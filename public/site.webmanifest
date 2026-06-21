@@ -1,0 +1,20 @@
+{
+  "name": "BlokBlitz: Dino Redders van Sterrenstad",
+  "short_name": "BlokBlitz",
+  "description": "Een lokale adaptieve 3D rekengame voor jonge kinderen.",
+  "lang": "nl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "portrait-primary",
+  "background_color": "#bae6fd",
+  "theme_color": "#bae6fd",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

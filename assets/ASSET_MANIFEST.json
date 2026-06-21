@@ -1,0 +1,55 @@
+{
+  "externalAssets": [],
+  "generatedAssets": [
+    {
+      "name": "Procedural quantity SVGs",
+      "source": "src/education/representations/svgGenerators.ts",
+      "license": "Project-generated",
+      "author": "Codex for this local project",
+      "downloadedAt": null,
+      "usedFiles": [],
+      "notes": "Dot cards, dice, dominoes, fingers, frames, beads, blocks, eggs, paw prints, numerals, and mixed cards are generated locally at runtime."
+    },
+    {
+      "name": "Procedural Three.js scenes",
+      "source": "src/game/Game.ts and scene modules",
+      "license": "Project-generated",
+      "author": "Codex for this local project",
+      "downloadedAt": null,
+      "usedFiles": [],
+      "notes": "Blocky city, runner track, WebWoud anchors, and hub visuals use local geometry, CSS, and SVG."
+    },
+    {
+      "name": "Web Audio cues",
+      "source": "src/game/AudioManager.ts",
+      "license": "Project-generated",
+      "author": "Codex for this local project",
+      "downloadedAt": null,
+      "usedFiles": [],
+      "notes": "Short success, snap, rescue, build, and soft-error tones are generated with the Web Audio API."
+    },
+    {
+      "name": "Browser vibration cues",
+      "source": "src/game/HapticManager.ts",
+      "license": "Project-generated",
+      "author": "Codex for this local project",
+      "downloadedAt": null,
+      "usedFiles": [],
+      "notes": "Optional short mobile vibration patterns are generated through the browser Vibration API and can be disabled in settings."
+    },
+    {
+      "name": "Local app shell icons, manifest, and offline cache",
+      "source": "public/favicon.svg, public/site.webmanifest, and public/sw.js",
+      "license": "Project-generated",
+      "author": "Codex for this local project",
+      "downloadedAt": null,
+      "usedFiles": [
+        "public/favicon.svg",
+        "public/site.webmanifest",
+        "public/sw.js"
+      ],
+      "notes": "Installable mobile shell metadata, the local SVG icon, and a same-origin offline cache service worker are generated for this project; no remote icons, app-store assets, or CDN caches are used."
+    }
+  ],
+  "notes": "No external assets are used at runtime."
+}
