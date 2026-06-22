@@ -1,6 +1,8 @@
-import { childFocusAction, childFocusSummary, childFocusTitle } from "../education/focusLabels";
 import type { Game } from "../game/Game";
-import { BaseScene, sceneHeader } from "./SceneUtils";
+import { HERO_SKINS, unlockedSkinIds } from "../runner/skins";
+import { WORLDS, cssHex, getWorld } from "../runner/worlds";
+import { openParentGate } from "./parentGate";
+import { BaseScene } from "./SceneUtils";
 
 export class MainMenuScene extends BaseScene {
   constructor(game: Game) {
@@ -10,95 +12,142 @@ export class MainMenuScene extends BaseScene {
   mount(): void {
     super.mount();
     this.game.resetWorld("menu");
+    // Make sure every skin the star total has earned is available to pick.
+    this.game.save.syncUnlockedSkins(unlockedSkinIds(this.game.data().progress.stars));
+    this.render();
+  }
+
+  private render(): void {
+    this.root.replaceChildren();
+    this.root.classList.add("menu-scene", "centered");
     const data = this.game.data();
-    const layout = document.createElement("div");
-    layout.className = "menu-layout";
-    const actions = document.createElement("div");
-    actions.className = "menu-actions";
-    const mission = document.createElement("div");
-    mission.className = "mission-map mission-world";
-    mission.dataset.missionWorld = "sterrenroute";
-    mission.setAttribute("aria-label", "Speelroute door Sterrenstad");
-    [
-      { label: "Getal", icon: "number" },
-      { label: "Sprint", icon: "sprint" },
-      { label: "WebWoud", icon: "web" },
-      { label: "Stad", icon: "city" }
-    ].forEach((step, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "mission-step";
-      button.dataset.missionStep = String(index + 1);
-      button.dataset.routeMarker = "true";
-      button.setAttribute("aria-label", `Route stap ${index + 1}: ${step.label}`);
-      button.innerHTML = `
-        <span class="mission-node-world ${step.icon}" aria-hidden="true">
-          <span class="mission-icon ${step.icon}"></span>
-        </span>
-        <strong>${index + 1}</strong>
-        <small>${step.label}</small>
-      `;
-      button.addEventListener("click", () => this.startSession());
-      mission.appendChild(button);
-    });
-    const playButton = this.button("Start avontuur", () => this.startSession());
-    playButton.classList.add("play-now");
-    playButton.innerHTML = `
-      <span class="play-gem" aria-hidden="true"></span>
-      <span>Start avontuur</span>
-    `;
+
+    const title = document.createElement("div");
+    title.className = "menu-title";
+    title.innerHTML = `<span class="menu-logo" aria-hidden="true">🦖</span><h1>BlokBlitz Run</h1><p>Kies een wereld en leer de getallen!</p>`;
+
+    const badges = document.createElement("div");
+    badges.className = "menu-badges";
+    badges.append(
+      this.badge("⭐", data.progress.stars, "sterren"),
+      this.badge("🏁", `${data.progress.bestRunDistance} m`, "beste run"),
+      this.badge("🏃", data.progress.runsCompleted, "runs")
+    );
+
+    const map = this.buildWorldMap();
+    const garage = this.buildGarage();
 
     const tools = document.createElement("div");
     tools.className = "menu-tools";
     tools.append(
-      this.button("Oefenen", () => this.game.showScene("minigame"), "secondary"),
-      this.button("Ouders", () => this.game.showScene("parentDashboard"), "ghost"),
-      this.button("Instellingen", () => this.game.showScene("settings"), "ghost")
+      this.button("◀ Speeltuin", () => this.game.showScene("hub"), "secondary"),
+      this.button("Ouders", () => openParentGate(() => this.game.showScene("parentDashboard")), "ghost"),
+      this.button("Instellingen", () => openParentGate(() => this.game.showScene("settings")), "ghost")
     );
 
-    actions.append(playButton, mission, tools);
-
-    const restored = Object.values(data.progress.cityDistricts).filter((district) => district.restored).length;
-    const progressStrip = document.createElement("div");
-    progressStrip.className = "kid-progress-strip";
-    progressStrip.dataset.kidProgress = "menu";
-    progressStrip.setAttribute("aria-label", "BlokBlitz voortgang");
-    [
-      { label: "Sterren", value: data.progress.stars, tone: "star" },
-      { label: "Blokken", value: data.progress.numberBlocks, tone: "block" },
-      { label: "Redders", value: data.progress.rescuedDinos + data.progress.rescuedNumerianen, tone: "rescue" },
-      { label: "Stad", value: `${restored}/14`, tone: "city" }
-    ].forEach((item) => {
-      const token = document.createElement("span");
-      token.className = `kid-progress-token ${item.tone}`;
-      token.dataset.progressToken = item.tone;
-      token.innerHTML = `<i aria-hidden="true"></i><strong>${item.value}</strong><small>${item.label}</small>`;
-      progressStrip.appendChild(token);
-    });
-    actions.appendChild(progressStrip);
-
-    const focus = this.game.adaptive.recommendFocus();
-    const coach = document.createElement("aside");
-    coach.className = "coach-card";
-    coach.dataset.focusSkill = focus.skill;
-    coach.innerHTML = `
-      <p class="eyebrow">Dino Coach</p>
-      <h2>${childFocusTitle(focus.skill)}</h2>
-      <p>${childFocusAction(focus.skill)}</p>
-      <span>${childFocusSummary(focus.skill, focus.representation, focus.range)}</span>
-    `;
-
-    const side = document.createElement("div");
-    side.className = "menu-side";
-    side.append(coach);
-
-    layout.append(actions, side);
-    this.root.append(sceneHeader("BlokBlitz", "Dino Redders van Sterrenstad"), layout);
+    this.root.append(title, badges, map, garage, tools);
   }
 
-  private startSession(): void {
+  private badge(icon: string, value: string | number, label: string): HTMLElement {
+    const badge = document.createElement("div");
+    badge.className = "menu-badge";
+    badge.innerHTML = `<span aria-hidden="true">${icon}</span><strong>${value}</strong><small>${label}</small>`;
+    return badge;
+  }
+
+  private buildWorldMap(): HTMLElement {
+    const data = this.game.data();
+    const wrap = document.createElement("div");
+    wrap.className = "world-map";
+    wrap.dataset.worldMap = "true";
+    const heading = document.createElement("p");
+    heading.className = "world-map-title";
+    heading.textContent = "Werelden";
+    wrap.appendChild(heading);
+
+    const grid = document.createElement("div");
+    grid.className = "world-grid";
+    WORLDS.forEach((world, index) => {
+      const progress = data.progress.worlds[world.id] ?? { unlocked: index === 0, completed: false, bestStars: 0 };
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = `world-card${progress.unlocked ? "" : " locked"}${progress.completed ? " done" : ""}`;
+      card.dataset.world = world.id;
+      card.dataset.locked = String(!progress.unlocked);
+      card.style.setProperty("--world-sky", cssHex(world.palette.sky));
+      card.style.setProperty("--world-ground", cssHex(world.palette.ground));
+      card.setAttribute("aria-label", progress.unlocked ? `Speel ${world.name}` : `${world.name} op slot`);
+      const stars = [0, 1, 2]
+        .map((i) => `<span class="ws${i < progress.bestStars ? " earned" : ""}">★</span>`)
+        .join("");
+      card.innerHTML = `
+        <span class="world-num">${index + 1}</span>
+        <span class="world-emoji" aria-hidden="true">${progress.unlocked ? world.emoji : "🔒"}</span>
+        <strong>${world.name}</strong>
+        <small>${progress.unlocked ? world.blurb : `Speel eerst ${getWorld(world.unlockAfter ?? undefined).name}`}</small>
+        <span class="world-stars" aria-hidden="true">${stars}</span>
+      `;
+      card.addEventListener("click", () => this.startWorld(world.id, progress.unlocked));
+      grid.appendChild(card);
+    });
+    wrap.appendChild(grid);
+    return wrap;
+  }
+
+  private buildGarage(): HTMLElement {
+    const data = this.game.data();
+    const unlocked = new Set(data.progress.cosmetics.unlockedSkins);
+    const active = data.progress.cosmetics.activeSkin;
+
+    const garage = document.createElement("div");
+    garage.className = "menu-garage";
+    garage.dataset.garage = "true";
+    const heading = document.createElement("p");
+    heading.className = "menu-garage-title";
+    heading.textContent = "Kies je held";
+    garage.appendChild(heading);
+
+    const row = document.createElement("div");
+    row.className = "garage-row";
+    HERO_SKINS.forEach((skin) => {
+      const isUnlocked = unlocked.has(skin.id);
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = `garage-card${skin.id === active ? " active" : ""}${isUnlocked ? "" : " locked"}`;
+      card.dataset.skin = skin.id;
+      card.dataset.locked = String(!isUnlocked);
+      card.style.setProperty("--skin-body", cssHex(skin.colors.body));
+      card.style.setProperty("--skin-accent", cssHex(skin.colors.accent));
+      card.setAttribute("aria-label", isUnlocked ? `Kies ${skin.name}` : `${skin.name}, nog ${skin.unlockStars} sterren`);
+      card.innerHTML = `
+        <span class="garage-face" aria-hidden="true"></span>
+        <strong>${skin.name}</strong>
+        ${isUnlocked ? "" : `<small class="garage-lock">🔒 ${skin.unlockStars}⭐</small>`}
+      `;
+      card.addEventListener("click", () => this.pickSkin(skin.id, isUnlocked));
+      row.appendChild(card);
+    });
+    garage.appendChild(row);
+    return garage;
+  }
+
+  private pickSkin(id: string, isUnlocked: boolean): void {
+    if (!isUnlocked) return this.wiggle(`.garage-card[data-skin="${id}"]`);
+    this.game.save.setActiveSkin(id);
+    this.render();
+  }
+
+  private startWorld(id: string, isUnlocked: boolean): void {
+    if (!isUnlocked) return this.wiggle(`.world-card[data-world="${id}"]`);
     this.game.requestFullscreenPlay();
     this.game.save.startNewSession();
-    this.game.showScene("numberOfDay");
+    this.game.showScene("run", { worldId: id });
+  }
+
+  private wiggle(selector: string): void {
+    const node = this.root.querySelector<HTMLElement>(selector);
+    node?.classList.remove("shake");
+    void node?.offsetWidth;
+    node?.classList.add("shake");
   }
 }

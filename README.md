@@ -1,6 +1,17 @@
-﻿# BlokBlitz: Dino Redders van Sterrenstad
+﻿# BlokBlitz Run
 
-Local-first TypeScript/Vite educational action game for children aged 4-7. Number structures are the game mechanics: gates, boosts, bridges, shields, anchors, train wagons, rescues, and city restoration all depend on canonical quantities, 5+n, and 10-structure.
+Local-first TypeScript/Vite **number-sense game for children aged 4-7**, built around a kid-first **Speeltuin (playground) hub** with several distinct game modes:
+
+- **🐣 Tel mee** — tap each animal to count, then pick the numeral (counting & cardinality).
+- **🧩 Zoek hetzelfde** — find the group with the same amount, shown across different getalbeelden (cross-representation equivalence).
+- **🦖 Wat is meer?** — feed the hungry dino the bigger group (comparing).
+- **🔟 Vul de tien** — fill a ten-frame to a target number (build quantity & 10-structure).
+- **➕ Eentje erbij** — pick one more / one less than a number (oneMoreLess).
+- **🔢 Op volgorde** — tap numbers from small to big (ordering).
+- **🧠 Memory** — flip cards to match each number to a group with the same amount (cross-representation + memory).
+- **🗺️ Avontuur** — a 3D voxel runner across six themed worlds, steering through **number gates** whose quantities appear as canonical cube/dice/bead/… patterns.
+
+The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back. A simple sum-based parent gate sits in front of the dashboard and settings.
 
 ## Run Locally
 
@@ -51,49 +62,47 @@ The child start and replay buttons also make a best-effort fullscreen request fr
 
 ## Controls
 
+Touch (primary, for tablet/phone):
+
+- Swipe left / right, or tap the on-screen ◀ ▶ buttons: change lane.
+- Swipe up, or tap the big SPRING button: jump over a barrier.
+- Tap the menu button (top-left): pause back to the menu, no penalty.
+
 Keyboard:
 
-- `A` / `ArrowLeft`: move left
-- `D` / `ArrowRight`: move right
-- `W` / `ArrowUp` / `Space`: jump, swing, or confirm action
-- `Enter`: confirm selected lane or anchor
-- `Escape`: return toward menu
+- `A` / `ArrowLeft`, `D` / `ArrowRight`: change lane.
+- `W` / `ArrowUp` / `Space`: jump.
+- `Escape`: back to menu.
 
-Mouse and touch:
+Mistakes are always safe: a wrong gate or a bump never ends the run — it only slows you briefly and shows the correct quantity, then you keep going.
 
-- Tap lanes, anchors, gates, district cards, minigame tabs, or answer cards.
-- Swipe left/right in Sprint or WebWoud to move between lanes or anchors.
-- Swipe up in Sprint or WebWoud to use the selected lane or anchor.
+Settings (behind the parent gate, from the menu):
 
-Settings:
-
-- Speed changes runner pace.
+- Speed changes the run pace (a gentle option for younger players).
 - Sound can be muted.
+- Spoken voice (reading + counting + praise) can be turned on or off.
 - Phone vibration feedback can be turned on or off.
 - High contrast can be toggled.
 
 ## Game Flow
 
-A full session runs:
+1. **Speeltuin hub** (home): big tappable cards for each game mode (Avontuur + the four calm tap modes), a hero garage, and `Ouders` / `Instellingen`. Each calm mode is a short set of ~5 rounds with a 1–3 star screen at the end, then back to the hub.
+2. **Avontuur → world map**: six themed worlds shown as tappable cards, unlocked one by one (🌳 Grasland → 🪙 Muntgrot → ❄️ IJsbaan → 🕸️ Webwoud → 🧱 Bouwdorp → 🚀 Sterrenrace). Each world has its own look, number cap (5 → 10), gate types (subitise → count → compare) and mechanic mix (coins, web-swings, build moments).
+3. **A run**: a 3-2-1 countdown, then number gates with coin trails, jumpable barriers, web-swing zips and a Minecraft build moment in between. The gate getalbeeld rotates through every pattern (dice, dots, ten-frames, fingers, beads, dominoes, eggs, numerals, paws…). A wrong gate or a bump is safe — it only slows you briefly and shows the correct quantity.
+4. **Results**: a 1–3 star rating, stars/blocks earned, distance and best record, and any newly unlocked world or hero — then `Volgende!`, `Nog eens!` or back to the map. Finishing a world unlocks the next.
 
-1. Number Portal
-2. BlokBlitz Sprint road gates
-3. WebWoud Redders swing anchors
-4. Sterrenstad Bouwers
-5. Summary
-6. Optional parent dashboard
+Pace is tuned for young children: the runner is gentle by default (and the Settings speed can slow it further), and the calm modes are untimed.
 
-The main menu has one session start, a tappable mission path, and compact access to practice, parent dashboard, and settings.
+The number gates *are* the running. The child reads the spoken-style target (e.g. `Ren door de 5!`) plus the canonical cube pattern shown on each lane, then steers into the matching gate. Picking the lane with the biggest group teaches comparing; matching the pattern teaches subitising and counting. Stars unlock new heroes; collected blocks and best distance persist between runs.
 
-Sprint and WebWoud are not quiz popups: the child moves across lane gates or swing anchors, and the structured number choice controls speed, rescue, reward, and progression.
-The session starts with a `Getalpoort`: the child wakes the number stone and sees the same quantity as eggs, ten-frame, beads, and numeral before Sprint.
-The practice area is `Oefenwereld`: each minigame uses themed objects such as gates, caves, bridges, shields, wagons, platforms, or rescue pens instead of generic answer cards.
-Sterrenstad is a build hub: districts are city plots, and restoration choices are construction pads in a build yard.
+The full representation/mastery/adaptive education engine drives every gate underneath, and the earlier guided "Sterrenstad" practice scenes plus the parent dashboard remain in the codebase and reachable.
 
 ## Architecture
 
 - `src/game`: app shell, Three.js world, input, audio, haptics, persistence, scene manager
-- `src/scenes`: Boot, menu, number of day, runner, WebWoud, city, minigames, summary, dashboard, settings
+- `src/runner`: the revamped real-time runner — pure `RunnerCore` simulation, `RunnerView` voxel rendering, the adaptive gate provider, and unlockable hero skins
+- `src/scenes`: Boot, `HubScene` (Speeltuin), `MainMenuScene` (world map), `RunScene`, `ResultsScene`, plus the retained guided scenes (number of day, legacy runner, WebWoud, city, minigames, summary, dashboard, settings)
+- `src/scenes/minigames`: the calm tap modes — `MiniGameScene` base + `miniUi` (shared done screen) + `CountScene`, `MatchScene`, `CompareScene`, `FillScene`, `OneMoreLessScene`, `OrderScene`, `MemoryScene`, and `miniChallenges` (their Challenge builders)
 - `src/education`: educational types, canonical layouts, mastery tracker, adaptive engine, challenge factory, misconception detection
 - `src/education/representations`: reusable SVG renderers for all 12 quantity representations
 - `src/gameplay`: layer-specific mechanic labels and templates

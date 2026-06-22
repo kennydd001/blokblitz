@@ -73,7 +73,18 @@ export class AdaptiveEngine {
     const cells = REPRESENTATIONS.map((representation) => this.tracker.getCell(skill, representation, range));
     const bestExisting = cells.find((cell) => cell.exposures > 0);
     const phase = phaseForExposure(bestExisting?.exposures ?? 0, bestExisting?.accuracy ?? 0);
-    return preferredRepresentationsForSkill(skill, phase)[0];
+    const preferred = preferredRepresentationsForSkill(skill, phase);
+    // If the child keeps failing on a getalbeeld, steer to a fresh one — the whole
+    // point of having twelve representations is that fingers or a ten-frame may
+    // click when dots don't.
+    const struggling = new Set(
+      cells.filter((cell) => cell.exposures >= 3 && cell.accuracy < 0.65).map((cell) => cell.representation)
+    );
+    if (struggling.size > 0) {
+      const fresh = preferred.find((rep) => !struggling.has(rep)) ?? REPRESENTATIONS.find((rep) => !struggling.has(rep));
+      if (fresh) return fresh;
+    }
+    return preferred[0];
   }
 
   displayTimeFor(skill: Skill, quantity: number, representation: Representation): number {

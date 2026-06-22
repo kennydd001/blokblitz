@@ -46,11 +46,11 @@ describe("mobile haptic cues", () => {
     Object.defineProperty(navigator, "vibrate", { configurable: true, value: vibrate });
 
     const haptics = new HapticManager();
-    haptics.setSettings({ speed: 1, muted: false, haptics: false, highContrast: false });
+    haptics.setSettings({ speed: 1, muted: false, haptics: false, highContrast: false, voice: true });
     haptics.play("snap");
     expect(vibrate).not.toHaveBeenCalled();
 
-    haptics.setSettings({ speed: 1, muted: false, haptics: true, highContrast: false });
+    haptics.setSettings({ speed: 1, muted: false, haptics: true, highContrast: false, voice: true });
     haptics.play("snap");
     expect(vibrate).toHaveBeenCalledWith([...hapticPattern("snap")]);
 

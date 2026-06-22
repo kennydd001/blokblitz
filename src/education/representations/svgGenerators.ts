@@ -12,20 +12,22 @@ import {
 import type { Representation } from "../types";
 import type { RenderOptions } from "./types";
 
+// Vivid, high-contrast palette so a 4-7 year old can isolate the quantity at a
+// glance — stark ink for dots/pips and bright primaries for carriers/frames.
 const colors = {
-  ink: "#1f2937",
-  softInk: "#475569",
-  card: "#fff8e6",
-  edge: "#1f2937",
-  gold: "#f6c453",
-  red: "#ef4444",
-  white: "#f8fafc",
-  teal: "#17a2a0",
-  blue: "#3b82f6",
-  green: "#22c55e",
-  purple: "#8b5cf6",
-  orange: "#f97316",
-  pink: "#f9a8d4"
+  ink: "#10131c",
+  softInk: "#3a4456",
+  card: "#fffdf5",
+  edge: "#10131c",
+  gold: "#ffcc33",
+  red: "#ff3b30",
+  white: "#ffffff",
+  teal: "#00bcd4",
+  blue: "#0a84ff",
+  green: "#34c759",
+  purple: "#7c5cff",
+  orange: "#ff8c1a",
+  pink: "#ff7eb6"
 };
 
 function svgFrame(width: number, height: number, body: string, options: RenderOptions = {}): string {

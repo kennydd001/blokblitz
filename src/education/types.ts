@@ -108,6 +108,8 @@ export interface GameSettings {
   muted: boolean;
   haptics: boolean;
   highContrast: boolean;
+  /** Spoken Dutch voice (instructions, counting, praise). */
+  voice: boolean;
 }
 
 export interface DistrictProgress {
@@ -128,6 +130,17 @@ export interface PlaySession {
   attempts: number;
 }
 
+export interface CosmeticsProgress {
+  activeSkin: string;
+  unlockedSkins: string[];
+}
+
+export interface WorldProgress {
+  unlocked: boolean;
+  completed: boolean;
+  bestStars: number;
+}
+
 export interface GameProgress {
   sessionId: string;
   stars: number;
@@ -141,6 +154,15 @@ export interface GameProgress {
   attempts: AttemptLog[];
   sessions: PlaySession[];
   lastChallengeIds: string[];
+  /** Best run distance in metres, for the menu best-score badge. */
+  bestRunDistance: number;
+  /** Number of full runs the child has finished. */
+  runsCompleted: number;
+  cosmetics: CosmeticsProgress;
+  /** Per-world unlock state and best star rating, keyed by world id. */
+  worlds: Record<string, WorldProgress>;
+  /** Earned collectible sticker ids. */
+  stickers: string[];
 }
 
 export interface SaveData {

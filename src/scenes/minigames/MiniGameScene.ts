@@ -1,0 +1,192 @@
+import { stickerById } from "../../data/stickers";
+import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
+import type { Challenge, ChallengeOption } from "../../education/types";
+import type { Game } from "../../game/Game";
+import { praiseWord } from "../../game/VoiceManager";
+import { BaseScene } from "../SceneUtils";
+import { buildDoneScreen, starsFromPerfect } from "./miniUi";
+
+// Shared shell for the calm, tap-based learning modes. No timer, no game over:
+// the child answers at their own pace, a wrong tap just gives a gentle nudge and
+// a retry, and a short set ends in a friendly star screen. Every answer is logged
+// through game.recordAttempt so the parent dashboard stays accurate.
+export abstract class MiniGameScene extends BaseScene {
+  protected total = 7;
+  protected round = 1;
+  protected correctRounds = 0;
+  protected perfectRounds = 0;
+  protected current!: Challenge;
+  protected startedAt = 0;
+  protected hintUsed = false;
+  protected resolving = false;
+  private celebrateCount = 0;
+  /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
+  protected timers: number[] = [];
+
+  /** setTimeout that is cancelled automatically on unmount. */
+  protected later(fn: () => void, ms: number): void {
+    this.timers.push(window.setTimeout(fn, ms));
+  }
+
+  protected abstract readonly emoji: string;
+  protected abstract readonly heading: string;
+  /** Mutable so a mode can change the instruction per round (e.g. "one more" vs "one less"). */
+  protected instruction = "";
+  /** Build the Challenge for this round. */
+  protected abstract makeChallenge(): Challenge;
+  /** Render the interactive play area; call this.pick(option) when the child answers. */
+  protected abstract renderPlay(challenge: Challenge): HTMLElement;
+
+  protected constructor(game: Game, name: string) {
+    super(game, name);
+  }
+
+  mount(): void {
+    super.mount();
+    this.game.resetWorld("menu");
+    this.root.classList.add("mini-scene", "centered");
+    this.round = 1;
+    this.correctRounds = 0;
+    this.perfectRounds = 0;
+    this.startRound();
+  }
+
+  unmount(): void {
+    for (const id of this.timers) window.clearTimeout(id);
+    this.timers = [];
+    this.resolving = false;
+    this.game.voice.cancel();
+    super.unmount();
+  }
+
+  /** A friendly quantity for this round, nudged by the adaptive engine but kept in range. */
+  protected focusQuantity(min: number, max: number): number {
+    const focus = this.game.adaptive.recommendFocus().quantity;
+    const jitter = Math.floor(Math.random() * 3) - 1;
+    return Math.max(min, Math.min(max, focus + jitter));
+  }
+
+  protected startRound(): void {
+    this.current = this.makeChallenge();
+    this.hintUsed = false;
+    this.resolving = false;
+    this.startedAt = performance.now();
+    this.root.replaceChildren(this.buildHeader(), this.instructionBar(), this.renderPlay(this.current));
+    this.game.voice.speak(this.instruction, { interrupt: true });
+  }
+
+  protected pick(option: ChallengeOption): void {
+    if (this.resolving) return;
+    const correct = this.game.recordAttempt(this.current, option, this.startedAt, this.hintUsed);
+    if (correct) {
+      this.resolving = true;
+      this.correctRounds += 1;
+      if (!this.hintUsed) this.perfectRounds += 1;
+      this.celebrate();
+      this.round += 1;
+      this.later(() => (this.round > this.total ? this.finish() : this.startRound()), 1000);
+    } else {
+      this.hintUsed = true;
+      // Multi-sensory "oops" + a teaching scaffold, then let them retry.
+      this.game.audio.play("soft-error");
+      this.game.haptics.play("soft-error");
+      this.game.voice.encourage();
+      this.showScaffold(option);
+      this.onWrong();
+    }
+  }
+
+  /** Override to highlight the right answer on a wrong tap (audio/voice handled by pick). */
+  protected onWrong(): void {
+    this.game.flashMessage(this.current.hint || "Bijna! Probeer nog eens.", "warn");
+  }
+
+  // Re-teach the concept visually after a wrong answer instead of just revealing it.
+  protected showScaffold(option: ChallengeOption): void {
+    const correctQ = Math.round(Number(this.current.quantity) || 0);
+    if (correctQ < 1) return;
+    const playerQ = Math.round(Number(option.quantity ?? option.value) || 0);
+    let line = `Kijk: dit is ${correctQ}.`;
+    if (playerQ === correctQ - 1) line = `Eentje meer: ${correctQ}.`;
+    else if (playerQ === correctQ + 1) line = `Eentje minder: ${correctQ}.`;
+    const representation = correctQ > 5 ? "tenframe" : "fiveframe";
+    const panel = document.createElement("div");
+    panel.className = "mini-scaffold";
+    panel.dataset.scaffold = "true";
+    panel.innerHTML = `<small>${line}</small><div class="mini-scaffold-art">${RepresentationFactory.renderSvg(representation, correctQ, { label: line })}</div>`;
+    this.root.querySelector(".mini-scaffold")?.remove();
+    this.root.appendChild(panel);
+    this.later(() => panel.remove(), 2400);
+  }
+
+  protected celebrate(): void {
+    this.game.voice.praise();
+    this.game.flashMessage(`${praiseWord(this.celebrateCount++)} ⭐`, "good");
+    const burst = document.createElement("div");
+    burst.className = "mini-correct-burst";
+    burst.setAttribute("aria-hidden", "true");
+    burst.innerHTML = "<span>✓</span><i></i><i></i><i></i><i></i><i></i><i></i>";
+    this.root.appendChild(burst);
+    this.later(() => burst.remove(), 1000);
+  }
+
+  private buildHeader(): HTMLElement {
+    const header = document.createElement("div");
+    header.className = "mini-header";
+    const home = this.iconButton("Terug", "back", () => this.game.showScene("hub"));
+    home.classList.add("mini-home");
+    const title = document.createElement("div");
+    title.className = "mini-title";
+    title.innerHTML = `<span aria-hidden="true">${this.emoji}</span><strong>${this.heading}</strong>`;
+    const dots = document.createElement("div");
+    dots.className = "mini-dots";
+    dots.setAttribute("aria-label", `Ronde ${Math.min(this.round, this.total)} van ${this.total}`);
+    for (let i = 1; i <= this.total; i += 1) {
+      const dot = document.createElement("span");
+      dot.className = `mini-dot${i < this.round ? " done" : i === this.round ? " now" : ""}`;
+      dots.appendChild(dot);
+    }
+    header.append(home, title, dots);
+    return header;
+  }
+
+  private instructionBar(): HTMLElement {
+    const bar = document.createElement("div");
+    bar.className = "mini-instruction";
+    bar.textContent = this.instruction;
+    return bar;
+  }
+
+  protected finish(): void {
+    this.game.audio.play("win");
+    this.game.haptics.play("win");
+    const stars = starsFromPerfect(this.perfectRounds, this.total);
+    this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
+    const newStickers = this.game.save
+      .syncStickers()
+      .map((id) => stickerById(id))
+      .filter((s): s is NonNullable<typeof s> => Boolean(s))
+      .map((s) => ({ emoji: s.emoji, name: s.name }));
+    if (newStickers.length > 0) this.game.voice.speak(`Je verdiende een nieuwe sticker: ${newStickers[0].name}!`);
+    this.root.replaceChildren(
+      buildDoneScreen({
+        emoji: this.emoji,
+        heading: this.heading,
+        stars,
+        sub: `Je had er ${this.correctRounds} van de ${this.total} goed!`,
+        newStickers,
+        onReplay: () => this.mountReplay(),
+        onHome: () => this.game.showScene("hub")
+      })
+    );
+  }
+
+  private mountReplay(): void {
+    this.root.classList.remove("centered");
+    this.root.classList.add("mini-scene", "centered");
+    this.round = 1;
+    this.correctRounds = 0;
+    this.perfectRounds = 0;
+    this.startRound();
+  }
+}

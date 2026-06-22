@@ -1,6 +1,8 @@
 import { stableQuantityFromDate } from "../education/quantityLayouts";
-import type { AttemptLog, DistrictProgress, GameProgress, GameSettings, SaveData } from "../education/types";
+import type { AttemptLog, DistrictProgress, GameProgress, GameSettings, SaveData, WorldProgress } from "../education/types";
 import { districtSeeds } from "../data/districts";
+import { earnedStickerIds } from "../data/stickers";
+import { WORLDS, nextWorldId } from "../runner/worlds";
 
 const STORAGE_KEY = "blokblitz-save-v1";
 
@@ -12,12 +14,19 @@ function makeDistrictRecord(): Record<string, DistrictProgress> {
   return Object.fromEntries(districtSeeds.map((district) => [district.id, { ...district }]));
 }
 
+function makeWorldRecord(): Record<string, WorldProgress> {
+  return Object.fromEntries(
+    WORLDS.map((world, index) => [world.id, { unlocked: index === 0, completed: false, bestStars: 0 }])
+  );
+}
+
 export function defaultSettings(): GameSettings {
   return {
     speed: 1,
     muted: false,
     haptics: true,
-    highContrast: false
+    highContrast: false,
+    voice: true
   };
 }
 
@@ -43,7 +52,12 @@ export function defaultProgress(): GameProgress {
         attempts: 0
       }
     ],
-    lastChallengeIds: []
+    lastChallengeIds: [],
+    bestRunDistance: 0,
+    runsCompleted: 0,
+    cosmetics: { activeSkin: "blitz", unlockedSkins: ["blitz"] },
+    worlds: makeWorldRecord(),
+    stickers: []
   };
 }
 
@@ -122,6 +136,62 @@ export class SaveManager {
     return this.getData();
   }
 
+  /** Record the outcome of a finished run: best distance + run counter. Stars/blocks go through award(). */
+  recordRunResult(distanceMeters: number): SaveData {
+    this.data.progress.bestRunDistance = Math.max(this.data.progress.bestRunDistance, Math.round(distanceMeters));
+    this.data.progress.runsCompleted += 1;
+    this.save();
+    return this.getData();
+  }
+
+  /** Mark a world finished, keep the best star score, and unlock the next world. Returns whether a new world opened. */
+  recordWorldResult(worldId: string, stars: number): { newWorldUnlocked: boolean } {
+    const world = this.data.progress.worlds[worldId];
+    let newWorldUnlocked = false;
+    if (world) {
+      world.completed = true;
+      world.bestStars = Math.max(world.bestStars, stars);
+    }
+    const nextId = nextWorldId(worldId);
+    if (nextId) {
+      const next = this.data.progress.worlds[nextId];
+      if (next && !next.unlocked) {
+        next.unlocked = true;
+        newWorldUnlocked = true;
+      }
+    }
+    this.save();
+    return { newWorldUnlocked };
+  }
+
+  /** Make every skin the current star total has earned available, without losing the active choice. */
+  syncUnlockedSkins(ids: string[]): SaveData {
+    const merged = new Set([...this.data.progress.cosmetics.unlockedSkins, ...ids]);
+    this.data.progress.cosmetics.unlockedSkins = [...merged];
+    this.save();
+    return this.getData();
+  }
+
+  /** Award any newly earned stickers from current progress. Returns the ids that are new. */
+  syncStickers(): string[] {
+    const earned = earnedStickerIds(this.data.progress);
+    const have = new Set(this.data.progress.stickers);
+    const fresh = earned.filter((id) => !have.has(id));
+    if (fresh.length > 0) {
+      this.data.progress.stickers = [...this.data.progress.stickers, ...fresh];
+      this.save();
+    }
+    return fresh;
+  }
+
+  setActiveSkin(id: string): SaveData {
+    if (this.data.progress.cosmetics.unlockedSkins.includes(id)) {
+      this.data.progress.cosmetics.activeSkin = id;
+      this.save();
+    }
+    return this.getData();
+  }
+
   restoreDistrict(id: string): SaveData {
     const district = this.data.progress.cityDistricts[id];
     if (district) {
@@ -170,6 +240,12 @@ export class SaveManager {
   private migrate(data: SaveData): SaveData {
     const fallback = defaultSaveData();
     const districts = { ...fallback.progress.cityDistricts, ...(data.progress?.cityDistricts ?? {}) };
+    const savedCosmetics = data.progress?.cosmetics;
+    const cosmetics = {
+      activeSkin: savedCosmetics?.activeSkin ?? fallback.progress.cosmetics.activeSkin,
+      unlockedSkins:
+        savedCosmetics?.unlockedSkins?.length ? [...new Set(savedCosmetics.unlockedSkins)] : [...fallback.progress.cosmetics.unlockedSkins]
+    };
     return {
       version: 1,
       settings: { ...fallback.settings, ...(data.settings ?? {}) },
@@ -179,7 +255,12 @@ export class SaveManager {
         cityDistricts: districts,
         attempts: data.progress?.attempts ?? [],
         sessions: data.progress?.sessions?.length ? data.progress.sessions : fallback.progress.sessions,
-        lastChallengeIds: data.progress?.lastChallengeIds ?? []
+        lastChallengeIds: data.progress?.lastChallengeIds ?? [],
+        bestRunDistance: data.progress?.bestRunDistance ?? 0,
+        runsCompleted: data.progress?.runsCompleted ?? 0,
+        cosmetics,
+        worlds: { ...makeWorldRecord(), ...(data.progress?.worlds ?? {}) },
+        stickers: data.progress?.stickers ?? []
       }
     };
   }

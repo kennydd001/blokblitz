@@ -1,0 +1,165 @@
+import { stickerById } from "../../data/stickers";
+import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
+import type { Representation } from "../../education/types";
+import type { Game } from "../../game/Game";
+import { BaseScene } from "../SceneUtils";
+import { memoryMatchChallenge, shuffle } from "./miniChallenges";
+import { buildDoneScreen } from "./miniUi";
+
+interface MemoryCard {
+  quantity: number;
+  contentHtml: string;
+  el: HTMLButtonElement;
+  matched: boolean;
+  flipped: boolean;
+}
+
+const PAIRS = 4;
+const ART_REPS: Representation[] = ["dots", "dice", "tenframe", "fingers", "domino", "eggs", "blocks", "fiveframe", "beads"];
+const BACK = '<span class="memory-back" aria-hidden="true">★</span>';
+
+export class MemoryScene extends BaseScene {
+  private cards: MemoryCard[] = [];
+  private first?: MemoryCard;
+  private lock = false;
+  private flips = 0;
+  private matchedCount = 0;
+  private attemptStart = 0;
+  private timers: number[] = [];
+
+  constructor(game: Game) {
+    super(game, "memory");
+  }
+
+  mount(): void {
+    super.mount();
+    this.game.resetWorld("menu");
+    this.root.classList.add("mini-scene", "centered");
+    this.startBoard();
+  }
+
+  unmount(): void {
+    for (const id of this.timers) window.clearTimeout(id);
+    this.timers = [];
+    this.game.voice.cancel();
+    super.unmount();
+  }
+
+  private startBoard(): void {
+    this.cards = [];
+    this.first = undefined;
+    this.lock = false;
+    this.flips = 0;
+    this.matchedCount = 0;
+
+    // Four amounts; each appears once as a numeral and once as a getalbeeld.
+    const quantities = shuffle([1, 2, 3, 4, 5, 6, 7, 8]).slice(0, PAIRS);
+    const deck: { quantity: number; contentHtml: string }[] = [];
+    quantities.forEach((q) => {
+      const rep = ART_REPS[Math.floor(Math.random() * ART_REPS.length)];
+      deck.push({ quantity: q, contentHtml: `<span class="memory-num">${q}</span>` });
+      deck.push({ quantity: q, contentHtml: `<div class="memory-art">${RepresentationFactory.renderSvg(rep, q, { label: String(q) })}</div>` });
+    });
+
+    const header = document.createElement("div");
+    header.className = "mini-header";
+    const home = this.iconButton("Terug", "back", () => this.game.showScene("hub"));
+    home.classList.add("mini-home");
+    const title = document.createElement("div");
+    title.className = "mini-title";
+    title.innerHTML = `<span aria-hidden="true">🧠</span><strong>Memory</strong>`;
+    header.append(home, title);
+
+    const instruction = document.createElement("div");
+    instruction.className = "mini-instruction";
+    instruction.textContent = "Zoek de paren: het getal en het groepje met even veel.";
+
+    const board = document.createElement("div");
+    board.className = "memory-board";
+    shuffle(deck).forEach((entry) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "memory-card";
+      button.dataset.quantity = String(entry.quantity);
+      button.setAttribute("aria-label", "geheugenkaart");
+      button.innerHTML = BACK;
+      const card: MemoryCard = { quantity: entry.quantity, contentHtml: entry.contentHtml, el: button, matched: false, flipped: false };
+      button.addEventListener("click", () => this.flip(card));
+      board.appendChild(button);
+      this.cards.push(card);
+    });
+
+    this.root.replaceChildren(header, instruction, board);
+    this.game.voice.speak("Zoek de paren: het getal en het groepje met even veel.", { interrupt: true });
+  }
+
+  private flip(card: MemoryCard): void {
+    if (this.lock || card.matched || card.flipped) return;
+    card.flipped = true;
+    card.el.classList.add("flipped");
+    card.el.innerHTML = card.contentHtml;
+    this.game.voice.sayNumber(card.quantity, { interrupt: true });
+
+    if (!this.first) {
+      this.first = card;
+      this.attemptStart = performance.now();
+      return;
+    }
+
+    const first = this.first;
+    this.first = undefined;
+    this.flips += 1;
+    const matched = first.quantity === card.quantity;
+    const { challenge, option } = memoryMatchChallenge(first.quantity, matched);
+    this.game.recordAttempt(challenge, option, this.attemptStart, false);
+
+    if (matched) {
+      first.matched = true;
+      card.matched = true;
+      first.el.classList.add("matched");
+      card.el.classList.add("matched");
+      this.game.voice.praise();
+      this.matchedCount += 1;
+      if (this.matchedCount >= PAIRS) {
+        this.lock = true;
+        this.timers.push(window.setTimeout(() => this.finish(), 700));
+      }
+    } else {
+      this.lock = true;
+      this.timers.push(
+        window.setTimeout(() => {
+          for (const c of [first, card]) {
+            c.flipped = false;
+            c.el.classList.remove("flipped");
+            c.el.innerHTML = BACK;
+          }
+          this.lock = false;
+        }, 850)
+      );
+    }
+  }
+
+  private finish(): void {
+    this.game.audio.play("win");
+    this.game.haptics.play("win");
+    const extra = this.flips - PAIRS;
+    const stars = extra <= 1 ? 3 : extra <= 4 ? 2 : 1;
+    this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
+    const newStickers = this.game.save
+      .syncStickers()
+      .map((id) => stickerById(id))
+      .filter((s): s is NonNullable<typeof s> => Boolean(s))
+      .map((s) => ({ emoji: s.emoji, name: s.name }));
+    this.root.replaceChildren(
+      buildDoneScreen({
+        emoji: "🧠",
+        heading: "Memory",
+        stars,
+        sub: `Alle paren gevonden in ${this.flips} beurten!`,
+        newStickers,
+        onReplay: () => this.startBoard(),
+        onHome: () => this.game.showScene("hub")
+      })
+    );
+  }
+}

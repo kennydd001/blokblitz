@@ -10,6 +10,7 @@ export class ParentDashboardScene extends BaseScene {
   mount(): void {
     super.mount();
     this.game.resetWorld("summary");
+    this.game.audio.stopMusic();
     this.render();
   }
 

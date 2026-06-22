@@ -11,14 +11,25 @@ import { GameLoop } from "./GameLoop";
 import { HapticManager } from "./HapticManager";
 import { InputManager } from "./InputManager";
 import { SaveManager } from "./SaveManager";
+import { VoiceManager } from "./VoiceManager";
 import type { SoundCue } from "./AudioManager";
 import { SceneManager } from "./SceneManager";
 import { BlokBlitzScene } from "../scenes/BlokBlitzScene";
 import { BootScene } from "../scenes/BootScene";
+import { HubScene } from "../scenes/HubScene";
 import { MainMenuScene } from "../scenes/MainMenuScene";
 import { MinigameScene } from "../scenes/MinigameScene";
 import { NumberOfDayScene } from "../scenes/NumberOfDayScene";
 import { ParentDashboardScene } from "../scenes/ParentDashboardScene";
+import { ResultsScene } from "../scenes/ResultsScene";
+import { RunScene } from "../scenes/RunScene";
+import { CompareScene } from "../scenes/minigames/CompareScene";
+import { CountScene } from "../scenes/minigames/CountScene";
+import { FillScene } from "../scenes/minigames/FillScene";
+import { MatchScene } from "../scenes/minigames/MatchScene";
+import { MemoryScene } from "../scenes/minigames/MemoryScene";
+import { OneMoreLessScene } from "../scenes/minigames/OneMoreLessScene";
+import { OrderScene } from "../scenes/minigames/OrderScene";
 import { SettingsScene } from "../scenes/SettingsScene";
 import { SterrenstadScene } from "../scenes/SterrenstadScene";
 import { SummaryScene } from "../scenes/SummaryScene";
@@ -34,6 +45,7 @@ export class Game {
   readonly input = new InputManager();
   readonly audio = new AudioManager();
   readonly haptics = new HapticManager();
+  readonly voice = new VoiceManager();
   readonly assets = new AssetManager();
   readonly save = new SaveManager();
   readonly mastery: MasteryTracker;
@@ -74,6 +86,8 @@ export class Game {
 
     this.audio.setSettings(this.save.getMutableData().settings);
     this.haptics.setSettings(this.save.getMutableData().settings);
+    this.voice.setSettings(this.save.getMutableData().settings);
+    this.voice.setDuckHook((ms) => this.audio.duck(ms));
     this.registerScenes();
     this.resize();
     window.addEventListener("resize", () => this.resize());
@@ -294,7 +308,17 @@ export class Game {
 
   private registerScenes(): void {
     this.scenes.register("boot", (game) => new BootScene(game));
+    this.scenes.register("hub", (game) => new HubScene(game));
     this.scenes.register("mainMenu", (game) => new MainMenuScene(game));
+    this.scenes.register("run", (game) => new RunScene(game));
+    this.scenes.register("results", (game) => new ResultsScene(game));
+    this.scenes.register("count", (game) => new CountScene(game));
+    this.scenes.register("match", (game) => new MatchScene(game));
+    this.scenes.register("compare", (game) => new CompareScene(game));
+    this.scenes.register("fill", (game) => new FillScene(game));
+    this.scenes.register("onemoreless", (game) => new OneMoreLessScene(game));
+    this.scenes.register("order", (game) => new OrderScene(game));
+    this.scenes.register("memory", (game) => new MemoryScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));
     this.scenes.register("webwoud", (game) => new WebWoudScene(game));
