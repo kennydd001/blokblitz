@@ -1,7 +1,8 @@
 import { STICKERS } from "../data/stickers";
 import type { Game } from "../game/Game";
-import { HERO_SKINS, unlockedSkinIds } from "../runner/skins";
+import { HERO_SKINS, skinById, unlockedSkinIds } from "../runner/skins";
 import { cssHex } from "../runner/worlds";
+import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
 import { BaseScene } from "./SceneUtils";
 
@@ -25,6 +26,8 @@ const MODES: ModeCard[] = [
 ];
 
 export class HubScene extends BaseScene {
+  private greeted = false;
+
   constructor(game: Game) {
     super(game, "hub");
   }
@@ -82,6 +85,19 @@ export class HubScene extends BaseScene {
     );
 
     this.root.append(title, badges, grid, garage, stickers, tools);
+
+    // Your hero greets you here too, in its chosen colour — picking a new hero in
+    // the garage updates the buddy instantly.
+    const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin));
+    this.root.appendChild(buddy.el);
+    buddy.setMood("happy", 1500);
+    if (!this.greeted) {
+      this.greeted = true;
+      buddy.say(`Hoi! Ik ben ${buddy.name}. Wat spelen we?`);
+      this.game.voice.speak("Hoi! Wat gaan we spelen?", { interrupt: true });
+    } else {
+      buddy.say("Leuke keuze!");
+    }
   }
 
   private buildStickerBook(): HTMLElement {

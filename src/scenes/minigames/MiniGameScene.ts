@@ -3,6 +3,8 @@ import { RepresentationFactory } from "../../education/representations/Represent
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { praiseWord } from "../../game/VoiceManager";
+import { skinById } from "../../runner/skins";
+import { createBuddy, type Buddy } from "../buddy";
 import { BaseScene } from "../SceneUtils";
 import { buildDoneScreen, starsFromPerfect } from "./miniUi";
 
@@ -20,6 +22,8 @@ export abstract class MiniGameScene extends BaseScene {
   protected hintUsed = false;
   protected resolving = false;
   private celebrateCount = 0;
+  private streak = 0;
+  protected buddy?: Buddy;
   /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
   protected timers: number[] = [];
 
@@ -48,6 +52,8 @@ export abstract class MiniGameScene extends BaseScene {
     this.round = 1;
     this.correctRounds = 0;
     this.perfectRounds = 0;
+    this.streak = 0;
+    this.buddy = createBuddy(skinById(this.game.data().progress.cosmetics.activeSkin));
     this.startRound();
   }
 
@@ -72,6 +78,10 @@ export abstract class MiniGameScene extends BaseScene {
     this.resolving = false;
     this.startedAt = performance.now();
     this.root.replaceChildren(this.buildHeader(), this.instructionBar(), this.renderPlay(this.current));
+    if (this.buddy) {
+      this.root.appendChild(this.buddy.el);
+      this.buddy.setMood("think", 1100);
+    }
     this.game.voice.speak(this.instruction, { interrupt: true });
   }
 
@@ -87,10 +97,13 @@ export abstract class MiniGameScene extends BaseScene {
       this.later(() => (this.round > this.total ? this.finish() : this.startRound()), 1000);
     } else {
       this.hintUsed = true;
+      this.streak = 0;
       // Multi-sensory "oops" + a teaching scaffold, then let them retry.
       this.game.audio.play("soft-error");
       this.game.haptics.play("soft-error");
       this.game.voice.encourage();
+      this.buddy?.setMood("oops", 1400);
+      this.buddy?.say("Probeer nog!");
       this.showScaffold(option);
       this.onWrong();
     }
@@ -120,14 +133,39 @@ export abstract class MiniGameScene extends BaseScene {
   }
 
   protected celebrate(): void {
+    this.streak += 1;
+    const big = this.streak >= 3;
     this.game.voice.praise();
+    this.buddy?.setMood(big ? "wow" : "happy", 1300);
+    this.buddy?.say(this.streak >= 2 ? `${this.streak} op een rij!` : praiseWord(this.celebrateCount));
     this.game.flashMessage(`${praiseWord(this.celebrateCount++)} ⭐`, "good");
+
+    // Confetti that grows with the streak; each piece flies a random direction.
+    const pieces = Math.min(22, 7 + this.streak * 3);
     const burst = document.createElement("div");
-    burst.className = "mini-correct-burst";
+    burst.className = `mini-correct-burst${big ? " big" : ""}`;
     burst.setAttribute("aria-hidden", "true");
-    burst.innerHTML = "<span>✓</span><i></i><i></i><i></i><i></i><i></i><i></i>";
+    const mark = document.createElement("span");
+    mark.textContent = big ? "🎉" : "✓";
+    burst.appendChild(mark);
+    for (let i = 0; i < pieces; i += 1) {
+      const piece = document.createElement("i");
+      piece.style.setProperty("--dx", `${(Math.random() - 0.5) * 360}px`);
+      piece.style.animationDelay = `${Math.random() * 0.12}s`;
+      burst.appendChild(piece);
+    }
     this.root.appendChild(burst);
-    this.later(() => burst.remove(), 1000);
+    this.later(() => burst.remove(), 1100);
+
+    // A streak banner from two-in-a-row, with a brighter chime as it climbs.
+    if (this.streak >= 2) {
+      const banner = document.createElement("div");
+      banner.className = "mini-streak";
+      banner.textContent = `🔥 ${this.streak} op een rij!`;
+      this.root.appendChild(banner);
+      this.later(() => banner.remove(), 1100);
+      if (this.streak >= 4) this.game.audio.play("snap");
+    }
   }
 
   private buildHeader(): HTMLElement {
@@ -160,6 +198,8 @@ export abstract class MiniGameScene extends BaseScene {
   protected finish(): void {
     this.game.audio.play("win");
     this.game.haptics.play("win");
+    this.buddy?.setMood("wow");
+    this.buddy?.say("Joepie!");
     const stars = starsFromPerfect(this.perfectRounds, this.total);
     this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
     const newStickers = this.game.save
@@ -179,6 +219,7 @@ export abstract class MiniGameScene extends BaseScene {
         onHome: () => this.game.showScene("hub")
       })
     );
+    if (this.buddy) this.root.appendChild(this.buddy.el);
   }
 
   private mountReplay(): void {
@@ -187,6 +228,7 @@ export abstract class MiniGameScene extends BaseScene {
     this.round = 1;
     this.correctRounds = 0;
     this.perfectRounds = 0;
+    this.streak = 0;
     this.startRound();
   }
 }

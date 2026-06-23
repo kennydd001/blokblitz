@@ -7404,3 +7404,91 @@ input {
   .sticker-cell { width: clamp(40px, 11vw, 46px); height: clamp(40px, 11vw, 46px); }
   .run-ctrl-left, .run-ctrl-right { min-height: 72px; }
 }
+
+/* =====================================================================
+   Buddy mascot — your chosen hero, alive and cheering in every mode
+   ===================================================================== */
+.buddy {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  width: clamp(74px, 19vw, 108px);
+  z-index: 25;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 0 rgba(23, 32, 51, 0.18));
+}
+.buddy-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.buddy-body { transform-box: fill-box; transform-origin: 50% 92%; }
+.buddy-eye { transform-box: fill-box; transform-origin: center; }
+.buddy-emote { font-size: 22px; opacity: 0; }
+
+.buddy.mood-idle .buddy-body { animation: buddy-bob 2.8s ease-in-out infinite; }
+.buddy .buddy-eye { animation: buddy-blink 4.4s infinite; }
+@keyframes buddy-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes buddy-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.12); } }
+
+.buddy.mood-think .buddy-body { animation: buddy-think 0.9s ease; }
+@keyframes buddy-think { 0% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 60% { transform: rotate(5deg); } 100% { transform: rotate(0); } }
+
+.buddy.mood-happy .buddy-body { animation: buddy-hop 0.5s ease 2; }
+.buddy.mood-happy .heart { animation: buddy-float 1s ease forwards; }
+@keyframes buddy-hop { 0%, 100% { transform: translateY(0); } 42% { transform: translateY(-14px); } }
+
+.buddy.mood-wow .buddy-body { animation: buddy-dance 0.6s ease infinite; }
+.buddy.mood-wow .star,
+.buddy.mood-wow .spark { animation: buddy-float 1.2s ease infinite; }
+@keyframes buddy-dance { 0%, 100% { transform: translateY(0) rotate(-7deg); } 50% { transform: translateY(-10px) rotate(7deg); } }
+
+.buddy.mood-oops .buddy-body { animation: buddy-wobble 0.6s ease; }
+@keyframes buddy-wobble { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+
+@keyframes buddy-float {
+  0% { opacity: 0; transform: translateY(2px); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-24px); }
+}
+
+.buddy-bubble {
+  position: absolute;
+  left: 58%;
+  bottom: 80%;
+  transform: translateY(6px) scale(0.6);
+  opacity: 0;
+  background: #fff;
+  border: 3px solid var(--edge);
+  border-radius: 12px;
+  padding: 4px 11px;
+  font-weight: 900;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  color: var(--ink);
+  box-shadow: 0 3px 0 rgba(23, 32, 51, 0.18);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.buddy-bubble.show { opacity: 1; transform: translateY(0) scale(1); }
+
+/* Escalating streak banner */
+.mini-streak {
+  position: fixed;
+  top: 16%;
+  left: 50%;
+  z-index: 30;
+  background: linear-gradient(180deg, #ffcaa3, #ff8a52);
+  border: 4px solid var(--edge);
+  border-radius: 999px;
+  padding: 8px 24px;
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: #4a1d00;
+  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.25);
+  pointer-events: none;
+  animation: streak-pop 1.1s ease forwards;
+}
+@keyframes streak-pop {
+  0% { transform: translate(-50%, 0) scale(0.4); opacity: 0; }
+  20% { transform: translate(-50%, 0) scale(1.18); opacity: 1; }
+  70% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -22px) scale(1); opacity: 0; }
+}
+
+.mini-correct-burst.big span { font-size: 5.4rem; }

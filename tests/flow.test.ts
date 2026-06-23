@@ -551,6 +551,22 @@ describe("rewards, voice and parent gate", () => {
     expect(root.querySelector(".mini-choice")).toBeTruthy();
   });
 
+  it("brings a reacting buddy and an escalating streak to every mode", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("count");
+    expect(root.querySelector(".buddy")).toBeTruthy();
+    // first correct: buddy cheers
+    root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')!.click();
+    expect(root.querySelector(".buddy.mood-happy, .buddy.mood-wow")).toBeTruthy();
+    vi.advanceTimersByTime(1100);
+    // second correct in a row: a streak banner appears
+    root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')!.click();
+    expect(root.querySelector(".mini-streak")).toBeTruthy();
+  });
+
   it("guards the parent area behind a sum and only proceeds on the right answer", async () => {
     const { openParentGate } = await import("../src/scenes/parentGate");
     const pass = vi.fn();
