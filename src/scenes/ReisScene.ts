@@ -107,6 +107,20 @@ export class ReisScene extends BaseScene {
     this.buddy.el.style.top = `${here.y - 78}px`;
     map.appendChild(this.buddy.el);
 
+    // Rescued friends come along: a little parade trailing Buddy down the road.
+    const parade = FRIENDS.filter((friend) => completed.has(friend.id));
+    parade.forEach((friend, i) => {
+      const trail = document.createElement("div");
+      trail.className = "reis-parade";
+      trail.dataset.friend = friend.id;
+      trail.style.setProperty("--i", String(i));
+      trail.style.left = `${((here.x + (i % 2 === 0 ? -1 : 1) * 24) / JOURNEY_WIDTH) * 100}%`;
+      trail.style.top = `${here.y + 36 + (i + 1) * 40}px`;
+      trail.textContent = friend.emoji;
+      trail.setAttribute("aria-hidden", "true");
+      map.appendChild(trail);
+    });
+
     scroll.appendChild(map);
 
     // Friends rescued so far + ghost slots for the rest.

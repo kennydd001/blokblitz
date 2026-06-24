@@ -8131,3 +8131,19 @@ input {
   50% { transform: translateX(16px); }
   100% { transform: translateX(-12px); }
 }
+
+/* Rescued friends parade along the road behind Buddy */
+.reis-parade {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 1.6rem;
+  z-index: 5;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 0 rgba(23, 32, 51, 0.18));
+  animation: parade-bob 1.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.16s);
+}
+@keyframes parade-bob {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(-50%, calc(-50% - 6px)); }
+}

@@ -11,8 +11,8 @@ const artifactDir = path.join(root, ".qa-artifacts", "viewport-qa");
 mkdirSync(artifactDir, { recursive: true });
 
 const scenarios = [
-  { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectMenuProgress: true },
-  { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectMenuProgress: true },
+  { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
+  { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "number-mobile", width: 390, height: 844, mobile: true, open: "number", expectAdventureBridge: true },
   { name: "runner-mobile", width: 390, height: 844, mobile: true, open: "runner" },
   { name: "runner-narrow-mobile", width: 360, height: 740, mobile: true, open: "runner" },
@@ -88,7 +88,7 @@ try {
       mobile: scenario.mobile
     });
     await cdp.send("Page.navigate", { url: `${baseUrl}?qa=${Date.now()}-${scenario.name}` });
-    await waitForSelector(".mission-step", 8_000);
+    await waitForSelector(".scene", 8_000);
     await openScenario(scenario.open);
     await delay(350);
 
@@ -126,11 +126,12 @@ try {
 
 async function openScenario(open) {
   if (open === "menu") {
-    await waitForSelector(".kid-progress-strip", 5_000);
+    await openGameScene("reis");
+    await waitForSelector(".reis-scene", 5_000);
     return;
   }
   if (open === "number") {
-    await click(".play-now");
+    await openGameScene("numberOfDay");
     await waitForSelector(".number-day-panel", 5_000);
     await waitForSelector(".adventure-bridge", 5_000);
     const sprintAvailableBeforeWake = await evaluate(`Boolean(document.querySelector("button[data-action='Naar Sprint']"))`);
@@ -164,7 +165,7 @@ async function openScenario(open) {
     return;
   }
   if (open === "minigame") {
-    await click("button[data-action='Oefenen']");
+    await openGameScene("minigame");
     await waitForSelector(".play-field-layer.mini", 5_000);
     return;
   }
@@ -307,6 +308,14 @@ async function collectMetrics() {
         })(),
         menuProgress: rect(".kid-progress-strip"),
         menuProgressTokens: rects(".kid-progress-token"),
+        journeyTop: rect(".reis-top"),
+        journeyQuest: rect(".reis-quest"),
+        journeyScroll: rect(".reis-scroll"),
+        journeyMap: rect(".reis-map"),
+        journeyProgress: rect(".reis-progress-pill"),
+        journeyFriends: rects(".reis-friend"),
+        journeyNodes: rects(".reis-node"),
+        journeyActiveNodes: rects(".reis-node.now"),
         summaryTreasure: rect(".summary-treasure-trail"),
         summaryTreasures: rects(".summary-treasure"),
         summaryCityMeter: rect(".summary-city-meter"),
@@ -344,13 +353,19 @@ function validateScenario(scenario, metrics, scenarioErrors) {
   if (scenarioErrors.length > 0) failures.push(...scenarioErrors);
   if (viewport.scrollWidth > viewport.width + 1) failures.push(`horizontal overflow ${viewport.scrollWidth} > ${viewport.width}`);
   if (!metrics.canvas || metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2) failures.push("canvas does not fill viewport");
-  if (scenario.expectMenuProgress) {
-    if (!metrics.menuProgress) failures.push("missing menu progress strip");
-    if (metrics.menuProgress && (metrics.menuProgress.width > viewport.width - 10 || metrics.menuProgress.height < 44)) failures.push(`menu progress strip bad size: ${JSON.stringify(metrics.menuProgress)}`);
-    if (metrics.menuProgressTokens.length !== 4) failures.push(`expected 4 menu progress tokens, got ${metrics.menuProgressTokens.length}`);
-    for (const token of metrics.menuProgressTokens) {
-      if (token.width < 40 || token.height < 44) failures.push(`menu progress token too small: ${JSON.stringify(token)}`);
-    }
+  if (scenario.expectJourneyMap) {
+    if (!metrics.journeyTop) failures.push("missing journey top bar");
+    if (!metrics.journeyProgress) failures.push("missing journey progress pill");
+    if (!metrics.journeyQuest) failures.push("missing journey quest card");
+    if (!metrics.journeyScroll) failures.push("missing journey scroll map");
+    if (!metrics.journeyMap) failures.push("missing journey map");
+    if (metrics.journeyTop && metrics.journeyTop.width > viewport.width - 10) failures.push(`journey top too wide: ${metrics.journeyTop.width}`);
+    if (metrics.journeyQuest && metrics.journeyQuest.width > viewport.width - 10) failures.push(`journey quest too wide: ${metrics.journeyQuest.width}`);
+    if (metrics.journeyQuest && metrics.journeyQuest.height < 72) failures.push(`journey quest too short: ${metrics.journeyQuest.height}`);
+    if (metrics.journeyScroll && metrics.journeyScroll.height < viewport.height * 0.5) failures.push(`journey map viewport too short: ${metrics.journeyScroll.height}`);
+    if (metrics.journeyActiveNodes.length !== 1) failures.push(`expected one active journey node, got ${metrics.journeyActiveNodes.length}`);
+    if (metrics.journeyNodes.length < 20) failures.push(`expected a full journey map, got ${metrics.journeyNodes.length} nodes`);
+    if (metrics.journeyFriends.length !== 6) failures.push(`expected 6 rescued-friend slots, got ${metrics.journeyFriends.length}`);
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }
