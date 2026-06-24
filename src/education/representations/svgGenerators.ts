@@ -43,13 +43,19 @@ function escapeAttr(value: string): string {
 }
 
 function card(width: number, height: number, fill = colors.card): string {
-  return `<rect x="4" y="4" width="${width - 8}" height="${height - 8}" rx="8" fill="${fill}" stroke="${
-    colors.edge
-  }" stroke-width="3"/>`;
+  // A rounded card with a soft top gloss so every getalbeeld reads as a tactile, dimensional manipulative.
+  return (
+    `<rect x="4" y="4" width="${width - 8}" height="${height - 8}" rx="11" fill="${fill}" stroke="${colors.edge}" stroke-width="3"/>` +
+    `<rect x="8" y="8" width="${width - 16}" height="${Math.round((height - 16) * 0.4)}" rx="8" fill="#ffffff" opacity="0.32"/>`
+  );
 }
 
 function dot(x: number, y: number, r = 8, fill = colors.ink): string {
-  return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>`;
+  // A filled dot with a little specular highlight so it looks like a glossy bead.
+  return (
+    `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>` +
+    `<circle cx="${(x - r * 0.32).toFixed(1)}" cy="${(y - r * 0.32).toFixed(1)}" r="${(r * 0.3).toFixed(1)}" fill="#ffffff" opacity="0.5"/>`
+  );
 }
 
 function smallLabel(text: string, x: number, y: number, fill = colors.ink): string {

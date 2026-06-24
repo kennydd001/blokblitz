@@ -123,9 +123,14 @@ vi.mock("three", () => {
   class Vector3 {
     constructor(readonly x: number, readonly y: number, readonly z: number) {}
   }
+  class CanvasTexture {
+    constructor(readonly image: unknown) {}
+    needsUpdate = false;
+  }
   return {
     Scene,
     Group,
+    CanvasTexture,
     PerspectiveCamera,
     WebGLRenderer,
     Mesh,

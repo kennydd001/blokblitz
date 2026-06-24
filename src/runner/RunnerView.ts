@@ -49,6 +49,27 @@ const CUBE = new THREE.BoxGeometry(1, 1, 1);
 const GEM = new THREE.OctahedronGeometry(0.5, 0);
 const TRACK_WIDTH = LANE_WIDTH * LANE_COUNT;
 
+function lightenColor(color: number, amount: number): number {
+  const mix = (channel: number): number => Math.max(0, Math.min(255, Math.round(channel + (255 - channel) * amount)));
+  return (mix((color >> 16) & 255) << 16) | (mix((color >> 8) & 255) << 8) | mix(color & 255);
+}
+
+// A soft vertical gradient sky (real browsers only); falls back to a flat colour in tests.
+function gradientSky(top: number, bottom: number): THREE.Texture | null {
+  if (typeof document === "undefined" || !THREE.CanvasTexture) return null;
+  const canvas = document.createElement("canvas");
+  canvas.width = 4;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  const grad = ctx.createLinearGradient(0, 0, 0, 256);
+  grad.addColorStop(0, `#${top.toString(16).padStart(6, "0")}`);
+  grad.addColorStop(1, `#${bottom.toString(16).padStart(6, "0")}`);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 4, 256);
+  return new THREE.CanvasTexture(canvas);
+}
+
 const LANE_VISUALS = [
   { name: "blue-triangle", primary: 0x1687ff, dark: 0x0a3e87, accent: 0xbfe8ff },
   { name: "gold-square", primary: 0xffc928, dark: 0x8c5a00, accent: 0xfff1a6 },
@@ -141,15 +162,29 @@ export class RunnerView {
     this.gatePreview = tag(new THREE.Group(), "runner-gate-preview");
     this.lastPreviewGateId = "";
 
-    this.world.background = new THREE.Color(this.palette.sky);
-    this.world.fog = new THREE.Fog(this.palette.fog, 26, 62);
+    const sky = gradientSky(lightenColor(this.palette.sky, 0.55), this.palette.sky);
+    this.world.background = sky ?? new THREE.Color(this.palette.sky);
+    this.world.fog = new THREE.Fog(this.palette.fog, 28, 64);
 
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x4a7a4a, 2.1);
+    // Warm key light + a soft cool fill for a richer, friendlier look.
+    const hemi = new THREE.HemisphereLight(lightenColor(this.palette.sky, 0.3), this.palette.ground, 1.7);
     this.world.add(hemi);
-    const sun = new THREE.DirectionalLight(0xffffff, 1.7);
-    sun.position.set(4, 9, 6);
+    const sun = new THREE.DirectionalLight(0xfff0d0, 2.0);
+    sun.position.set(5, 10, 6);
     sun.castShadow = true;
     this.world.add(sun);
+    const fill = new THREE.DirectionalLight(0x9fc0ff, 0.5);
+    fill.position.set(-6, 5, -4);
+    this.world.add(fill);
+
+    // A glowing sun disc + faded distant hills for depth.
+    const sunDisc = block(7.5, 12.5, -36, 5, 5, 0.4, mat(0xfff3b0, { emissive: 0xfff3b0, intensity: 0.95, rough: 0.3 }));
+    this.world.add(sunDisc);
+    const hillMat = mat(lightenColor(this.palette.ground, -0.18), { rough: 0.95, intensity: 0.02 });
+    for (let i = 0; i < 5; i += 1) {
+      const hill = block((i - 2) * 9.5, 1.2, -54 - (i % 2) * 3, 9, 6.5, 4, hillMat);
+      this.world.add(hill);
+    }
 
     this.buildGround();
     this.buildScenery();

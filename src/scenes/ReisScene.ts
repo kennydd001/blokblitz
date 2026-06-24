@@ -17,6 +17,16 @@ import { cssHex, getWorld, type PropStyle } from "../runner/worlds";
 import { createBuddy, type Buddy } from "./buddy";
 import { BaseScene } from "./SceneUtils";
 
+// Mix a hex colour toward white (0 = unchanged, 1 = white) for the soft band tops.
+function lightenHex(hex: string, amount: number): string {
+  const n = Number.parseInt(hex.slice(1), 16);
+  const mix = (channel: number): number => Math.round(channel + (255 - channel) * amount);
+  const r = mix((n >> 16) & 255);
+  const g = mix((n >> 8) & 255);
+  const b = mix(n & 255);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
 // "De Sterrenreis" — one winding road that ties every activity into a single
 // adventure. Exactly one node glows (the frontier); Buddy stands on it; the road
 // behind is coloured and done, the road ahead is dim. Finishing an activity drops
@@ -139,9 +149,31 @@ export class ReisScene extends BaseScene {
   private buildBackdrop(): SVGSVGElement | HTMLElement {
     const holder = document.createElement("div");
     holder.className = "reis-backdrop";
-    const bands = regionBands()
-      .map((band) => `<rect x="0" y="${band.topY}" width="${JOURNEY_WIDTH}" height="${band.bottomY - band.topY}" fill="${band.color}"/>`)
+    const bandList = regionBands();
+    // Each region band is a soft vertical gradient (light at the top, world colour below).
+    const defs =
+      bandList
+        .map(
+          (band) =>
+            `<linearGradient id="band-${band.regionId}" x1="0" y1="${band.topY}" x2="0" y2="${band.bottomY}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${lightenHex(band.color, 0.55)}"/><stop offset="1" stop-color="${band.color}"/></linearGradient>`
+        )
+        .join("") +
+      `<radialGradient id="reis-sun"><stop offset="0" stop-color="#fff7c0" stop-opacity="0.95"/><stop offset="1" stop-color="#fff7c0" stop-opacity="0"/></radialGradient>`;
+    const bands = bandList
+      .map((band) => `<rect x="0" y="${band.topY}" width="${JOURNEY_WIDTH}" height="${band.bottomY - band.topY}" fill="url(#band-${band.regionId})"/>`)
       .join("");
+
+    // Twinkling stars up in the night (the top of the road, near home).
+    let stars = "";
+    for (let i = 0; i < 18; i += 1) {
+      const sx = (20 + ((Math.sin(i * 12.9) + 1) / 2) * (JOURNEY_WIDTH - 40)).toFixed(0);
+      const sy = (24 + ((Math.sin(i * 7.3 + 1) + 1) / 2) * 760).toFixed(0);
+      const r = (1.3 + ((Math.sin(i * 3.1) + 1) / 2) * 1.9).toFixed(1);
+      stars += `<circle cx="${sx}" cy="${sy}" r="${r}" fill="#ffffff" opacity="0.85"/>`;
+    }
+    // A warm sun glow low down (the start of the journey, in daylight).
+    const sun = `<circle cx="${JOURNEY_WIDTH - 56}" cy="${JOURNEY_HEIGHT - 130}" r="130" fill="url(#reis-sun)"/><circle cx="${JOURNEY_WIDTH - 56}" cy="${JOURNEY_HEIGHT - 130}" r="32" fill="#fff2a8"/>`;
+
     // Smooth climbing road through the node coordinates.
     let path = `M ${JOURNEY[0].x} ${JOURNEY[0].y}`;
     for (let i = 1; i < JOURNEY.length; i += 1) {
@@ -151,11 +183,15 @@ export class ReisScene extends BaseScene {
       path += ` C ${a.x} ${midY}, ${b.x} ${midY}, ${b.x} ${b.y}`;
     }
     holder.innerHTML = `<svg viewBox="0 0 ${JOURNEY_WIDTH} ${JOURNEY_HEIGHT}" width="${JOURNEY_WIDTH}" height="${JOURNEY_HEIGHT}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>${defs}</defs>
       <g class="reis-bands">${bands}</g>
+      ${sun}
+      <g class="reis-starfield">${stars}</g>
       <g class="reis-decor">${this.decorations()}</g>
-      <path d="${path}" fill="none" stroke="#10131c" stroke-width="30" stroke-linecap="round" opacity="0.18"/>
-      <path d="${path}" fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" opacity="0.6"/>
-      <path d="${path}" fill="none" stroke="#fff7df" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 22"/>
+      <path d="${path}" fill="none" stroke="#10131c" stroke-width="32" stroke-linecap="round" opacity="0.16"/>
+      <path d="${path}" fill="none" stroke="#fff3d8" stroke-width="27" stroke-linecap="round"/>
+      <path d="${path}" fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round" opacity="0.5"/>
+      <path d="${path}" fill="none" stroke="#f4b942" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 24"/>
     </svg>`;
     return holder;
   }
