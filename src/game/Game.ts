@@ -22,6 +22,7 @@ import { MinigameScene } from "../scenes/MinigameScene";
 import { NumberOfDayScene } from "../scenes/NumberOfDayScene";
 import { ParentDashboardScene } from "../scenes/ParentDashboardScene";
 import { ResultsScene } from "../scenes/ResultsScene";
+import { ReisScene } from "../scenes/ReisScene";
 import { RunScene } from "../scenes/RunScene";
 import { CompareScene } from "../scenes/minigames/CompareScene";
 import { CountScene } from "../scenes/minigames/CountScene";
@@ -52,6 +53,11 @@ export class Game {
   readonly adaptive: AdaptiveEngine;
   readonly challenges = new ChallengeFactory();
   readonly scenes: SceneManager;
+
+  /** The journey node that launched the current activity (story mode), or undefined for free play. */
+  lastJourneyNode?: string;
+  /** How many journey nodes the map has already celebrated, so a return shows the new bloom once. */
+  journeySeenCompleted = 0;
 
   private readonly loop: GameLoop;
   private readonly animatedObjects: THREE.Object3D[] = [];
@@ -309,6 +315,7 @@ export class Game {
   private registerScenes(): void {
     this.scenes.register("boot", (game) => new BootScene(game));
     this.scenes.register("hub", (game) => new HubScene(game));
+    this.scenes.register("reis", (game) => new ReisScene(game));
     this.scenes.register("mainMenu", (game) => new MainMenuScene(game));
     this.scenes.register("run", (game) => new RunScene(game));
     this.scenes.register("results", (game) => new ResultsScene(game));

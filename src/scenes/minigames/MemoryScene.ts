@@ -63,7 +63,7 @@ export class MemoryScene extends BaseScene {
 
     const header = document.createElement("div");
     header.className = "mini-header";
-    const home = this.iconButton("Terug", "back", () => this.game.showScene("hub"));
+    const home = this.iconButton("Terug", "back", () => this.game.showScene(this.returnScene()));
     home.classList.add("mini-home");
     const title = document.createElement("div");
     title.className = "mini-title";
@@ -144,6 +144,7 @@ export class MemoryScene extends BaseScene {
     this.game.haptics.play("win");
     const extra = this.flips - PAIRS;
     const stars = extra <= 1 ? 3 : extra <= 4 ? 2 : 1;
+    if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
     this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
     const newStickers = this.game.save
       .syncStickers()
@@ -158,8 +159,13 @@ export class MemoryScene extends BaseScene {
         sub: `Alle paren gevonden in ${this.flips} beurten!`,
         newStickers,
         onReplay: () => this.startBoard(),
-        onHome: () => this.game.showScene("hub")
+        homeLabel: this.game.lastJourneyNode ? "Verder" : "Speeltuin",
+        onHome: () => this.game.showScene(this.returnScene())
       })
     );
+  }
+
+  private returnScene(): string {
+    return this.game.lastJourneyNode ? "reis" : "hub";
   }
 }

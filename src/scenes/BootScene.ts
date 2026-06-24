@@ -16,7 +16,7 @@ export class BootScene extends BaseScene {
       sceneHeader("BlokBlitz", "Dino Redders van Sterrenstad"),
       this.game.assets.describe() ? this.makeSplash() : document.createElement("div")
     );
-    this.timer = window.setTimeout(() => this.game.showScene("hub"), 700);
+    this.timer = window.setTimeout(() => this.game.showScene("reis"), 700);
     this.addCleanup(() => window.clearTimeout(this.timer));
   }
 
@@ -27,9 +27,8 @@ export class BootScene extends BaseScene {
       <div class="brand-mark">10</div>
       <p>Getallen maken de stad wakker.</p>
     `;
-    panel.appendChild(this.button("Start", () => this.game.showScene("hub")));
+    panel.appendChild(this.button("Start", () => this.game.showScene("reis")));
     return panel;
   }
 }
-
 

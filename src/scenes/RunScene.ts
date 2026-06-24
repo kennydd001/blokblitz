@@ -61,7 +61,7 @@ export class RunScene extends BaseScene {
       if (action === "left") this.core.input("left");
       else if (action === "right") this.core.input("right");
       else if (action === "up" || action === "confirm") this.jump();
-      else if (action === "pause") this.game.showScene("mainMenu");
+      else if (action === "pause") this.game.showScene(this.game.lastJourneyNode ? "reis" : "mainMenu");
     });
   }
 
@@ -160,7 +160,7 @@ export class RunScene extends BaseScene {
 
     const top = document.createElement("div");
     top.className = "run-top";
-    const pause = this.iconButton("Menu", "menu", () => this.game.showScene("mainMenu"));
+    const pause = this.iconButton("Menu", "menu", () => this.game.showScene(this.game.lastJourneyNode ? "reis" : "mainMenu"));
     pause.classList.add("run-pause");
     const stats = document.createElement("div");
     stats.className = "run-stats";

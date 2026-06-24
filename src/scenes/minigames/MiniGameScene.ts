@@ -168,10 +168,15 @@ export abstract class MiniGameScene extends BaseScene {
     }
   }
 
+  /** Where "back"/"home" goes: the story map when launched from it, else the Speeltuin. */
+  protected returnScene(): string {
+    return this.game.lastJourneyNode ? "reis" : "hub";
+  }
+
   private buildHeader(): HTMLElement {
     const header = document.createElement("div");
     header.className = "mini-header";
-    const home = this.iconButton("Terug", "back", () => this.game.showScene("hub"));
+    const home = this.iconButton("Terug", "back", () => this.game.showScene(this.returnScene()));
     home.classList.add("mini-home");
     const title = document.createElement("div");
     title.className = "mini-title";
@@ -200,6 +205,8 @@ export abstract class MiniGameScene extends BaseScene {
     this.game.haptics.play("win");
     this.buddy?.setMood("wow");
     this.buddy?.say("Joepie!");
+    // In story mode, finishing this stop drops a stone for Buddy's star.
+    if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
     const stars = starsFromPerfect(this.perfectRounds, this.total);
     this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
     const newStickers = this.game.save
@@ -215,8 +222,9 @@ export abstract class MiniGameScene extends BaseScene {
         stars,
         sub: `Je had er ${this.correctRounds} van de ${this.total} goed!`,
         newStickers,
+        homeLabel: this.game.lastJourneyNode ? "Verder" : "Speeltuin",
         onReplay: () => this.mountReplay(),
-        onHome: () => this.game.showScene("hub")
+        onHome: () => this.game.showScene(this.returnScene())
       })
     );
     if (this.buddy) this.root.appendChild(this.buddy.el);

@@ -36,6 +36,9 @@ export class ResultsScene extends BaseScene {
     const result = (params as ResultsParams | undefined) ?? fallback;
     const { summary, world } = result;
     const runStars = summary.runStars + summary.bonusStars;
+    // In story mode, clearing this world's gate moves Buddy's star one notch on.
+    const inStory = Boolean(this.game.lastJourneyNode);
+    if (inStory) this.game.save.advanceJourney(this.game.lastJourneyNode as string);
 
     this.root.classList.add("results-scene", "centered");
 
@@ -123,15 +126,21 @@ export class ResultsScene extends BaseScene {
     const actions = document.createElement("div");
     actions.className = "results-actions";
     const nextId = nextWorldId(world.id);
-    if (result.newWorldUnlocked && nextId) {
+    const back = inStory ? "reis" : "mainMenu";
+    if (inStory) {
+      // The journey decides what's next — just go back to the road (Buddy hops on).
+      const onward = this.button("Verder! ▶", () => this.game.showScene("reis"));
+      onward.classList.add("play-now");
+      actions.append(onward, this.button("Nog eens", () => this.playWorld(world.id), "secondary"));
+    } else if (result.newWorldUnlocked && nextId) {
       const next = this.button("Volgende! ▶", () => this.playWorld(nextId));
       next.classList.add("play-now");
       actions.appendChild(next);
-      actions.append(this.button("Nog eens", () => this.playWorld(world.id), "secondary"), this.button("Kaart", () => this.game.showScene("mainMenu"), "ghost"));
+      actions.append(this.button("Nog eens", () => this.playWorld(world.id), "secondary"), this.button("Kaart", () => this.game.showScene(back), "ghost"));
     } else {
       const again = this.button("Nog eens!", () => this.playWorld(world.id));
       again.classList.add("play-now");
-      actions.append(again, this.button("Kaart", () => this.game.showScene("mainMenu"), "secondary"));
+      actions.append(again, this.button("Kaart", () => this.game.showScene(back), "secondary"));
     }
     card.appendChild(actions);
 

@@ -139,6 +139,7 @@ export class MainMenuScene extends BaseScene {
 
   private startWorld(id: string, isUnlocked: boolean): void {
     if (!isUnlocked) return this.wiggle(`.world-card[data-world="${id}"]`);
+    this.game.lastJourneyNode = undefined;
     this.game.requestFullscreenPlay();
     this.game.save.startNewSession();
     this.game.showScene("run", { worldId: id });

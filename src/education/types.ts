@@ -28,7 +28,18 @@ export type MasteryLevel = "emerging" | "secure" | "fluent";
 
 export type SceneId =
   | "boot"
+  | "hub"
+  | "reis"
   | "mainMenu"
+  | "run"
+  | "results"
+  | "count"
+  | "match"
+  | "compare"
+  | "fill"
+  | "onemoreless"
+  | "order"
+  | "memory"
   | "numberOfDay"
   | "runner"
   | "webwoud"
@@ -141,6 +152,13 @@ export interface WorldProgress {
   bestStars: number;
 }
 
+export interface JourneyProgress {
+  /** Index of the next not-yet-done node on De Sterrenreis (the glowing frontier). */
+  nodeIndex: number;
+  /** Ids of completed journey nodes. */
+  completed: string[];
+}
+
 export interface GameProgress {
   sessionId: string;
   stars: number;
@@ -163,6 +181,8 @@ export interface GameProgress {
   worlds: Record<string, WorldProgress>;
   /** Earned collectible sticker ids. */
   stickers: string[];
+  /** Progress along De Sterrenreis (the story map). */
+  journey: JourneyProgress;
 }
 
 export interface SaveData {

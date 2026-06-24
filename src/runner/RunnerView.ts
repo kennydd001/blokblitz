@@ -49,6 +49,12 @@ const CUBE = new THREE.BoxGeometry(1, 1, 1);
 const GEM = new THREE.OctahedronGeometry(0.5, 0);
 const TRACK_WIDTH = LANE_WIDTH * LANE_COUNT;
 
+const LANE_VISUALS = [
+  { name: "blue-triangle", primary: 0x1687ff, dark: 0x0a3e87, accent: 0xbfe8ff },
+  { name: "gold-square", primary: 0xffc928, dark: 0x8c5a00, accent: 0xfff1a6 },
+  { name: "pink-diamond", primary: 0xff5fb8, dark: 0x8a1b56, accent: 0xffc8e5 }
+] as const;
+
 // Materials are cached and reused across every run, so building a new world per
 // run no longer leaks MeshStandardMaterials (world.clear just detaches them).
 const matCache = new Map<string, THREE.MeshStandardMaterial>();
@@ -74,11 +80,24 @@ function block(x: number, y: number, z: number, sx: number, sy: number, sz: numb
   return mesh;
 }
 
+function tag<T extends THREE.Object3D>(object: T, role: string, data: Record<string, unknown> = {}): T {
+  object.userData = { ...object.userData, blokblitzRole: role, ...data };
+  return object;
+}
+
+interface RenderableGate {
+  id?: string;
+  correctLane?: number;
+  lanes: Array<{ quantity: number; correct?: boolean }>;
+  representation?: string;
+}
+
 export class RunnerView {
   private root = new THREE.Group();
   private ground = new THREE.Group();
   private scenery = new THREE.Group();
   private hero = new THREE.Group();
+  private gatePreview = new THREE.Group();
   private heroParts: Record<string, THREE.Mesh> = {};
   private entities = new Map<number, EntityHandle>();
   private particles: Particle[] = [];
@@ -96,6 +115,7 @@ export class RunnerView {
   private cameraX = 0;
   private skin: HeroSkin;
   private palette: WorldPalette;
+  private lastPreviewGateId = "";
 
   private readonly range = SPAWN_AHEAD + DESPAWN_BEHIND;
 
@@ -118,6 +138,8 @@ export class RunnerView {
     this.root = new THREE.Group();
     this.ground = new THREE.Group();
     this.scenery = new THREE.Group();
+    this.gatePreview = tag(new THREE.Group(), "runner-gate-preview");
+    this.lastPreviewGateId = "";
 
     this.world.background = new THREE.Color(this.palette.sky);
     this.world.fog = new THREE.Fog(this.palette.fog, 26, 62);
@@ -133,7 +155,7 @@ export class RunnerView {
     this.buildScenery();
     this.buildHero();
 
-    this.root.add(this.ground, this.scenery, this.hero);
+    this.root.add(this.ground, this.scenery, this.gatePreview, this.hero);
     this.world.add(this.root);
     this.camera.position.set(0, 3.5, 6.6);
     this.camera.lookAt(0, 1, -6);
@@ -275,6 +297,7 @@ export class RunnerView {
     this.updateGround();
     this.reconcileEntities(snapshot.entities);
     this.updateEntities(snapshot);
+    this.updateGatePreview(snapshot.target, snapshot.laneTarget);
     this.updateHero(snapshot, dt);
     this.updateCamera(snapshot, dt);
     this.updateParticles(dt);
@@ -333,6 +356,7 @@ export class RunnerView {
         g.position.set(laneToX(view.lane), 0, view.z);
       } else if (view.kind === "gate") {
         g.position.set(0, 0, view.z);
+        this.updateGateFocus(g, snapshot.laneTarget, view.z, view.resolved);
         if (view.resolved) {
           // Gently sink the passed gate so the path stays clear.
           g.position.y = Math.max(-2.4, g.position.y - 0.12);
@@ -366,25 +390,206 @@ export class RunnerView {
     return group;
   }
 
-  private buildGate(gate: { lanes: { quantity: number }[]; representation?: string }): THREE.Group {
-    const group = new THREE.Group();
-    const postMat = mat(0xffffff, { intensity: 0.16, rough: 0.4 });
-    // The gate (the actual puzzle) gleams brighter than the coins so the child's
-    // eye is drawn to the number to read, not just the collectibles.
-    const beamMat = mat(0x3c8cff, { emissive: 0x3c8cff, intensity: 0.4, rough: 0.35 });
+  private buildGate(gate: RenderableGate): THREE.Group {
+    const group = tag(new THREE.Group(), "runner-gate", {
+      gateId: gate.id ?? "",
+      representation: gate.representation ?? "blocks"
+    });
+    const baseMat = mat(0x10192c, { intensity: 0.08, rough: 0.65 });
+    group.add(tag(block(0, 0.03, 1.2, TRACK_WIDTH + 0.8, 0.08, 3.5, baseMat), "runner-gate-foundation"));
+
     gate.lanes.forEach((lane, index) => {
-      const x = laneToX(index);
-      const sub = new THREE.Group();
-      sub.position.x = x;
-      sub.add(block(-0.95, 1.1, 0, 0.18, 2.2, 0.18, postMat));
-      sub.add(block(0.95, 1.1, 0, 0.18, 2.2, 0.18, postMat));
-      sub.add(block(0, 2.25, 0, 2.1, 0.26, 0.3, beamMat));
+      const visual = LANE_VISUALS[index % LANE_VISUALS.length];
+      const sub = tag(new THREE.Group(), "runner-gate-lane", {
+        gateId: gate.id ?? "",
+        lane: index,
+        quantity: lane.quantity,
+        correct: Boolean(lane.correct ?? index === gate.correctLane),
+        gateColorName: visual.name,
+        selectedFocus: false
+      });
+      sub.position.x = laneToX(index);
+
+      const laneMat = mat(visual.primary, { emissive: visual.primary, intensity: 0.32, rough: 0.38 });
+      const darkMat = mat(visual.dark, { emissive: visual.dark, intensity: 0.18, rough: 0.55 });
+      const accentMat = mat(visual.accent, { emissive: visual.accent, intensity: 0.28, rough: 0.45 });
+      const whiteMat = mat(0xffffff, { intensity: 0.16, rough: 0.48 });
+      const inkMat = mat(0x10192c, { intensity: 0.02, rough: 0.72 });
+
+      sub.add(tag(block(0, 0.09, 1.28, 1.74, 0.12, 3.18, laneMat), "runner-gate-lane-pad", {
+        lane: index,
+        quantity: lane.quantity,
+        gateColorName: visual.name
+      }));
+      sub.add(tag(block(-0.92, 0.18, 1.28, 0.12, 0.2, 3.18, darkMat), "runner-gate-pad-rail", { lane: index }));
+      sub.add(tag(block(0.92, 0.18, 1.28, 0.12, 0.2, 3.18, darkMat), "runner-gate-pad-rail", { lane: index }));
+      sub.add(this.buildLaneChevrons(visual.primary, visual.accent, index, lane.quantity));
+      sub.add(this.buildLaneNumberRunway(lane.quantity, index));
+
+      // Big dark sign with a bright frame: this makes the number structure read
+      // clearly at mobile distance and avoids relying on hue alone.
+      sub.add(tag(block(0, 1.5, 0.18, 1.86, 1.74, 0.16, inkMat), "runner-gate-panel", { lane: index, quantity: lane.quantity }));
+      sub.add(tag(block(0, 2.42, 0.24, 2.04, 0.18, 0.22, whiteMat), "runner-gate-panel-frame", { lane: index }));
+      sub.add(tag(block(0, 0.58, 0.24, 2.04, 0.18, 0.22, whiteMat), "runner-gate-panel-frame", { lane: index }));
+      sub.add(tag(block(-1.0, 1.5, 0.24, 0.18, 1.9, 0.22, whiteMat), "runner-gate-panel-frame", { lane: index }));
+      sub.add(tag(block(1.0, 1.5, 0.24, 0.18, 1.9, 0.22, whiteMat), "runner-gate-panel-frame", { lane: index }));
+
+      sub.add(tag(block(-1.08, 1.18, 0, 0.2, 2.36, 0.24, darkMat), "runner-gate-post", { lane: index }));
+      sub.add(tag(block(1.08, 1.18, 0, 0.2, 2.36, 0.24, darkMat), "runner-gate-post", { lane: index }));
+      sub.add(tag(block(0, 2.66, 0, 1.42, 0.24, 0.24, accentMat), "runner-gate-lane-beacon", {
+        lane: index,
+        gateColorName: visual.name
+      }));
+
       const art = buildVoxelNumber(gate.representation ?? "blocks", lane.quantity);
-      art.position.set(0, 1.4, 0);
+      tag(art, "runner-gate-quantity-art", {
+        lane: index,
+        quantity: lane.quantity,
+        representation: gate.representation ?? "blocks"
+      });
+      art.position.set(0, 1.62, 0.46);
+      art.scale.set(1.5, 1.5, 1.5);
       sub.add(art);
+
+      const shelf = this.buildFivePlusShelf(lane.quantity, index);
+      shelf.position.set(0, 0.88, 0.5);
+      sub.add(shelf);
+
       group.add(sub);
     });
     return group;
+  }
+
+  private buildLaneChevrons(primary: number, accent: number, lane: number, quantity: number): THREE.Group {
+    const group = tag(new THREE.Group(), "runner-gate-lane-arrows", { lane, quantity });
+    const primaryMat = mat(primary, { emissive: primary, intensity: 0.35, rough: 0.32 });
+    const accentMat = mat(accent, { emissive: accent, intensity: 0.32, rough: 0.38 });
+    for (let step = 0; step < 4; step += 1) {
+      const z = 2.55 - step * 0.62;
+      group.add(tag(block(0, 0.19, z - 0.08, 0.42, 0.1, 0.18, step % 2 === 0 ? accentMat : primaryMat), "runner-gate-arrow-block", { lane, step, quantity }));
+      group.add(tag(block(-0.34, 0.18, z, 0.24, 0.1, 0.16, accentMat), "runner-gate-arrow-block", { lane, step, side: "left", quantity }));
+      group.add(tag(block(0.34, 0.18, z, 0.24, 0.1, 0.16, accentMat), "runner-gate-arrow-block", { lane, step, side: "right", quantity }));
+    }
+    return group;
+  }
+
+  private buildLaneNumberRunway(quantity: number, lane: number): THREE.Group {
+    const q = Math.max(1, Math.min(10, Math.round(quantity)));
+    const group = tag(new THREE.Group(), "runner-gate-number-runway", { lane, quantity: q });
+    const fiveMat = mat(0xfff36d, { emissive: 0xfff36d, intensity: 0.44, rough: 0.32 });
+    const extraMat = mat(0xff7a59, { emissive: 0xff7a59, intensity: 0.38, rough: 0.38 });
+    for (let i = 0; i < q; i += 1) {
+      const row = i < 5 ? 0 : 1;
+      const col = i % 5;
+      const inRow = row === 0 ? Math.min(5, q) : q - 5;
+      const startX = -((inRow - 1) * 0.27) / 2;
+      const token = block(startX + col * 0.27, 0.3, 2.28 - row * 0.42, 0.22, 0.16, 0.22, i < 5 ? fiveMat : extraMat);
+      tag(token, "runner-gate-runway-token", {
+        lane,
+        quantity: q,
+        tokenIndex: i + 1,
+        fiveGroup: i < 5
+      });
+      group.add(token);
+    }
+    return group;
+  }
+
+  private updateGatePreview(target: RenderableGate | undefined, selectedLane: number): void {
+    this.gatePreview.visible = Boolean(target);
+    if (!target) {
+      this.lastPreviewGateId = "";
+      this.gatePreview.clear();
+      return;
+    }
+    const id = `${target.id ?? ""}:${target.lanes.map((lane) => lane.quantity).join("-")}`;
+    if (id !== this.lastPreviewGateId) {
+      this.lastPreviewGateId = id;
+      this.gatePreview.clear();
+      target.lanes.forEach((lane, index) => {
+        const visual = LANE_VISUALS[index % LANE_VISUALS.length];
+        const laneGroup = tag(new THREE.Group(), "runner-gate-preview-lane", {
+          lane: index,
+          quantity: lane.quantity,
+          gateColorName: visual.name,
+          selectedFocus: false
+        });
+        laneGroup.position.set(laneToX(index), 0.16, -2.65);
+        laneGroup.add(tag(block(0, 0.02, 0, 1.34, 0.08, 0.72, mat(visual.dark, { intensity: 0.16, rough: 0.5 })), "runner-gate-preview-pad", {
+          lane: index,
+          quantity: lane.quantity
+        }));
+        laneGroup.add(this.buildPreviewTokens(lane.quantity, index));
+        this.gatePreview.add(laneGroup);
+      });
+    }
+    for (const child of this.gatePreview.children) {
+      if (child.userData.blokblitzRole !== "runner-gate-preview-lane") continue;
+      const lane = Number(child.userData.lane);
+      const selected = lane === selectedLane;
+      child.userData.selectedFocus = selected;
+      const s = selected ? 1.12 : 1;
+      child.scale.set(s, s, s);
+      child.position.y = selected ? 0.22 + Math.sin(this.elapsed * 8) * 0.02 : 0.16;
+    }
+  }
+
+  private buildPreviewTokens(quantity: number, lane: number): THREE.Group {
+    const q = Math.max(1, Math.min(10, Math.round(quantity)));
+    const group = tag(new THREE.Group(), "runner-gate-preview-tokens", { lane, quantity: q });
+    const fiveMat = mat(0xfff36d, { emissive: 0xfff36d, intensity: 0.5, rough: 0.3 });
+    const extraMat = mat(0xff7a59, { emissive: 0xff7a59, intensity: 0.42, rough: 0.34 });
+    for (let i = 0; i < q; i += 1) {
+      const row = i < 5 ? 0 : 1;
+      const col = i % 5;
+      const inRow = row === 0 ? Math.min(5, q) : q - 5;
+      const token = block(-((inRow - 1) * 0.2) / 2 + col * 0.2, 0.12, row * 0.24 - 0.12, 0.15, 0.16, 0.15, i < 5 ? fiveMat : extraMat);
+      tag(token, "runner-gate-preview-token", {
+        lane,
+        quantity: q,
+        tokenIndex: i + 1,
+        fiveGroup: i < 5
+      });
+      group.add(token);
+    }
+    return group;
+  }
+
+  private buildFivePlusShelf(quantity: number, lane: number): THREE.Group {
+    const q = Math.max(1, Math.min(10, Math.round(quantity)));
+    const group = tag(new THREE.Group(), "runner-gate-five-structure", { lane, quantity: q });
+    const fiveMat = mat(0xf7c531, { emissive: 0xf7c531, intensity: 0.38, rough: 0.35 });
+    const extraMat = mat(0xff7a59, { emissive: 0xff7a59, intensity: 0.34, rough: 0.38 });
+    const emptyMat = mat(0x3a455c, { intensity: 0.05, rough: 0.8 });
+    for (let i = 0; i < 10; i += 1) {
+      const row = i < 5 ? 0 : 1;
+      const col = i % 5;
+      const filled = i < q;
+      const material = filled ? (i < 5 ? fiveMat : extraMat) : emptyMat;
+      const token = block(-0.52 + col * 0.26, row * 0.26, 0, filled ? 0.22 : 0.13, filled ? 0.22 : 0.1, 0.14, material);
+      tag(token, "runner-gate-five-token", {
+        lane,
+        quantity: q,
+        tokenIndex: i + 1,
+        filled,
+        fiveGroup: i < 5
+      });
+      group.add(token);
+    }
+    return group;
+  }
+
+  private updateGateFocus(group: THREE.Group, selectedLane: number, gateZ: number, resolved: boolean): void {
+    const focusVisible = !resolved && gateZ > -34 && gateZ < 5;
+    for (const child of group.children) {
+      const lane = child.userData.blokblitzRole === "runner-gate-lane" ? Number(child.userData.lane) : Number.NaN;
+      if (!Number.isFinite(lane)) continue;
+      const selected = focusVisible && lane === selectedLane;
+      child.userData.selectedFocus = selected;
+      const s = selected ? 1.08 : 1;
+      child.scale.set(s, s, s);
+      child.position.y = selected ? 0.08 + Math.sin(this.elapsed * 9) * 0.03 : 0;
+    }
   }
 
   // A web-swing anchor (Spiderman vibe): tall poles + a glowing web the hero zips through.

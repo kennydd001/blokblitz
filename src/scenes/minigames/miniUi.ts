@@ -7,6 +7,7 @@ export interface DoneScreenOptions {
   stars: number;
   sub: string;
   newStickers?: { emoji: string; name: string }[];
+  homeLabel?: string;
   onReplay: () => void;
   onHome: () => void;
 }
@@ -66,8 +67,8 @@ export function buildDoneScreen(options: DoneScreenOptions): HTMLElement {
   const home = document.createElement("button");
   home.type = "button";
   home.className = "btn secondary";
-  home.dataset.action = "Speeltuin";
-  home.textContent = "Speeltuin";
+  home.dataset.action = options.homeLabel ?? "Speeltuin";
+  home.textContent = options.homeLabel ?? "Speeltuin";
   home.addEventListener("click", options.onHome);
   actions.append(again, home);
   card.appendChild(actions);

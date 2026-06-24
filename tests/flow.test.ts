@@ -4,8 +4,9 @@ import { AdaptiveEngine } from "../src/education/adaptiveEngine";
 import { ChallengeFactory } from "../src/education/challengeFactory";
 import { MasteryTracker } from "../src/education/masteryTracker";
 import { AdaptiveGateProvider } from "../src/runner/gateProvider";
-import { RunnerCore, type GateProvider, type GateSpec } from "../src/runner/RunnerCore";
+import { RunnerCore, type GateProvider, type GateSpec, type RunnerSnapshot } from "../src/runner/RunnerCore";
 import { STICKERS } from "../src/data/stickers";
+import { JOURNEY, frontierIndex, journeyNodeAction, journeyNodeTitle } from "../src/data/journey";
 import { WORLDS, nextWorldId, starsForRun } from "../src/runner/worlds";
 
 // A compact Three.js stand-in covering everything the menu, runner view and the
@@ -171,6 +172,18 @@ function driveToFinish(core: RunnerCore, maxSteps = 8000): void {
   for (let i = 0; i < maxSteps && core.state !== "finished"; i += 1) core.update(0.05);
 }
 
+function collectUserDataByRole(root: unknown, role: string): Array<Record<string, unknown>> {
+  const matches: Array<Record<string, unknown>> = [];
+  const visit = (node: unknown): void => {
+    if (!node || typeof node !== "object") return;
+    const object = node as { userData?: Record<string, unknown>; children?: unknown[] };
+    if (object.userData?.blokblitzRole === role) matches.push(object.userData);
+    if (Array.isArray(object.children)) object.children.forEach(visit);
+  };
+  visit(root);
+  return matches;
+}
+
 describe("RunnerCore — real-time runner logic", () => {
   it("finishes a run and never reaches a game-over state", () => {
     const core = new RunnerCore({ provider: fixedGateProvider(1), gatesTotal: 4, rng: () => 0.5 });
@@ -223,6 +236,84 @@ describe("RunnerCore — real-time runner logic", () => {
     core.input("right"); // clamped at 2
     core.update(0.2);
     expect(core.snapshot().laneTarget).toBe(2);
+  });
+});
+
+describe("RunnerView — clear mobile-readable gates", () => {
+  it("renders gates as distinct lane portals with 5+n structure cues", async () => {
+    const THREE = await import("three");
+    const { RunnerView } = await import("../src/runner/RunnerView");
+    const { skinById } = await import("../src/runner/skins");
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+    const view = new RunnerView(scene, camera, skinById("blitz"));
+    view.build();
+
+    const gate: GateSpec = {
+      id: "clarity-gate",
+      correctLane: 1,
+      targetText: "Ren door de 7!",
+      skill: "subitize",
+      representation: "tenframe",
+      lanes: [
+        { quantity: 4, correct: false, numeral: "4" },
+        { quantity: 7, correct: true, numeral: "7" },
+        { quantity: 9, correct: false, numeral: "9" }
+      ]
+    };
+    const snapshot: RunnerSnapshot = {
+      state: "running",
+      laneTarget: 1,
+      laneX: 1,
+      airborne: false,
+      jumpHeight: 0,
+      speed: 11,
+      speedRatio: 0.2,
+      distanceMeters: 12,
+      coins: 0,
+      runStars: 0,
+      bonusStars: 0,
+      combo: 0,
+      bestCombo: 0,
+      gatesCorrect: 0,
+      gatesResolved: 0,
+      gatesTotal: 1,
+      target: gate,
+      entities: [
+        {
+          id: 99,
+          kind: "gate",
+          z: -18,
+          lane: 0,
+          gate,
+          collected: false,
+          resolved: false,
+          correctResolved: false
+        }
+      ]
+    };
+
+    view.sync(snapshot, 0.016);
+    const lanes = collectUserDataByRole(scene, "runner-gate-lane");
+    expect(lanes).toHaveLength(3);
+    expect(new Set(lanes.map((lane) => lane.gateColorName))).toHaveLength(3);
+    expect(lanes.find((lane) => lane.lane === 1)?.selectedFocus).toBe(true);
+
+    expect(collectUserDataByRole(scene, "runner-gate-lane-pad")).toHaveLength(3);
+    expect(collectUserDataByRole(scene, "runner-gate-number-runway").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
+    expect(collectUserDataByRole(scene, "runner-gate-panel")).toHaveLength(3);
+    expect(collectUserDataByRole(scene, "runner-gate-quantity-art").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
+    expect(collectUserDataByRole(scene, "runner-gate-five-structure").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
+    expect(collectUserDataByRole(scene, "runner-gate-preview-lane").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
+    expect(collectUserDataByRole(scene, "runner-gate-preview-lane").find((lane) => lane.lane === 1)?.selectedFocus).toBe(true);
+
+    const tokens = collectUserDataByRole(scene, "runner-gate-five-token");
+    expect(tokens.filter((token) => token.lane === 1 && token.filled).map((token) => token.tokenIndex)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(tokens.filter((token) => token.lane === 1 && token.filled && token.fiveGroup)).toHaveLength(5);
+    const runwayTokens = collectUserDataByRole(scene, "runner-gate-runway-token");
+    expect(runwayTokens.filter((token) => token.lane === 1).map((token) => token.tokenIndex)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    const previewTokens = collectUserDataByRole(scene, "runner-gate-preview-token");
+    expect(previewTokens.filter((token) => token.lane === 1).map((token) => token.tokenIndex)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 });
 
@@ -405,10 +496,130 @@ describe("Speeltuin hub + calm game modes", () => {
     const game = new Game(root);
     game.showScene("hub");
     expect(root.querySelectorAll(".hub-card").length).toBe(8);
-    ["mainMenu", "count", "match", "compare", "fill", "onemoreless", "order", "memory"].forEach((mode) => {
+    ["reis", "count", "match", "compare", "fill", "onemoreless", "order", "memory"].forEach((mode) => {
       expect(root.querySelector(`.hub-card[data-mode="${mode}"]`)).toBeTruthy();
     });
     expect(root.querySelector(".menu-garage")).toBeTruthy();
+  });
+
+  it("makes De Sterrenreis the default adventure and advances after a story activity", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    game.showScene("boot");
+    vi.advanceTimersByTime(750);
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+    expect(root.querySelectorAll(".reis-node")).toHaveLength(JOURNEY.length);
+    expect(root.querySelectorAll(".reis-node.now")).toHaveLength(1);
+    expect(root.querySelector(".reis-buddy")).toBeTruthy();
+    expect(root.querySelector(".reis-quest")).toBeTruthy();
+    expect(root.querySelector(".reis-progress-pill")?.textContent).toContain("1/");
+    expect(root.querySelector(".reis-quest")?.textContent).toContain(journeyNodeTitle(JOURNEY[0]));
+    expect(root.querySelector(".reis-quest")?.textContent).toContain(journeyNodeAction(JOURNEY[0]));
+
+    const firstNode = JOURNEY[0];
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${firstNode.id}"]`)!.click();
+    expect(game.lastJourneyNode).toBe(firstNode.id);
+    expect(root.querySelector(".mini-header")).toBeTruthy();
+
+    for (let r = 0; r < 15 && !root.querySelector(".mini-done"); r += 1) {
+      root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')!.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    expect(game.data().progress.journey.completed).toContain(firstNode.id);
+    expect(root.querySelector<HTMLButtonElement>('.results-actions .btn.secondary')?.textContent).toBe("Verder");
+    root.querySelector<HTMLButtonElement>('.results-actions .btn.secondary')!.click();
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+    expect(root.querySelector(`.reis-node.done[data-node="${firstNode.id}"]`)).toBeTruthy();
+    expect(root.querySelector(`.reis-node.now[data-node="${JOURNEY[1].id}"]`)).toBeTruthy();
+  });
+
+  it("advances story runner gates, friend rescues, and the final star", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const fullscreenSpy = vi.fn(() => Promise.resolve());
+    Object.defineProperty(root, "requestFullscreen", { value: fullscreenSpy, configurable: true });
+
+    const gateIndex = JOURNEY.findIndex((node) => node.kind === "gate");
+    const gate = JOURNEY[gateIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, gateIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    expect(root.querySelector(`.reis-node.now[data-node="${gate.id}"]`)).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${gate.id}"]`)!.click();
+    expect(fullscreenSpy).toHaveBeenCalled();
+    expect(root.querySelector(".run-scene")).toBeTruthy();
+
+    for (let i = 0; i < 8000 && !root.querySelector(".results-card"); i += 1) {
+      game.scenes.update(0.05);
+    }
+    expect(root.querySelector(".results-card")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(gate.id);
+    root.querySelector<HTMLButtonElement>(".results-actions .play-now")!.click();
+
+    const friend = JOURNEY[gateIndex + 1];
+    expect(friend.kind).toBe("friend");
+    expect(root.querySelector(`.reis-node.now[data-node="${friend.id}"]`)).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${friend.id}"]`)!.click();
+    expect(game.data().progress.journey.completed).toContain(friend.id);
+    expect(root.querySelector(`.reis-friend.has[data-friend="${friend.friendId}"]`)).toBeTruthy();
+
+    const star = JOURNEY[JOURNEY.length - 1];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, -1).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    game.showScene("reis");
+    expect(root.querySelector(`.reis-node.now[data-node="${star.id}"]`)).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${star.id}"]`)!.click();
+    expect(game.save.journeyComplete()).toBe(true);
+    expect(root.querySelector(".reis-finale")).toBeTruthy();
+    expect(root.querySelector(".reis-progress-pill")?.textContent).toContain("Ster thuis");
+  });
+
+  it("advances story memory stops back to the Sterrenreis map", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const memoryIndex = JOURNEY.findIndex((node) => node.scene === "memory");
+    const memory = JOURNEY[memoryIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, memoryIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    expect(root.querySelector(`.reis-node.now[data-node="${memory.id}"]`)).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${memory.id}"]`)!.click();
+    expect(root.querySelector(".memory-board")).toBeTruthy();
+
+    const byQuantity = new Map<string, HTMLButtonElement[]>();
+    root.querySelectorAll<HTMLButtonElement>(".memory-card").forEach((card) => {
+      const q = card.dataset.quantity!;
+      byQuantity.set(q, [...(byQuantity.get(q) ?? []), card]);
+    });
+    expect(byQuantity.size).toBe(4);
+    for (const pair of byQuantity.values()) {
+      pair[0].click();
+      pair[1].click();
+    }
+    vi.advanceTimersByTime(800);
+
+    expect(game.data().progress.journey.completed).toContain(memory.id);
+    expect(root.querySelector<HTMLButtonElement>(".results-actions .btn.secondary")?.textContent).toBe("Verder");
+    root.querySelector<HTMLButtonElement>(".results-actions .btn.secondary")!.click();
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+    expect(root.querySelector(`.reis-node.done[data-node="${memory.id}"]`)).toBeTruthy();
+    expect(root.querySelector(`.reis-node.now[data-node="${JOURNEY[memoryIndex + 1].id}"]`)).toBeTruthy();
   });
 
   const choicePlay = async (scene: string): Promise<void> => {
@@ -591,6 +802,81 @@ describe("rewards, voice and parent gate", () => {
       voice.encourage();
       voice.cancel();
     }).not.toThrow();
+  });
+});
+
+describe("De Sterrenreis — story mode", () => {
+  beforeEach(() => {
+    document.body.className = "";
+    document.body.innerHTML = '<div id="app"></div>';
+    localStorage.clear();
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+    localStorage.clear();
+  });
+
+  it("advances the journey frontier and de-dups completed nodes", async () => {
+    const { Game } = await import("../src/game/Game");
+    const { JOURNEY } = await import("../src/data/journey");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    expect(game.data().progress.journey.nodeIndex).toBe(0);
+    const first = JOURNEY[0].id;
+    game.save.advanceJourney(first);
+    expect(game.data().progress.journey.completed).toContain(first);
+    expect(game.data().progress.journey.nodeIndex).toBe(1);
+    game.save.advanceJourney(first);
+    expect(game.data().progress.journey.completed.filter((id) => id === first)).toHaveLength(1);
+    expect(game.data().progress.journey.nodeIndex).toBe(1);
+  });
+
+  it("renders the road with exactly one glowing frontier, a quest, the buddy and a friend meadow", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("reis");
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+    expect(root.querySelector(".reis-quest")).toBeTruthy();
+    expect(root.querySelectorAll(".reis-node.now")).toHaveLength(1);
+    expect(root.querySelector(".reis-buddy")).toBeTruthy();
+    expect(root.querySelectorAll(".reis-friend")).toHaveLength(6);
+    expect(root.querySelectorAll(".reis-node").length).toBeGreaterThanOrEqual(20);
+  });
+
+  it("launches a stop from the frontier and advances the journey on completion, then returns to the map", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const { JOURNEY } = await import("../src/data/journey");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("reis");
+    const first = JOURNEY[0]; // a 'count' stop
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${first.id}"]`)!.click();
+    expect(game.lastJourneyNode).toBe(first.id);
+    expect(root.querySelector(".mini-header")).toBeTruthy();
+    for (let r = 0; r < 15 && !root.querySelector(".results-card"); r += 1) {
+      const correct = root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]');
+      if (!correct) break;
+      correct.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(game.data().progress.journey.completed).toContain(first.id);
+    // The done-screen home button ("Verder") goes back to the map.
+    const home = root.querySelector<HTMLButtonElement>(".results-actions .btn.secondary");
+    expect(home?.textContent).toBe("Verder");
+    home!.click();
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+    expect(root.querySelector(`.reis-node[data-node="${first.id}"]`)?.classList.contains("done")).toBe(true);
+  });
+
+  it("back-fills journey progress for an old save without it", async () => {
+    localStorage.setItem("blokblitz-save-v1", JSON.stringify({ version: 1, settings: { muted: false }, progress: { stars: 7 } }));
+    const { SaveManager } = await import("../src/game/SaveManager");
+    const save = new SaveManager();
+    expect(save.getData().progress.journey).toEqual({ nodeIndex: 0, completed: [] });
+    expect(save.getData().progress.stars).toBe(7);
   });
 });
 

@@ -21,6 +21,7 @@ const requiredFiles = [
 
 const requiredScenes = [
   "BootScene",
+  "ReisScene",
   "MainMenuScene",
   "NumberOfDayScene",
   "BlokBlitzScene",

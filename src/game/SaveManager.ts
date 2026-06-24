@@ -1,6 +1,7 @@
 import { stableQuantityFromDate } from "../education/quantityLayouts";
 import type { AttemptLog, DistrictProgress, GameProgress, GameSettings, SaveData, WorldProgress } from "../education/types";
 import { districtSeeds } from "../data/districts";
+import { JOURNEY, frontierIndex } from "../data/journey";
 import { earnedStickerIds } from "../data/stickers";
 import { WORLDS, nextWorldId } from "../runner/worlds";
 
@@ -57,7 +58,8 @@ export function defaultProgress(): GameProgress {
     runsCompleted: 0,
     cosmetics: { activeSkin: "blitz", unlockedSkins: ["blitz"] },
     worlds: makeWorldRecord(),
-    stickers: []
+    stickers: [],
+    journey: { nodeIndex: 0, completed: [] }
   };
 }
 
@@ -172,6 +174,20 @@ export class SaveManager {
     return this.getData();
   }
 
+  /** Mark a journey node done and move the glowing frontier to the next not-done node. */
+  advanceJourney(nodeId: string): SaveData {
+    const journey = this.data.progress.journey;
+    if (!journey.completed.includes(nodeId)) journey.completed.push(nodeId);
+    journey.nodeIndex = frontierIndex(journey.completed);
+    this.save();
+    return this.getData();
+  }
+
+  /** Whether every node on De Sterrenreis is done. */
+  journeyComplete(): boolean {
+    return this.data.progress.journey.nodeIndex >= JOURNEY.length;
+  }
+
   /** Award any newly earned stickers from current progress. Returns the ids that are new. */
   syncStickers(): string[] {
     const earned = earnedStickerIds(this.data.progress);
@@ -260,7 +276,8 @@ export class SaveManager {
         runsCompleted: data.progress?.runsCompleted ?? 0,
         cosmetics,
         worlds: { ...makeWorldRecord(), ...(data.progress?.worlds ?? {}) },
-        stickers: data.progress?.stickers ?? []
+        stickers: data.progress?.stickers ?? [],
+        journey: data.progress?.journey ?? { nodeIndex: 0, completed: [] }
       }
     };
   }

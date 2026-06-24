@@ -15,7 +15,7 @@ interface ModeCard {
 }
 
 const MODES: ModeCard[] = [
-  { scene: "mainMenu", emoji: "🗺️", name: "Avontuur", desc: "Ren door de werelden", tone: "adventure" },
+  { scene: "reis", emoji: "🗺️", name: "Sterrenreis", desc: "Breng de ster thuis", tone: "adventure" },
   { scene: "count", emoji: "🐣", name: "Tel mee", desc: "Tel de diertjes", tone: "count" },
   { scene: "match", emoji: "🧩", name: "Zoek hetzelfde", desc: "Vind even veel", tone: "match" },
   { scene: "compare", emoji: "🦖", name: "Wat is meer?", desc: "Kies de grootste", tone: "compare" },
@@ -125,6 +125,12 @@ export class HubScene extends BaseScene {
   }
 
   private enter(scene: string): void {
+    if (scene === "reis" || scene === "mainMenu") {
+      this.game.lastJourneyNode = undefined;
+      this.game.showScene(scene);
+      return;
+    }
+    this.game.lastJourneyNode = undefined;
     if (scene !== "mainMenu") this.game.requestFullscreenPlay();
     this.game.save.startNewSession();
     this.game.showScene(scene);
