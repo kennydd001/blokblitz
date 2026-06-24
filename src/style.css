@@ -8054,3 +8054,36 @@ input {
   .reis-quest-copy em { font-size: 0.78rem; }
   .reis-friend { width: 38px; height: 38px; font-size: 1.3rem; }
 }
+
+/* Buddy walks the road on advance; friends react; region welcome */
+.buddy.reis-buddy.walking { transition: left 700ms ease, top 700ms ease; }
+.reis-friend.has { cursor: pointer; }
+.reis-friend.bounce { animation: friend-bounce 0.5s ease; }
+@keyframes friend-bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px) scale(1.12); }
+}
+.reis-region-banner {
+  position: fixed;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 32;
+  background: rgba(255, 252, 242, 0.97);
+  border: 4px solid var(--edge);
+  border-radius: 999px;
+  padding: 10px 26px;
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: var(--ink);
+  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.24);
+  pointer-events: none;
+  animation: region-banner 2.4s ease forwards;
+}
+.reis-region-banner span { font-size: 1.5rem; }
+@keyframes region-banner {
+  0% { transform: translate(-50%, -14px); opacity: 0; }
+  12% { transform: translate(-50%, 0); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate(-50%, -10px); opacity: 0; }
+}

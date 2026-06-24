@@ -58,6 +58,8 @@ export class Game {
   lastJourneyNode?: string;
   /** How many journey nodes the map has already celebrated, so a return shows the new bloom once. */
   journeySeenCompleted = 0;
+  /** The journey region the map last announced, so a "welcome" only fires when Buddy enters a new one. */
+  journeyLastRegion?: string;
 
   private readonly loop: GameLoop;
   private readonly animatedObjects: THREE.Object3D[] = [];

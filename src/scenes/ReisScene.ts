@@ -7,11 +7,13 @@ import {
   journeyNodeAction,
   journeyNodeTitle,
   journeyProgressLabel,
+  nodeIndexById,
   regionBands,
   type JourneyNode
 } from "../data/journey";
 import type { Game } from "../game/Game";
 import { skinById } from "../runner/skins";
+import { cssHex, getWorld, type PropStyle } from "../runner/worlds";
 import { createBuddy, type Buddy } from "./buddy";
 import { BaseScene } from "./SceneUtils";
 
@@ -30,7 +32,6 @@ export class ReisScene extends BaseScene {
   mount(): void {
     super.mount();
     this.game.resetWorld("menu");
-    this.game.audio.startMusic("hub");
     const arrived = Boolean(this.game.lastJourneyNode);
     this.game.lastJourneyNode = undefined;
     this.render();
@@ -50,6 +51,8 @@ export class ReisScene extends BaseScene {
     const frontier = frontierIndex(completedIds);
     const progress = Math.min(1, frontier / JOURNEY.length);
     const here = JOURNEY[Math.min(frontier, JOURNEY.length - 1)];
+    // The map sounds like wherever Buddy currently stands.
+    this.game.audio.startMusic(here.regionId);
 
     // Top bar: stars + a free-play backpack.
     const top = document.createElement("div");
@@ -101,15 +104,26 @@ export class ReisScene extends BaseScene {
     meadow.className = "reis-meadow";
     FRIENDS.forEach((friend) => {
       const has = completed.has(friend.id);
-      const slot = document.createElement("div");
+      const slot = document.createElement(has ? "button" : "div") as HTMLElement;
       slot.className = `reis-friend${has ? " has" : ""}`;
       slot.dataset.friend = friend.id;
       slot.setAttribute("aria-label", has ? friend.name : "nog te redden");
       slot.textContent = has ? friend.emoji : "❓";
+      if (has) {
+        (slot as HTMLButtonElement).type = "button";
+        slot.addEventListener("click", () => {
+          slot.classList.remove("bounce");
+          void slot.offsetWidth;
+          slot.classList.add("bounce");
+          this.game.audio.play("coin");
+          this.game.voice.speak(`Hoi! Ik ben ${friend.name}!`, { interrupt: true });
+        });
+      }
       meadow.appendChild(slot);
     });
 
     this.root.append(top, quest, track, scroll, meadow);
+    this.maybeRegionBanner(here);
 
     // Centre the frontier node so only current + next need to be on screen.
     const centerFrontier = (): void => {
@@ -138,11 +152,32 @@ export class ReisScene extends BaseScene {
     }
     holder.innerHTML = `<svg viewBox="0 0 ${JOURNEY_WIDTH} ${JOURNEY_HEIGHT}" width="${JOURNEY_WIDTH}" height="${JOURNEY_HEIGHT}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g class="reis-bands">${bands}</g>
-      <path d="${path}" fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" opacity="0.55"/>
+      <g class="reis-decor">${this.decorations()}</g>
       <path d="${path}" fill="none" stroke="#10131c" stroke-width="30" stroke-linecap="round" opacity="0.18"/>
+      <path d="${path}" fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" opacity="0.6"/>
       <path d="${path}" fill="none" stroke="#fff7df" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 22"/>
     </svg>`;
     return holder;
+  }
+
+  // A few blocky props down each colour band's edges so every region looks distinct.
+  private decorations(): string {
+    return JOURNEY.map((node, i) => {
+      const world = getWorld(node.regionId);
+      const color = world.palette.props[i % world.palette.props.length];
+      const x = i % 2 === 0 ? 34 : JOURNEY_WIDTH - 34;
+      return this.prop(world.palette.propStyle, cssHex(color), x, node.y);
+    }).join("");
+  }
+
+  private prop(style: PropStyle, color: string, x: number, y: number): string {
+    const t = `transform="translate(${x} ${y})"`;
+    if (style === "crystal") return `<g ${t}><polygon points="0,-15 8,0 0,13 -8,0" fill="${color}" stroke="#10131c" stroke-width="2"/></g>`;
+    if (style === "ice") return `<g ${t}><polygon points="0,-17 6,4 -6,4" fill="#eaffff" stroke="#10131c" stroke-width="2"/></g>`;
+    if (style === "mushroom") return `<g ${t}><rect x="-2" y="-2" width="4" height="11" fill="#f2ead2" stroke="#10131c" stroke-width="1.5"/><ellipse cx="0" cy="-3" rx="11" ry="7" fill="${color}" stroke="#10131c" stroke-width="2"/></g>`;
+    if (style === "cactus") return `<g ${t}><rect x="-4" y="-14" width="8" height="28" rx="4" fill="${color}" stroke="#10131c" stroke-width="2"/></g>`;
+    if (style === "star") return `<g ${t}><circle cx="0" cy="0" r="9" fill="${color}" opacity="0.3"/><circle cx="0" cy="0" r="5" fill="${color}"/></g>`;
+    return `<g ${t}><rect x="-3" y="0" width="6" height="13" fill="#8a5a3c" stroke="#10131c" stroke-width="1.5"/><polygon points="0,-17 12,2 -12,2" fill="${color}" stroke="#10131c" stroke-width="2"/></g>`;
   }
 
   private buildNode(node: JourneyNode, index: number, state: string, frontier: number): HTMLElement {
@@ -244,8 +279,13 @@ export class ReisScene extends BaseScene {
   private celebrateArrival(): void {
     const completed = this.journey().completed;
     if (completed.length > this.game.journeySeenCompleted) {
-      this.bloom(completed[completed.length - 1]);
+      const justDone = completed[completed.length - 1];
+      this.bloom(justDone);
       this.game.journeySeenCompleted = completed.length;
+      // Buddy walks along the road from the stone it just dropped to the next one.
+      const fromIndex = nodeIndexById(justDone);
+      const toIndex = Math.min(frontierIndex(completed), JOURNEY.length - 1);
+      if (fromIndex >= 0) this.walkBuddy(JOURNEY[fromIndex], JOURNEY[toIndex]);
       this.buddy?.setMood("happy", 1400);
       this.game.voice.speak(this.game.save.journeyComplete() ? "Helemaal thuis! Knap gedaan!" : "Goed zo! Verder met de reis!", {
         interrupt: true,
@@ -254,6 +294,39 @@ export class ReisScene extends BaseScene {
     } else {
       this.game.voice.speak("Verder met de reis!", { interrupt: true });
     }
+  }
+
+  // Slide Buddy from one node to the next so the road feels travelled, not teleported.
+  private walkBuddy(from: JourneyNode, to: JourneyNode): void {
+    const buddy = this.buddy;
+    if (!buddy) return;
+    const el = buddy.el;
+    el.classList.remove("walking");
+    el.style.left = `${(from.x / JOURNEY_WIDTH) * 100}%`;
+    el.style.top = `${from.y - 78}px`;
+    void el.offsetWidth;
+    el.classList.add("walking");
+    const step = (): void => {
+      el.style.left = `${(to.x / JOURNEY_WIDTH) * 100}%`;
+      el.style.top = `${to.y - 78}px`;
+    };
+    if (typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(step);
+    else step();
+  }
+
+  // A brief "welcome" the first time Buddy enters each region (visual + spoken + music already switched).
+  private maybeRegionBanner(here: JourneyNode): void {
+    if (here.regionId === this.game.journeyLastRegion) return;
+    this.game.journeyLastRegion = here.regionId;
+    const world = getWorld(here.regionId);
+    const banner = document.createElement("div");
+    banner.className = "reis-region-banner";
+    banner.setAttribute("aria-hidden", "true");
+    banner.innerHTML = `<span aria-hidden="true">${world.emoji}</span> Welkom in ${world.name}!`;
+    this.root.appendChild(banner);
+    const timer = window.setTimeout(() => banner.remove(), 2400);
+    this.addCleanup(() => window.clearTimeout(timer));
+    if (this.journey().completed.length > 0) this.game.voice.speak(`Welkom in ${world.name}!`, { interrupt: false });
   }
 
   private intro(): void {
