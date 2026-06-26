@@ -1,7 +1,7 @@
 import { stableQuantityFromDate } from "../education/quantityLayouts";
 import type { AttemptLog, DistrictProgress, GameProgress, GameSettings, SaveData, WorldProgress } from "../education/types";
 import { districtSeeds } from "../data/districts";
-import { JOURNEY, frontierIndex } from "../data/journey";
+import { JOURNEY, backfillCompleted, frontierIndex } from "../data/journey";
 import { earnedStickerIds } from "../data/stickers";
 import { WORLDS, nextWorldId } from "../runner/worlds";
 
@@ -277,7 +277,12 @@ export class SaveManager {
         cosmetics,
         worlds: { ...makeWorldRecord(), ...(data.progress?.worlds ?? {}) },
         stickers: data.progress?.stickers ?? [],
-        journey: data.progress?.journey ?? { nodeIndex: 0, completed: [] }
+        // Back-fill the journey so saves that predate inserted nodes (e.g. the
+        // region bosses) keep a clean linear prefix instead of jumping backwards.
+        journey: (() => {
+          const completed = backfillCompleted(data.progress?.journey?.completed ?? []);
+          return { nodeIndex: frontierIndex(completed), completed };
+        })()
       }
     };
   }

@@ -80,6 +80,26 @@ export function countChallenge(quantity: number): Challenge {
   });
 }
 
+/** See a getalbeeld, then tap its number — used by the boss fights, with the
+ * representation varied each round so the child reads every number image. */
+export function subitizeChallenge(quantity: number, representation: Representation): Challenge {
+  const target = clampQuantity(quantity);
+  const options = shuffle([
+    option(target, "numeral", true),
+    ...nearbyDistractors(target, 2).map((q) => option(q, "numeral", false))
+  ]);
+  return baseChallenge({
+    challengeType: "subitize-flash",
+    skill: "subitize",
+    quantity: target,
+    representation: "numeral",
+    promptRepresentation: representation,
+    answerRepresentation: "numeral",
+    options,
+    hint: "Tel rustig: eerst vijf, dan de rest."
+  });
+}
+
 /** Find the card with the same amount as the target, across different representations. */
 export function matchChallenge(quantity: number): Challenge {
   const target = clampQuantity(quantity);

@@ -230,7 +230,7 @@ export abstract class MiniGameScene extends BaseScene {
     if (this.buddy) this.root.appendChild(this.buddy.el);
   }
 
-  private mountReplay(): void {
+  protected mountReplay(): void {
     this.root.classList.remove("centered");
     this.root.classList.add("mini-scene", "centered");
     this.round = 1;

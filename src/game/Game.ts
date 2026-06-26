@@ -24,6 +24,7 @@ import { ParentDashboardScene } from "../scenes/ParentDashboardScene";
 import { ResultsScene } from "../scenes/ResultsScene";
 import { ReisScene } from "../scenes/ReisScene";
 import { RunScene } from "../scenes/RunScene";
+import { BossScene } from "../scenes/minigames/BossScene";
 import { CompareScene } from "../scenes/minigames/CompareScene";
 import { CountScene } from "../scenes/minigames/CountScene";
 import { FillScene } from "../scenes/minigames/FillScene";
@@ -328,6 +329,7 @@ export class Game {
     this.scenes.register("onemoreless", (game) => new OneMoreLessScene(game));
     this.scenes.register("order", (game) => new OrderScene(game));
     this.scenes.register("memory", (game) => new MemoryScene(game));
+    this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));
     this.scenes.register("webwoud", (game) => new WebWoudScene(game));

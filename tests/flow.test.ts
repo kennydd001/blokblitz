@@ -6,7 +6,7 @@ import { MasteryTracker } from "../src/education/masteryTracker";
 import { AdaptiveGateProvider } from "../src/runner/gateProvider";
 import { RunnerCore, type GateProvider, type GateSpec, type RunnerSnapshot } from "../src/runner/RunnerCore";
 import { STICKERS } from "../src/data/stickers";
-import { FRIENDS, FRIEND_STORY, JOURNEY, JOURNEY_INTRO, REGION_STORY, frontierIndex, journeyNodeAction, journeyNodeTitle } from "../src/data/journey";
+import { BOSSES, FRIENDS, FRIEND_STORY, JOURNEY, JOURNEY_INTRO, REGION_STORY, backfillCompleted, frontierIndex, journeyNodeAction, journeyNodeTitle } from "../src/data/journey";
 import { WORLDS, nextWorldId, starsForRun } from "../src/runner/worlds";
 
 // A compact Three.js stand-in covering everything the menu, runner view and the
@@ -569,6 +569,35 @@ describe("Speeltuin hub + calm game modes", () => {
     }
   });
 
+  it("guards every region's friend with a boss that has a name and a defeat line", () => {
+    const bossNodes = JOURNEY.filter((node) => node.kind === "boss");
+    const regions = [...new Set(JOURNEY.map((node) => node.regionId))];
+    expect(bossNodes).toHaveLength(regions.length);
+    for (const node of bossNodes) {
+      const boss = BOSSES[node.regionId];
+      expect(boss?.name, `boss name for ${node.regionId}`).toBeTruthy();
+      expect(boss?.defeat, `defeat line for ${node.regionId}`).toBeTruthy();
+      expect(node.scene).toBe("boss");
+      // The boss sits between the region's gate and its friend.
+      const index = JOURNEY.indexOf(node);
+      expect(JOURNEY[index - 1]?.kind).toBe("gate");
+      expect(JOURNEY[index + 1]?.kind).toBe("friend");
+    }
+  });
+
+  it("back-fills a pre-boss save to a clean linear prefix (no jumping backwards)", () => {
+    // A returning save whose furthest done node is a region's friend...
+    const friendIndex = JOURNEY.findIndex((node) => node.kind === "friend");
+    const stale = JOURNEY.slice(0, friendIndex + 1)
+      .filter((node) => node.kind !== "boss") // ...predates the inserted bosses.
+      .map((node) => node.id);
+    const repaired = backfillCompleted(stale);
+    // Everything up to and including that friend is now marked done — including
+    // the boss that was inserted earlier — so the frontier moves forward, not back.
+    expect(repaired).toEqual(JOURNEY.slice(0, friendIndex + 1).map((node) => node.id));
+    expect(frontierIndex(repaired)).toBe(friendIndex + 1);
+  });
+
   it("opens a brand-new journey with a tappable story card", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
@@ -626,8 +655,16 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(game.data().progress.journey.completed).toContain(gate.id);
     root.querySelector<HTMLButtonElement>(".results-actions .play-now")!.click();
 
-    const friend = JOURNEY[gateIndex + 1];
+    // The region boss now guards the friend; its full fight is covered in its own
+    // test, so here just confirm it's the next frontier, then skip past it.
+    const boss = JOURNEY[gateIndex + 1];
+    expect(boss.kind).toBe("boss");
+    expect(root.querySelector(`.reis-node.now[data-node="${boss.id}"]`)).toBeTruthy();
+    game.save.advanceJourney(boss.id);
+
+    const friend = JOURNEY[gateIndex + 2];
     expect(friend.kind).toBe("friend");
+    game.showScene("reis");
     expect(root.querySelector(`.reis-node.now[data-node="${friend.id}"]`)).toBeTruthy();
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${friend.id}"]`)!.click();
     expect(game.data().progress.journey.completed).toContain(friend.id);
@@ -644,6 +681,41 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(game.save.journeyComplete()).toBe(true);
     expect(root.querySelector(".reis-finale")).toBeTruthy();
     expect(root.querySelector(".reis-progress-pill")?.textContent).toContain("Ster thuis");
+  });
+
+  it("fights and defeats a region boss, then frees the trapped friend", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const bossIndex = JOURNEY.findIndex((node) => node.kind === "boss");
+    const boss = JOURNEY[bossIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, bossIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    expect(root.querySelector(`.reis-node.now[data-node="${boss.id}"]`)).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${boss.id}"]`)!.click();
+    // The boss arena is up with a full health bar.
+    expect(root.querySelector(".boss-arena")).toBeTruthy();
+    expect(root.querySelectorAll(".boss-heart").length).toBeGreaterThan(0);
+
+    // Land enough correct hits to drain the boss (each correct answer is a hit).
+    for (let i = 0; i < 12 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.boss-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(boss.id);
+    // Beating the boss makes the friend it guarded the next frontier.
+    const friend = JOURNEY[bossIndex + 1];
+    expect(friend.kind).toBe("friend");
+    expect(game.data().progress.journey.nodeIndex).toBe(bossIndex + 1);
+    vi.useRealTimers();
   });
 
   it("advances story memory stops back to the Sterrenreis map", async () => {

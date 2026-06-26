@@ -6,7 +6,7 @@
 
 import { getWorld, cssHex } from "../runner/worlds";
 
-export type JourneyKind = "stop" | "gate" | "friend" | "star";
+export type JourneyKind = "stop" | "gate" | "friend" | "boss" | "star";
 
 export interface JourneyNode {
   id: string;
@@ -70,6 +70,25 @@ const REGIONS: RegionPlan[] = [
   { region: "sterrenrace", stops: ["match", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];
 
+// Each region's climax: a colour-stealing boss that guards the trapped friend.
+// You beat it with number challenges (each correct answer is a hit); when it
+// falls, the region's colours bloom back and the friend joins the parade.
+export interface BossSpec {
+  name: string;
+  emoji: string;
+  taunt: string;
+  defeat: string;
+}
+
+export const BOSSES: Record<string, BossSpec> = {
+  grasland: { name: "Grauwgrijs", emoji: "👾", taunt: "Geen kleur voor jou!", defeat: "Het grasland is weer groen!" },
+  muntgrot: { name: "Schaduwvleer", emoji: "🦇", taunt: "Lekker donker hier!", defeat: "De grot glinstert weer goud!" },
+  ijsbaan: { name: "Vorstwolf", emoji: "🐺", taunt: "Alles bevriest!", defeat: "Het ijs glimt weer blauw!" },
+  webwoud: { name: "Webbaas", emoji: "🕷️", taunt: "Mooi vast in mijn web!", defeat: "Het webwoud kleurt weer groen!" },
+  bouwdorp: { name: "Sloopbot", emoji: "🤖", defeat: "Het dorp staat weer overeind!", taunt: "Sloop! Sloop!" },
+  sterrenrace: { name: "Sterrenrover", emoji: "👹", taunt: "De ster is van mij!", defeat: "De sterrenhemel schittert weer!" }
+};
+
 const SPACING = 150;
 const TOP_MARGIN = 150;
 const VIEW_W = 360;
@@ -83,6 +102,7 @@ function buildNodes(): JourneyNode[] {
       specs.push({ id: `${plan.region}-${scene}-${s}`, kind: "stop", scene, regionId: plan.region, emoji: MODE_EMOJI[scene] ?? "❓" });
     });
     specs.push({ id: `${plan.region}-gate`, kind: "gate", scene: "run", worldId: plan.region, regionId: plan.region, emoji: getWorld(plan.region).emoji });
+    specs.push({ id: `${plan.region}-boss`, kind: "boss", scene: "boss", worldId: plan.region, regionId: plan.region, emoji: BOSSES[plan.region].emoji });
     specs.push({
       id: plan.friend.id,
       kind: "friend",
@@ -135,6 +155,24 @@ export function regionBands(): RegionBand[] {
 
 export function nodeIndexById(id: string): number {
   return JOURNEY.findIndex((node) => node.id === id);
+}
+
+/**
+ * Linear-journey repair. A returning save's `completed` ids may predate nodes
+ * that were inserted later (e.g. the region bosses). Because the journey is
+ * strictly linear (you can only ever tap the current frontier), the correct
+ * completed set is always a clean prefix — so fill it back up to the furthest
+ * node the child had actually reached, which also marks any newly inserted
+ * earlier nodes as already done instead of sending the child backwards.
+ */
+export function backfillCompleted(completed: string[]): string[] {
+  const done = new Set(completed);
+  let maxIdx = -1;
+  JOURNEY.forEach((node, i) => {
+    if (done.has(node.id)) maxIdx = i;
+  });
+  if (maxIdx < 0) return [];
+  return JOURNEY.slice(0, maxIdx + 1).map((node) => node.id);
 }
 
 /** The first node not yet completed = the glowing frontier. */
@@ -190,6 +228,7 @@ export function journeyFinale(friendsRescued: number): string {
 
 export function journeyNodeTitle(node: JourneyNode): string {
   if (node.kind === "gate") return `${getWorld(node.worldId).name} run`;
+  if (node.kind === "boss") return `Versla ${BOSSES[node.regionId]?.name ?? "de baas"}`;
   if (node.kind === "friend") return node.friendName ? `Red ${node.friendName}` : "Red een vriendje";
   if (node.kind === "star") return "Breng de ster thuis";
   return MODE_TITLE[node.scene ?? ""] ?? "Volgende stap";
@@ -197,6 +236,7 @@ export function journeyNodeTitle(node: JourneyNode): string {
 
 export function journeyNodeAction(node: JourneyNode): string {
   if (node.kind === "gate") return "Ren door de juiste getalpoorten.";
+  if (node.kind === "boss") return "Raak de baas met het juiste getal!";
   if (node.kind === "friend") return "Tik om je vriendje mee te nemen.";
   if (node.kind === "star") return "Tik de ster en vier de thuisreis.";
   return MODE_ACTION[node.scene ?? ""] ?? "Speel en help Buddy verder.";
