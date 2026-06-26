@@ -137,13 +137,26 @@ export class BossScene extends MiniGameScene {
   }
 
   protected finish(): void {
-    this.game.audio.play("win");
-    this.game.haptics.play("win");
-    this.buddy?.setMood("wow");
-    this.buddy?.say("Verslagen!");
     // Beating the boss completes this journey node (frees the friend next).
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
+    this.game.audio.play("snap");
+    this.game.haptics.play("win");
     this.game.voice.speak(`${this.boss.name} is verslagen! ${this.boss.defeat}`, { interrupt: true, pitch: 1.2 });
+    // Phase 1: the monster reels and dissolves into a burst of colour...
+    this.root.querySelector(".boss-foe")?.classList.add("defeated");
+    this.root.querySelectorAll(".boss-heart").forEach((heart) => heart.classList.add("gone"));
+    const pop = document.createElement("div");
+    pop.className = "boss-pop";
+    pop.setAttribute("aria-hidden", "true");
+    (this.root.querySelector(".boss-arena") ?? this.root).appendChild(pop);
+    this.later(() => this.showBossDone(), 850);
+  }
+
+  // ...then phase 2: the victory screen.
+  private showBossDone(): void {
+    this.game.audio.play("win");
+    this.buddy?.setMood("wow");
+    this.buddy?.say("Verslagen!");
     const stars = starsFromPerfect(this.perfectRounds, this.total);
     const newStickers = this.game.save
       .syncStickers()
