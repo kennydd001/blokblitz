@@ -20,6 +20,10 @@ export interface GateLaneSpec {
   quantity: number;
   correct: boolean;
   numeral: string;
+  /** Physical lane (0..2) this choice sits in. Defaults to the array index. */
+  lane?: number;
+  /** Index into the education Challenge's options, for attempt logging. */
+  optionIndex?: number;
 }
 
 export interface GateSpec {
@@ -68,7 +72,7 @@ export interface EntityView {
 
 export type RunnerEvent =
   | { type: "coin"; lane: number; combo: number }
-  | { type: "gate"; gate: GateSpec; chosenLane: number; correct: boolean; reactionMs: number; combo: number }
+  | { type: "gate"; gate: GateSpec; chosenLane: number; chosenOptionIndex?: number; correct: boolean; reactionMs: number; combo: number }
   | { type: "obstacle-cleared"; lane: number }
   | { type: "stumble"; lane: number }
   | { type: "boost"; combo: number }
@@ -130,6 +134,9 @@ const JUMP_DURATION = 0.62;
 const START_SPEED = 10;
 const MAX_SPEED = 19;
 const LANE_LERP = 13; // higher = snappier lane changes
+// How far ahead (world units) a gate starts pulling the run into slow-motion so
+// the child has time to read the two numbers and commit to a lane.
+const GATE_SLOWMO_RANGE = 19;
 
 export class RunnerCore {
   state: "running" | "finished" = "running";
@@ -255,10 +262,14 @@ export class RunnerCore {
     if (this.state !== "running") return;
     this.clock += dt;
 
-    // Speed eases up over the run for that "getting faster" rush.
+    // Speed eases up over the run for that "getting faster" rush...
     const progress = Math.min(1, this.gatesResolved / this.gatesTotal);
-    const targetSpeed = this.minSpeed + (this.maxSpeed - this.minSpeed) * progress + this.combo * 0.35;
-    this.speed += (Math.min(this.maxSpeed, targetSpeed) - this.speed) * Math.min(1, dt * 1.5);
+    // ...but eases DOWN into slow-motion as a number gate approaches, so a 5yo
+    // has time to read the two numbers and pick a lane (down to ~58% as it nears).
+    const gateDist = this.nearestGateDistance();
+    const slow = gateDist < GATE_SLOWMO_RANGE ? 0.58 + 0.42 * (gateDist / GATE_SLOWMO_RANGE) : 1;
+    const targetSpeed = (this.minSpeed + (this.maxSpeed - this.minSpeed) * progress + this.combo * 0.35) * slow;
+    this.speed += (Math.min(this.maxSpeed, targetSpeed) - this.speed) * Math.min(1, dt * (slow < 1 ? 3 : 1.5));
 
     this.traveled += this.speed * dt;
     this.distanceMeters += this.speed * dt * METERS_PER_UNIT;
@@ -308,6 +319,7 @@ export class RunnerCore {
     }
     if (item.kind === "gate" && item.gate) {
       item.resolved = true;
+      const entry = item.gate.lanes.find((lane, i) => (lane.lane ?? i) === heroLane);
       const correct = heroLane === item.gate.correctLane;
       item.correctResolved = correct;
       this.gatesResolved += 1;
@@ -330,6 +342,7 @@ export class RunnerCore {
         type: "gate",
         gate: item.gate,
         chosenLane: heroLane,
+        chosenOptionIndex: entry?.optionIndex,
         correct,
         reactionMs,
         combo: this.combo
@@ -373,6 +386,17 @@ export class RunnerCore {
     const out = this.events;
     this.events = [];
     return out;
+  }
+
+  /** Distance (world units) to the nearest unresolved gate ahead, or Infinity. */
+  private nearestGateDistance(): number {
+    let best = Infinity;
+    for (const item of this.items) {
+      if (item.kind !== "gate" || item.resolved || item.processed) continue;
+      const d = item.at - this.traveled;
+      if (d >= -0.5 && d < best) best = d;
+    }
+    return best;
   }
 
   private currentTarget(): GateSpec | undefined {

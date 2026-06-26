@@ -14,6 +14,7 @@ const scenarios = [
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "number-mobile", width: 390, height: 844, mobile: true, open: "number", expectAdventureBridge: true },
+  { name: "real-runner-mobile", width: 390, height: 844, mobile: true, open: "real-runner", expectRealRunner: true },
   { name: "runner-mobile", width: 390, height: 844, mobile: true, open: "runner" },
   { name: "runner-narrow-mobile", width: 360, height: 740, mobile: true, open: "runner" },
   { name: "runner-scaffold-mobile", width: 390, height: 844, mobile: true, open: "runner-scaffold", expectScaffold: true },
@@ -143,6 +144,13 @@ async function openScenario(open) {
   if (open === "runner") {
     await openGameScene("runner");
     await waitForSelector(".play-field-layer.runner", 5_000);
+    return;
+  }
+  if (open === "real-runner") {
+    await openGameScene("run");
+    await waitForSelector(".run-scene", 5_000);
+    await waitForSelector(".run-target", 5_000);
+    await delay(1_000);
     return;
   }
   if (open === "runner-scaffold") {
@@ -341,7 +349,23 @@ async function collectMetrics() {
           const cs = getComputedStyle(el);
           return cs.display !== "none" && cs.visibility !== "hidden" && Number(cs.opacity) > 0.05 && r.width > 1 && r.height > 1;
         }).length,
-        missionRibbonVisible: Boolean(document.querySelector(".scene.blokblitz .mission-ribbon, .scene.webwoud .mission-ribbon, .scene.minigames .mission-ribbon"))
+        missionRibbonVisible: Boolean(document.querySelector(".scene.blokblitz .mission-ribbon, .scene.webwoud .mission-ribbon, .scene.minigames .mission-ribbon")),
+        realRunnerTarget: rect(".run-target"),
+        realRunnerControls: rect(".run-controls"),
+        realRunnerControlButtons: rects(".run-ctrl"),
+        realRunnerProgress: rect(".run-progress"),
+        realRunnerRoles: (() => {
+          const game = window.__blokblitzGame;
+          const roles = {};
+          const visit = (node) => {
+            if (!node || typeof node !== "object") return;
+            const role = node.userData?.blokblitzRole;
+            if (role) roles[role] = (roles[role] ?? 0) + 1;
+            if (Array.isArray(node.children)) node.children.forEach(visit);
+          };
+          visit(game?.world);
+          return roles;
+        })()
       };
     })()
   `);
@@ -405,6 +429,26 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (metrics.cityBuildNow && (metrics.cityBuildNow.width < 44 || metrics.cityBuildNow.height < 54)) failures.push(`Bouw nu button too small: ${JSON.stringify(metrics.cityBuildNow)}`);
     if (metrics.cityRecommendedDistricts.length !== 1) failures.push(`expected one recommended city district, got ${metrics.cityRecommendedDistricts.length}`);
     if (metrics.cityBuildLivePresent) failures.push("city overview opened live build before Bouw nu");
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectRealRunner) {
+    if (!metrics.realRunnerTarget) failures.push("missing real runner target");
+    if (!metrics.realRunnerControls) failures.push("missing real runner controls");
+    if (!metrics.realRunnerProgress) failures.push("missing real runner progress");
+    if (metrics.realRunnerTarget && metrics.realRunnerTarget.width > viewport.width - 8) failures.push(`real runner target too wide: ${metrics.realRunnerTarget.width}`);
+    if (metrics.realRunnerTarget && metrics.realRunnerTarget.bottom > viewport.height * 0.36) failures.push(`real runner target blocks too much play space: ${JSON.stringify(metrics.realRunnerTarget)}`);
+    if (metrics.realRunnerControls && metrics.realRunnerControls.bottom > viewport.height + 1) failures.push(`real runner controls offscreen: ${JSON.stringify(metrics.realRunnerControls)}`);
+    if (metrics.realRunnerControlButtons.length !== 3) failures.push(`expected 3 real runner controls, got ${metrics.realRunnerControlButtons.length}`);
+    for (const button of metrics.realRunnerControlButtons) {
+      if (button.width < 64 || button.height < 64) failures.push(`real runner control too small: ${JSON.stringify(button)}`);
+    }
+    const roles = metrics.realRunnerRoles ?? {};
+    // The revamped gate is a big left/right fork: each of the two lanes carries a
+    // giant numeral, the matching getalbeeld, and a number-coloured floor carpet.
+    if ((roles["runner-gate-big-numeral"] ?? 0) < 2) failures.push(`missing big in-world gate numerals: ${roles["runner-gate-big-numeral"] ?? 0}`);
+    if ((roles["runner-gate-quantity-art"] ?? 0) < 2) failures.push(`missing in-world gate getalbeelden: ${roles["runner-gate-quantity-art"] ?? 0}`);
+    if ((roles["runner-gate-floor"] ?? 0) < 2) failures.push(`missing number-coloured gate floors: ${roles["runner-gate-floor"] ?? 0}`);
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }

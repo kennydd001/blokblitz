@@ -45,6 +45,9 @@ export interface GateConfig {
   maxQuantity: number;
   gateTypes: MinigameType[];
   representations: string[];
+  /** How many lane choices per gate. 2 = a big left/right fork (the default,
+   * clearest for young children); 3 = all three options on three lanes. */
+  gateLanes: number;
 }
 
 function targetText(challenge: Challenge): string {
@@ -66,7 +69,8 @@ export class AdaptiveGateProvider implements GateProvider {
     this.config = {
       maxQuantity: config?.maxQuantity ?? 10,
       gateTypes: config?.gateTypes?.length ? config.gateTypes : DEFAULT_TYPES,
-      representations: config?.representations?.length ? config.representations : DEFAULT_REPRESENTATIONS
+      representations: config?.representations?.length ? config.representations : DEFAULT_REPRESENTATIONS,
+      gateLanes: config?.gateLanes ?? 2
     };
   }
 
@@ -88,11 +92,42 @@ export class AdaptiveGateProvider implements GateProvider {
     const representation = this.adaptive.chooseRepresentation(focus.skill, quantity);
     const challenge = this.challenges.createMinigame(type, { quantity, representation, scene: "runner" });
 
-    const lanes = challenge.options.map((option) => {
-      const value = option.quantity ?? (Number(option.value) || 1);
-      return { quantity: value, correct: option.isCorrect, numeral: String(value) };
-    });
-    const correctLane = Math.max(0, challenge.options.findIndex((option) => option.isCorrect));
+    // Each option carries its index (for attempt logging) and its quantity.
+    const options = challenge.options.map((option, index) => ({
+      index,
+      quantity: option.quantity ?? (Number(option.value) || 1),
+      correct: Boolean(option.isCorrect)
+    }));
+    const correctOpt = options.find((o) => o.correct) ?? options[0];
+
+    let lanes: GateSpec["lanes"];
+    let correctLane: number;
+    if (this.config.gateLanes <= 2 && options.length >= 2) {
+      // The clarity win: just TWO big choices — the right number and one
+      // distractor — on the left and right lanes with a clear gap between them.
+      // A single either/or reads instantly where three lanes blur at speed.
+      const distractor =
+        options.find((o) => !o.correct && o.quantity !== correctOpt.quantity) ??
+        options.find((o) => !o.correct) ??
+        correctOpt;
+      const correctLeft = Math.random() < 0.5;
+      const left = correctLeft ? correctOpt : distractor;
+      const right = correctLeft ? distractor : correctOpt;
+      lanes = [
+        { lane: 0, optionIndex: left.index, quantity: left.quantity, correct: left.correct, numeral: String(left.quantity) },
+        { lane: 2, optionIndex: right.index, quantity: right.quantity, correct: right.correct, numeral: String(right.quantity) }
+      ];
+      correctLane = correctLeft ? 0 : 2;
+    } else {
+      lanes = options.map((o) => ({
+        lane: o.index,
+        optionIndex: o.index,
+        quantity: o.quantity,
+        correct: o.correct,
+        numeral: String(o.quantity)
+      }));
+      correctLane = Math.max(0, options.findIndex((o) => o.correct));
+    }
 
     const gateRepresentation = this.config.representations[this.counter % this.config.representations.length];
     this.counter += 1;

@@ -4,6 +4,7 @@ import type { Game } from "../game/Game";
 import { AdaptiveGateProvider } from "../runner/gateProvider";
 import { RunnerCore, type RunnerEvent } from "../runner/RunnerCore";
 import { RunnerView } from "../runner/RunnerView";
+import { numberColor } from "../runner/voxelNumber";
 import { newlyUnlockedSkins, skinById, unlockedSkinIds } from "../runner/skins";
 import { getWorld, starsForRun, type WorldDef } from "../runner/worlds";
 import { BaseScene } from "./SceneUtils";
@@ -107,6 +108,8 @@ export class RunScene extends BaseScene {
     } else if (event.type === "boost") {
       this.game.audio.play("boost");
       this.game.haptics.play("boost");
+      this.game.flashMessage(`Combo x${event.combo}! 🔥`, "good");
+      this.game.voice.praise();
     } else if (event.type === "swing") {
       this.game.audio.play("boost");
       this.game.haptics.play("boost");
@@ -118,8 +121,23 @@ export class RunScene extends BaseScene {
     } else if (event.type === "gate") {
       const challenge = event.gate.meta as Challenge | undefined;
       if (challenge) {
-        const option = challenge.options[event.chosenLane] ?? challenge.options[0];
+        // Log the option the child actually steered into (fork gates map a lane
+        // to a specific option); a missed gate counts as a wrong option.
+        const idx = event.chosenOptionIndex ?? challenge.options.findIndex((o) => !o.isCorrect);
+        const option = challenge.options[idx] ?? challenge.options[0];
         this.game.recordAttempt(challenge, option, performance.now() - event.reactionMs, false);
+      }
+      if (event.correct) {
+        this.game.audio.play("success");
+        this.game.haptics.play("boost");
+        this.game.flashMessage("Ja! ⭐", "good");
+      } else {
+        // The teaching beat: show AND say the number it actually was.
+        const answer = event.gate.lanes.find((lane) => lane.correct)?.quantity;
+        this.game.audio.play("soft-error");
+        this.game.haptics.play("stumble");
+        this.game.flashMessage(answer ? `Het was de ${answer}! 💡` : "Bijna!", "warn");
+        if (answer) this.game.voice.sayNumber(answer, { interrupt: true });
       }
     } else if (event.type === "finished") {
       this.endRun(event);
@@ -267,6 +285,20 @@ export class RunScene extends BaseScene {
     this.lastTargetId = id;
     if (text) this.game.voice.speak(text, { interrupt: true });
     if (this.targetTextEl && text) this.targetTextEl.textContent = text;
+    // Tint the target card in the number's own colour, so "the number you want"
+    // and "the gate of that colour" are visibly the same thing.
+    const card = this.targetTextEl?.parentElement;
+    if (card) {
+      const numberTarget = challenge && challenge.challengeType !== "enemy-wave-compare";
+      if (numberTarget) {
+        const hex = `#${numberColor(challenge.quantity).toString(16).padStart(6, "0")}`;
+        card.style.borderColor = hex;
+        card.style.boxShadow = `0 0 18px ${hex}66, 0 8px 22px rgba(0, 0, 0, 0.28)`;
+      } else {
+        card.style.borderColor = "";
+        card.style.boxShadow = "";
+      }
+    }
     if (this.targetArtEl) {
       if (challenge && challenge.challengeType !== "enemy-wave-compare") {
         this.targetArtEl.innerHTML = RepresentationFactory.renderSvg(challenge.promptRepresentation, challenge.quantity, {

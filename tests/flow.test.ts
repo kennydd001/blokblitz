@@ -245,9 +245,10 @@ describe("RunnerCore — real-time runner logic", () => {
 });
 
 describe("RunnerView — clear mobile-readable gates", () => {
-  it("renders gates as distinct lane portals with 5+n structure cues", async () => {
+  it("renders each gate as a big number-coloured doorway", async () => {
     const THREE = await import("three");
     const { RunnerView } = await import("../src/runner/RunnerView");
+    const { numberColor } = await import("../src/runner/voxelNumber");
     const { skinById } = await import("../src/runner/skins");
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
@@ -301,39 +302,55 @@ describe("RunnerView — clear mobile-readable gates", () => {
     view.sync(snapshot, 0.016);
     const lanes = collectUserDataByRole(scene, "runner-gate-lane");
     expect(lanes).toHaveLength(3);
-    expect(new Set(lanes.map((lane) => lane.gateColorName))).toHaveLength(3);
+    // Each lane is coloured by its NUMBER (not its position), so colour alone
+    // already tells the child which gate is which; all three differ.
+    expect(lanes.map((lane) => lane.gateColor)).toEqual([numberColor(4), numberColor(7), numberColor(9)]);
+    expect(new Set(lanes.map((lane) => lane.gateColor)).size).toBe(3);
     expect(lanes.find((lane) => lane.lane === 1)?.selectedFocus).toBe(true);
 
-    expect(collectUserDataByRole(scene, "runner-gate-lane-pad")).toHaveLength(3);
-    expect(collectUserDataByRole(scene, "runner-gate-number-runway").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
-    expect(collectUserDataByRole(scene, "runner-gate-panel")).toHaveLength(3);
+    // The dominant marks per lane: a giant numeral + the matching getalbeeld.
+    expect(collectUserDataByRole(scene, "runner-gate-big-numeral").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
     expect(collectUserDataByRole(scene, "runner-gate-quantity-art").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
-    expect(collectUserDataByRole(scene, "runner-gate-five-structure").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
-    expect(collectUserDataByRole(scene, "runner-gate-preview-lane").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
-    expect(collectUserDataByRole(scene, "runner-gate-preview-lane").find((lane) => lane.lane === 1)?.selectedFocus).toBe(true);
+    // A coloured sign panel + a glowing floor carpet, two posts per doorway.
+    expect(collectUserDataByRole(scene, "runner-gate-panel").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
+    expect(collectUserDataByRole(scene, "runner-gate-floor").map((lane) => lane.quantity)).toEqual([4, 7, 9]);
+    expect(collectUserDataByRole(scene, "runner-gate-post")).toHaveLength(6);
 
-    const tokens = collectUserDataByRole(scene, "runner-gate-five-token");
-    expect(tokens.filter((token) => token.lane === 1 && token.filled).map((token) => token.tokenIndex)).toEqual([1, 2, 3, 4, 5, 6, 7]);
-    expect(tokens.filter((token) => token.lane === 1 && token.filled && token.fiveGroup)).toHaveLength(5);
-    const runwayTokens = collectUserDataByRole(scene, "runner-gate-runway-token");
-    expect(runwayTokens.filter((token) => token.lane === 1).map((token) => token.tokenIndex)).toEqual([1, 2, 3, 4, 5, 6, 7]);
-    const previewTokens = collectUserDataByRole(scene, "runner-gate-preview-token");
-    expect(previewTokens.filter((token) => token.lane === 1).map((token) => token.tokenIndex)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    // The decluttered design drops the old chevrons / runways / 5+ shelves / preview.
+    expect(collectUserDataByRole(scene, "runner-gate-number-runway")).toHaveLength(0);
+    expect(collectUserDataByRole(scene, "runner-gate-five-structure")).toHaveLength(0);
+    expect(collectUserDataByRole(scene, "runner-gate-preview-lane")).toHaveLength(0);
   });
 });
 
 describe("AdaptiveGateProvider — gates from the education engine", () => {
-  it("produces a three-lane gate with exactly one correct lane", () => {
+  it("produces a two-lane fork with exactly one correct choice", () => {
     const tracker = new MasteryTracker([]);
     const provider = new AdaptiveGateProvider(new AdaptiveEngine(tracker), new ChallengeFactory());
     for (let round = 0; round < 6; round += 1) {
       const gate = provider.next(round);
+      // Default gate is a big left/right fork: two choices on lanes 0 and 2.
+      expect(gate.lanes).toHaveLength(2);
+      expect(gate.lanes.map((lane) => lane.lane)).toEqual([0, 2]);
+      expect(gate.lanes.filter((lane) => lane.correct)).toHaveLength(1);
+      expect([0, 2]).toContain(gate.correctLane);
+      const correctEntry = gate.lanes.find((lane) => lane.lane === gate.correctLane);
+      expect(correctEntry?.correct).toBe(true);
+      expect(typeof correctEntry?.optionIndex).toBe("number");
+      // The two numbers differ, so the choice is real.
+      expect(gate.lanes[0].quantity).not.toBe(gate.lanes[1].quantity);
+      expect(gate.meta).toBeTruthy();
+    }
+  });
+
+  it("can also build a three-lane gate when a world asks for it", () => {
+    const tracker = new MasteryTracker([]);
+    const provider = new AdaptiveGateProvider(new AdaptiveEngine(tracker), new ChallengeFactory(), { gateLanes: 3 });
+    for (let round = 0; round < 4; round += 1) {
+      const gate = provider.next(round);
       expect(gate.lanes).toHaveLength(3);
       expect(gate.lanes.filter((lane) => lane.correct)).toHaveLength(1);
-      expect(gate.correctLane).toBeGreaterThanOrEqual(0);
-      expect(gate.correctLane).toBeLessThan(3);
       expect(gate.lanes[gate.correctLane].correct).toBe(true);
-      expect(gate.meta).toBeTruthy();
     }
   });
 
