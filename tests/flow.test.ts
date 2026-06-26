@@ -6,7 +6,7 @@ import { MasteryTracker } from "../src/education/masteryTracker";
 import { AdaptiveGateProvider } from "../src/runner/gateProvider";
 import { RunnerCore, type GateProvider, type GateSpec, type RunnerSnapshot } from "../src/runner/RunnerCore";
 import { STICKERS } from "../src/data/stickers";
-import { JOURNEY, frontierIndex, journeyNodeAction, journeyNodeTitle } from "../src/data/journey";
+import { FRIENDS, FRIEND_STORY, JOURNEY, JOURNEY_INTRO, REGION_STORY, frontierIndex, journeyNodeAction, journeyNodeTitle } from "../src/data/journey";
 import { WORLDS, nextWorldId, starsForRun } from "../src/runner/worlds";
 
 // A compact Three.js stand-in covering everything the menu, runner view and the
@@ -557,6 +557,46 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".reis-scene")).toBeTruthy();
     expect(root.querySelector(`.reis-node.done[data-node="${firstNode.id}"]`)).toBeTruthy();
     expect(root.querySelector(`.reis-node.now[data-node="${JOURNEY[1].id}"]`)).toBeTruthy();
+  });
+
+  it("has a story beat for every region and every rescued friend", () => {
+    const regions = new Set(JOURNEY.map((node) => node.regionId));
+    for (const region of regions) {
+      expect(REGION_STORY[region], `region story for ${region}`).toBeTruthy();
+    }
+    for (const friend of FRIENDS) {
+      expect(FRIEND_STORY[friend.id], `friend story for ${friend.id}`).toBeTruthy();
+    }
+  });
+
+  it("opens a brand-new journey with a tappable story card", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    game.showScene("reis");
+    const overlay = root.querySelector(".reis-story-overlay");
+    expect(overlay).toBeTruthy();
+    expect(overlay?.textContent).toContain(JOURNEY_INTRO.title);
+    expect(overlay?.textContent).toContain(JOURNEY_INTRO.lines[0]);
+    const start = root.querySelector<HTMLButtonElement>(".reis-story-start");
+    expect(start?.textContent).toBe(JOURNEY_INTRO.start);
+    start!.click();
+    expect(root.querySelector(".reis-story-overlay")).toBeNull();
+    // The map itself is still there underneath the story.
+    expect(root.querySelector(".reis-quest")).toBeTruthy();
+  });
+
+  it("does not re-show the story card once the journey has begun", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = [JOURNEY[0].id];
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    game.showScene("reis");
+    expect(root.querySelector(".reis-story-overlay")).toBeNull();
   });
 
   it("advances story runner gates, friend rescues, and the final star", async () => {

@@ -146,6 +146,48 @@ export function frontierIndex(completed: string[]): number {
 
 export const FRIENDS = REGIONS.map((plan) => plan.friend);
 
+// ---- the story spine -------------------------------------------------------
+// When the star fell, the colour drained out of every region. Buddy carries the
+// star home one region at a time; each region's colour blooms back as the child
+// finishes it, and a friend who was lost there joins the parade. These tiny,
+// kid-readable beats give the journey a "why" beyond just "next activity".
+
+/** One-line story hook shown + spoken the first time Buddy enters each region. */
+export const REGION_STORY: Record<string, string> = {
+  grasland: "Het grasland werd grijs toen de ster viel. Breng de kleuren terug!",
+  muntgrot: "In de Muntgrot is het donker. Tel goed, dan glinstert het weer!",
+  ijsbaan: "Op de ijsbaan is alles bevroren. Warme antwoorden laten het smelten!",
+  webwoud: "In het Webwoud raakte een vriendje verstrikt. Help het los!",
+  bouwdorp: "Het Bouwdorp viel om. Samen bouwen we het stukje voor stukje weer op!",
+  sterrenrace: "Bijna thuis! De sterrenhemel wacht op zijn verloren sterretje."
+};
+
+/** What each rescued friend says/does as it joins the parade. */
+export const FRIEND_STORY: Record<string, string> = {
+  "f-bun": "Hippie het konijn hupt mee en wijst de weg!",
+  "f-fox": "Vonk de vos snuffelt de muntjes zo voor je op!",
+  "f-peng": "Pim de pinguïn glijdt vrolijk met je mee!",
+  "f-owl": "Oeki de uil houdt van bovenaf de wacht!",
+  "f-frog": "Bram de kikker springt van blok naar blok!",
+  "f-dragon": "Sterre de draak draagt de ster het laatste stukje!"
+};
+
+/** The opening story, shown once on a brand-new journey (no nodes done yet). */
+export const JOURNEY_INTRO = {
+  title: "De Sterrenreis",
+  lines: [
+    "Op een nacht viel er een sterretje uit de hemel.",
+    "Alle kleuren verdwenen… maar samen brengen we ze terug!",
+    "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden."
+  ],
+  start: "Start het avontuur!"
+};
+
+/** The closing story, spoken at the star finale. */
+export function journeyFinale(friendsRescued: number): string {
+  return `Hoera! De ster is thuis en schijnt weer! Alle kleuren zijn terug en ${friendsRescued} vriendjes vieren mee. Knap gedaan!`;
+}
+
 export function journeyNodeTitle(node: JourneyNode): string {
   if (node.kind === "gate") return `${getWorld(node.worldId).name} run`;
   if (node.kind === "friend") return node.friendName ? `Red ${node.friendName}` : "Red een vriendje";

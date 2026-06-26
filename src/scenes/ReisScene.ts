@@ -1,9 +1,13 @@
 import {
   FRIENDS,
+  FRIEND_STORY,
   JOURNEY,
   JOURNEY_HEIGHT,
+  JOURNEY_INTRO,
   JOURNEY_WIDTH,
+  REGION_STORY,
   frontierIndex,
+  journeyFinale,
   journeyNodeAction,
   journeyNodeTitle,
   journeyProgressLabel,
@@ -307,7 +311,8 @@ export class ReisScene extends BaseScene {
     this.bloom(node.id);
     this.buddy?.setMood("wow", 1600);
     this.buddy?.say(`${node.friendName ?? "Vriendje"}!`);
-    this.game.voice.speak(`Hoera! ${node.friendName ?? "Een vriendje"} is gered en gaat mee!`, { interrupt: true });
+    const story = (node.friendId && FRIEND_STORY[node.friendId]) || "";
+    this.game.voice.speak(`Hoera! ${node.friendName ?? "Een vriendje"} is gered en gaat mee! ${story}`, { interrupt: true });
   }
 
   private finale(node: JourneyNode): void {
@@ -317,7 +322,9 @@ export class ReisScene extends BaseScene {
     this.render();
     this.buddy?.setMood("wow");
     this.buddy?.say("Thuis!");
-    this.game.voice.speak("Hoera! We zijn thuis! De ster schijnt weer!", { interrupt: true, pitch: 1.25 });
+    const done = new Set(this.journey().completed);
+    const friendsRescued = FRIENDS.filter((friend) => done.has(friend.id)).length;
+    this.game.voice.speak(journeyFinale(friendsRescued), { interrupt: true, pitch: 1.25 });
     const burst = document.createElement("div");
     burst.className = "results-burst reis-finale";
     burst.setAttribute("aria-hidden", "true");
@@ -369,21 +376,54 @@ export class ReisScene extends BaseScene {
     if (here.regionId === this.game.journeyLastRegion) return;
     this.game.journeyLastRegion = here.regionId;
     const world = getWorld(here.regionId);
+    const story = REGION_STORY[here.regionId] ?? "";
     const banner = document.createElement("div");
     banner.className = "reis-region-banner";
     banner.setAttribute("aria-hidden", "true");
-    banner.innerHTML = `<span aria-hidden="true">${world.emoji}</span> Welkom in ${world.name}!`;
+    banner.innerHTML = `<span class="reis-region-title"><span aria-hidden="true">${world.emoji}</span> Welkom in ${world.name}!</span>${story ? `<span class="reis-region-story">${story}</span>` : ""}`;
     this.root.appendChild(banner);
-    const timer = window.setTimeout(() => banner.remove(), 2400);
+    const timer = window.setTimeout(() => banner.remove(), 3600);
     this.addCleanup(() => window.clearTimeout(timer));
-    if (this.journey().completed.length > 0) this.game.voice.speak(`Welkom in ${world.name}!`, { interrupt: false });
+    if (this.journey().completed.length > 0) this.game.voice.speak(`Welkom in ${world.name}! ${story}`, { interrupt: false });
   }
 
   private intro(): void {
     this.game.journeySeenCompleted = this.journey().completed.length;
-    const line = this.journey().completed.length === 0 ? "Oh nee! Mijn sterretje! Help je hem naar huis?" : "Verder met de reis! Waar gaan we heen?";
     this.buddy?.setMood("happy", 1500);
-    this.game.voice.speak(line, { interrupt: true });
+    // A brand-new journey opens with the story; returning players just get nudged.
+    if (this.journey().completed.length === 0) {
+      this.showStoryCard();
+      return;
+    }
+    this.game.voice.speak("Verder met de reis! Waar gaan we heen?", { interrupt: true });
+  }
+
+  // The opening story beat: a tappable card that sets up the whole adventure.
+  private showStoryCard(): void {
+    const overlay = document.createElement("div");
+    overlay.className = "reis-story-overlay";
+    const card = document.createElement("div");
+    card.className = "reis-story-card";
+    card.innerHTML =
+      `<div class="reis-story-star" aria-hidden="true">⭐</div>` +
+      `<h2>${JOURNEY_INTRO.title}</h2>` +
+      JOURNEY_INTRO.lines.map((line) => `<p>${line}</p>`).join("");
+    const start = document.createElement("button");
+    start.type = "button";
+    start.className = "btn primary reis-story-start";
+    start.textContent = JOURNEY_INTRO.start;
+    start.addEventListener("click", () => {
+      overlay.remove();
+      this.buddy?.setMood("wow", 1400);
+      this.buddy?.say("Daar gaan we!");
+      this.game.voice.speak("Daar gaan we! Volg de weg.", { interrupt: true });
+    });
+    card.appendChild(start);
+    overlay.appendChild(card);
+    this.root.appendChild(overlay);
+    this.addCleanup(() => overlay.remove());
+    // Read the story aloud for a pre-reader.
+    this.game.voice.speak(JOURNEY_INTRO.lines.join(" "), { interrupt: true });
   }
 
   private bloom(nodeId: string): void {
