@@ -44,6 +44,25 @@ export class BossScene extends MiniGameScene {
     this.cap = getWorld(this.regionId).maxQuantity;
     super.mount();
     this.root.classList.add("boss-scene");
+    this.showBossIntro();
+  }
+
+  // A short, dramatic reveal so the boss feels like an EVENT, not just a screen.
+  private showBossIntro(): void {
+    const intro = document.createElement("div");
+    intro.className = "boss-intro";
+    intro.setAttribute("aria-hidden", "true");
+    intro.innerHTML =
+      `<div class="boss-intro-card">` +
+      `<span class="boss-intro-vs">BAAS!</span>` +
+      `<span class="boss-intro-face">${this.boss.emoji}</span>` +
+      `<strong>${this.boss.name}</strong>` +
+      `<em>“${this.boss.taunt}”</em>` +
+      `</div>`;
+    this.root.appendChild(intro);
+    this.game.haptics.play("stumble");
+    this.game.voice.speak(`${this.boss.name}! ${this.boss.taunt}`, { interrupt: true });
+    this.later(() => intro.remove(), 1900);
   }
 
   protected makeChallenge(): Challenge {
