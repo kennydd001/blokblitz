@@ -585,6 +585,18 @@ describe("Speeltuin hub + calm game modes", () => {
     }
   });
 
+  it("draws a distinct SVG monster for every boss region", async () => {
+    const { buildBossArt } = await import("../src/scenes/bossArt");
+    const regions = [...new Set(JOURNEY.filter((node) => node.kind === "boss").map((node) => node.regionId))];
+    const svgs = regions.map((region) => buildBossArt(region));
+    regions.forEach((region, i) => {
+      expect(svgs[i]).toContain("<svg");
+      expect(svgs[i]).toContain(`data-boss="${region}"`);
+    });
+    // No two bosses share the same monster art.
+    expect(new Set(svgs).size).toBe(regions.length);
+  });
+
   it("back-fills a pre-boss save to a clean linear prefix (no jumping backwards)", () => {
     // A returning save whose furthest done node is a region's friend...
     const friendIndex = JOURNEY.findIndex((node) => node.kind === "friend");

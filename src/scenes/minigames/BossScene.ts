@@ -4,6 +4,7 @@ import { RepresentationFactory } from "../../education/representations/Represent
 import type { Challenge, Representation } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { getWorld } from "../../runner/worlds";
+import { buildBossArt } from "../bossArt";
 import { subitizeChallenge } from "./miniChallenges";
 import { MiniGameScene } from "./MiniGameScene";
 import { buildDoneScreen, starsFromPerfect } from "./miniUi";
@@ -55,7 +56,7 @@ export class BossScene extends MiniGameScene {
     intro.innerHTML =
       `<div class="boss-intro-card">` +
       `<span class="boss-intro-vs">BAAS!</span>` +
-      `<span class="boss-intro-face">${this.boss.emoji}</span>` +
+      `<span class="boss-intro-face">${buildBossArt(this.regionId)}</span>` +
       `<strong>${this.boss.name}</strong>` +
       `<em>“${this.boss.taunt}”</em>` +
       `</div>`;
@@ -80,7 +81,7 @@ export class BossScene extends MiniGameScene {
     const foe = document.createElement("div");
     foe.className = "boss-foe";
     foe.dataset.boss = this.regionId;
-    foe.innerHTML = `<span class="boss-face" aria-hidden="true">${this.boss.emoji}</span><span class="boss-name">${this.boss.name}</span>`;
+    foe.innerHTML = `<span class="boss-face" aria-hidden="true">${buildBossArt(this.regionId)}</span><span class="boss-name">${this.boss.name}</span>`;
     const remaining = this.total - this.correctRounds;
     const health = document.createElement("div");
     health.className = "boss-health";
