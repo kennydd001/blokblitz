@@ -8265,9 +8265,10 @@ input {
 .reis-cloud {
   position: absolute;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.85;
   animation: cloud-drift 26s linear infinite;
 }
+.reis-cloud svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 5px 7px rgba(23, 32, 51, 0.12)); }
 @keyframes cloud-drift {
   0% { transform: translateX(-12px); }
   50% { transform: translateX(16px); }

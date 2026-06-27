@@ -99,6 +99,7 @@ export class ReisScene extends BaseScene {
     map.style.width = `${JOURNEY_WIDTH}px`;
 
     map.appendChild(this.buildBackdrop());
+    map.appendChild(this.buildClouds());
 
     JOURNEY.forEach((node, index) => {
       const state = completed.has(node.id) ? "done" : index === frontier ? "now" : "locked";
@@ -213,6 +214,31 @@ export class ReisScene extends BaseScene {
       <path d="${path}" fill="none" stroke="#f4b942" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 24"/>
     </svg>`;
     return holder;
+  }
+
+  // Soft drifting clouds over the map sky for a living boot screen.
+  private buildClouds(): DocumentFragment {
+    const frag = document.createDocumentFragment();
+    const spots: Array<[number, number, number]> = [
+      [12, 0.16, 96],
+      [70, 0.26, 78],
+      [26, 0.44, 120],
+      [62, 0.58, 86],
+      [16, 0.74, 104],
+      [72, 0.86, 80]
+    ];
+    spots.forEach(([leftPct, topFrac, w], i) => {
+      const cloud = document.createElement("div");
+      cloud.className = "reis-cloud";
+      cloud.setAttribute("aria-hidden", "true");
+      cloud.style.left = `${leftPct}%`;
+      cloud.style.top = `${Math.round(JOURNEY_HEIGHT * topFrac)}px`;
+      cloud.style.width = `${w}px`;
+      cloud.style.animationDelay = `${i * -3.7}s`;
+      cloud.innerHTML = `<svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg"><g fill="#ffffff"><ellipse cx="34" cy="42" rx="22" ry="13"/><ellipse cx="58" cy="32" rx="28" ry="20"/><ellipse cx="84" cy="40" rx="24" ry="15"/></g></svg>`;
+      frag.appendChild(cloud);
+    });
+    return frag;
   }
 
   // A few blocky props down each colour band's edges so every region looks distinct.
