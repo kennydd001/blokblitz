@@ -1,9 +1,11 @@
+import { JOURNEY } from "../../data/journey";
 import { stickerById } from "../../data/stickers";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { praiseWord } from "../../game/VoiceManager";
 import { skinById } from "../../runner/skins";
+import { cssHex, getWorld } from "../../runner/worlds";
 import { createBuddy, type Buddy } from "../buddy";
 import { BaseScene } from "../SceneUtils";
 import { buildDoneScreen, starsFromPerfect } from "./miniUi";
@@ -49,6 +51,7 @@ export abstract class MiniGameScene extends BaseScene {
     super.mount();
     this.game.resetWorld("menu");
     this.root.classList.add("mini-scene", "centered");
+    this.themeArena();
     this.round = 1;
     this.correctRounds = 0;
     this.perfectRounds = 0;
@@ -166,6 +169,16 @@ export abstract class MiniGameScene extends BaseScene {
       this.later(() => banner.remove(), 1100);
       if (this.streak >= 4) this.game.audio.play("snap");
     }
+  }
+
+  // When launched from the Sterrenreis, softly tint the play area with that
+  // region's colours so every story activity feels like it's in its own world.
+  // (The boss scene overrides this with a moodier version after super.mount.)
+  private themeArena(): void {
+    const node = this.game.lastJourneyNode ? JOURNEY.find((n) => n.id === this.game.lastJourneyNode) : undefined;
+    if (!node) return;
+    const pal = getWorld(node.regionId).palette;
+    this.root.style.background = `radial-gradient(120% 100% at 50% 18%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5)), linear-gradient(180deg, ${cssHex(pal.sky)} 0%, ${cssHex(pal.ground)} 100%)`;
   }
 
   /** Where "back"/"home" goes: the story map when launched from it, else the Speeltuin. */
