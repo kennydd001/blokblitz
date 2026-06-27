@@ -3,7 +3,7 @@ import { stickerById } from "../../data/stickers";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, Representation } from "../../education/types";
 import type { Game } from "../../game/Game";
-import { getWorld } from "../../runner/worlds";
+import { cssHex, getWorld } from "../../runner/worlds";
 import { buildBossArt } from "../bossArt";
 import { subitizeChallenge } from "./miniChallenges";
 import { MiniGameScene } from "./MiniGameScene";
@@ -45,6 +45,10 @@ export class BossScene extends MiniGameScene {
     this.cap = getWorld(this.regionId).maxQuantity;
     super.mount();
     this.root.classList.add("boss-scene");
+    // Set the fight in the boss's own world: a moody gradient in that region's
+    // sky -> ground colours, so each arena feels like the ice cave, web wood, etc.
+    const pal = getWorld(this.regionId).palette;
+    this.root.style.background = `radial-gradient(130% 100% at 50% 22%, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.34)), linear-gradient(180deg, ${cssHex(pal.sky)} 0%, ${cssHex(pal.ground)} 100%)`;
     this.showBossIntro();
   }
 
