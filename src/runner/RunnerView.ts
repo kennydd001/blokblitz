@@ -119,6 +119,7 @@ export class RunnerView {
 
   private stripes: THREE.Mesh[] = [];
   private props: THREE.Object3D[] = [];
+  private motes: THREE.Mesh[] = [];
 
   private scroll = 0;
   private elapsed = 0;
@@ -148,6 +149,7 @@ export class RunnerView {
     this.particles = [];
     this.stripes = [];
     this.props = [];
+    this.motes = [];
     this.root = new THREE.Group();
     this.ground = new THREE.Group();
     this.scenery = new THREE.Group();
@@ -178,6 +180,7 @@ export class RunnerView {
 
     this.buildGround();
     this.buildScenery();
+    this.buildAtmosphere();
     this.buildHero();
 
     this.root.add(this.ground, this.scenery, this.hero);
@@ -209,7 +212,7 @@ export class RunnerView {
     }
 
     // Lane divider rails so the three lanes read clearly.
-    const railMat = mat(this.palette.rail, { intensity: 0.12, rough: 0.5 });
+    const railMat = mat(this.palette.rail, { emissive: this.palette.rail, intensity: 0.4, rough: 0.4 });
     [-0.5, 0.5].forEach((side) => {
       const rail = block(side * 2.1, 0.05, -(SPAWN_AHEAD - DESPAWN_BEHIND) / 2, 0.08, 0.08, this.range, railMat);
       this.ground.add(rail);
@@ -284,6 +287,40 @@ export class RunnerView {
     return group;
   }
 
+  // A soft field of drifting motes (pollen / snow / sparks, gold in space) that
+  // streams past the runner for depth and life — cheap emissive cubes recycled
+  // toward the camera like the ground stripes.
+  private buildAtmosphere(): void {
+    const space = this.palette.propStyle === "star";
+    const moteColor = space ? 0xffe9a8 : lightenColor(this.palette.sky, 0.5);
+    const moteMat = mat(moteColor, { emissive: moteColor, intensity: space ? 0.7 : 0.4, rough: 0.5 });
+    for (let i = 0; i < 26; i += 1) {
+      const mote = new THREE.Mesh(CUBE, moteMat);
+      const s = 0.09 + (i % 3) * 0.05;
+      mote.scale.set(s, s, s);
+      const x = (Math.random() - 0.5) * 17;
+      const y = 0.6 + Math.random() * 7;
+      mote.position.set(x, y, 0);
+      mote.userData.baseZ = Math.random() * this.range;
+      mote.userData.x = x;
+      mote.userData.y = y;
+      mote.userData.phase = i * 0.7;
+      this.motes.push(mote);
+      this.scenery.add(mote);
+    }
+  }
+
+  private updateMotes(): void {
+    for (const mote of this.motes) {
+      const phase = mote.userData.phase as number;
+      mote.position.z = this.wrapZ(mote.userData.baseZ as number);
+      mote.position.x = (mote.userData.x as number) + Math.sin(this.elapsed * 0.6 + phase) * 0.7;
+      mote.position.y = (mote.userData.y as number) + Math.sin(this.elapsed * 0.9 + phase) * 0.35;
+      mote.rotation.x = this.elapsed + phase;
+      mote.rotation.y = this.elapsed * 0.8 + phase;
+    }
+  }
+
   private buildHero(): void {
     this.hero = new THREE.Group();
     this.heroParts = {};
@@ -320,6 +357,7 @@ export class RunnerView {
     this.elapsed += dt;
     this.scroll += snapshot.speed * dt;
     this.updateGround();
+    this.updateMotes();
     this.reconcileEntities(snapshot.entities);
     this.updateEntities(snapshot);
     this.updateHero(snapshot, dt);
