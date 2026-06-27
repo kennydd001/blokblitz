@@ -7153,9 +7153,13 @@ input {
   30% { transform: translateY(-4px) rotate(6deg); }
   60% { transform: translateY(-4px) rotate(-6deg); }
 }
-/* The boss node on the map glares with a red ring */
-.reis-node.boss .reis-node-face { filter: drop-shadow(0 0 6px rgba(229, 70, 70, 0.85)); }
+/* The boss node on the map shows its monster, glaring with a red ring */
+.reis-node.boss .reis-node-face { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; filter: drop-shadow(0 0 6px rgba(229, 70, 70, 0.85)); }
+.reis-node.boss .reis-node-face .boss-art { width: 100%; height: 100%; }
+.reis-node.boss.now .reis-node-face { width: 54px; height: 54px; }
 .reis-node.boss.now { box-shadow: 0 0 0 5px #e54646, 0 0 22px rgba(229, 70, 70, 0.7), 0 7px 0 rgba(23, 32, 51, 0.24); }
+.reis-quest.boss .reis-quest-emoji { display: inline-flex; align-items: center; justify-content: center; }
+.reis-quest.boss .reis-quest-emoji .boss-art { width: 48px; height: 48px; }
 
 .mini-correct-burst {
   position: fixed;

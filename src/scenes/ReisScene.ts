@@ -16,6 +16,7 @@ import {
   type JourneyNode
 } from "../data/journey";
 import type { Game } from "../game/Game";
+import { buildBossArt } from "./bossArt";
 import { skinById } from "../runner/skins";
 import { cssHex, getWorld, type PropStyle } from "../runner/worlds";
 import { createBuddy, type Buddy } from "./buddy";
@@ -245,7 +246,7 @@ export class ReisScene extends BaseScene {
     button.setAttribute("aria-label", state === "locked" ? "nog op slot" : node.kind);
     button.innerHTML = `
       ${state === "now" ? '<span class="reis-beacon" aria-hidden="true"></span>' : ""}
-      <span class="reis-node-face" aria-hidden="true">${state === "locked" ? "🔒" : node.emoji}</span>
+      <span class="reis-node-face" aria-hidden="true">${state === "locked" ? "🔒" : node.kind === "boss" ? buildBossArt(node.regionId) : node.emoji}</span>
       ${state === "done" ? '<span class="reis-check" aria-hidden="true">✓</span>' : ""}
     `;
     if (state === "now") {
@@ -266,7 +267,7 @@ export class ReisScene extends BaseScene {
     card.dataset.questNode = node.id;
     card.setAttribute("aria-label", `Volgende stap: ${isComplete ? "Ster thuis" : journeyNodeTitle(node)}`);
     card.innerHTML = `
-      <span class="reis-quest-emoji" aria-hidden="true">${isComplete ? "🏠" : node.emoji}</span>
+      <span class="reis-quest-emoji" aria-hidden="true">${isComplete ? "🏠" : node.kind === "boss" ? buildBossArt(node.regionId) : node.emoji}</span>
       <span class="reis-quest-copy">
         <small>${isComplete ? "Klaar" : "Volgende stap"}</small>
         <strong>${isComplete ? "Ster thuis" : journeyNodeTitle(node)}</strong>
