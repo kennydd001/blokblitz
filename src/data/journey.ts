@@ -30,7 +30,8 @@ const MODE_EMOJI: Record<string, string> = {
   memory: "🧠",
   compare: "🦖",
   order: "🔢",
-  fill: "🔟"
+  fill: "🔟",
+  splitbord: "⚖️"
 };
 
 const MODE_TITLE: Record<string, string> = {
@@ -40,7 +41,8 @@ const MODE_TITLE: Record<string, string> = {
   memory: "Vind de paren",
   compare: "Kies de grootste",
   order: "Zet op volgorde",
-  fill: "Vul de tien"
+  fill: "Vul de tien",
+  splitbord: "Splitsbord"
 };
 
 const MODE_ACTION: Record<string, string> = {
@@ -50,7 +52,8 @@ const MODE_ACTION: Record<string, string> = {
   memory: "Draai twee gelijke beelden om.",
   compare: "Pak de grootste groep.",
   order: "Leg de getallen klein naar groot.",
-  fill: "Maak het doelgetal vol."
+  fill: "Maak het doelgetal vol.",
+  splitbord: "Vul de twee vakjes samen tot het getal."
 };
 
 // Ordered by each region's number cap (5 -> 6 -> 8 -> 8 -> 10 -> 10), so difficulty
@@ -66,7 +69,7 @@ const REGIONS: RegionPlan[] = [
   { region: "muntgrot", stops: ["match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
   { region: "ijsbaan", stops: ["compare", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
   { region: "webwoud", stops: ["memory", "compare"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
-  { region: "bouwdorp", stops: ["fill", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
+  { region: "bouwdorp", stops: ["fill", "splitbord", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
   { region: "sterrenrace", stops: ["match", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];
 

@@ -730,6 +730,43 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays the Splitbord rekenbordje from the journey: a wrong tap scaffolds, finishing advances", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const sbIndex = JOURNEY.findIndex((node) => node.scene === "splitbord");
+    const sb = JOURNEY[sbIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, sbIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${sb.id}"]`)!.click();
+    expect(root.querySelector(".splitbord-board")).toBeTruthy();
+
+    // A wrong tap teaches (scaffold) instead of failing, and does not finish.
+    const wrong = root.querySelector<HTMLButtonElement>('.splitbord-choice[data-correct="false"]');
+    if (wrong) {
+      wrong.click();
+      expect(root.querySelector(".mini-scaffold")).toBeTruthy();
+    }
+    expect(root.querySelector(".mini-done")).toBeNull();
+
+    // Finish by always tapping the correct split.
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.splitbord-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(sb.id);
+    // Logged as splitbord-* under the existing partwhole skill for the dashboard.
+    expect(game.mastery.getAttempts().some((a) => a.challengeType.startsWith("splitbord-"))).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("advances story memory stops back to the Sterrenreis map", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");

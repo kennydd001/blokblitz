@@ -32,6 +32,7 @@ import { MatchScene } from "../scenes/minigames/MatchScene";
 import { MemoryScene } from "../scenes/minigames/MemoryScene";
 import { OneMoreLessScene } from "../scenes/minigames/OneMoreLessScene";
 import { OrderScene } from "../scenes/minigames/OrderScene";
+import { SplitbordScene } from "../scenes/minigames/SplitbordScene";
 import { SettingsScene } from "../scenes/SettingsScene";
 import { SterrenstadScene } from "../scenes/SterrenstadScene";
 import { SummaryScene } from "../scenes/SummaryScene";
@@ -329,6 +330,7 @@ export class Game {
     this.scenes.register("onemoreless", (game) => new OneMoreLessScene(game));
     this.scenes.register("order", (game) => new OrderScene(game));
     this.scenes.register("memory", (game) => new MemoryScene(game));
+    this.scenes.register("splitbord", (game) => new SplitbordScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));

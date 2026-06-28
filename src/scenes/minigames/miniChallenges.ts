@@ -2,6 +2,7 @@
 // Challenge objects so every answer is logged through the same MasteryTracker and
 // shows up in the parent dashboard, while each mode renders its own clear UI.
 
+import { allSplitsFor, type SplitMode } from "../../education/math/splits";
 import { clampQuantity } from "../../education/quantityLayouts";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption, Representation, Skill } from "../../education/types";
@@ -55,7 +56,7 @@ function baseChallenge(fields: Partial<Challenge> & { skill: Skill; quantity: nu
     correctAnswer: fields.correctAnswer ?? fields.quantity,
     displayTimeMs: 4000,
     options: fields.options,
-    mechanic: "",
+    mechanic: fields.mechanic ?? "",
     successEffect: "Goed zo!",
     safeErrorEffect: "Probeer nog eens.",
     hint: fields.hint ?? "Tel rustig: eerst vijf, dan de rest."
@@ -200,6 +201,102 @@ export function resultOption(isCorrect: boolean): ChallengeOption {
 /** Build the option object for a chosen quantity (used by Fill where the child constructs the answer). */
 export function pickedOption(quantity: number, target: number, representation: Representation = "tenframe"): ChallengeOption {
   return option(quantity, representation, quantity === target);
+}
+
+// ---- Splitbord Builder (part-whole splits / rekenbordje met 3 vakjes) ------
+const SPLIT_MODES: SplitMode[] = ["pick-parts", "pick-missing", "pick-total"];
+
+function pairOption(label: string, isCorrect: boolean): ChallengeOption {
+  return { id: uid("pair"), label, value: label, representation: "numeral", svg: "", isCorrect };
+}
+
+// Plausible "pair" distractors that look close but do NOT make the total
+// (drawn from splits of total +/- 1, so the sums are near but wrong).
+function partDistractors(total: number, count = 2): string[] {
+  const wrong: string[] = [];
+  const candidates = shuffle([...allSplitsFor(total + 1), ...allSplitsFor(Math.max(1, total - 1))].filter((s) => !s.isZeroSplit));
+  for (const split of candidates) {
+    const label = `${split.left}+${split.right}`;
+    if (split.left + split.right !== total && !wrong.includes(label)) wrong.push(label);
+    if (wrong.length >= count) break;
+  }
+  return wrong;
+}
+
+/**
+ * The 3-box split board. Three challenge shapes:
+ * - pick-parts ("maak 5"): choose the pair that sums to the total.
+ * - pick-missing ("5 is 4 en ?"): one part shown, pick the missing part.
+ * - pick-total ("3 en 2 maken ?"): both parts shown, pick the total.
+ * Logs as the existing `partwhole` skill so it flows into the dashboard for free.
+ */
+export function splitbordChallenge(total: number, mode?: SplitMode): Challenge {
+  const t = Math.max(2, clampQuantity(total));
+  const chosenMode = mode ?? SPLIT_MODES[Math.floor(Math.random() * SPLIT_MODES.length)];
+  const rep: Representation = t <= 5 ? "fiveframe" : "tenframe";
+  const nonZero = allSplitsFor(t).filter((s) => !s.isZeroSplit);
+  const pick = nonZero[Math.floor(Math.random() * nonZero.length)] ?? allSplitsFor(t)[0];
+  const { left, right } = pick;
+
+  if (chosenMode === "pick-parts") {
+    const correctLabel = `${left}+${right}`;
+    const options = shuffle([pairOption(correctLabel, true), ...partDistractors(t).map((label) => pairOption(label, false))]);
+    return baseChallenge({
+      challengeType: "splitbord-parts",
+      skill: "partwhole",
+      quantity: t,
+      representation: rep,
+      promptRepresentation: rep,
+      answerRepresentation: "numeral",
+      correctAnswer: [correctLabel],
+      options,
+      title: `Maak ${t}`,
+      prompt: `Welke twee samen maken ${t}?`,
+      mechanic: `split|pick-parts|${t}|?|?`,
+      hint: "Tel de twee vakjes samen. Eerst vijf, dan de rest."
+    });
+  }
+
+  if (chosenMode === "pick-missing") {
+    const known = left;
+    const missing = right;
+    const distractors = [...new Set([known, missing + 1, missing - 1, missing + 2])]
+      .filter((d) => d >= 0 && d <= t && d !== missing)
+      .slice(0, 2);
+    const options = shuffle([option(missing, "numeral", true), ...distractors.map((d) => option(d, "numeral", false))]);
+    return baseChallenge({
+      challengeType: "splitbord-missing",
+      skill: "partwhole",
+      quantity: t,
+      correctAnswer: missing,
+      representation: rep,
+      promptRepresentation: rep,
+      answerRepresentation: "numeral",
+      options,
+      title: `${t} is ${known} en ?`,
+      prompt: `${t} is ${known} en hoeveel?`,
+      mechanic: `split|pick-missing|${t}|${known}|?`,
+      hint: "Hoeveel moet erbij om samen het getal te maken? Kijk naar het lege vak."
+    });
+  }
+
+  // pick-total
+  const distractors = [t + 1, t - 1, t + 2].filter((d) => d >= 1 && d <= 10 && d !== t).slice(0, 2);
+  const options = shuffle([option(t, "numeral", true), ...distractors.map((d) => option(d, "numeral", false))]);
+  return baseChallenge({
+    challengeType: "splitbord-total",
+    skill: "partwhole",
+    quantity: t,
+    correctAnswer: t,
+    representation: rep,
+    promptRepresentation: rep,
+    answerRepresentation: "numeral",
+    options,
+    title: `${left} en ${right} maken ?`,
+    prompt: `${left} en ${right} maken samen hoeveel?`,
+    mechanic: `split|pick-total|?|${left}|${right}`,
+    hint: "Tel de twee delen samen."
+  });
 }
 
 /** Cross-representation match challenge for the Memory mode (match by amount). */

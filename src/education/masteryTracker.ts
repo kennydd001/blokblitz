@@ -32,9 +32,20 @@ export class MasteryTracker {
     return withError;
   }
 
+  // Generic grouping keys: new curriculum attempts may carry their own
+  // rangeKey/targetKey; number attempts fall back to the numeric fields, so
+  // existing grouping is byte-identical.
+  private rangeKeyOf(attempt: AttemptLog): string {
+    return attempt.rangeKey ?? attempt.quantityRange;
+  }
+
+  private targetKeyOf(attempt: AttemptLog): string {
+    return attempt.targetKey ?? String(attempt.quantity);
+  }
+
   getCell(skill: Skill, representation: Representation, range: QuantityRange): MasteryCell {
     const matching = this.attempts.filter(
-      (attempt) => attempt.skill === skill && attempt.representation === representation && attempt.quantityRange === range
+      (attempt) => attempt.skill === skill && attempt.representation === representation && this.rangeKeyOf(attempt) === range
     );
     const exposures = matching.length;
     const correct = matching.filter((attempt) => attempt.wasCorrect).length;

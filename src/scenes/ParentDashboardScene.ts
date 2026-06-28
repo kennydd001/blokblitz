@@ -32,6 +32,7 @@ export class ParentDashboardScene extends BaseScene {
 
     dashboard.append(
       this.panel("Mastery per skill", tracker.masteryBySkill().map((item) => this.bar(childFocusTitle(item.skill), item.accuracy, `${item.exposures}x ${item.mastery}`))),
+      this.panel("Splits (rekenbordje)", this.splitRows()),
       this.panel(
         "Mastery per representatie",
         tracker.masteryByRepresentation().map((item) => this.bar(childRepresentationName(item.representation), item.accuracy, `${item.exposures}x ${item.mastery}`))
@@ -69,6 +70,21 @@ export class ParentDashboardScene extends BaseScene {
       this.button("Menu", () => this.game.showScene("mainMenu"), "ghost")
     );
     this.root.append(sceneHeader("Ouder dashboard", "Echte opgeslagen mastery data."), guide, dashboard, actions);
+  }
+
+  // Splitbord progress: the part-whole splits logged via the Splitbord mode.
+  private splitRows(): HTMLElement[] {
+    const splits = this.game.mastery.getAttempts().filter((a) => a.challengeType.startsWith("splitbord-"));
+    if (splits.length === 0) return [];
+    const correct = splits.filter((a) => a.wasCorrect).length;
+    const acc = Math.round((correct / splits.length) * 100);
+    const rts = splits.filter((a) => a.wasCorrect && a.reactionTimeMs > 0).map((a) => a.reactionTimeMs).sort((x, y) => x - y);
+    const medRT = rts.length ? rts[Math.floor(rts.length / 2)] : 0;
+    return [
+      this.line("Pogingen", String(splits.length)),
+      this.line("Juist", `${acc}%`),
+      this.line("Mediane reactietijd", `${medRT} ms`)
+    ];
   }
 
   private panel(title: string, rows: HTMLElement[]): HTMLElement {

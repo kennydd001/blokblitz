@@ -40,6 +40,7 @@ export type SceneId =
   | "onemoreless"
   | "order"
   | "memory"
+  | "splitbord"
   | "numberOfDay"
   | "runner"
   | "webwoud"
@@ -80,6 +81,14 @@ export interface AttemptLog {
   reactionTimeMs: number;
   hintUsed: boolean;
   errorType?: string;
+  // ---- Optional generic curriculum fields (non-breaking) ----
+  // Let non-number domains (reading, measurement, geometry...) log through the
+  // same pipeline. When absent, the tracker falls back to the number fields.
+  domain?: LearningDomain;
+  targetKey?: string;
+  rangeKey?: string;
+  stimulusKey?: string;
+  responseKey?: string;
 }
 
 export interface ChallengeOption {
@@ -235,3 +244,49 @@ export const MINIGAME_TYPES = [
 ] as const;
 
 export type MinigameType = (typeof MINIGAME_TYPES)[number];
+
+// ---- Generic curriculum layer (non-breaking, additive) -------------------
+// The game grows from "number sense 1-10" toward a full first-grade curriculum
+// (reading, operations to 20, measurement, geometry...). These types describe a
+// learning target in any domain WITHOUT disturbing the number-first Skill union
+// above — existing number modes keep using `Skill`; new modes use this superset.
+export type LearningDomain =
+  | "math-number"
+  | "math-operations"
+  | "math-measurement"
+  | "math-geometry"
+  | "literacy-phonemic"
+  | "literacy-reading"
+  | "literacy-writing"
+  | "listening-comprehension"
+  | "world-traffic";
+
+export type CurriculumSkill =
+  | Skill
+  | "numberLine20"
+  | "teenNumber"
+  | "addSub20"
+  | "bridge10"
+  | "money10"
+  | "timeHourHalf"
+  | "measureCompare"
+  | "shapeRecognize"
+  | "spatialPosition"
+  | "patternContinue"
+  | "soundDiscriminate"
+  | "soundBlend"
+  | "soundSegment"
+  | "letterSound"
+  | "wordRead"
+  | "wordBuild"
+  | "rhyme"
+  | "vocabulary"
+  | "listeningQuestion";
+
+export interface LearningTarget {
+  id: string;
+  domain: LearningDomain;
+  skill: CurriculumSkill;
+  rangeKey: string;
+  label: string;
+}
