@@ -26,6 +26,7 @@ import { ReisScene } from "../scenes/ReisScene";
 import { RunScene } from "../scenes/RunScene";
 import { BossScene } from "../scenes/minigames/BossScene";
 import { CompareScene } from "../scenes/minigames/CompareScene";
+import { GetallenlijnScene } from "../scenes/minigames/GetallenlijnScene";
 import { KlankgrotScene } from "../scenes/minigames/KlankgrotScene";
 import { LetterkompasScene } from "../scenes/minigames/LetterkompasScene";
 import { CountScene } from "../scenes/minigames/CountScene";
@@ -356,6 +357,7 @@ export class Game {
     this.scenes.register("letterkompas", (game) => new LetterkompasScene(game));
     this.scenes.register("tientalhuis", (game) => new TientalhuisScene(game));
     this.scenes.register("zoemroute", (game) => new ZoemrouteScene(game));
+    this.scenes.register("getallenlijn", (game) => new GetallenlijnScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));

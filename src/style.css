@@ -7138,6 +7138,21 @@ input {
 .zoemroute-choices { gap: 16px; }
 .zoemroute-choice { min-width: 96px; }
 
+/* ===== Getallenlijn Glijbaan — number line to 20 ===== */
+.getallenlijn-play { gap: 18px; }
+.getallenlijn-line { display: flex; align-items: stretch; gap: 6px; max-width: 96%; }
+.getallenlijn-cell {
+  min-width: 50px; min-height: 56px; display: flex; align-items: center; justify-content: center;
+  background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 14px;
+  box-shadow: 0 4px 0 rgba(23, 32, 51, 0.16);
+}
+.getallenlijn-cell b { font-size: 1.7rem; font-weight: 900; color: var(--ink); }
+.getallenlijn-cell.blank { border-style: dashed; background: #fff7d6; box-shadow: 0 0 0 4px var(--gold) inset, 0 4px 0 rgba(23, 32, 51, 0.16); }
+.getallenlijn-cell.blank b { color: #c79a16; }
+.getallenlijn-choices { gap: 14px; }
+.getallenlijn-choice { min-width: 78px; }
+.getallenlijn-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+
 /* ===== Tientalhuis — teen-number structure (10 + n) ===== */
 .tientalhuis-play { gap: 16px; }
 .tientalhuis-board { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }

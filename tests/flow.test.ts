@@ -889,6 +889,36 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays Getallenlijn from the journey: a blank on the line, finishing advances + logs math-to-20", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const glIndex = JOURNEY.findIndex((node) => node.scene === "getallenlijn");
+    const gl = JOURNEY[glIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, glIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${gl.id}"]`)!.click();
+    expect(root.querySelector(".getallenlijn-line")).toBeTruthy();
+    expect(root.querySelectorAll(".getallenlijn-cell")).toHaveLength(5);
+    expect(root.querySelector(".getallenlijn-cell.blank")).toBeTruthy();
+    expect(root.querySelectorAll(".getallenlijn-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.getallenlijn-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(gl.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-number")).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("advances story memory stops back to the Sterrenreis map", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
