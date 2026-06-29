@@ -43,8 +43,14 @@ export class MasteryTracker {
     return attempt.targetKey ?? String(attempt.quantity);
   }
 
+  // Only number-domain attempts feed the number-first views, so reading/measure
+  // attempts (which carry placeholder numeric fields) never pollute them.
+  private numberAttempts(): AttemptLog[] {
+    return this.attempts.filter((attempt) => !attempt.domain || attempt.domain.startsWith("math"));
+  }
+
   getCell(skill: Skill, representation: Representation, range: QuantityRange): MasteryCell {
-    const matching = this.attempts.filter(
+    const matching = this.numberAttempts().filter(
       (attempt) => attempt.skill === skill && attempt.representation === representation && this.rangeKeyOf(attempt) === range
     );
     const exposures = matching.length;
@@ -95,7 +101,7 @@ export class MasteryTracker {
 
   masteryBySkill(): Array<{ skill: Skill; accuracy: number; exposures: number; mastery: string }> {
     return SKILLS.map((skill) => {
-      const attempts = this.attempts.filter((attempt) => attempt.skill === skill);
+      const attempts = this.numberAttempts().filter((attempt) => attempt.skill === skill);
       const exposures = attempts.length;
       const accuracy = exposures === 0 ? 0 : attempts.filter((attempt) => attempt.wasCorrect).length / exposures;
       const fluent = this.getCells().filter((cell) => cell.skill === skill && cell.mastery === "fluent").length;
@@ -107,7 +113,7 @@ export class MasteryTracker {
 
   masteryByRepresentation(): Array<{ representation: Representation; accuracy: number; exposures: number; mastery: string }> {
     return REPRESENTATIONS.map((representation) => {
-      const attempts = this.attempts.filter((attempt) => attempt.representation === representation);
+      const attempts = this.numberAttempts().filter((attempt) => attempt.representation === representation);
       const exposures = attempts.length;
       const accuracy = exposures === 0 ? 0 : attempts.filter((attempt) => attempt.wasCorrect).length / exposures;
       const fluent = this.getCells().filter((cell) => cell.representation === representation && cell.mastery === "fluent").length;
@@ -120,7 +126,7 @@ export class MasteryTracker {
   weakestQuantities(limit = 5): Array<{ quantity: number; accuracy: number; exposures: number }> {
     return Array.from({ length: 10 }, (_, index) => index + 1)
       .map((quantity) => {
-        const attempts = this.attempts.filter((attempt) => attempt.quantity === quantity);
+        const attempts = this.numberAttempts().filter((attempt) => attempt.quantity === quantity);
         const exposures = attempts.length;
         const accuracy = exposures === 0 ? 1 : attempts.filter((attempt) => attempt.wasCorrect).length / exposures;
         return { quantity, accuracy, exposures };
@@ -132,7 +138,7 @@ export class MasteryTracker {
 
   weakestRanges(): Array<{ range: QuantityRange; accuracy: number; exposures: number }> {
     return QUANTITY_RANGES.map((range) => {
-      const attempts = this.attempts.filter((attempt) => getQuantityRange(attempt.quantity) === range);
+      const attempts = this.numberAttempts().filter((attempt) => getQuantityRange(attempt.quantity) === range);
       const exposures = attempts.length;
       const accuracy = exposures === 0 ? 1 : attempts.filter((attempt) => attempt.wasCorrect).length / exposures;
       return { range, accuracy, exposures };

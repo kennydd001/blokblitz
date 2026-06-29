@@ -41,6 +41,7 @@ export type SceneId =
   | "order"
   | "memory"
   | "splitbord"
+  | "klankgrot"
   | "numberOfDay"
   | "runner"
   | "webwoud"
@@ -69,7 +70,9 @@ export interface AttemptLog {
   levelId: string;
   scene: "runner" | "webwoud" | "city" | "minigame";
   challengeType: string;
-  skill: Skill;
+  // Widened to the curriculum superset so non-number domains (reading, etc.) can
+  // log here too. Number skills are unchanged; number views filter by `domain`.
+  skill: Skill | CurriculumSkill;
   representation: Representation;
   quantity: number;
   quantityRange: QuantityRange;

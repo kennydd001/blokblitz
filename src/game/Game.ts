@@ -4,7 +4,7 @@ import { buildAttemptLog } from "../education/challengeLogger";
 import { ChallengeFactory } from "../education/challengeFactory";
 import { MasteryTracker } from "../education/masteryTracker";
 import { subitizeThresholdMs } from "../education/quantityLayouts";
-import type { Challenge, ChallengeOption, SaveData } from "../education/types";
+import type { AttemptLog, Challenge, ChallengeOption, SaveData } from "../education/types";
 import { AssetManager } from "./AssetManager";
 import { AudioManager } from "./AudioManager";
 import { GameLoop } from "./GameLoop";
@@ -26,6 +26,7 @@ import { ReisScene } from "../scenes/ReisScene";
 import { RunScene } from "../scenes/RunScene";
 import { BossScene } from "../scenes/minigames/BossScene";
 import { CompareScene } from "../scenes/minigames/CompareScene";
+import { KlankgrotScene } from "../scenes/minigames/KlankgrotScene";
 import { CountScene } from "../scenes/minigames/CountScene";
 import { FillScene } from "../scenes/minigames/FillScene";
 import { MatchScene } from "../scenes/minigames/MatchScene";
@@ -166,6 +167,23 @@ export class Game {
       this.haptics.play("soft-error");
     }
     return option.isCorrect;
+  }
+
+  // Log a pre-built non-number (curriculum) attempt through the same pipeline:
+  // mastery + persistence + reward. Used by literacy/measurement modes.
+  recordCurriculumAttempt(attempt: AttemptLog): boolean {
+    const logged = this.mastery.logAttempt(attempt);
+    this.save.appendAttempt(logged);
+    if (attempt.wasCorrect) {
+      this.save.award({ stars: 1, blocks: 1, streakDelta: 1 });
+      this.audio.play("success");
+      this.haptics.play("success");
+    } else {
+      this.save.award({ streakDelta: -1 });
+      this.audio.play("soft-error");
+      this.haptics.play("soft-error");
+    }
+    return attempt.wasCorrect;
   }
 
   flashMessage(message: string, tone: "good" | "warn" = "good"): void {
@@ -331,6 +349,7 @@ export class Game {
     this.scenes.register("order", (game) => new OrderScene(game));
     this.scenes.register("memory", (game) => new MemoryScene(game));
     this.scenes.register("splitbord", (game) => new SplitbordScene(game));
+    this.scenes.register("klankgrot", (game) => new KlankgrotScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));

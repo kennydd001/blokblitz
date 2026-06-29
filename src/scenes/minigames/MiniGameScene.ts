@@ -88,9 +88,15 @@ export abstract class MiniGameScene extends BaseScene {
     this.game.voice.speak(this.instruction, { interrupt: true });
   }
 
+  // How an answer is logged + scored. Default = the number pipeline; literacy /
+  // measurement modes override this to log a curriculum attempt instead.
+  protected logAttempt(option: ChallengeOption): boolean {
+    return this.game.recordAttempt(this.current, option, this.startedAt, this.hintUsed);
+  }
+
   protected pick(option: ChallengeOption): void {
     if (this.resolving) return;
-    const correct = this.game.recordAttempt(this.current, option, this.startedAt, this.hintUsed);
+    const correct = this.logAttempt(option);
     if (correct) {
       this.resolving = true;
       this.correctRounds += 1;

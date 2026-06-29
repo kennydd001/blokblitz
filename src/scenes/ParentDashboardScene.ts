@@ -33,6 +33,7 @@ export class ParentDashboardScene extends BaseScene {
     dashboard.append(
       this.panel("Mastery per skill", tracker.masteryBySkill().map((item) => this.bar(childFocusTitle(item.skill), item.accuracy, `${item.exposures}x ${item.mastery}`))),
       this.panel("Splits (rekenbordje)", this.splitRows()),
+      this.panel("Lezen (klanken)", this.readingRows()),
       this.panel(
         "Mastery per representatie",
         tracker.masteryByRepresentation().map((item) => this.bar(childRepresentationName(item.representation), item.accuracy, `${item.exposures}x ${item.mastery}`))
@@ -84,6 +85,21 @@ export class ParentDashboardScene extends BaseScene {
       this.line("Pogingen", String(splits.length)),
       this.line("Juist", `${acc}%`),
       this.line("Mediane reactietijd", `${medRT} ms`)
+    ];
+  }
+
+  // Reading progress: phonemic-awareness (Klankgrot) attempts, by domain.
+  private readingRows(): HTMLElement[] {
+    const reading = this.game.mastery.getAttempts().filter((a) => a.domain === "literacy-phonemic");
+    if (reading.length === 0) return [];
+    const pct = (xs: typeof reading): number => (xs.length ? Math.round((xs.filter((a) => a.wasCorrect).length / xs.length) * 100) : 0);
+    const discriminate = reading.filter((a) => a.skill === "soundDiscriminate");
+    const blend = reading.filter((a) => a.skill === "soundBlend");
+    return [
+      this.line("Pogingen", String(reading.length)),
+      this.line("Juist", `${pct(reading)}%`),
+      this.line("Klank herkennen", `${pct(discriminate)}% uit ${discriminate.length}`),
+      this.line("Samenvoegen", `${pct(blend)}% uit ${blend.length}`)
     ];
   }
 

@@ -767,6 +767,43 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays Klankgrot from the journey: emoji choices, a wrong tap reveals, finishing advances + logs reading", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const kgIndex = JOURNEY.findIndex((node) => node.scene === "klankgrot");
+    const kg = JOURNEY[kgIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, kgIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${kg.id}"]`)!.click();
+    expect(root.querySelector(".klankgrot-play")).toBeTruthy();
+    expect(root.querySelectorAll(".klankgrot-choice")).toHaveLength(3);
+
+    // A wrong tap reveals the right picture (auditory re-teach), and does not finish.
+    const wrong = root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="false"]');
+    if (wrong) {
+      wrong.click();
+      expect(root.querySelector(".klankgrot-choice.reveal")).toBeTruthy();
+    }
+    expect(root.querySelector(".mini-done")).toBeNull();
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(kg.id);
+    // Logged as a reading (literacy-phonemic) attempt for the dashboard.
+    expect(game.mastery.getAttempts().some((a) => a.domain === "literacy-phonemic")).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("advances story memory stops back to the Sterrenreis map", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");

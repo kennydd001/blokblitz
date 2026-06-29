@@ -7080,6 +7080,26 @@ input {
 .splitbord-choice { min-width: 78px; }
 .splitbord-choice-num { display: block; font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
 
+/* ===== Klankgrot — phonemic awareness (voice-first, emoji pictures) ===== */
+.klankgrot-play { gap: 18px; }
+.klankgrot-crystal {
+  width: 88px; height: 88px; border-radius: 50%;
+  border: 5px solid var(--edge);
+  background: radial-gradient(circle at 40% 35%, #bdf0ff, #4ec3ff 70%, #2b8fd6);
+  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.22), 0 0 26px rgba(78, 195, 255, 0.7);
+  font-size: 2.6rem; line-height: 1; cursor: pointer;
+  animation: klank-pulse 1.8s ease-in-out infinite;
+  transition: transform 140ms ease;
+}
+.klankgrot-crystal:active { transform: scale(0.92); }
+@keyframes klank-pulse {
+  0%, 100% { box-shadow: 0 6px 0 rgba(23, 32, 51, 0.22), 0 0 22px rgba(78, 195, 255, 0.6); }
+  50% { box-shadow: 0 6px 0 rgba(23, 32, 51, 0.22), 0 0 34px rgba(78, 195, 255, 0.95); }
+}
+.klankgrot-choices { gap: 16px; }
+.klankgrot-choice { min-width: 96px; }
+.klankgrot-pic { display: block; font-size: 3.4rem; line-height: 1; padding: 8px 12px; }
+
 /* ===== Boss fights — each region's colour-stealing climax ===== */
 .boss-play { gap: 14px; }
 .boss-arena { position: relative; width: min(560px, 96%); display: flex; flex-direction: column; align-items: center; gap: 8px; }
