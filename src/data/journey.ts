@@ -33,7 +33,8 @@ const MODE_EMOJI: Record<string, string> = {
   fill: "🔟",
   splitbord: "⚖️",
   klankgrot: "🔊",
-  letterkompas: "🧭"
+  letterkompas: "🧭",
+  tientalhuis: "🏠"
 };
 
 const MODE_TITLE: Record<string, string> = {
@@ -46,7 +47,8 @@ const MODE_TITLE: Record<string, string> = {
   fill: "Vul de tien",
   splitbord: "Splitsbord",
   klankgrot: "Klankgrot",
-  letterkompas: "Letterkompas"
+  letterkompas: "Letterkompas",
+  tientalhuis: "Tientalhuis"
 };
 
 const MODE_ACTION: Record<string, string> = {
@@ -59,7 +61,8 @@ const MODE_ACTION: Record<string, string> = {
   fill: "Maak het doelgetal vol.",
   splitbord: "Vul de twee vakjes samen tot het getal.",
   klankgrot: "Luister en kies het juiste plaatje.",
-  letterkompas: "Hoor de klank en kies de letter."
+  letterkompas: "Hoor de klank en kies de letter.",
+  tientalhuis: "Maak een tiener: tien en nog wat."
 };
 
 // Ordered by each region's number cap (5 -> 6 -> 8 -> 8 -> 10 -> 10), so difficulty
@@ -74,7 +77,7 @@ const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "onemoreless"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
   { region: "muntgrot", stops: ["klankgrot", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
   { region: "ijsbaan", stops: ["compare", "letterkompas", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
-  { region: "webwoud", stops: ["memory", "compare"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
+  { region: "webwoud", stops: ["memory", "compare", "tientalhuis"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
   { region: "bouwdorp", stops: ["fill", "splitbord", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
   { region: "sterrenrace", stops: ["match", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];

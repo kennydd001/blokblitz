@@ -7116,6 +7116,24 @@ input {
 .letterkompas-choice.rune { min-width: 86px; }
 .letterkompas-rune { display: block; font-size: 2.8rem; font-weight: 900; line-height: 1; padding: 10px 16px; color: var(--ink); }
 
+/* ===== Tientalhuis — teen-number structure (10 + n) ===== */
+.tientalhuis-play { gap: 16px; }
+.tientalhuis-board { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.tientalhuis-room, .tientalhuis-loose, .tientalhuis-target {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 16px;
+  padding: 8px 12px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18);
+}
+.tientalhuis-room small, .tientalhuis-loose small { font-size: 0.72rem; font-weight: 800; color: #5a6b8c; text-transform: uppercase; letter-spacing: 1px; }
+.tientalhuis-room.empty { min-width: 56px; min-height: 56px; justify-content: center; border-style: dashed; background: #f1f5fc; }
+.tientalhuis-room.empty b { font-size: 2.2rem; color: #b7c0d4; }
+.tientalhuis-target b { font-size: 2.6rem; font-weight: 900; color: var(--ink); }
+.tientalhuis-art .quantity-svg { width: 116px; height: auto; max-height: 96px; }
+.tientalhuis-plus { font-size: 1.7rem; font-weight: 900; color: #5a6b8c; }
+.tientalhuis-choices { gap: 14px; }
+.tientalhuis-choice { min-width: 78px; }
+.tientalhuis-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+
 /* ===== Boss fights — each region's colour-stealing climax ===== */
 .boss-play { gap: 14px; }
 .boss-arena { position: relative; width: min(560px, 96%); display: flex; flex-direction: column; align-items: center; gap: 8px; }

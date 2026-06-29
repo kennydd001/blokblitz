@@ -34,6 +34,7 @@ export class ParentDashboardScene extends BaseScene {
       this.panel("Mastery per skill", tracker.masteryBySkill().map((item) => this.bar(childFocusTitle(item.skill), item.accuracy, `${item.exposures}x ${item.mastery}`))),
       this.panel("Splits (rekenbordje)", this.splitRows()),
       this.panel("Lezen (klanken)", this.readingRows()),
+      this.panel("Rekenen tot 20", this.math20Rows()),
       this.panel(
         "Mastery per representatie",
         tracker.masteryByRepresentation().map((item) => this.bar(childRepresentationName(item.representation), item.accuracy, `${item.exposures}x ${item.mastery}`))
@@ -103,6 +104,17 @@ export class ParentDashboardScene extends BaseScene {
       this.line("Samenvoegen", `${pct(blend)}% uit ${blend.length}`)
     ];
     if (letters.length) rows.push(this.line("Letter & klank", `${pct(letters)}% uit ${letters.length}`));
+    return rows;
+  }
+
+  // Math-to-20 progress (Tientalhuis teen structure, later bridge/number-line).
+  private math20Rows(): HTMLElement[] {
+    const attempts = this.game.mastery.getAttempts().filter((a) => a.domain?.startsWith("math"));
+    if (attempts.length === 0) return [];
+    const pct = (xs: typeof attempts): number => (xs.length ? Math.round((xs.filter((a) => a.wasCorrect).length / xs.length) * 100) : 0);
+    const teen = attempts.filter((a) => a.skill === "teenNumber");
+    const rows = [this.line("Pogingen", String(attempts.length)), this.line("Juist", `${pct(attempts)}%`)];
+    if (teen.length) rows.push(this.line("Tienerstructuur", `${pct(teen)}% uit ${teen.length}`));
     return rows;
   }
 

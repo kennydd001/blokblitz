@@ -43,10 +43,11 @@ export class MasteryTracker {
     return attempt.targetKey ?? String(attempt.quantity);
   }
 
-  // Only number-domain attempts feed the number-first views, so reading/measure
-  // attempts (which carry placeholder numeric fields) never pollute them.
+  // Only the original 1-10 number modes (no domain tag) feed the number-first
+  // views. Every domain-tagged curriculum mode (reading, math-to-20, measure...)
+  // carries placeholder numeric fields and gets its own dashboard panel instead.
   private numberAttempts(): AttemptLog[] {
-    return this.attempts.filter((attempt) => !attempt.domain || attempt.domain.startsWith("math"));
+    return this.attempts.filter((attempt) => !attempt.domain);
   }
 
   getCell(skill: Skill, representation: Representation, range: QuantityRange): MasteryCell {

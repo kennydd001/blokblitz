@@ -43,6 +43,7 @@ export type SceneId =
   | "splitbord"
   | "klankgrot"
   | "letterkompas"
+  | "tientalhuis"
   | "numberOfDay"
   | "runner"
   | "webwoud"
