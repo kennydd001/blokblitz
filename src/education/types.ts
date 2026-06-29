@@ -46,6 +46,7 @@ export type SceneId =
   | "tientalhuis"
   | "zoemroute"
   | "getallenlijn"
+  | "woordbouwplaats"
   | "numberOfDay"
   | "runner"
   | "webwoud"

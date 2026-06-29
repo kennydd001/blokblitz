@@ -39,6 +39,81 @@ export function zoemRound(): ZoemRound {
   };
 }
 
+// ---- Woordbouwplaats: sound segmentation (fill the missing sound box) --------
+const ALL_UNITS = [...new Set(PHONICS_WORDS.flatMap((w) => w.units))];
+
+export type BouwMisconception = "first-sound-weak" | "final-sound-weak" | "vowel-length-weak" | "build-weak";
+
+export interface BouwRound {
+  word: PhonicsWord;
+  units: string[];
+  blankIndex: number;
+  correct: string;
+  prompt: string;
+  options: Array<{ label: string; value: string; isCorrect: boolean }>;
+  targetKey: string; // build-maan-1
+  skill: "wordBuild";
+}
+
+export function bouwRound(): BouwRound {
+  const word = pickOne(SIMPLE_WORDS);
+  const units = word.units;
+  const blankIndex = Math.floor(Math.random() * units.length);
+  const correct = units[blankIndex];
+  const distractors = shuffle(ALL_UNITS.filter((u) => u !== correct)).slice(0, 2);
+  return {
+    word,
+    units,
+    blankIndex,
+    correct,
+    prompt: "Welke klank hoort in het lege vakje?",
+    options: shuffle([{ label: correct, value: correct, isCorrect: true }, ...distractors.map((u) => ({ label: u, value: u, isCorrect: false }))]),
+    targetKey: `build-${word.word}-${blankIndex}`,
+    skill: "wordBuild"
+  };
+}
+
+export function classifyBouwError(blankIndex: number, unitsLength: number): BouwMisconception {
+  if (blankIndex === 0) return "first-sound-weak";
+  if (blankIndex === unitsLength - 1) return "final-sound-weak";
+  return "vowel-length-weak"; // the middle box is usually the vowel
+}
+
+let bouwCounter = 0;
+
+export function bouwChallenge(round: BouwRound): Challenge {
+  bouwCounter += 1;
+  const rep: Representation = "numeral";
+  const options: ChallengeOption[] = round.options.map((opt, i) => ({
+    id: `bouw-${bouwCounter}-${i}`,
+    label: opt.label,
+    value: opt.value,
+    representation: rep,
+    svg: "",
+    isCorrect: opt.isCorrect
+  }));
+  return {
+    id: `woordbouwplaats-${bouwCounter}`,
+    levelId: "woordbouwplaats",
+    challengeType: "word-build",
+    title: "Woordbouwplaats",
+    prompt: round.prompt,
+    scene: "minigame",
+    skill: "subitize",
+    representation: rep,
+    promptRepresentation: rep,
+    answerRepresentation: rep,
+    quantity: 0,
+    correctAnswer: round.correct,
+    displayTimeMs: 4000,
+    options,
+    mechanic: `bouw|${round.word.word}|${round.blankIndex}`,
+    successEffect: "Woord gemaakt!",
+    safeErrorEffect: "Luister nog eens naar het woord.",
+    hint: "Zeg het woord traag en luister naar elke klank."
+  };
+}
+
 let zoemCounter = 0;
 
 export function zoemChallenge(round: ZoemRound): Challenge {
