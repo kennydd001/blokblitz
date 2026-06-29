@@ -42,6 +42,7 @@ export type SceneId =
   | "memory"
   | "splitbord"
   | "klankgrot"
+  | "letterkompas"
   | "numberOfDay"
   | "runner"
   | "webwoud"

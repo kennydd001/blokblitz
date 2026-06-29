@@ -804,6 +804,34 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays Letterkompas from the journey: finishing advances + logs letter-sound work", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const lkIndex = JOURNEY.findIndex((node) => node.scene === "letterkompas");
+    const lk = JOURNEY[lkIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, lkIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${lk.id}"]`)!.click();
+    expect(root.querySelector(".letterkompas-play")).toBeTruthy();
+    expect(root.querySelectorAll(".letterkompas-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.letterkompas-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(lk.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "literacy-reading")).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("advances story memory stops back to the Sterrenreis map", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");

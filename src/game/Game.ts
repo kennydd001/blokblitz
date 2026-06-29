@@ -27,6 +27,7 @@ import { RunScene } from "../scenes/RunScene";
 import { BossScene } from "../scenes/minigames/BossScene";
 import { CompareScene } from "../scenes/minigames/CompareScene";
 import { KlankgrotScene } from "../scenes/minigames/KlankgrotScene";
+import { LetterkompasScene } from "../scenes/minigames/LetterkompasScene";
 import { CountScene } from "../scenes/minigames/CountScene";
 import { FillScene } from "../scenes/minigames/FillScene";
 import { MatchScene } from "../scenes/minigames/MatchScene";
@@ -350,6 +351,7 @@ export class Game {
     this.scenes.register("memory", (game) => new MemoryScene(game));
     this.scenes.register("splitbord", (game) => new SplitbordScene(game));
     this.scenes.register("klankgrot", (game) => new KlankgrotScene(game));
+    this.scenes.register("letterkompas", (game) => new LetterkompasScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));
