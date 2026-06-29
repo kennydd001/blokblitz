@@ -7116,6 +7116,28 @@ input {
 .letterkompas-choice.rune { min-width: 86px; }
 .letterkompas-rune { display: block; font-size: 2.8rem; font-weight: 900; line-height: 1; padding: 10px 16px; color: var(--ink); }
 
+/* ===== Zoemroute — connected blending (sound stones) ===== */
+.zoemroute-play { gap: 18px; }
+.zoemroute-stones { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
+.zoemroute-stone {
+  min-width: 52px; min-height: 52px; padding: 6px 12px; border-radius: 16px;
+  border: 4px solid var(--edge); background: linear-gradient(160deg, #bdf0ff, #5ec0ff);
+  box-shadow: 0 5px 0 rgba(23, 32, 51, 0.2);
+  font-size: 1.7rem; font-weight: 900; color: var(--ink); cursor: pointer;
+  transition: transform 120ms ease;
+}
+.zoemroute-stone:active { transform: scale(0.92); }
+.zoemroute-link { width: 14px; height: 4px; border-radius: 2px; background: var(--edge); opacity: 0.5; }
+.zoemroute-zoem {
+  margin-left: 6px; padding: 8px 16px; border-radius: 16px;
+  border: 4px solid var(--edge); background: linear-gradient(160deg, #fff7d6, #ffd866);
+  box-shadow: 0 5px 0 rgba(23, 32, 51, 0.2);
+  font-size: 1.1rem; font-weight: 900; color: var(--ink); cursor: pointer;
+}
+.zoemroute-zoem:active { transform: scale(0.95); }
+.zoemroute-choices { gap: 16px; }
+.zoemroute-choice { min-width: 96px; }
+
 /* ===== Tientalhuis — teen-number structure (10 + n) ===== */
 .tientalhuis-play { gap: 16px; }
 .tientalhuis-board { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }

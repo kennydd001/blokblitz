@@ -44,6 +44,7 @@ export type SceneId =
   | "klankgrot"
   | "letterkompas"
   | "tientalhuis"
+  | "zoemroute"
   | "numberOfDay"
   | "runner"
   | "webwoud"

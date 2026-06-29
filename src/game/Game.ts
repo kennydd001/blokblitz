@@ -36,6 +36,7 @@ import { OneMoreLessScene } from "../scenes/minigames/OneMoreLessScene";
 import { OrderScene } from "../scenes/minigames/OrderScene";
 import { SplitbordScene } from "../scenes/minigames/SplitbordScene";
 import { TientalhuisScene } from "../scenes/minigames/TientalhuisScene";
+import { ZoemrouteScene } from "../scenes/minigames/ZoemrouteScene";
 import { SettingsScene } from "../scenes/SettingsScene";
 import { SterrenstadScene } from "../scenes/SterrenstadScene";
 import { SummaryScene } from "../scenes/SummaryScene";
@@ -354,6 +355,7 @@ export class Game {
     this.scenes.register("klankgrot", (game) => new KlankgrotScene(game));
     this.scenes.register("letterkompas", (game) => new LetterkompasScene(game));
     this.scenes.register("tientalhuis", (game) => new TientalhuisScene(game));
+    this.scenes.register("zoemroute", (game) => new ZoemrouteScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));

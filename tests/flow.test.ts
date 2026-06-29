@@ -860,6 +860,35 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays Zoemroute from the journey: sound stones + blend, finishing advances + logs reading", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const zrIndex = JOURNEY.findIndex((node) => node.scene === "zoemroute");
+    const zr = JOURNEY[zrIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, zrIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${zr.id}"]`)!.click();
+    expect(root.querySelector(".zoemroute-stones")).toBeTruthy();
+    expect(root.querySelectorAll(".zoemroute-stone").length).toBeGreaterThanOrEqual(1);
+    expect(root.querySelectorAll(".zoemroute-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.zoemroute-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(zr.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "literacy-reading")).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("advances story memory stops back to the Sterrenreis map", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
