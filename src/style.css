@@ -7413,6 +7413,13 @@ input {
 .hub-card.onemore { background: linear-gradient(160deg, #ffe9b0, #f6c453); }
 .hub-card.order { background: linear-gradient(160deg, #c4f3e6, #2bb3a3); }
 .hub-card.memory { background: linear-gradient(160deg, #ffd6ef, #e26bb0); }
+.hub-card.splitbord { background: linear-gradient(160deg, #ffe3b0, #f0a93c); }
+.hub-card.tientalhuis { background: linear-gradient(160deg, #ffe0b8, #f0a85c); }
+.hub-card.getallenlijn { background: linear-gradient(160deg, #c4eef3, #46b6c8); }
+.hub-card.klankgrot { background: linear-gradient(160deg, #bfe8ff, #4ec3ff); }
+.hub-card.letterkompas { background: linear-gradient(160deg, #cde8d6, #57b894); }
+.hub-card.zoemroute { background: linear-gradient(160deg, #fff0a8, #f2c43a); }
+.hub-card.woordbouw { background: linear-gradient(160deg, #e0d2ff, #8f6fe6); }
 
 /* =====================================================================
    De Sterrenreis - one story road instead of separate activities

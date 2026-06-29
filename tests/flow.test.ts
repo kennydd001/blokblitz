@@ -517,11 +517,56 @@ describe("Speeltuin hub + calm game modes", () => {
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
     game.showScene("hub");
-    expect(root.querySelectorAll(".hub-card").length).toBe(8);
-    ["reis", "count", "match", "compare", "fill", "onemoreless", "order", "memory"].forEach((mode) => {
+    // Free play exposes EVERY game: the adventure, the 1-10 number modes, the
+    // splits + math-to-20 modes, and the reading modes.
+    const expected = [
+      "reis",
+      "count",
+      "match",
+      "compare",
+      "fill",
+      "onemoreless",
+      "order",
+      "memory",
+      "splitbord",
+      "tientalhuis",
+      "getallenlijn",
+      "klankgrot",
+      "letterkompas",
+      "zoemroute",
+      "woordbouwplaats"
+    ];
+    expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
+    expected.forEach((mode) => {
       expect(root.querySelector(`.hub-card[data-mode="${mode}"]`)).toBeTruthy();
     });
     expect(root.querySelector(".menu-garage")).toBeTruthy();
+  });
+
+  it("free play: a curriculum mode launched from the hub returns to the hub, journey untouched", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const journeyBefore = game.data().progress.journey.completed.length;
+
+    game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
+    expect(root.querySelector(".klankgrot-play")).toBeTruthy();
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    // The home button reads "Speeltuin" and returns to the hub, not the journey.
+    const home = root.querySelector<HTMLButtonElement>(".results-actions .btn.secondary")!;
+    expect(home.textContent).toBe("Speeltuin");
+    home.click();
+    expect(root.querySelector(".hub-scene")).toBeTruthy();
+    // Free play does NOT advance the Sterrenreis.
+    expect(game.data().progress.journey.completed.length).toBe(journeyBefore);
+    vi.useRealTimers();
   });
 
   it("makes De Sterrenreis the default adventure and advances after a story activity", async () => {
