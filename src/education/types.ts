@@ -48,6 +48,7 @@ export type SceneId =
   | "getallenlijn"
   | "woordbouwplaats"
   | "tienbrug"
+  | "vormenburcht"
   | "numberOfDay"
   | "runner"
   | "webwoud"

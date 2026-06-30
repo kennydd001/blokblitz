@@ -38,7 +38,8 @@ const MODE_EMOJI: Record<string, string> = {
   zoemroute: "🐝",
   getallenlijn: "📏",
   woordbouwplaats: "🔤",
-  tienbrug: "🌉"
+  tienbrug: "🌉",
+  vormenburcht: "🔷"
 };
 
 const MODE_TITLE: Record<string, string> = {
@@ -56,7 +57,8 @@ const MODE_TITLE: Record<string, string> = {
   zoemroute: "Zoemroute",
   getallenlijn: "Getallenlijn",
   woordbouwplaats: "Woordbouwplaats",
-  tienbrug: "Tienbrug"
+  tienbrug: "Tienbrug",
+  vormenburcht: "Vormenburcht"
 };
 
 const MODE_ACTION: Record<string, string> = {
@@ -74,7 +76,8 @@ const MODE_ACTION: Record<string, string> = {
   zoemroute: "Zoem de klanken samen tot een woord.",
   getallenlijn: "Vind het getal op de lijn tot 20.",
   woordbouwplaats: "Vind de klank die in het lege vakje hoort.",
-  tienbrug: "Steek over: eerst de tien, dan de rest."
+  tienbrug: "Steek over: eerst de tien, dan de rest.",
+  vormenburcht: "Herken de vorm, tel de hoeken, maak het patroon af."
 };
 
 // Ordered by each region's number cap (5 -> 6 -> 8 -> 8 -> 10 -> 10), so difficulty
@@ -88,7 +91,7 @@ interface RegionPlan {
 const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "onemoreless"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
   { region: "muntgrot", stops: ["klankgrot", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
-  { region: "ijsbaan", stops: ["compare", "letterkompas", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
+  { region: "ijsbaan", stops: ["compare", "letterkompas", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
   { region: "webwoud", stops: ["memory", "compare", "tientalhuis", "woordbouwplaats"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
   { region: "bouwdorp", stops: ["fill", "splitbord", "getallenlijn", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
   { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }

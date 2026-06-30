@@ -7138,6 +7138,16 @@ input {
 .zoemroute-choices { gap: 16px; }
 .zoemroute-choice { min-width: 96px; }
 
+/* ===== Vormenburcht — shapes, corners, patterns ===== */
+.vormen-play { gap: 16px; }
+.vormen-prompt { display: flex; justify-content: center; }
+.vormen-stage { background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 18px; padding: 10px 16px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18); }
+.vormen-pattern { display: flex; align-items: center; gap: 6px; background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 18px; padding: 8px 12px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18); }
+.vormen-next { font-size: 2rem; font-weight: 900; color: #c79a16; padding: 0 8px; }
+.vormen-choice.shape { padding: 8px; }
+.vormen-choice .shape-svg { display: block; }
+.vormen-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+
 /* ===== Tienbrug — add/subtract to 20 over the ten-bridge ===== */
 .tienbrug-play { gap: 14px; }
 .tienbrug-sum { display: flex; align-items: center; gap: 8px; }
@@ -7429,6 +7439,7 @@ input {
 .hub-card.tientalhuis { background: linear-gradient(160deg, #ffe0b8, #f0a85c); }
 .hub-card.getallenlijn { background: linear-gradient(160deg, #c4eef3, #46b6c8); }
 .hub-card.tienbrug { background: linear-gradient(160deg, #cfe0ff, #5f86e6); }
+.hub-card.vormen { background: linear-gradient(160deg, #d6f0ff, #38b0e0); }
 .hub-card.klankgrot { background: linear-gradient(160deg, #bfe8ff, #4ec3ff); }
 .hub-card.letterkompas { background: linear-gradient(160deg, #cde8d6, #57b894); }
 .hub-card.zoemroute { background: linear-gradient(160deg, #fff0a8, #f2c43a); }

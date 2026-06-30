@@ -35,6 +35,7 @@ export class ParentDashboardScene extends BaseScene {
       this.panel("Splits (rekenbordje)", this.splitRows()),
       this.panel("Lezen (klanken)", this.readingRows()),
       this.panel("Rekenen tot 20", this.math20Rows()),
+      this.panel("Vormen & meten", this.geomRows()),
       this.panel(
         "Mastery per representatie",
         tracker.masteryByRepresentation().map((item) => this.bar(childRepresentationName(item.representation), item.accuracy, `${item.exposures}x ${item.mastery}`))
@@ -109,7 +110,7 @@ export class ParentDashboardScene extends BaseScene {
 
   // Math-to-20 progress (Tientalhuis teen structure, later bridge/number-line).
   private math20Rows(): HTMLElement[] {
-    const attempts = this.game.mastery.getAttempts().filter((a) => a.domain?.startsWith("math"));
+    const attempts = this.game.mastery.getAttempts().filter((a) => a.domain === "math-number" || a.domain === "math-operations");
     if (attempts.length === 0) return [];
     const pct = (xs: typeof attempts): number => (xs.length ? Math.round((xs.filter((a) => a.wasCorrect).length / xs.length) * 100) : 0);
     const teen = attempts.filter((a) => a.skill === "teenNumber");
@@ -119,6 +120,19 @@ export class ParentDashboardScene extends BaseScene {
     if (teen.length) rows.push(this.line("Tienerstructuur", `${pct(teen)}% uit ${teen.length}`));
     if (line.length) rows.push(this.line("Getallenlijn", `${pct(line)}% uit ${line.length}`));
     if (addsub.length) rows.push(this.line("Plus & min tot 20", `${pct(addsub)}% uit ${addsub.length}`));
+    return rows;
+  }
+
+  // Measurement + geometry (shapes / patterns / measure / money / time).
+  private geomRows(): HTMLElement[] {
+    const attempts = this.game.mastery.getAttempts().filter((a) => a.domain === "math-geometry" || a.domain === "math-measurement");
+    if (attempts.length === 0) return [];
+    const pct = (xs: typeof attempts): number => (xs.length ? Math.round((xs.filter((a) => a.wasCorrect).length / xs.length) * 100) : 0);
+    const shapes = attempts.filter((a) => a.skill === "shapeRecognize");
+    const patterns = attempts.filter((a) => a.skill === "patternContinue");
+    const rows = [this.line("Pogingen", String(attempts.length)), this.line("Juist", `${pct(attempts)}%`)];
+    if (shapes.length) rows.push(this.line("Vormen", `${pct(shapes)}% uit ${shapes.length}`));
+    if (patterns.length) rows.push(this.line("Patronen", `${pct(patterns)}% uit ${patterns.length}`));
     return rows;
   }
 

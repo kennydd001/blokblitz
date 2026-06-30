@@ -535,7 +535,8 @@ describe("Speeltuin hub + calm game modes", () => {
       "klankgrot",
       "letterkompas",
       "zoemroute",
-      "woordbouwplaats"
+      "woordbouwplaats",
+      "vormenburcht"
     ];
     expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
     expected.forEach((mode) => {
@@ -1019,6 +1020,34 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(tb.id);
     expect(game.mastery.getAttempts().some((a) => a.domain === "math-operations")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Vormenburcht from the journey: shape choices, finishing advances + logs geometry", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const vbIndex = JOURNEY.findIndex((node) => node.scene === "vormenburcht");
+    const vb = JOURNEY[vbIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, vbIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${vb.id}"]`)!.click();
+    expect(root.querySelector(".vormen-play")).toBeTruthy();
+    expect(root.querySelectorAll(".vormen-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.vormen-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(vb.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-geometry")).toBe(true);
     vi.useRealTimers();
   });
 
