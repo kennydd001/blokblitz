@@ -36,6 +36,7 @@ import { MemoryScene } from "../scenes/minigames/MemoryScene";
 import { OneMoreLessScene } from "../scenes/minigames/OneMoreLessScene";
 import { OrderScene } from "../scenes/minigames/OrderScene";
 import { SplitbordScene } from "../scenes/minigames/SplitbordScene";
+import { TienbrugScene } from "../scenes/minigames/TienbrugScene";
 import { TientalhuisScene } from "../scenes/minigames/TientalhuisScene";
 import { WoordbouwplaatsScene } from "../scenes/minigames/WoordbouwplaatsScene";
 import { ZoemrouteScene } from "../scenes/minigames/ZoemrouteScene";
@@ -360,6 +361,7 @@ export class Game {
     this.scenes.register("zoemroute", (game) => new ZoemrouteScene(game));
     this.scenes.register("getallenlijn", (game) => new GetallenlijnScene(game));
     this.scenes.register("woordbouwplaats", (game) => new WoordbouwplaatsScene(game));
+    this.scenes.register("tienbrug", (game) => new TienbrugScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));

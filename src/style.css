@@ -7138,6 +7138,18 @@ input {
 .zoemroute-choices { gap: 16px; }
 .zoemroute-choice { min-width: 96px; }
 
+/* ===== Tienbrug — add/subtract to 20 over the ten-bridge ===== */
+.tienbrug-play { gap: 14px; }
+.tienbrug-sum { display: flex; align-items: center; gap: 8px; }
+.tienbrug-sum b { min-width: 48px; padding: 6px 12px; text-align: center; font-size: 2.1rem; font-weight: 900; color: var(--ink); background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 14px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18); }
+.tienbrug-sum span { font-size: 1.7rem; font-weight: 900; color: #5a6b8c; }
+.tienbrug-bridge { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tienbrug-bridge-label { font-size: 0.72rem; font-weight: 800; color: #5a6b8c; text-transform: uppercase; letter-spacing: 1px; }
+.tienbrug-bridge .quantity-svg { width: 150px; height: auto; max-height: 70px; }
+.tienbrug-choices { gap: 14px; }
+.tienbrug-choice { min-width: 78px; }
+.tienbrug-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+
 /* ===== Getallenlijn Glijbaan — number line to 20 ===== */
 .getallenlijn-play { gap: 18px; }
 .getallenlijn-line { display: flex; align-items: stretch; gap: 6px; max-width: 96%; }
@@ -7416,6 +7428,7 @@ input {
 .hub-card.splitbord { background: linear-gradient(160deg, #ffe3b0, #f0a93c); }
 .hub-card.tientalhuis { background: linear-gradient(160deg, #ffe0b8, #f0a85c); }
 .hub-card.getallenlijn { background: linear-gradient(160deg, #c4eef3, #46b6c8); }
+.hub-card.tienbrug { background: linear-gradient(160deg, #cfe0ff, #5f86e6); }
 .hub-card.klankgrot { background: linear-gradient(160deg, #bfe8ff, #4ec3ff); }
 .hub-card.letterkompas { background: linear-gradient(160deg, #cde8d6, #57b894); }
 .hub-card.zoemroute { background: linear-gradient(160deg, #fff0a8, #f2c43a); }

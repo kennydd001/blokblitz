@@ -113,8 +113,12 @@ export class ParentDashboardScene extends BaseScene {
     if (attempts.length === 0) return [];
     const pct = (xs: typeof attempts): number => (xs.length ? Math.round((xs.filter((a) => a.wasCorrect).length / xs.length) * 100) : 0);
     const teen = attempts.filter((a) => a.skill === "teenNumber");
+    const line = attempts.filter((a) => a.skill === "numberLine20");
+    const addsub = attempts.filter((a) => a.skill === "addSub20" || a.skill === "bridge10");
     const rows = [this.line("Pogingen", String(attempts.length)), this.line("Juist", `${pct(attempts)}%`)];
     if (teen.length) rows.push(this.line("Tienerstructuur", `${pct(teen)}% uit ${teen.length}`));
+    if (line.length) rows.push(this.line("Getallenlijn", `${pct(line)}% uit ${line.length}`));
+    if (addsub.length) rows.push(this.line("Plus & min tot 20", `${pct(addsub)}% uit ${addsub.length}`));
     return rows;
   }
 

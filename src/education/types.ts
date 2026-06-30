@@ -47,6 +47,7 @@ export type SceneId =
   | "zoemroute"
   | "getallenlijn"
   | "woordbouwplaats"
+  | "tienbrug"
   | "numberOfDay"
   | "runner"
   | "webwoud"

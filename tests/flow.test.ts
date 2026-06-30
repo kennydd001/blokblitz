@@ -531,6 +531,7 @@ describe("Speeltuin hub + calm game modes", () => {
       "splitbord",
       "tientalhuis",
       "getallenlijn",
+      "tienbrug",
       "klankgrot",
       "letterkompas",
       "zoemroute",
@@ -990,6 +991,34 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(wb.id);
     expect(game.mastery.getAttempts().some((a) => a.domain === "literacy-reading")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Tienbrug from the journey: a sum over the ten, finishing advances + logs operations", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const tbIndex = JOURNEY.findIndex((node) => node.scene === "tienbrug");
+    const tb = JOURNEY[tbIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, tbIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${tb.id}"]`)!.click();
+    expect(root.querySelector(".tienbrug-sum")).toBeTruthy();
+    expect(root.querySelectorAll(".tienbrug-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.tienbrug-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(tb.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-operations")).toBe(true);
     vi.useRealTimers();
   });
 
