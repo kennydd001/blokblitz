@@ -56,7 +56,7 @@ export abstract class MiniGameScene extends BaseScene {
     this.correctRounds = 0;
     this.perfectRounds = 0;
     this.streak = 0;
-    this.buddy = createBuddy(skinById(this.game.data().progress.cosmetics.activeSkin));
+    this.buddy = createBuddy(skinById(this.game.data().progress.cosmetics.activeSkin), this.game.data().progress.stars);
     this.startRound();
   }
 

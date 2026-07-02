@@ -642,6 +642,52 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("evolves Buddy with stars: levels, stacking accessories, and a one-time level-up moment", async () => {
+    const { BUDDY_LEVELS, buddyLevel, createBuddy } = await import("../src/scenes/buddy");
+    const { skinById } = await import("../src/runner/skins");
+
+    // Thresholds resolve to the right level.
+    expect(buddyLevel(0).level).toBe(1);
+    expect(buddyLevel(24).level).toBe(1);
+    expect(buddyLevel(25).level).toBe(2);
+    expect(buddyLevel(60).level).toBe(3);
+    expect(buddyLevel(120).level).toBe(4);
+    expect(buddyLevel(999).level).toBe(5);
+    expect(BUDDY_LEVELS).toHaveLength(5);
+
+    // Accessories stack as Buddy grows.
+    const baby = createBuddy(skinById("blitz"), 0);
+    expect(baby.el.querySelector(".buddy-acc")).toBeNull();
+    const cool = createBuddy(skinById("blitz"), 30);
+    expect(cool.el.querySelector(".buddy-acc-scarf")).toBeTruthy();
+    expect(cool.el.querySelector(".buddy-acc-cape")).toBeNull();
+    const koning = createBuddy(skinById("blitz"), 150);
+    expect(koning.el.querySelector(".buddy-acc-scarf")).toBeTruthy();
+    expect(koning.el.querySelector(".buddy-acc-cape")).toBeTruthy();
+    expect(koning.el.querySelector(".buddy-acc-crown")).toBeTruthy();
+    expect(koning.el.querySelector(".buddy-acc-stars")).toBeNull();
+    const ster = createBuddy(skinById("blitz"), 300);
+    expect(ster.el.querySelector(".buddy-acc-stars")).toBeTruthy();
+
+    // Crossing a threshold triggers the level-up moment exactly once.
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.award({ stars: 30 });
+    game.showScene("reis");
+    const overlay = root.querySelector<HTMLElement>(".buddy-levelup");
+    expect(overlay).toBeTruthy();
+    expect(overlay!.textContent).toContain("Coole dino");
+    expect(game.data().progress.buddyLevelSeen).toBe(2);
+    overlay!.click();
+    expect(root.querySelector(".buddy-levelup")).toBeNull();
+    game.showScene("hub");
+    game.showScene("reis");
+    expect(root.querySelector(".buddy-levelup")).toBeNull();
+    // The map buddy now wears its scarf.
+    expect(root.querySelector(".reis-buddy .buddy-acc-scarf")).toBeTruthy();
+  });
+
   it("offers a daily gift chest on the map, once per day", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;

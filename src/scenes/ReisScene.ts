@@ -20,7 +20,7 @@ import { buildBossArt } from "./bossArt";
 import { skinById } from "../runner/skins";
 import { cssHex, getWorld, type PropStyle } from "../runner/worlds";
 import { createBuddy, type Buddy } from "./buddy";
-import { spawnTreasureChest, treasureMeter } from "./treasure";
+import { maybeBuddyLevelUp, spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
 // Mix a hex colour toward white (0 = unchanged, 1 = white) for the soft band tops.
@@ -108,7 +108,7 @@ export class ReisScene extends BaseScene {
     });
 
     // Buddy stands on the frontier node (or the star when the journey is done).
-    this.buddy = createBuddy(skinById(this.game.data().progress.cosmetics.activeSkin));
+    this.buddy = createBuddy(skinById(this.game.data().progress.cosmetics.activeSkin), this.game.data().progress.stars);
     this.buddy.el.classList.add("reis-buddy");
     this.buddy.el.style.left = `${(here.x / JOURNEY_WIDTH) * 100}%`;
     this.buddy.el.style.top = `${here.y - 78}px`;
@@ -156,6 +156,7 @@ export class ReisScene extends BaseScene {
     this.root.append(top, quest, track, scroll, meadow);
     this.maybeDailyChest();
     spawnTreasureChest(this.game, this.root, this.buddy);
+    maybeBuddyLevelUp(this.game, this.root);
     this.maybeRegionBanner(here);
 
     // Centre the frontier node so only current + next need to be on screen.

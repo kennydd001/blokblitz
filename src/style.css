@@ -8445,6 +8445,46 @@ input {
   100% { transform: scale(1) rotate(0); opacity: 1; }
 }
 
+/* Buddy level-up: the evolved dino shows off its new accessory */
+.buddy-levelup {
+  position: fixed;
+  inset: 0;
+  z-index: 72;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(120% 120% at 50% 30%, rgba(24, 62, 46, 0.6), rgba(8, 20, 14, 0.85));
+  cursor: pointer;
+  animation: reis-story-fade 0.25s ease;
+}
+.buddy-levelup-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  background: linear-gradient(165deg, #f2fff7 0%, #c9f3da 100%);
+  border: 5px solid var(--edge);
+  border-radius: 26px;
+  padding: 20px 36px 24px;
+  box-shadow: 0 14px 0 rgba(23, 32, 51, 0.26), 0 0 38px rgba(53, 201, 131, 0.55);
+  animation: results-pop 0.45s ease;
+}
+.buddy-levelup-hero { position: relative; width: 132px; animation: sticker-pop-in 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.buddy-levelup-card strong { font-size: 1.6rem; color: var(--ink); }
+.buddy-levelup-card em { font-size: 1.15rem; font-weight: 900; color: #157a4e; }
+.buddy-levelup-card small { margin-top: 6px; font-size: 0.8rem; font-weight: 700; color: #6d8a7b; }
+.buddy-levelup-burst { z-index: 73; }
+
+/* Level-5 orbit stars gently twinkle around the dino */
+.buddy-orbit-star { font-size: 11px; animation: orbit-twinkle 1.8s ease-in-out infinite; }
+.buddy-orbit-star.s2 { animation-delay: 0.5s; }
+.buddy-orbit-star.s3 { animation-delay: 1s; }
+@keyframes orbit-twinkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
 @media (max-width: 380px) {
   .reis-quest-copy strong { font-size: 1rem; }
   .reis-quest-copy em { font-size: 0.78rem; }

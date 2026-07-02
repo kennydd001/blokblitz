@@ -15,10 +15,61 @@ export interface Buddy {
   name: string;
 }
 
-export function createBuddy(skin: HeroSkin): Buddy {
+// Buddy grows with the child: stars feed the dino, and at each threshold it
+// visibly evolves (scarf -> cape -> crown -> star glow). Accessories stack, so
+// a Sterrendino proudly wears everything it earned along the way.
+export interface BuddyLevel {
+  level: number;
+  stars: number;
+  title: string;
+}
+
+export const BUDDY_LEVELS: BuddyLevel[] = [
+  { level: 1, stars: 0, title: "Kleine dino" },
+  { level: 2, stars: 25, title: "Coole dino" },
+  { level: 3, stars: 60, title: "Superdino" },
+  { level: 4, stars: 120, title: "Koningsdino" },
+  { level: 5, stars: 250, title: "Sterrendino" }
+];
+
+export function buddyLevel(stars: number): BuddyLevel {
+  let current = BUDDY_LEVELS[0];
+  for (const entry of BUDDY_LEVELS) {
+    if (stars >= entry.stars) current = entry;
+  }
+  return current;
+}
+
+// Per-level accessory art layered into the buddy SVG (same chunky outlines).
+function accessorySvg(level: number): string {
+  let out = "";
+  if (level >= 3) {
+    out += `<path class="buddy-acc buddy-acc-cape" d="M36 46 q-16 26 -6 52 l14 -6 z M90 46 q16 26 6 52 l-14 -6 z" fill="#e4564b" stroke="#10131c" stroke-width="3"/>`;
+  }
+  return out;
+}
+
+// Accessories that sit ON TOP of the body (scarf, crown, orbiting stars).
+function overlaySvg(level: number): string {
+  let out = "";
+  if (level >= 2) {
+    out += `<path class="buddy-acc buddy-acc-scarf" d="M40 44 q23 12 46 0 l-4 10 q-19 9 -38 0 z" fill="#37c0f0" stroke="#10131c" stroke-width="3"/>`;
+  }
+  if (level >= 4) {
+    out += `<g class="buddy-acc buddy-acc-crown" stroke="#10131c" stroke-width="2.5"><path d="M46 22 l5 -12 l7 8 l7 -11 l7 11 l7 -8 l5 12 z" fill="#f4b942"/><circle cx="51" cy="9" r="2.6" fill="#ff5fb8"/><circle cx="72" cy="6" r="2.6" fill="#37c0f0"/><circle cx="84" cy="9" r="2.6" fill="#7ddf7d"/></g>`;
+  }
+  if (level >= 5) {
+    out += `<g class="buddy-acc buddy-acc-stars"><text class="buddy-orbit-star s1" x="12" y="52">⭐</text><text class="buddy-orbit-star s2" x="96" y="42">⭐</text><text class="buddy-orbit-star s3" x="18" y="98">✨</text></g>`;
+  }
+  return out;
+}
+
+export function createBuddy(skin: HeroSkin, stars = 0): Buddy {
+  const level = buddyLevel(stars).level;
   const wrap = document.createElement("div");
   wrap.className = "buddy mood-idle";
   wrap.dataset.buddy = skin.id;
+  wrap.dataset.buddyLevel = String(level);
   wrap.style.setProperty("--b", cssHex(skin.colors.body));
   wrap.style.setProperty("--be", cssHex(skin.colors.belly));
   wrap.style.setProperty("--ac", cssHex(skin.colors.accent));
@@ -34,6 +85,7 @@ export function createBuddy(skin: HeroSkin): Buddy {
       </g>
       <g class="buddy-body">
         <path class="buddy-tail" d="M22 86 q-14 2 -16 16 q14 -2 18 -10 z" fill="var(--b)" stroke="#10131c" stroke-width="3"/>
+        ${accessorySvg(level)}
         <g class="buddy-spikes" fill="var(--ac)" stroke="#10131c" stroke-width="2.5">
           <path d="M52 24 l8 -14 l8 14 z"/>
           <path d="M66 26 l7 -12 l7 12 z"/>
@@ -47,6 +99,7 @@ export function createBuddy(skin: HeroSkin): Buddy {
         <ellipse class="buddy-cheek" cx="44" cy="72" rx="5" ry="3.5" fill="#ff7eb6"/>
         <ellipse class="buddy-cheek" cx="84" cy="72" rx="5" ry="3.5" fill="#ff7eb6"/>
         <path class="buddy-mouth" d="M56 80 q8 9 16 0" fill="none" stroke="#10131c" stroke-width="3" stroke-linecap="round"/>
+        ${overlaySvg(level)}
       </g>
     </svg>
   `;

@@ -210,6 +210,8 @@ export interface GameProgress {
   dailyChestDay: string;
   /** Finished activities toward the session treasure chest (full at 3). */
   sessionChestFill: number;
+  /** Highest Buddy level already celebrated with the level-up moment. */
+  buddyLevelSeen: number;
 }
 
 export interface SaveData {

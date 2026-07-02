@@ -3,7 +3,8 @@
 // map and the Speeltuin hub so the loop is visible wherever the child lands.
 
 import type { Game } from "../game/Game";
-import type { Buddy } from "./buddy";
+import { skinById } from "../runner/skins";
+import { buddyLevel, createBuddy, type Buddy } from "./buddy";
 
 /** The 3-gem meter pill (💎💎◇). */
 export function treasureMeter(game: Game): HTMLElement {
@@ -53,4 +54,40 @@ export function spawnTreasureChest(game: Game, root: HTMLElement, buddy?: Buddy)
   });
   root.appendChild(chest);
   return chest;
+}
+
+/**
+ * The Buddy level-up moment: when total stars cross a BUDDY_LEVELS threshold,
+ * celebrate it once — a full-screen card where the evolved Buddy shows off its
+ * new accessory and title. Called from the calm screens (map + hub) so it never
+ * interrupts gameplay. Returns the overlay (or null when nothing new).
+ */
+export function maybeBuddyLevelUp(game: Game, root: HTMLElement): HTMLElement | null {
+  const progress = game.data().progress;
+  const level = buddyLevel(progress.stars);
+  if (level.level <= (progress.buddyLevelSeen ?? 1)) return null;
+  game.save.markBuddyLevelSeen(level.level);
+
+  const overlay = document.createElement("div");
+  overlay.className = "buddy-levelup";
+  overlay.dataset.buddyLevelup = String(level.level);
+  const card = document.createElement("div");
+  card.className = "buddy-levelup-card";
+  card.innerHTML = `<strong>Buddy groeit!</strong><em>${level.title}</em><small>tik om verder te gaan</small>`;
+  const hero = createBuddy(skinById(progress.cosmetics.activeSkin), progress.stars);
+  hero.el.classList.add("buddy-levelup-hero");
+  hero.setMood("wow");
+  card.prepend(hero.el);
+  const burst = document.createElement("div");
+  burst.className = "results-burst buddy-levelup-burst";
+  burst.setAttribute("aria-hidden", "true");
+  burst.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>";
+  overlay.append(card, burst);
+  overlay.addEventListener("click", () => overlay.remove());
+
+  game.audio.play("win");
+  game.haptics.play("win");
+  game.voice.speak(`Buddy groeit! ${level.title}!`, { interrupt: true, pitch: 1.2 });
+  root.appendChild(overlay);
+  return overlay;
 }

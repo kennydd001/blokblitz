@@ -4,7 +4,7 @@ import { HERO_SKINS, skinById, unlockedSkinIds } from "../runner/skins";
 import { cssHex } from "../runner/worlds";
 import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
-import { spawnTreasureChest, treasureMeter } from "./treasure";
+import { maybeBuddyLevelUp, spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
 interface ModeCard {
@@ -109,10 +109,11 @@ export class HubScene extends BaseScene {
 
     // Your hero greets you here too, in its chosen colour — picking a new hero in
     // the garage updates the buddy instantly.
-    const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin));
+    const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin), data.progress.stars);
     this.root.appendChild(buddy.el);
     buddy.setMood("happy", 1500);
     spawnTreasureChest(this.game, this.root, buddy);
+    maybeBuddyLevelUp(this.game, this.root);
     if (!this.greeted) {
       this.greeted = true;
       buddy.say(`Hoi! Ik ben ${buddy.name}. Wat spelen we?`);

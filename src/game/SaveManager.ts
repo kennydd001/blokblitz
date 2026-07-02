@@ -61,7 +61,8 @@ export function defaultProgress(): GameProgress {
     stickers: [],
     journey: { nodeIndex: 0, completed: [] },
     dailyChestDay: "",
-    sessionChestFill: 0
+    sessionChestFill: 0,
+    buddyLevelSeen: 1
   };
 }
 
@@ -286,7 +287,8 @@ export class SaveManager {
           return { nodeIndex: frontierIndex(completed), completed };
         })(),
         dailyChestDay: data.progress?.dailyChestDay ?? "",
-        sessionChestFill: data.progress?.sessionChestFill ?? 0
+        sessionChestFill: data.progress?.sessionChestFill ?? 0,
+        buddyLevelSeen: data.progress?.buddyLevelSeen ?? 1
       }
     };
   }
@@ -308,6 +310,12 @@ export class SaveManager {
     this.data.progress.sessionChestFill = 0;
     this.save();
     return true;
+  }
+
+  /** Remember that the child saw Buddy reach this level. */
+  markBuddyLevelSeen(level: number): void {
+    this.data.progress.buddyLevelSeen = Math.max(this.data.progress.buddyLevelSeen ?? 1, level);
+    this.save();
   }
 
   /** Whether today's gift chest is still unopened. */
