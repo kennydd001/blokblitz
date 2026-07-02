@@ -97,7 +97,11 @@ function voiceLineSlug(text) {
 }
 
 function soundFor(unit) {
-  const stretched = {
+  // Phoneme-true spellings for a Dutch voice, mirroring
+  // src/education/literacy/phonemeInventory.ts. Continuous consonants stretch
+  // (mmm), stop consonants get a minimal schwa (buh — NEVER the letter name
+  // "bee"), short vowels stay short (oh, not ooo), digraphs read as themselves.
+  const spoken = {
     m: "mmm",
     s: "sss",
     v: "vvv",
@@ -106,13 +110,20 @@ function soundFor(unit) {
     z: "zzz",
     h: "hhh",
     l: "lll",
+    f: "fff",
+    w: "www",
+    b: "buh",
+    d: "duh",
+    k: "kuh",
+    p: "puh",
+    t: "tuh",
     a: "aaa",
-    e: "eee",
-    i: "iii",
-    o: "ooo",
-    u: "uuu"
+    e: "eh",
+    i: "ih",
+    o: "oh",
+    u: "uh"
   };
-  return stretched[unit] ?? unit;
+  return spoken[unit] ?? unit;
 }
 
 function blendTrigger(word) {
@@ -257,6 +268,54 @@ function buildInventory() {
   add("shape-corners", "Hoeveel hoeken heeft deze vorm?", "geometry");
   add("shape-pattern", "Wat komt er nu? Maak het patroon af.", "geometry");
   shapeNames.forEach((shape) => add(`shape-find-${shape}`, `Tik de ${shape}.`, "geometry"));
+
+  // Standalone phonics words, so a zoem chain can end on the plain word.
+  phonicsWords.forEach((word) => add(`word-${word.word}`, word.word, "phonics"));
+
+  // Kloktoren: prompts + every whole/half hour in Flemish time language.
+  add("klok-read", "Hoe laat is het?", "klok");
+  const dutchTime = (hour, minute) => (minute === 30 ? `half ${hour === 12 ? 1 : hour + 1}` : `${hour} uur`);
+  for (let hour = 1; hour <= 12; hour += 1) {
+    for (const minute of [0, 30]) {
+      const time = dutchTime(hour, minute);
+      add(`klok-time-${hour}-${minute}`, time, "klok");
+      add(`klok-which-${hour}-${minute}`, `Welke klok is ${time}?`, "klok");
+    }
+  }
+  add("klok-wrong", "Kijk naar de wijzers: kort = uur, lang = minuten.", "klok");
+
+  // Geldmarkt: prompts + purse targets.
+  add("geld-count", "Hoeveel euro is dit samen?", "geld");
+  for (let amount = 3; amount <= 10; amount += 1) add(`geld-make-${amount}`, `Welke portemonnee is ${amount} euro?`, "geld");
+  add("geld-wrong", "Tel de muntjes samen: 5, dan 2, dan 1.", "geld");
+
+  // Meetwerf: prompts.
+  addMany("meet", [
+    "Hoeveel blokjes lang is de balk?",
+    "Welke balk is het langst?",
+    "Welke balk is het kortst?",
+    "Leg ze naast elkaar en vergelijk."
+  ]);
+
+  // Verkeerspad: card prompts, every option (spoken on tap) and every lesson.
+  const trafficCards = [
+    { prompt: "Waar steek je veilig over?", options: ["op het zebrapad", "tussen de auto's", "achter een boom"], lesson: "Steek altijd over op het zebrapad." },
+    { prompt: "Het licht is rood. Wat doe je?", options: ["stoppen en wachten", "snel oversteken", "ogen dicht en lopen"], lesson: "Rood is stoppen. Wacht tot het groen is." },
+    { prompt: "Het licht is groen voor jou. Wat doe je?", options: ["eerst kijken, dan oversteken", "blijven staan slapen", "op je spelletje kijken"], lesson: "Groen is gaan, maar kijk altijd eerst links en rechts." },
+    { prompt: "Het is donker. Wat trek je aan om gezien te worden?", options: ["een fluohesje", "donkere kleren", "een zonnebril"], lesson: "Met een fluohesje en lichtjes zien de auto's jou." },
+    { prompt: "Je zit in de auto. Wat doe je eerst?", options: ["gordel vastklikken", "rondspringen", "uit het raam hangen"], lesson: "Klik, vast! Altijd eerst je gordel." },
+    { prompt: "Je gaat fietsen. Wat zet je op?", options: ["je fietshelm", "een hoge hoed", "een kroontje"], lesson: "Een helm beschermt je hoofd." },
+    { prompt: "Een grote vrachtwagen staat aan het licht. Waar ga je staan?", options: ["ver ervoor, waar de chauffeur je ziet", "er vlak naast", "er vlak achter"], lesson: "Vlak naast of achter een vrachtwagen kan de chauffeur je niet zien: de dode hoek." },
+    { prompt: "Waar loop je op straat?", options: ["op de stoep", "midden op de weg", "op de busbaan"], lesson: "De stoep is voor voetgangers, de weg voor auto's." },
+    { prompt: "Je bal rolt de straat op. Wat doe je?", options: ["stoppen en een grote mens vragen", "er meteen achteraan rennen", "de straat op duiken"], lesson: "Nooit zomaar de straat op rennen, ook niet voor je bal." },
+    { prompt: "Je steekt over met mama of papa. Wat doe je?", options: ["hand vasthouden", "vooruit rennen", "heel ver achterblijven"], lesson: "Hand in hand oversteken is het veiligst." }
+  ];
+  trafficCards.forEach((card, index) => {
+    add(`verkeer-prompt-${index + 1}`, card.prompt, "verkeer");
+    add(`verkeer-lesson-${index + 1}`, card.lesson, "verkeer");
+    card.options.forEach((option, oi) => add(`verkeer-option-${index + 1}-${oi + 1}`, option, "verkeer"));
+  });
+  addMany("verkeer", ["Veilig gedaan!", "Kies het veilige pad in het verkeer."]);
 }
 
 function wait(ms) {

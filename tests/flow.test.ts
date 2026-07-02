@@ -575,6 +575,26 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("offers a daily gift chest on the map, once per day", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    game.showScene("reis");
+    const chest = root.querySelector<HTMLButtonElement>(".reis-chest");
+    expect(chest).toBeTruthy();
+
+    const starsBefore = game.data().progress.stars;
+    chest!.click();
+    expect(game.data().progress.stars).toBe(starsBefore + 3);
+    // Same day: no second chest, and re-clicking pays nothing.
+    chest!.click();
+    expect(game.data().progress.stars).toBe(starsBefore + 3);
+    game.showScene("hub");
+    game.showScene("reis");
+    expect(root.querySelector(".reis-chest")).toBeNull();
+  });
+
   it("makes De Sterrenreis the default adventure and advances after a story activity", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");

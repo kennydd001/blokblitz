@@ -82,7 +82,7 @@ describe("browser reading audio path", () => {
     expect(existsSync("public/audio/reading/nl/hestia")).toBe(false);
   });
 
-  it("routes isolated letters and zoemend lezen through browser-only ReadingAudioManager", () => {
+  it("routes isolated letters and zoemend lezen through the clip-first ReadingAudioManager", () => {
     const sources = [
       "src/scenes/minigames/KlankgrotScene.ts",
       "src/scenes/minigames/LetterkompasScene.ts",
@@ -98,9 +98,27 @@ describe("browser reading audio path", () => {
     expect(sources).not.toContain("voice.speak(unit");
     expect(sources).not.toContain('units.join("... ")');
 
+    // Clip-first: real Hestia phoneme clips, chained for blends, with browser
+    // speech synthesis kept only as the last-resort fallback.
     const managerSource = readFileSync("src/game/ReadingAudioManager.ts", "utf8");
+    expect(managerSource).toContain("VOICE_LINE_SLUGS");
+    expect(managerSource).toContain("voiceLineFile");
+    expect(managerSource).toContain("new Audio(");
     expect(managerSource).toContain("speakBrowserOnly");
     expect(managerSource).not.toContain("readingAudioManifest");
-    expect(managerSource).not.toContain("new Audio(");
+  });
+
+  it("bundles real phoneme, word and blend clips for the reading modes", async () => {
+    const { VOICE_LINE_SLUGS, voiceLineSlug } = await import("../src/game/voiceLineManifest");
+    const { PHONICS_WORDS } = await import("../src/education/literacy/phonics");
+    for (const word of PHONICS_WORDS) {
+      // every sound unit has a clip...
+      for (const unit of word.units) expect(VOICE_LINE_SLUGS.has(voiceLineSlug(unit)), `unit clip ${unit}`).toBe(true);
+      // ...the whole word has a clip...
+      expect(VOICE_LINE_SLUGS.has(voiceLineSlug(word.word)), `word clip ${word.word}`).toBe(true);
+      // ...and the paced zoem blend has a clip.
+      const blend = voiceLineSlug(`${word.units.join("... ")}... ${word.word}`);
+      expect(VOICE_LINE_SLUGS.has(blend), `blend clip ${blend}`).toBe(true);
+    }
   });
 });

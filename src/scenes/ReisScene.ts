@@ -153,6 +153,7 @@ export class ReisScene extends BaseScene {
     });
 
     this.root.append(top, quest, track, scroll, meadow);
+    this.maybeDailyChest();
     this.maybeRegionBanner(here);
 
     // Centre the frontier node so only current + next need to be on screen.
@@ -399,6 +400,39 @@ export class ReisScene extends BaseScene {
   }
 
   // A brief "welcome" the first time Buddy enters each region (visual + spoken + music already switched).
+  // The daily gift: a wiggling chest on the map, once per day. Opening it pops
+  // a star burst + reward — a tiny ritual that makes "even kijken" worth it.
+  private maybeDailyChest(): void {
+    const dayKey = new Date().toISOString().slice(0, 10);
+    if (!this.game.save.dailyChestAvailable(dayKey)) return;
+    const chest = document.createElement("button");
+    chest.type = "button";
+    chest.className = "reis-chest";
+    chest.dataset.dailyChest = "true";
+    chest.setAttribute("aria-label", "Open je dagelijkse cadeautje");
+    chest.innerHTML = `<span aria-hidden="true">🎁</span>`;
+    chest.addEventListener("click", () => {
+      if (!this.game.save.claimDailyChest(dayKey)) return;
+      this.game.save.award({ stars: 3, blocks: 3 });
+      this.game.audio.play("win");
+      this.game.haptics.play("win");
+      this.game.voice.speak("Hoera! Drie sterren erbij!", { interrupt: true, pitch: 1.2 });
+      this.buddy?.setMood("wow", 1600);
+      this.buddy?.say("Een cadeautje!");
+      const burst = document.createElement("div");
+      burst.className = "results-burst reis-chest-burst";
+      burst.setAttribute("aria-hidden", "true");
+      burst.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>";
+      this.root.appendChild(burst);
+      this.addCleanup(() => burst.remove());
+      chest.classList.add("opened");
+      chest.disabled = true;
+      const timer = window.setTimeout(() => chest.remove(), 900);
+      this.addCleanup(() => window.clearTimeout(timer));
+    });
+    this.root.appendChild(chest);
+  }
+
   private maybeRegionBanner(here: JourneyNode): void {
     if (here.regionId === this.game.journeyLastRegion) return;
     this.game.journeyLastRegion = here.regionId;

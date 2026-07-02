@@ -59,7 +59,8 @@ export function defaultProgress(): GameProgress {
     cosmetics: { activeSkin: "blitz", unlockedSkins: ["blitz"] },
     worlds: makeWorldRecord(),
     stickers: [],
-    journey: { nodeIndex: 0, completed: [] }
+    journey: { nodeIndex: 0, completed: [] },
+    dailyChestDay: ""
   };
 }
 
@@ -282,9 +283,23 @@ export class SaveManager {
         journey: (() => {
           const completed = backfillCompleted(data.progress?.journey?.completed ?? []);
           return { nodeIndex: frontierIndex(completed), completed };
-        })()
+        })(),
+        dailyChestDay: data.progress?.dailyChestDay ?? ""
       }
     };
+  }
+
+  /** Whether today's gift chest is still unopened. */
+  dailyChestAvailable(dayKey: string): boolean {
+    return this.data.progress.dailyChestDay !== dayKey;
+  }
+
+  /** Open today's chest (idempotent): returns true only the first time today. */
+  claimDailyChest(dayKey: string): boolean {
+    if (!this.dailyChestAvailable(dayKey)) return false;
+    this.data.progress.dailyChestDay = dayKey;
+    this.save();
+    return true;
   }
 
   private readStorage(): string | null {

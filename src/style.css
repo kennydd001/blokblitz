@@ -8341,6 +8341,32 @@ input {
 
 .reis-finale { z-index: 40; }
 
+/* Daily gift chest — a wiggling present pinned above the map */
+.reis-chest {
+  position: fixed;
+  right: 14px;
+  top: 30%;
+  z-index: 34;
+  width: 74px;
+  height: 74px;
+  border-radius: 22px;
+  border: 5px solid var(--edge);
+  background: linear-gradient(160deg, #ffe08a, #f6a821);
+  box-shadow: 0 7px 0 rgba(23, 32, 51, 0.26), 0 0 26px rgba(246, 168, 33, 0.65);
+  font-size: 2.4rem;
+  line-height: 1;
+  cursor: pointer;
+  animation: chest-wiggle 1.6s ease-in-out infinite;
+}
+.reis-chest.opened { animation: results-pop 0.5s ease; opacity: 0; transition: opacity 0.8s ease 0.1s; }
+.reis-chest-burst { z-index: 44; }
+@keyframes chest-wiggle {
+  0%, 100% { transform: rotate(0); }
+  12% { transform: rotate(-7deg) scale(1.05); }
+  24% { transform: rotate(6deg); }
+  36% { transform: rotate(0); }
+}
+
 @media (max-width: 380px) {
   .reis-quest-copy strong { font-size: 1rem; }
   .reis-quest-copy em { font-size: 0.78rem; }

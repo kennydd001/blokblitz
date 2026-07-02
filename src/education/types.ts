@@ -206,6 +206,8 @@ export interface GameProgress {
   stickers: string[];
   /** Progress along De Sterrenreis (the story map). */
   journey: JourneyProgress;
+  /** Day key (yyyy-mm-dd) of the last opened daily gift chest. */
+  dailyChestDay: string;
 }
 
 export interface SaveData {

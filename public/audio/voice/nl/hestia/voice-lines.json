@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-30T20:09:15.686Z",
+  "generatedAt": "2026-07-02T04:45:44.928Z",
   "provider": "Deepgram",
   "model": "aura-2-hestia-nl",
   "voice": "Hestia",
   "route": "direct /v1/speak",
-  "lineCount": 737,
+  "lineCount": 867,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -199,6 +199,14 @@
       "file": "1-is-1-en-hoeveel-vraag.mp3"
     },
     {
+      "id": "klok-time-1-0",
+      "slug": "1-uur",
+      "text": "1 uur",
+      "spokenText": "1 uur",
+      "category": "klok",
+      "file": "1-uur.mp3"
+    },
+    {
       "id": "split-parts-10-0",
       "slug": "10-en-0-maken-samen-hoeveel-vraag",
       "text": "10 en 0 maken samen hoeveel?",
@@ -383,6 +391,14 @@
       "file": "10-is-9-en-hoeveel-vraag.mp3"
     },
     {
+      "id": "klok-time-10-0",
+      "slug": "10-uur",
+      "text": "10 uur",
+      "spokenText": "10 uur",
+      "category": "klok",
+      "file": "10-uur.mp3"
+    },
+    {
       "id": "teen-build-11",
       "slug": "11-is-tien-en-hoeveel-vraag",
       "text": "11 is tien en hoeveel?",
@@ -519,6 +535,14 @@
       "file": "11-min-9-vraag.mp3"
     },
     {
+      "id": "klok-time-11-0",
+      "slug": "11-uur",
+      "text": "11 uur",
+      "spokenText": "11 uur",
+      "category": "klok",
+      "file": "11-uur.mp3"
+    },
+    {
       "id": "teen-build-12",
       "slug": "12-is-tien-en-hoeveel-vraag",
       "text": "12 is tien en hoeveel?",
@@ -637,6 +661,14 @@
       "spokenText": "12 - 9 = ?",
       "category": "math20",
       "file": "12-min-9-vraag.mp3"
+    },
+    {
+      "id": "klok-time-12-0",
+      "slug": "12-uur",
+      "text": "12 uur",
+      "spokenText": "12 uur",
+      "category": "klok",
+      "file": "12-uur.mp3"
     },
     {
       "id": "teen-build-13",
@@ -1151,6 +1183,14 @@
       "file": "2-is-2-en-hoeveel-vraag.mp3"
     },
     {
+      "id": "klok-time-2-0",
+      "slug": "2-uur",
+      "text": "2 uur",
+      "spokenText": "2 uur",
+      "category": "klok",
+      "file": "2-uur.mp3"
+    },
+    {
       "id": "split-parts-3-0",
       "slug": "3-en-0-maken-samen-hoeveel-vraag",
       "text": "3 en 0 maken samen hoeveel?",
@@ -1277,6 +1317,14 @@
       "spokenText": "3 is 3 en hoeveel?",
       "category": "splitbord",
       "file": "3-is-3-en-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "klok-time-3-0",
+      "slug": "3-uur",
+      "text": "3 uur",
+      "spokenText": "3 uur",
+      "category": "klok",
+      "file": "3-uur.mp3"
     },
     {
       "id": "split-parts-4-0",
@@ -1413,6 +1461,14 @@
       "spokenText": "4 is 4 en hoeveel?",
       "category": "splitbord",
       "file": "4-is-4-en-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "klok-time-4-0",
+      "slug": "4-uur",
+      "text": "4 uur",
+      "spokenText": "4 uur",
+      "category": "klok",
+      "file": "4-uur.mp3"
     },
     {
       "id": "split-parts-5-0",
@@ -1621,6 +1677,14 @@
       "spokenText": "5 + 9 = ?",
       "category": "math20",
       "file": "5-plus-9-vraag.mp3"
+    },
+    {
+      "id": "klok-time-5-0",
+      "slug": "5-uur",
+      "text": "5 uur",
+      "spokenText": "5 uur",
+      "category": "klok",
+      "file": "5-uur.mp3"
     },
     {
       "id": "split-parts-6-0",
@@ -1869,6 +1933,14 @@
       "spokenText": "6 + ? = 10",
       "category": "math20",
       "file": "6-plus-vraag-10.mp3"
+    },
+    {
+      "id": "klok-time-6-0",
+      "slug": "6-uur",
+      "text": "6 uur",
+      "spokenText": "6 uur",
+      "category": "klok",
+      "file": "6-uur.mp3"
     },
     {
       "id": "split-parts-7-0",
@@ -2141,6 +2213,14 @@
       "spokenText": "7 + ? = 10",
       "category": "math20",
       "file": "7-plus-vraag-10.mp3"
+    },
+    {
+      "id": "klok-time-7-0",
+      "slug": "7-uur",
+      "text": "7 uur",
+      "spokenText": "7 uur",
+      "category": "klok",
+      "file": "7-uur.mp3"
     },
     {
       "id": "split-parts-8-0",
@@ -2437,6 +2517,14 @@
       "spokenText": "8 + ? = 10",
       "category": "math20",
       "file": "8-plus-vraag-10.mp3"
+    },
+    {
+      "id": "klok-time-8-0",
+      "slug": "8-uur",
+      "text": "8 uur",
+      "spokenText": "8 uur",
+      "category": "klok",
+      "file": "8-uur.mp3"
     },
     {
       "id": "split-parts-9-0",
@@ -2759,6 +2847,14 @@
       "file": "9-plus-vraag-10.mp3"
     },
     {
+      "id": "klok-time-9-0",
+      "slug": "9-uur",
+      "text": "9 uur",
+      "spokenText": "9 uur",
+      "category": "klok",
+      "file": "9-uur.mp3"
+    },
+    {
       "id": "sound-a",
       "slug": "a",
       "text": "a",
@@ -2783,6 +2879,14 @@
       "file": "acht.mp3"
     },
     {
+      "id": "verkeer-option-1-3",
+      "slug": "achter-een-boom",
+      "text": "achter een boom",
+      "spokenText": "achter een boom",
+      "category": "verkeer",
+      "file": "achter-een-boom.mp3"
+    },
+    {
       "id": "number-18",
       "slug": "achttien",
       "text": "achttien",
@@ -2794,7 +2898,7 @@
       "id": "sound-b",
       "slug": "b",
       "text": "b",
-      "spokenText": "b",
+      "spokenText": "buh",
       "category": "phonics",
       "file": "b.mp3"
     },
@@ -2802,7 +2906,7 @@
       "id": "blend-bal",
       "slug": "b-a-l-bal",
       "text": "b... a... l... bal",
-      "spokenText": "b... aaa... lll... bal",
+      "spokenText": "buh... aaa... lll... bal",
       "category": "phonics",
       "file": "b-a-l-bal.mp3"
     },
@@ -2810,7 +2914,7 @@
       "id": "blend-boom",
       "slug": "b-oo-m-boom",
       "text": "b... oo... m... boom",
-      "spokenText": "b... oo... mmm... boom",
+      "spokenText": "buh... oo... mmm... boom",
       "category": "phonics",
       "file": "b-oo-m-boom.mp3"
     },
@@ -2818,9 +2922,17 @@
       "id": "blend-boot",
       "slug": "b-oo-t-boot",
       "text": "b... oo... t... boot",
-      "spokenText": "b... oo... t... boot",
+      "spokenText": "buh... oo... tuh... boot",
       "category": "phonics",
       "file": "b-oo-t-boot.mp3"
+    },
+    {
+      "id": "word-bal",
+      "slug": "bal",
+      "text": "bal",
+      "spokenText": "bal",
+      "category": "phonics",
+      "file": "bal.mp3"
     },
     {
       "id": "region-story-6",
@@ -2845,6 +2957,30 @@
       "spokenText": "Bijna! Probeer nog eens.",
       "category": "encourage",
       "file": "bijna-uitroep-probeer-nog-eens.mp3"
+    },
+    {
+      "id": "verkeer-option-3-2",
+      "slug": "blijven-staan-slapen",
+      "text": "blijven staan slapen",
+      "spokenText": "blijven staan slapen",
+      "category": "verkeer",
+      "file": "blijven-staan-slapen.mp3"
+    },
+    {
+      "id": "word-boom",
+      "slug": "boom",
+      "text": "boom",
+      "spokenText": "boom",
+      "category": "phonics",
+      "file": "boom.mp3"
+    },
+    {
+      "id": "word-boot",
+      "slug": "boot",
+      "text": "boot",
+      "spokenText": "boot",
+      "category": "phonics",
+      "file": "boot.mp3"
     },
     {
       "id": "build-number-1",
@@ -2938,7 +3074,7 @@
       "id": "sound-d",
       "slug": "d",
       "text": "d",
-      "spokenText": "d",
+      "spokenText": "duh",
       "category": "phonics",
       "file": "d.mp3"
     },
@@ -2959,12 +3095,36 @@
       "file": "de-dino-heeft-honger-uitroep-tik-de-groep-met-de-meeste.mp3"
     },
     {
+      "id": "verkeer-lesson-8",
+      "slug": "de-stoep-is-voor-voetgangers-de-weg-voor-auto-s",
+      "text": "De stoep is voor voetgangers, de weg voor auto's.",
+      "spokenText": "De stoep is voor voetgangers, de weg voor auto's.",
+      "category": "verkeer",
+      "file": "de-stoep-is-voor-voetgangers-de-weg-voor-auto-s.mp3"
+    },
+    {
+      "id": "verkeer-option-9-3",
+      "slug": "de-straat-op-duiken",
+      "text": "de straat op duiken",
+      "spokenText": "de straat op duiken",
+      "category": "verkeer",
+      "file": "de-straat-op-duiken.mp3"
+    },
+    {
       "id": "number-13",
       "slug": "dertien",
       "text": "dertien",
       "spokenText": "dertien",
       "category": "numbers",
       "file": "dertien.mp3"
+    },
+    {
+      "id": "verkeer-option-4-2",
+      "slug": "donkere-kleren",
+      "text": "donkere kleren",
+      "spokenText": "donkere kleren",
+      "category": "verkeer",
+      "file": "donkere-kleren.mp3"
     },
     {
       "id": "number-3",
@@ -2978,7 +3138,7 @@
       "id": "sound-e",
       "slug": "e",
       "text": "e",
-      "spokenText": "eee",
+      "spokenText": "eh",
       "category": "phonics",
       "file": "e.mp3"
     },
@@ -2989,6 +3149,54 @@
       "spokenText": "één",
       "category": "numbers",
       "file": "een.mp3"
+    },
+    {
+      "id": "verkeer-option-4-1",
+      "slug": "een-fluohesje",
+      "text": "een fluohesje",
+      "spokenText": "een fluohesje",
+      "category": "verkeer",
+      "file": "een-fluohesje.mp3"
+    },
+    {
+      "id": "verkeer-prompt-7",
+      "slug": "een-grote-vrachtwagen-staat-aan-het-licht-waar-ga-je-staan-vraag",
+      "text": "Een grote vrachtwagen staat aan het licht. Waar ga je staan?",
+      "spokenText": "Een grote vrachtwagen staat aan het licht. Waar ga je staan?",
+      "category": "verkeer",
+      "file": "een-grote-vrachtwagen-staat-aan-het-licht-waar-ga-je-staan-vraag.mp3"
+    },
+    {
+      "id": "verkeer-lesson-6",
+      "slug": "een-helm-beschermt-je-hoofd",
+      "text": "Een helm beschermt je hoofd.",
+      "spokenText": "Een helm beschermt je hoofd.",
+      "category": "verkeer",
+      "file": "een-helm-beschermt-je-hoofd.mp3"
+    },
+    {
+      "id": "verkeer-option-6-2",
+      "slug": "een-hoge-hoed",
+      "text": "een hoge hoed",
+      "spokenText": "een hoge hoed",
+      "category": "verkeer",
+      "file": "een-hoge-hoed.mp3"
+    },
+    {
+      "id": "verkeer-option-6-3",
+      "slug": "een-kroontje",
+      "text": "een kroontje",
+      "spokenText": "een kroontje",
+      "category": "verkeer",
+      "file": "een-kroontje.mp3"
+    },
+    {
+      "id": "verkeer-option-4-3",
+      "slug": "een-zonnebril",
+      "text": "een zonnebril",
+      "spokenText": "een zonnebril",
+      "category": "verkeer",
+      "file": "een-zonnebril.mp3"
     },
     {
       "id": "common-21",
@@ -3007,12 +3215,44 @@
       "file": "eerst-deze-uitroep.mp3"
     },
     {
+      "id": "verkeer-option-3-1",
+      "slug": "eerst-kijken-dan-oversteken",
+      "text": "eerst kijken, dan oversteken",
+      "spokenText": "eerst kijken, dan oversteken",
+      "category": "verkeer",
+      "file": "eerst-kijken-dan-oversteken.mp3"
+    },
+    {
       "id": "number-11",
       "slug": "elf",
       "text": "elf",
       "spokenText": "elf",
       "category": "numbers",
       "file": "elf.mp3"
+    },
+    {
+      "id": "verkeer-option-9-2",
+      "slug": "er-meteen-achteraan-rennen",
+      "text": "er meteen achteraan rennen",
+      "spokenText": "er meteen achteraan rennen",
+      "category": "verkeer",
+      "file": "er-meteen-achteraan-rennen.mp3"
+    },
+    {
+      "id": "verkeer-option-7-3",
+      "slug": "er-vlak-achter",
+      "text": "er vlak achter",
+      "spokenText": "er vlak achter",
+      "category": "verkeer",
+      "file": "er-vlak-achter.mp3"
+    },
+    {
+      "id": "verkeer-option-7-2",
+      "slug": "er-vlak-naast",
+      "text": "er vlak naast",
+      "spokenText": "er vlak naast",
+      "category": "verkeer",
+      "file": "er-vlak-naast.mp3"
     },
     {
       "id": "sound-eu",
@@ -3055,6 +3295,22 @@
       "file": "goed-zo-uitroep-verder-met-de-reis-uitroep.mp3"
     },
     {
+      "id": "verkeer-option-5-1",
+      "slug": "gordel-vastklikken",
+      "text": "gordel vastklikken",
+      "spokenText": "gordel vastklikken",
+      "category": "verkeer",
+      "file": "gordel-vastklikken.mp3"
+    },
+    {
+      "id": "verkeer-lesson-3",
+      "slug": "groen-is-gaan-maar-kijk-altijd-eerst-links-en-rechts",
+      "text": "Groen is gaan, maar kijk altijd eerst links en rechts.",
+      "spokenText": "Groen is gaan, maar kijk altijd eerst links en rechts.",
+      "category": "verkeer",
+      "file": "groen-is-gaan-maar-kijk-altijd-eerst-links-en-rechts.mp3"
+    },
+    {
       "id": "sound-h",
       "slug": "h",
       "text": "h",
@@ -3066,7 +3322,7 @@
       "id": "blend-hond",
       "slug": "h-o-n-d-hond",
       "text": "h... o... n... d... hond",
-      "spokenText": "hhh... ooo... nnn... d... hond",
+      "spokenText": "hhh... oh... nnn... duh... hond",
       "category": "phonics",
       "file": "h-o-n-d-hond.mp3"
     },
@@ -3079,12 +3335,132 @@
       "file": "h-ui-s-huis.mp3"
     },
     {
+      "id": "klok-time-12-30",
+      "slug": "half-1",
+      "text": "half 1",
+      "spokenText": "half 1",
+      "category": "klok",
+      "file": "half-1.mp3"
+    },
+    {
+      "id": "klok-time-9-30",
+      "slug": "half-10",
+      "text": "half 10",
+      "spokenText": "half 10",
+      "category": "klok",
+      "file": "half-10.mp3"
+    },
+    {
+      "id": "klok-time-10-30",
+      "slug": "half-11",
+      "text": "half 11",
+      "spokenText": "half 11",
+      "category": "klok",
+      "file": "half-11.mp3"
+    },
+    {
+      "id": "klok-time-11-30",
+      "slug": "half-12",
+      "text": "half 12",
+      "spokenText": "half 12",
+      "category": "klok",
+      "file": "half-12.mp3"
+    },
+    {
+      "id": "klok-time-1-30",
+      "slug": "half-2",
+      "text": "half 2",
+      "spokenText": "half 2",
+      "category": "klok",
+      "file": "half-2.mp3"
+    },
+    {
+      "id": "klok-time-2-30",
+      "slug": "half-3",
+      "text": "half 3",
+      "spokenText": "half 3",
+      "category": "klok",
+      "file": "half-3.mp3"
+    },
+    {
+      "id": "klok-time-3-30",
+      "slug": "half-4",
+      "text": "half 4",
+      "spokenText": "half 4",
+      "category": "klok",
+      "file": "half-4.mp3"
+    },
+    {
+      "id": "klok-time-4-30",
+      "slug": "half-5",
+      "text": "half 5",
+      "spokenText": "half 5",
+      "category": "klok",
+      "file": "half-5.mp3"
+    },
+    {
+      "id": "klok-time-5-30",
+      "slug": "half-6",
+      "text": "half 6",
+      "spokenText": "half 6",
+      "category": "klok",
+      "file": "half-6.mp3"
+    },
+    {
+      "id": "klok-time-6-30",
+      "slug": "half-7",
+      "text": "half 7",
+      "spokenText": "half 7",
+      "category": "klok",
+      "file": "half-7.mp3"
+    },
+    {
+      "id": "klok-time-7-30",
+      "slug": "half-8",
+      "text": "half 8",
+      "spokenText": "half 8",
+      "category": "klok",
+      "file": "half-8.mp3"
+    },
+    {
+      "id": "klok-time-8-30",
+      "slug": "half-9",
+      "text": "half 9",
+      "spokenText": "half 9",
+      "category": "klok",
+      "file": "half-9.mp3"
+    },
+    {
+      "id": "verkeer-lesson-10",
+      "slug": "hand-in-hand-oversteken-is-het-veiligst",
+      "text": "Hand in hand oversteken is het veiligst.",
+      "spokenText": "Hand in hand oversteken is het veiligst.",
+      "category": "verkeer",
+      "file": "hand-in-hand-oversteken-is-het-veiligst.mp3"
+    },
+    {
+      "id": "verkeer-option-10-1",
+      "slug": "hand-vasthouden",
+      "text": "hand vasthouden",
+      "spokenText": "hand vasthouden",
+      "category": "verkeer",
+      "file": "hand-vasthouden.mp3"
+    },
+    {
       "id": "praise-8",
       "slug": "heel-goed-uitroep",
       "text": "Heel goed!",
       "spokenText": "Heel goed!",
       "category": "praise",
       "file": "heel-goed-uitroep.mp3"
+    },
+    {
+      "id": "verkeer-option-10-3",
+      "slug": "heel-ver-achterblijven",
+      "text": "heel ver achterblijven",
+      "spokenText": "heel ver achterblijven",
+      "category": "verkeer",
+      "file": "heel-ver-achterblijven.mp3"
     },
     {
       "id": "common-8",
@@ -3109,6 +3485,30 @@
       "spokenText": "Het grasland werd grijs toen de ster viel. Breng de kleuren terug!",
       "category": "story",
       "file": "het-grasland-werd-grijs-toen-de-ster-viel-breng-de-kleuren-terug-uitroep.mp3"
+    },
+    {
+      "id": "verkeer-prompt-4",
+      "slug": "het-is-donker-wat-trek-je-aan-om-gezien-te-worden-vraag",
+      "text": "Het is donker. Wat trek je aan om gezien te worden?",
+      "spokenText": "Het is donker. Wat trek je aan om gezien te worden?",
+      "category": "verkeer",
+      "file": "het-is-donker-wat-trek-je-aan-om-gezien-te-worden-vraag.mp3"
+    },
+    {
+      "id": "verkeer-prompt-3",
+      "slug": "het-licht-is-groen-voor-jou-wat-doe-je-vraag",
+      "text": "Het licht is groen voor jou. Wat doe je?",
+      "spokenText": "Het licht is groen voor jou. Wat doe je?",
+      "category": "verkeer",
+      "file": "het-licht-is-groen-voor-jou-wat-doe-je-vraag.mp3"
+    },
+    {
+      "id": "verkeer-prompt-2",
+      "slug": "het-licht-is-rood-wat-doe-je-vraag",
+      "text": "Het licht is rood. Wat doe je?",
+      "spokenText": "Het licht is rood. Wat doe je?",
+      "category": "verkeer",
+      "file": "het-licht-is-rood-wat-doe-je-vraag.mp3"
     },
     {
       "id": "make-ten-shield-1",
@@ -3191,6 +3591,14 @@
       "file": "hippie-het-konijn-hupt-mee-en-wijst-de-weg-uitroep.mp3"
     },
     {
+      "id": "klok-read",
+      "slug": "hoe-laat-is-het-vraag",
+      "text": "Hoe laat is het?",
+      "spokenText": "Hoe laat is het?",
+      "category": "klok",
+      "file": "hoe-laat-is-het-vraag.mp3"
+    },
+    {
       "id": "praise-7",
       "slug": "hoera-uitroep",
       "text": "Hoera!",
@@ -3205,6 +3613,22 @@
       "spokenText": "Hoera! De ster is thuis en schijnt weer! Alle kleuren zijn terug en zes vriendjes vieren mee. Knap gedaan!",
       "category": "story",
       "file": "hoera-uitroep-de-ster-is-thuis-en-schijnt-weer-uitroep-alle-kleuren-zijn-terug-en-zes-vriendjes-.mp3"
+    },
+    {
+      "id": "meet-1",
+      "slug": "hoeveel-blokjes-lang-is-de-balk-vraag",
+      "text": "Hoeveel blokjes lang is de balk?",
+      "spokenText": "Hoeveel blokjes lang is de balk?",
+      "category": "meet",
+      "file": "hoeveel-blokjes-lang-is-de-balk-vraag.mp3"
+    },
+    {
+      "id": "geld-count",
+      "slug": "hoeveel-euro-is-dit-samen-vraag",
+      "text": "Hoeveel euro is dit samen?",
+      "spokenText": "Hoeveel euro is dit samen?",
+      "category": "geld",
+      "file": "hoeveel-euro-is-dit-samen-vraag.mp3"
     },
     {
       "id": "shape-corners",
@@ -3231,10 +3655,26 @@
       "file": "hoi-uitroep-wat-gaan-we-spelen-vraag.mp3"
     },
     {
+      "id": "word-hond",
+      "slug": "hond",
+      "text": "hond",
+      "spokenText": "hond",
+      "category": "phonics",
+      "file": "hond.mp3"
+    },
+    {
+      "id": "word-huis",
+      "slug": "huis",
+      "text": "huis",
+      "spokenText": "huis",
+      "category": "phonics",
+      "file": "huis.mp3"
+    },
+    {
       "id": "sound-i",
       "slug": "i",
       "text": "i",
-      "spokenText": "iii",
+      "spokenText": "ih",
       "category": "phonics",
       "file": "i.mp3"
     },
@@ -3255,12 +3695,52 @@
       "file": "in-het-webwoud-raakte-een-vriendje-verstrikt-help-het-los-uitroep.mp3"
     },
     {
+      "id": "verkeer-prompt-9",
+      "slug": "je-bal-rolt-de-straat-op-wat-doe-je-vraag",
+      "text": "Je bal rolt de straat op. Wat doe je?",
+      "spokenText": "Je bal rolt de straat op. Wat doe je?",
+      "category": "verkeer",
+      "file": "je-bal-rolt-de-straat-op-wat-doe-je-vraag.mp3"
+    },
+    {
+      "id": "verkeer-option-6-1",
+      "slug": "je-fietshelm",
+      "text": "je fietshelm",
+      "spokenText": "je fietshelm",
+      "category": "verkeer",
+      "file": "je-fietshelm.mp3"
+    },
+    {
+      "id": "verkeer-prompt-6",
+      "slug": "je-gaat-fietsen-wat-zet-je-op-vraag",
+      "text": "Je gaat fietsen. Wat zet je op?",
+      "spokenText": "Je gaat fietsen. Wat zet je op?",
+      "category": "verkeer",
+      "file": "je-gaat-fietsen-wat-zet-je-op-vraag.mp3"
+    },
+    {
       "id": "encourage-4",
       "slug": "je-kan-het-uitroep",
       "text": "Je kan het!",
       "spokenText": "Je kan het!",
       "category": "encourage",
       "file": "je-kan-het-uitroep.mp3"
+    },
+    {
+      "id": "verkeer-prompt-10",
+      "slug": "je-steekt-over-met-mama-of-papa-wat-doe-je-vraag",
+      "text": "Je steekt over met mama of papa. Wat doe je?",
+      "spokenText": "Je steekt over met mama of papa. Wat doe je?",
+      "category": "verkeer",
+      "file": "je-steekt-over-met-mama-of-papa-wat-doe-je-vraag.mp3"
+    },
+    {
+      "id": "verkeer-prompt-5",
+      "slug": "je-zit-in-de-auto-wat-doe-je-eerst-vraag",
+      "text": "Je zit in de auto. Wat doe je eerst?",
+      "spokenText": "Je zit in de auto. Wat doe je eerst?",
+      "category": "verkeer",
+      "file": "je-zit-in-de-auto-wat-doe-je-eerst-vraag.mp3"
     },
     {
       "id": "common-16",
@@ -3274,7 +3754,7 @@
       "id": "sound-k",
       "slug": "k",
       "text": "k",
-      "spokenText": "k",
+      "spokenText": "kuh",
       "category": "phonics",
       "file": "k.mp3"
     },
@@ -3282,9 +3762,17 @@
       "id": "blend-kat",
       "slug": "k-a-t-kat",
       "text": "k... a... t... kat",
-      "spokenText": "k... aaa... t... kat",
+      "spokenText": "kuh... aaa... tuh... kat",
       "category": "phonics",
       "file": "k-a-t-kat.mp3"
+    },
+    {
+      "id": "word-kat",
+      "slug": "kat",
+      "text": "kat",
+      "spokenText": "kat",
+      "category": "phonics",
+      "file": "kat.mp3"
     },
     {
       "id": "compare-largest",
@@ -3375,6 +3863,14 @@
       "file": "kies-de-kralenbrug-met-9.mp3"
     },
     {
+      "id": "verkeer-2",
+      "slug": "kies-het-veilige-pad-in-het-verkeer",
+      "text": "Kies het veilige pad in het verkeer.",
+      "spokenText": "Kies het veilige pad in het verkeer.",
+      "category": "verkeer",
+      "file": "kies-het-veilige-pad-in-het-verkeer.mp3"
+    },
+    {
       "id": "common-20",
       "slug": "kijk-eerst-vijf-dan-de-extra-blokjes",
       "text": "Kijk: eerst vijf, dan de extra blokjes.",
@@ -3383,12 +3879,28 @@
       "file": "kijk-eerst-vijf-dan-de-extra-blokjes.mp3"
     },
     {
+      "id": "klok-wrong",
+      "slug": "kijk-naar-de-wijzers-kort-uur-lang-minuten",
+      "text": "Kijk naar de wijzers: kort = uur, lang = minuten.",
+      "spokenText": "Kijk naar de wijzers: kort = uur, lang = minuten.",
+      "category": "klok",
+      "file": "kijk-naar-de-wijzers-kort-uur-lang-minuten.mp3"
+    },
+    {
       "id": "encourage-3",
       "slug": "kijk-nog-eens-goed",
       "text": "Kijk nog eens goed.",
       "spokenText": "Kijk nog eens goed.",
       "category": "encourage",
       "file": "kijk-nog-eens-goed.mp3"
+    },
+    {
+      "id": "verkeer-lesson-5",
+      "slug": "klik-vast-uitroep-altijd-eerst-je-gordel",
+      "text": "Klik, vast! Altijd eerst je gordel.",
+      "spokenText": "Klik, vast! Altijd eerst je gordel.",
+      "category": "verkeer",
+      "file": "klik-vast-uitroep-altijd-eerst-je-gordel.mp3"
     },
     {
       "id": "zoem-success",
@@ -3495,6 +4007,14 @@
       "file": "laat-precies-9-dieren-door.mp3"
     },
     {
+      "id": "meet-4",
+      "slug": "leg-ze-naast-elkaar-en-vergelijk",
+      "text": "Leg ze naast elkaar en vergelijk.",
+      "spokenText": "Leg ze naast elkaar en vergelijk.",
+      "category": "meet",
+      "file": "leg-ze-naast-elkaar-en-vergelijk.mp3"
+    },
+    {
       "id": "common-13",
       "slug": "luister-naar-de-klank",
       "text": "Luister naar de klank.",
@@ -3535,6 +4055,38 @@
       "file": "m-ui-s-muis.mp3"
     },
     {
+      "id": "word-maan",
+      "slug": "maan",
+      "text": "maan",
+      "spokenText": "maan",
+      "category": "phonics",
+      "file": "maan.mp3"
+    },
+    {
+      "id": "verkeer-lesson-4",
+      "slug": "met-een-fluohesje-en-lichtjes-zien-de-auto-s-jou",
+      "text": "Met een fluohesje en lichtjes zien de auto's jou.",
+      "spokenText": "Met een fluohesje en lichtjes zien de auto's jou.",
+      "category": "verkeer",
+      "file": "met-een-fluohesje-en-lichtjes-zien-de-auto-s-jou.mp3"
+    },
+    {
+      "id": "verkeer-option-8-2",
+      "slug": "midden-op-de-weg",
+      "text": "midden op de weg",
+      "spokenText": "midden op de weg",
+      "category": "verkeer",
+      "file": "midden-op-de-weg.mp3"
+    },
+    {
+      "id": "word-muis",
+      "slug": "muis",
+      "text": "muis",
+      "spokenText": "muis",
+      "category": "phonics",
+      "file": "muis.mp3"
+    },
+    {
       "id": "sound-n",
       "slug": "n",
       "text": "n",
@@ -3567,12 +4119,28 @@
       "file": "negentien.mp3"
     },
     {
+      "id": "word-neus",
+      "slug": "neus",
+      "text": "neus",
+      "spokenText": "neus",
+      "category": "phonics",
+      "file": "neus.mp3"
+    },
+    {
       "id": "common-19",
       "slug": "nog-eens",
       "text": "Nog eens.",
       "spokenText": "Nog eens.",
       "category": "common",
       "file": "nog-eens.mp3"
+    },
+    {
+      "id": "verkeer-lesson-9",
+      "slug": "nooit-zomaar-de-straat-op-rennen-ook-niet-voor-je-bal",
+      "text": "Nooit zomaar de straat op rennen, ook niet voor je bal.",
+      "spokenText": "Nooit zomaar de straat op rennen, ook niet voor je bal.",
+      "category": "verkeer",
+      "file": "nooit-zomaar-de-straat-op-rennen-ook-niet-voor-je-bal.mp3"
     },
     {
       "id": "number-0",
@@ -3586,7 +4154,7 @@
       "id": "sound-o",
       "slug": "o",
       "text": "o",
-      "spokenText": "ooo",
+      "spokenText": "oh",
       "category": "phonics",
       "file": "o.mp3"
     },
@@ -3599,12 +4167,28 @@
       "file": "oeki-de-uil-houdt-van-bovenaf-de-wacht-uitroep.mp3"
     },
     {
+      "id": "verkeer-option-2-3",
+      "slug": "ogen-dicht-en-lopen",
+      "text": "ogen dicht en lopen",
+      "spokenText": "ogen dicht en lopen",
+      "category": "verkeer",
+      "file": "ogen-dicht-en-lopen.mp3"
+    },
+    {
       "id": "sound-oo",
       "slug": "oo",
       "text": "oo",
       "spokenText": "oo",
       "category": "phonics",
       "file": "oo.mp3"
+    },
+    {
+      "id": "verkeer-option-8-3",
+      "slug": "op-de-busbaan",
+      "text": "op de busbaan",
+      "spokenText": "op de busbaan",
+      "category": "verkeer",
+      "file": "op-de-busbaan.mp3"
     },
     {
       "id": "region-story-3",
@@ -3615,12 +4199,36 @@
       "file": "op-de-ijsbaan-is-alles-bevroren-warme-antwoorden-laten-het-smelten-uitroep.mp3"
     },
     {
+      "id": "verkeer-option-8-1",
+      "slug": "op-de-stoep",
+      "text": "op de stoep",
+      "spokenText": "op de stoep",
+      "category": "verkeer",
+      "file": "op-de-stoep.mp3"
+    },
+    {
       "id": "journey-intro",
       "slug": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel-alle-kleuren-verdwenen-maar-samen-brengen-we-ze-",
       "text": "Op een nacht viel er een sterretje uit de hemel. Alle kleuren verdwenen... maar samen brengen we ze terug! Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
       "spokenText": "Op een nacht viel er een sterretje uit de hemel. Alle kleuren verdwenen... maar samen brengen we ze terug! Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
       "category": "story",
       "file": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel-alle-kleuren-verdwenen-maar-samen-brengen-we-ze-.mp3"
+    },
+    {
+      "id": "verkeer-option-1-1",
+      "slug": "op-het-zebrapad",
+      "text": "op het zebrapad",
+      "spokenText": "op het zebrapad",
+      "category": "verkeer",
+      "file": "op-het-zebrapad.mp3"
+    },
+    {
+      "id": "verkeer-option-3-3",
+      "slug": "op-je-spelletje-kijken",
+      "text": "op je spelletje kijken",
+      "spokenText": "op je spelletje kijken",
+      "category": "verkeer",
+      "file": "op-je-spelletje-kijken.mp3"
     },
     {
       "id": "split-chest-1",
@@ -3706,7 +4314,7 @@
       "id": "letter-sound-p",
       "slug": "p",
       "text": "p",
-      "spokenText": "p",
+      "spokenText": "puh",
       "category": "letters",
       "file": "p.mp3"
     },
@@ -3759,6 +4367,30 @@
       "file": "r-oo-s-roos.mp3"
     },
     {
+      "id": "verkeer-option-5-2",
+      "slug": "rondspringen",
+      "text": "rondspringen",
+      "spokenText": "rondspringen",
+      "category": "verkeer",
+      "file": "rondspringen.mp3"
+    },
+    {
+      "id": "verkeer-lesson-2",
+      "slug": "rood-is-stoppen-wacht-tot-het-groen-is",
+      "text": "Rood is stoppen. Wacht tot het groen is.",
+      "spokenText": "Rood is stoppen. Wacht tot het groen is.",
+      "category": "verkeer",
+      "file": "rood-is-stoppen-wacht-tot-het-groen-is.mp3"
+    },
+    {
+      "id": "word-roos",
+      "slug": "roos",
+      "text": "roos",
+      "spokenText": "roos",
+      "category": "phonics",
+      "file": "roos.mp3"
+    },
+    {
       "id": "sound-s",
       "slug": "s",
       "text": "s",
@@ -3770,7 +4402,7 @@
       "id": "blend-sok",
       "slug": "s-o-k-sok",
       "text": "s... o... k... sok",
-      "spokenText": "sss... ooo... k... sok",
+      "spokenText": "sss... oh... kuh... sok",
       "category": "phonics",
       "file": "s-o-k-sok.mp3"
     },
@@ -3778,9 +4410,25 @@
       "id": "blend-ster",
       "slug": "s-t-e-r-ster",
       "text": "s... t... e... r... ster",
-      "spokenText": "sss... t... eee... rrr... ster",
+      "spokenText": "sss... tuh... eh... rrr... ster",
       "category": "phonics",
       "file": "s-t-e-r-ster.mp3"
+    },
+    {
+      "id": "verkeer-option-2-2",
+      "slug": "snel-oversteken",
+      "text": "snel oversteken",
+      "spokenText": "snel oversteken",
+      "category": "verkeer",
+      "file": "snel-oversteken.mp3"
+    },
+    {
+      "id": "word-sok",
+      "slug": "sok",
+      "text": "sok",
+      "spokenText": "sok",
+      "category": "phonics",
+      "file": "sok.mp3"
     },
     {
       "id": "one-more-1",
@@ -3855,12 +4503,44 @@
       "file": "spring-naar-eentje-meer-dan-9.mp3"
     },
     {
+      "id": "verkeer-lesson-1",
+      "slug": "steek-altijd-over-op-het-zebrapad",
+      "text": "Steek altijd over op het zebrapad.",
+      "spokenText": "Steek altijd over op het zebrapad.",
+      "category": "verkeer",
+      "file": "steek-altijd-over-op-het-zebrapad.mp3"
+    },
+    {
+      "id": "word-ster",
+      "slug": "ster",
+      "text": "ster",
+      "spokenText": "ster",
+      "category": "phonics",
+      "file": "ster.mp3"
+    },
+    {
       "id": "story-6",
       "slug": "sterre-de-draak-draagt-de-ster-het-laatste-stukje-uitroep",
       "text": "Sterre de draak draagt de ster het laatste stukje!",
       "spokenText": "Sterre de draak draagt de ster het laatste stukje!",
       "category": "story",
       "file": "sterre-de-draak-draagt-de-ster-het-laatste-stukje-uitroep.mp3"
+    },
+    {
+      "id": "verkeer-option-9-1",
+      "slug": "stoppen-en-een-grote-mens-vragen",
+      "text": "stoppen en een grote mens vragen",
+      "spokenText": "stoppen en een grote mens vragen",
+      "category": "verkeer",
+      "file": "stoppen-en-een-grote-mens-vragen.mp3"
+    },
+    {
+      "id": "verkeer-option-2-1",
+      "slug": "stoppen-en-wachten",
+      "text": "stoppen en wachten",
+      "spokenText": "stoppen en wachten",
+      "category": "verkeer",
+      "file": "stoppen-en-wachten.mp3"
     },
     {
       "id": "praise-3",
@@ -3874,9 +4554,17 @@
       "id": "sound-t",
       "slug": "t",
       "text": "t",
-      "spokenText": "t",
+      "spokenText": "tuh",
       "category": "phonics",
       "file": "t.mp3"
+    },
+    {
+      "id": "geld-wrong",
+      "slug": "tel-de-muntjes-samen-5-dan-2-dan-1",
+      "text": "Tel de muntjes samen: 5, dan 2, dan 1.",
+      "spokenText": "Tel de muntjes samen: 5, dan 2, dan 1.",
+      "category": "geld",
+      "file": "tel-de-muntjes-samen-5-dan-2-dan-1.mp3"
     },
     {
       "id": "encourage-2",
@@ -3967,6 +4655,14 @@
       "file": "top-uitroep.mp3"
     },
     {
+      "id": "verkeer-option-1-2",
+      "slug": "tussen-de-auto-s",
+      "text": "tussen de auto's",
+      "spokenText": "tussen de auto's",
+      "category": "verkeer",
+      "file": "tussen-de-auto-s.mp3"
+    },
+    {
       "id": "number-12",
       "slug": "twaalf",
       "text": "twaalf",
@@ -3994,7 +4690,7 @@
       "id": "letter-sound-u",
       "slug": "u",
       "text": "u",
-      "spokenText": "uuu",
+      "spokenText": "uh",
       "category": "letters",
       "file": "u.mp3"
     },
@@ -4005,6 +4701,14 @@
       "spokenText": "ui",
       "category": "phonics",
       "file": "ui.mp3"
+    },
+    {
+      "id": "verkeer-option-5-3",
+      "slug": "uit-het-raam-hangen",
+      "text": "uit het raam hangen",
+      "spokenText": "uit het raam hangen",
+      "category": "verkeer",
+      "file": "uit-het-raam-hangen.mp3"
     },
     {
       "id": "sound-v",
@@ -4018,7 +4722,7 @@
       "id": "blend-vis",
       "slug": "v-i-s-vis",
       "text": "v... i... s... vis",
-      "spokenText": "vvv... iii... sss... vis",
+      "spokenText": "vvv... ih... sss... vis",
       "category": "phonics",
       "file": "v-i-s-vis.mp3"
     },
@@ -4029,6 +4733,22 @@
       "spokenText": "veertien",
       "category": "numbers",
       "file": "veertien.mp3"
+    },
+    {
+      "id": "verkeer-1",
+      "slug": "veilig-gedaan-uitroep",
+      "text": "Veilig gedaan!",
+      "spokenText": "Veilig gedaan!",
+      "category": "verkeer",
+      "file": "veilig-gedaan-uitroep.mp3"
+    },
+    {
+      "id": "verkeer-option-7-1",
+      "slug": "ver-ervoor-waar-de-chauffeur-je-ziet",
+      "text": "ver ervoor, waar de chauffeur je ziet",
+      "spokenText": "ver ervoor, waar de chauffeur je ziet",
+      "category": "verkeer",
+      "file": "ver-ervoor-waar-de-chauffeur-je-ziet.mp3"
     },
     {
       "id": "common-4",
@@ -4231,6 +4951,22 @@
       "file": "vind-de-dubbele-route-voor-9.mp3"
     },
     {
+      "id": "word-vis",
+      "slug": "vis",
+      "text": "vis",
+      "spokenText": "vis",
+      "category": "phonics",
+      "file": "vis.mp3"
+    },
+    {
+      "id": "verkeer-lesson-7",
+      "slug": "vlak-naast-of-achter-een-vrachtwagen-kan-de-chauffeur-je-niet-zien-de-dode-hoek",
+      "text": "Vlak naast of achter een vrachtwagen kan de chauffeur je niet zien: de dode hoek.",
+      "spokenText": "Vlak naast of achter een vrachtwagen kan de chauffeur je niet zien: de dode hoek.",
+      "category": "verkeer",
+      "file": "vlak-naast-of-achter-een-vrachtwagen-kan-de-chauffeur-je-niet-zien-de-dode-hoek.mp3"
+    },
+    {
       "id": "story-2",
       "slug": "vonk-de-vos-snuffelt-de-muntjes-zo-voor-je-op-uitroep",
       "text": "Vonk de vos snuffelt de muntjes zo voor je op!",
@@ -4239,12 +4975,36 @@
       "file": "vonk-de-vos-snuffelt-de-muntjes-zo-voor-je-op-uitroep.mp3"
     },
     {
+      "id": "verkeer-option-10-2",
+      "slug": "vooruit-rennen",
+      "text": "vooruit rennen",
+      "spokenText": "vooruit rennen",
+      "category": "verkeer",
+      "file": "vooruit-rennen.mp3"
+    },
+    {
       "id": "fill-scene",
       "slug": "vul-precies-zoveel-vakjes-als-het-getal-eerst-de-bovenste-rij",
       "text": "Vul precies zoveel vakjes als het getal. Eerst de bovenste rij.",
       "spokenText": "Vul precies zoveel vakjes als het getal. Eerst de bovenste rij.",
       "category": "number-prompts",
       "file": "vul-precies-zoveel-vakjes-als-het-getal-eerst-de-bovenste-rij.mp3"
+    },
+    {
+      "id": "verkeer-prompt-8",
+      "slug": "waar-loop-je-op-straat-vraag",
+      "text": "Waar loop je op straat?",
+      "spokenText": "Waar loop je op straat?",
+      "category": "verkeer",
+      "file": "waar-loop-je-op-straat-vraag.mp3"
+    },
+    {
+      "id": "verkeer-prompt-1",
+      "slug": "waar-steek-je-veilig-over-vraag",
+      "text": "Waar steek je veilig over?",
+      "spokenText": "Waar steek je veilig over?",
+      "category": "verkeer",
+      "file": "waar-steek-je-veilig-over-vraag.mp3"
     },
     {
       "id": "train-ten-1",
@@ -4802,7 +5562,7 @@
       "id": "blend-picture-bal",
       "slug": "welk-plaatje-is-b-min-a-min-l-vraag",
       "text": "Welk plaatje is b-a-l?",
-      "spokenText": "Welk plaatje is b aaa lll?",
+      "spokenText": "Welk plaatje is buh aaa lll?",
       "category": "phonics",
       "file": "welk-plaatje-is-b-min-a-min-l-vraag.mp3"
     },
@@ -4810,7 +5570,7 @@
       "id": "blend-picture-boom",
       "slug": "welk-plaatje-is-b-min-oo-min-m-vraag",
       "text": "Welk plaatje is b-oo-m?",
-      "spokenText": "Welk plaatje is b oo mmm?",
+      "spokenText": "Welk plaatje is buh oo mmm?",
       "category": "phonics",
       "file": "welk-plaatje-is-b-min-oo-min-m-vraag.mp3"
     },
@@ -4818,7 +5578,7 @@
       "id": "blend-picture-boot",
       "slug": "welk-plaatje-is-b-min-oo-min-t-vraag",
       "text": "Welk plaatje is b-oo-t?",
-      "spokenText": "Welk plaatje is b oo t?",
+      "spokenText": "Welk plaatje is buh oo tuh?",
       "category": "phonics",
       "file": "welk-plaatje-is-b-min-oo-min-t-vraag.mp3"
     },
@@ -4826,7 +5586,7 @@
       "id": "blend-picture-hond",
       "slug": "welk-plaatje-is-h-min-o-min-n-min-d-vraag",
       "text": "Welk plaatje is h-o-n-d?",
-      "spokenText": "Welk plaatje is hhh ooo nnn d?",
+      "spokenText": "Welk plaatje is hhh oh nnn duh?",
       "category": "phonics",
       "file": "welk-plaatje-is-h-min-o-min-n-min-d-vraag.mp3"
     },
@@ -4842,7 +5602,7 @@
       "id": "blend-picture-kat",
       "slug": "welk-plaatje-is-k-min-a-min-t-vraag",
       "text": "Welk plaatje is k-a-t?",
-      "spokenText": "Welk plaatje is k aaa t?",
+      "spokenText": "Welk plaatje is kuh aaa tuh?",
       "category": "phonics",
       "file": "welk-plaatje-is-k-min-a-min-t-vraag.mp3"
     },
@@ -4882,7 +5642,7 @@
       "id": "blend-picture-sok",
       "slug": "welk-plaatje-is-s-min-o-min-k-vraag",
       "text": "Welk plaatje is s-o-k?",
-      "spokenText": "Welk plaatje is sss ooo k?",
+      "spokenText": "Welk plaatje is sss oh kuh?",
       "category": "phonics",
       "file": "welk-plaatje-is-s-min-o-min-k-vraag.mp3"
     },
@@ -4890,7 +5650,7 @@
       "id": "blend-picture-ster",
       "slug": "welk-plaatje-is-s-min-t-min-e-min-r-vraag",
       "text": "Welk plaatje is s-t-e-r?",
-      "spokenText": "Welk plaatje is sss t eee rrr?",
+      "spokenText": "Welk plaatje is sss tuh eh rrr?",
       "category": "phonics",
       "file": "welk-plaatje-is-s-min-t-min-e-min-r-vraag.mp3"
     },
@@ -4898,7 +5658,7 @@
       "id": "blend-picture-vis",
       "slug": "welk-plaatje-is-v-min-i-min-s-vraag",
       "text": "Welk plaatje is v-i-s?",
-      "spokenText": "Welk plaatje is vvv iii sss?",
+      "spokenText": "Welk plaatje is vvv ih sss?",
       "category": "phonics",
       "file": "welk-plaatje-is-v-min-i-min-s-vraag.mp3"
     },
@@ -4906,7 +5666,7 @@
       "id": "blend-picture-zon",
       "slug": "welk-plaatje-is-z-min-o-min-n-vraag",
       "text": "Welk plaatje is z-o-n?",
-      "spokenText": "Welk plaatje is zzz ooo nnn?",
+      "spokenText": "Welk plaatje is zzz oh nnn?",
       "category": "phonics",
       "file": "welk-plaatje-is-z-min-o-min-n-vraag.mp3"
     },
@@ -4930,7 +5690,7 @@
       "id": "begin-sound-b",
       "slug": "welk-woord-begint-met-de-b-min-klank-vraag",
       "text": "Welk woord begint met de b-klank?",
-      "spokenText": "Welk woord begint met de b klank?",
+      "spokenText": "Welk woord begint met de buh klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-b-min-klank-vraag.mp3"
     },
@@ -4938,7 +5698,7 @@
       "id": "begin-sound-d",
       "slug": "welk-woord-begint-met-de-d-min-klank-vraag",
       "text": "Welk woord begint met de d-klank?",
-      "spokenText": "Welk woord begint met de d klank?",
+      "spokenText": "Welk woord begint met de duh klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-d-min-klank-vraag.mp3"
     },
@@ -4946,7 +5706,7 @@
       "id": "begin-sound-e",
       "slug": "welk-woord-begint-met-de-e-min-klank-vraag",
       "text": "Welk woord begint met de e-klank?",
-      "spokenText": "Welk woord begint met de eee klank?",
+      "spokenText": "Welk woord begint met de eh klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-e-min-klank-vraag.mp3"
     },
@@ -4970,7 +5730,7 @@
       "id": "begin-sound-i",
       "slug": "welk-woord-begint-met-de-i-min-klank-vraag",
       "text": "Welk woord begint met de i-klank?",
-      "spokenText": "Welk woord begint met de iii klank?",
+      "spokenText": "Welk woord begint met de ih klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-i-min-klank-vraag.mp3"
     },
@@ -4978,7 +5738,7 @@
       "id": "begin-sound-k",
       "slug": "welk-woord-begint-met-de-k-min-klank-vraag",
       "text": "Welk woord begint met de k-klank?",
-      "spokenText": "Welk woord begint met de k klank?",
+      "spokenText": "Welk woord begint met de kuh klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-k-min-klank-vraag.mp3"
     },
@@ -5002,7 +5762,7 @@
       "id": "letter-word-b",
       "slug": "welk-woord-begint-met-de-letter-b-vraag",
       "text": "Welk woord begint met de letter B?",
-      "spokenText": "Welk woord begint met de letter b?",
+      "spokenText": "Welk woord begint met de letter buh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-b-vraag.mp3"
     },
@@ -5010,7 +5770,7 @@
       "id": "letter-word-d",
       "slug": "welk-woord-begint-met-de-letter-d-vraag",
       "text": "Welk woord begint met de letter D?",
-      "spokenText": "Welk woord begint met de letter d?",
+      "spokenText": "Welk woord begint met de letter duh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-d-vraag.mp3"
     },
@@ -5018,7 +5778,7 @@
       "id": "letter-word-e",
       "slug": "welk-woord-begint-met-de-letter-e-vraag",
       "text": "Welk woord begint met de letter E?",
-      "spokenText": "Welk woord begint met de letter eee?",
+      "spokenText": "Welk woord begint met de letter eh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-e-vraag.mp3"
     },
@@ -5034,7 +5794,7 @@
       "id": "letter-word-i",
       "slug": "welk-woord-begint-met-de-letter-i-vraag",
       "text": "Welk woord begint met de letter I?",
-      "spokenText": "Welk woord begint met de letter iii?",
+      "spokenText": "Welk woord begint met de letter ih?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-i-vraag.mp3"
     },
@@ -5042,7 +5802,7 @@
       "id": "letter-word-k",
       "slug": "welk-woord-begint-met-de-letter-k-vraag",
       "text": "Welk woord begint met de letter K?",
-      "spokenText": "Welk woord begint met de letter k?",
+      "spokenText": "Welk woord begint met de letter kuh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-k-vraag.mp3"
     },
@@ -5074,7 +5834,7 @@
       "id": "letter-word-o",
       "slug": "welk-woord-begint-met-de-letter-o-vraag",
       "text": "Welk woord begint met de letter O?",
-      "spokenText": "Welk woord begint met de letter ooo?",
+      "spokenText": "Welk woord begint met de letter oh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-o-vraag.mp3"
     },
@@ -5082,7 +5842,7 @@
       "id": "letter-word-p",
       "slug": "welk-woord-begint-met-de-letter-p-vraag",
       "text": "Welk woord begint met de letter P?",
-      "spokenText": "Welk woord begint met de letter p?",
+      "spokenText": "Welk woord begint met de letter puh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-p-vraag.mp3"
     },
@@ -5106,7 +5866,7 @@
       "id": "letter-word-t",
       "slug": "welk-woord-begint-met-de-letter-t-vraag",
       "text": "Welk woord begint met de letter T?",
-      "spokenText": "Welk woord begint met de letter t?",
+      "spokenText": "Welk woord begint met de letter tuh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-t-vraag.mp3"
     },
@@ -5114,7 +5874,7 @@
       "id": "letter-word-u",
       "slug": "welk-woord-begint-met-de-letter-u-vraag",
       "text": "Welk woord begint met de letter U?",
-      "spokenText": "Welk woord begint met de letter uuu?",
+      "spokenText": "Welk woord begint met de letter uh?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-u-vraag.mp3"
     },
@@ -5154,7 +5914,7 @@
       "id": "begin-sound-o",
       "slug": "welk-woord-begint-met-de-o-min-klank-vraag",
       "text": "Welk woord begint met de o-klank?",
-      "spokenText": "Welk woord begint met de ooo klank?",
+      "spokenText": "Welk woord begint met de oh klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-o-min-klank-vraag.mp3"
     },
@@ -5186,7 +5946,7 @@
       "id": "begin-sound-t",
       "slug": "welk-woord-begint-met-de-t-min-klank-vraag",
       "text": "Welk woord begint met de t-klank?",
-      "spokenText": "Welk woord begint met de t klank?",
+      "spokenText": "Welk woord begint met de tuh klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-t-min-klank-vraag.mp3"
     },
@@ -5234,7 +5994,7 @@
       "id": "end-sound-b",
       "slug": "welk-woord-eindigt-met-de-b-min-klank-vraag",
       "text": "Welk woord eindigt met de b-klank?",
-      "spokenText": "Welk woord eindigt met de b klank?",
+      "spokenText": "Welk woord eindigt met de buh klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-b-min-klank-vraag.mp3"
     },
@@ -5242,7 +6002,7 @@
       "id": "end-sound-d",
       "slug": "welk-woord-eindigt-met-de-d-min-klank-vraag",
       "text": "Welk woord eindigt met de d-klank?",
-      "spokenText": "Welk woord eindigt met de d klank?",
+      "spokenText": "Welk woord eindigt met de duh klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-d-min-klank-vraag.mp3"
     },
@@ -5250,7 +6010,7 @@
       "id": "end-sound-e",
       "slug": "welk-woord-eindigt-met-de-e-min-klank-vraag",
       "text": "Welk woord eindigt met de e-klank?",
-      "spokenText": "Welk woord eindigt met de eee klank?",
+      "spokenText": "Welk woord eindigt met de eh klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-e-min-klank-vraag.mp3"
     },
@@ -5274,7 +6034,7 @@
       "id": "end-sound-i",
       "slug": "welk-woord-eindigt-met-de-i-min-klank-vraag",
       "text": "Welk woord eindigt met de i-klank?",
-      "spokenText": "Welk woord eindigt met de iii klank?",
+      "spokenText": "Welk woord eindigt met de ih klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-i-min-klank-vraag.mp3"
     },
@@ -5282,7 +6042,7 @@
       "id": "end-sound-k",
       "slug": "welk-woord-eindigt-met-de-k-min-klank-vraag",
       "text": "Welk woord eindigt met de k-klank?",
-      "spokenText": "Welk woord eindigt met de k klank?",
+      "spokenText": "Welk woord eindigt met de kuh klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-k-min-klank-vraag.mp3"
     },
@@ -5314,7 +6074,7 @@
       "id": "end-sound-o",
       "slug": "welk-woord-eindigt-met-de-o-min-klank-vraag",
       "text": "Welk woord eindigt met de o-klank?",
-      "spokenText": "Welk woord eindigt met de ooo klank?",
+      "spokenText": "Welk woord eindigt met de oh klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-o-min-klank-vraag.mp3"
     },
@@ -5346,7 +6106,7 @@
       "id": "end-sound-t",
       "slug": "welk-woord-eindigt-met-de-t-min-klank-vraag",
       "text": "Welk woord eindigt met de t-klank?",
-      "spokenText": "Welk woord eindigt met de t klank?",
+      "spokenText": "Welk woord eindigt met de tuh klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-t-min-klank-vraag.mp3"
     },
@@ -5375,6 +6135,22 @@
       "file": "welk-woord-eindigt-met-de-z-min-klank-vraag.mp3"
     },
     {
+      "id": "meet-3",
+      "slug": "welke-balk-is-het-kortst-vraag",
+      "text": "Welke balk is het kortst?",
+      "spokenText": "Welke balk is het kortst?",
+      "category": "meet",
+      "file": "welke-balk-is-het-kortst-vraag.mp3"
+    },
+    {
+      "id": "meet-2",
+      "slug": "welke-balk-is-het-langst-vraag",
+      "text": "Welke balk is het langst?",
+      "spokenText": "Welke balk is het langst?",
+      "category": "meet",
+      "file": "welke-balk-is-het-langst-vraag.mp3"
+    },
+    {
       "id": "match-scene",
       "slug": "welke-groep-heeft-even-veel-als-deze-vraag",
       "text": "Welke groep heeft even veel als deze?",
@@ -5389,6 +6165,198 @@
       "spokenText": "Welke klank hoort in het lege vakje?",
       "category": "reading",
       "file": "welke-klank-hoort-in-het-lege-vakje-vraag.mp3"
+    },
+    {
+      "id": "klok-which-1-0",
+      "slug": "welke-klok-is-1-uur-vraag",
+      "text": "Welke klok is 1 uur?",
+      "spokenText": "Welke klok is 1 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-1-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-10-0",
+      "slug": "welke-klok-is-10-uur-vraag",
+      "text": "Welke klok is 10 uur?",
+      "spokenText": "Welke klok is 10 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-10-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-11-0",
+      "slug": "welke-klok-is-11-uur-vraag",
+      "text": "Welke klok is 11 uur?",
+      "spokenText": "Welke klok is 11 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-11-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-12-0",
+      "slug": "welke-klok-is-12-uur-vraag",
+      "text": "Welke klok is 12 uur?",
+      "spokenText": "Welke klok is 12 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-12-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-2-0",
+      "slug": "welke-klok-is-2-uur-vraag",
+      "text": "Welke klok is 2 uur?",
+      "spokenText": "Welke klok is 2 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-2-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-3-0",
+      "slug": "welke-klok-is-3-uur-vraag",
+      "text": "Welke klok is 3 uur?",
+      "spokenText": "Welke klok is 3 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-3-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-4-0",
+      "slug": "welke-klok-is-4-uur-vraag",
+      "text": "Welke klok is 4 uur?",
+      "spokenText": "Welke klok is 4 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-4-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-5-0",
+      "slug": "welke-klok-is-5-uur-vraag",
+      "text": "Welke klok is 5 uur?",
+      "spokenText": "Welke klok is 5 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-5-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-6-0",
+      "slug": "welke-klok-is-6-uur-vraag",
+      "text": "Welke klok is 6 uur?",
+      "spokenText": "Welke klok is 6 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-6-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-7-0",
+      "slug": "welke-klok-is-7-uur-vraag",
+      "text": "Welke klok is 7 uur?",
+      "spokenText": "Welke klok is 7 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-7-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-8-0",
+      "slug": "welke-klok-is-8-uur-vraag",
+      "text": "Welke klok is 8 uur?",
+      "spokenText": "Welke klok is 8 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-8-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-9-0",
+      "slug": "welke-klok-is-9-uur-vraag",
+      "text": "Welke klok is 9 uur?",
+      "spokenText": "Welke klok is 9 uur?",
+      "category": "klok",
+      "file": "welke-klok-is-9-uur-vraag.mp3"
+    },
+    {
+      "id": "klok-which-12-30",
+      "slug": "welke-klok-is-half-1-vraag",
+      "text": "Welke klok is half 1?",
+      "spokenText": "Welke klok is half 1?",
+      "category": "klok",
+      "file": "welke-klok-is-half-1-vraag.mp3"
+    },
+    {
+      "id": "klok-which-9-30",
+      "slug": "welke-klok-is-half-10-vraag",
+      "text": "Welke klok is half 10?",
+      "spokenText": "Welke klok is half 10?",
+      "category": "klok",
+      "file": "welke-klok-is-half-10-vraag.mp3"
+    },
+    {
+      "id": "klok-which-10-30",
+      "slug": "welke-klok-is-half-11-vraag",
+      "text": "Welke klok is half 11?",
+      "spokenText": "Welke klok is half 11?",
+      "category": "klok",
+      "file": "welke-klok-is-half-11-vraag.mp3"
+    },
+    {
+      "id": "klok-which-11-30",
+      "slug": "welke-klok-is-half-12-vraag",
+      "text": "Welke klok is half 12?",
+      "spokenText": "Welke klok is half 12?",
+      "category": "klok",
+      "file": "welke-klok-is-half-12-vraag.mp3"
+    },
+    {
+      "id": "klok-which-1-30",
+      "slug": "welke-klok-is-half-2-vraag",
+      "text": "Welke klok is half 2?",
+      "spokenText": "Welke klok is half 2?",
+      "category": "klok",
+      "file": "welke-klok-is-half-2-vraag.mp3"
+    },
+    {
+      "id": "klok-which-2-30",
+      "slug": "welke-klok-is-half-3-vraag",
+      "text": "Welke klok is half 3?",
+      "spokenText": "Welke klok is half 3?",
+      "category": "klok",
+      "file": "welke-klok-is-half-3-vraag.mp3"
+    },
+    {
+      "id": "klok-which-3-30",
+      "slug": "welke-klok-is-half-4-vraag",
+      "text": "Welke klok is half 4?",
+      "spokenText": "Welke klok is half 4?",
+      "category": "klok",
+      "file": "welke-klok-is-half-4-vraag.mp3"
+    },
+    {
+      "id": "klok-which-4-30",
+      "slug": "welke-klok-is-half-5-vraag",
+      "text": "Welke klok is half 5?",
+      "spokenText": "Welke klok is half 5?",
+      "category": "klok",
+      "file": "welke-klok-is-half-5-vraag.mp3"
+    },
+    {
+      "id": "klok-which-5-30",
+      "slug": "welke-klok-is-half-6-vraag",
+      "text": "Welke klok is half 6?",
+      "spokenText": "Welke klok is half 6?",
+      "category": "klok",
+      "file": "welke-klok-is-half-6-vraag.mp3"
+    },
+    {
+      "id": "klok-which-6-30",
+      "slug": "welke-klok-is-half-7-vraag",
+      "text": "Welke klok is half 7?",
+      "spokenText": "Welke klok is half 7?",
+      "category": "klok",
+      "file": "welke-klok-is-half-7-vraag.mp3"
+    },
+    {
+      "id": "klok-which-7-30",
+      "slug": "welke-klok-is-half-8-vraag",
+      "text": "Welke klok is half 8?",
+      "spokenText": "Welke klok is half 8?",
+      "category": "klok",
+      "file": "welke-klok-is-half-8-vraag.mp3"
+    },
+    {
+      "id": "klok-which-8-30",
+      "slug": "welke-klok-is-half-9-vraag",
+      "text": "Welke klok is half 9?",
+      "spokenText": "Welke klok is half 9?",
+      "category": "klok",
+      "file": "welke-klok-is-half-9-vraag.mp3"
     },
     {
       "id": "letter-hear",
@@ -5477,6 +6445,70 @@
       "spokenText": "Welke poort is 9?",
       "category": "number-prompts",
       "file": "welke-poort-is-9-vraag.mp3"
+    },
+    {
+      "id": "geld-make-10",
+      "slug": "welke-portemonnee-is-10-euro-vraag",
+      "text": "Welke portemonnee is 10 euro?",
+      "spokenText": "Welke portemonnee is 10 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-10-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-3",
+      "slug": "welke-portemonnee-is-3-euro-vraag",
+      "text": "Welke portemonnee is 3 euro?",
+      "spokenText": "Welke portemonnee is 3 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-3-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-4",
+      "slug": "welke-portemonnee-is-4-euro-vraag",
+      "text": "Welke portemonnee is 4 euro?",
+      "spokenText": "Welke portemonnee is 4 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-4-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-5",
+      "slug": "welke-portemonnee-is-5-euro-vraag",
+      "text": "Welke portemonnee is 5 euro?",
+      "spokenText": "Welke portemonnee is 5 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-5-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-6",
+      "slug": "welke-portemonnee-is-6-euro-vraag",
+      "text": "Welke portemonnee is 6 euro?",
+      "spokenText": "Welke portemonnee is 6 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-6-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-7",
+      "slug": "welke-portemonnee-is-7-euro-vraag",
+      "text": "Welke portemonnee is 7 euro?",
+      "spokenText": "Welke portemonnee is 7 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-7-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-8",
+      "slug": "welke-portemonnee-is-8-euro-vraag",
+      "text": "Welke portemonnee is 8 euro?",
+      "spokenText": "Welke portemonnee is 8 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-8-euro-vraag.mp3"
+    },
+    {
+      "id": "geld-make-9",
+      "slug": "welke-portemonnee-is-9-euro-vraag",
+      "text": "Welke portemonnee is 9 euro?",
+      "spokenText": "Welke portemonnee is 9 euro?",
+      "category": "geld",
+      "file": "welke-portemonnee-is-9-euro-vraag.mp3"
     },
     {
       "id": "split-total-1",
@@ -5586,7 +6618,7 @@
       "id": "blend-zon",
       "slug": "z-o-n-zon",
       "text": "z... o... n... zon",
-      "spokenText": "zzz... ooo... nnn... zon",
+      "spokenText": "zzz... oh... nnn... zon",
       "category": "phonics",
       "file": "z-o-n-zon.mp3"
     },
@@ -5821,6 +6853,14 @@
       "spokenText": "Zoem rustig: rek de klanken aan elkaar.",
       "category": "common",
       "file": "zoem-rustig-rek-de-klanken-aan-elkaar.mp3"
+    },
+    {
+      "id": "word-zon",
+      "slug": "zon",
+      "text": "zon",
+      "spokenText": "zon",
+      "category": "phonics",
+      "file": "zon.mp3"
     },
     {
       "id": "web-anchor-1",
