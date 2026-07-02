@@ -82,3 +82,47 @@ export function starsFromPerfect(perfect: number, total: number): number {
   if (perfect >= Math.ceil(total * 0.6)) return 2;
   return 1;
 }
+
+/**
+ * The sticker unboxing: a full-screen gift that wiggles, bursts open and pops
+ * the earned sticker BIG with its name — a real collect moment instead of a
+ * side banner. Tap anywhere to dismiss (auto-opens shortly after appearing).
+ */
+export function showStickerReveal(root: HTMLElement, stickers: { emoji: string; name: string }[], onDone?: () => void): HTMLElement | null {
+  if (stickers.length === 0) return null;
+  const overlay = document.createElement("div");
+  overlay.className = "sticker-reveal";
+  overlay.dataset.stickerReveal = "true";
+  let index = 0;
+
+  const show = (): void => {
+    const sticker = stickers[index];
+    overlay.innerHTML = `
+      <div class="sticker-reveal-card">
+        <div class="sticker-reveal-gift" aria-hidden="true">🎁</div>
+        <div class="sticker-reveal-sticker" aria-hidden="true">${sticker.emoji}</div>
+        <strong>Nieuwe sticker!</strong>
+        <em>${sticker.name}</em>
+        <small>${index + 1}/${stickers.length} — tik om verder te gaan</small>
+      </div>
+      <div class="results-burst sticker-reveal-burst" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    `;
+    // Gift wiggles, then bursts open into the sticker.
+    window.setTimeout(() => overlay.classList.add("open"), 650);
+  };
+
+  overlay.addEventListener("click", () => {
+    index += 1;
+    if (index < stickers.length) {
+      overlay.classList.remove("open");
+      show();
+      return;
+    }
+    overlay.remove();
+    onDone?.();
+  });
+
+  show();
+  root.appendChild(overlay);
+  return overlay;
+}

@@ -575,6 +575,73 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("fills the treasure meter per finished activity and pays out a chest at 3", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    // Fill the meter as three finished activities would.
+    expect(game.save.bumpTreasure()).toBe(1);
+    expect(game.save.bumpTreasure()).toBe(2);
+    expect(game.save.bumpTreasure()).toBe(3);
+    expect(game.save.treasureFull()).toBe(true);
+
+    game.showScene("reis");
+    // The meter pill shows 3/3 and the chest is spawned.
+    expect(root.querySelector<HTMLElement>(".schat-meter")?.dataset.treasureFill).toBe("3");
+    const chest = root.querySelector<HTMLButtonElement>(".schat-chest");
+    expect(chest).toBeTruthy();
+
+    const starsBefore = game.data().progress.stars;
+    chest!.click();
+    expect(game.data().progress.stars).toBe(starsBefore + 5);
+    expect(game.data().progress.sessionChestFill).toBe(0);
+    // Re-clicking pays nothing; a fresh mount shows no chest and an empty meter.
+    chest!.click();
+    expect(game.data().progress.stars).toBe(starsBefore + 5);
+    game.showScene("hub");
+    game.showScene("reis");
+    expect(root.querySelector(".schat-chest")).toBeNull();
+    expect(root.querySelector<HTMLElement>(".schat-meter")?.dataset.treasureFill).toBe("0");
+  });
+
+  it("finishing a mini mode fills the treasure meter", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    expect(game.data().progress.sessionChestFill).toBe(0);
+    game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.sessionChestFill).toBe(1);
+    vi.useRealTimers();
+  });
+
+  it("unboxes a new sticker with a full-screen reveal", async () => {
+    vi.useFakeTimers();
+    const { showStickerReveal } = await import("../src/scenes/minigames/miniUi");
+    const root = document.querySelector<HTMLElement>("#app")!;
+
+    expect(showStickerReveal(root, [])).toBeNull();
+    const overlay = showStickerReveal(root, [{ emoji: "🦕", name: "Dino ster" }])!;
+    expect(overlay).toBeTruthy();
+    expect(overlay.querySelector(".sticker-reveal-gift")).toBeTruthy();
+    expect(overlay.textContent).toContain("Dino ster");
+    // The gift auto-opens into the sticker...
+    vi.advanceTimersByTime(700);
+    expect(overlay.classList.contains("open")).toBe(true);
+    // ...and a tap dismisses it.
+    overlay.click();
+    expect(root.querySelector(".sticker-reveal")).toBeNull();
+    vi.useRealTimers();
+  });
+
   it("offers a daily gift chest on the map, once per day", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;

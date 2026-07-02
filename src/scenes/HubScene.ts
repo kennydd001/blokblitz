@@ -4,6 +4,7 @@ import { HERO_SKINS, skinById, unlockedSkinIds } from "../runner/skins";
 import { cssHex } from "../runner/worlds";
 import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
+import { spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
 interface ModeCard {
@@ -73,7 +74,8 @@ export class HubScene extends BaseScene {
     badges.className = "menu-badges";
     badges.append(
       this.badge("⭐", data.progress.stars, "sterren"),
-      this.badge("🏆", `${Object.values(data.progress.worlds).filter((w) => w.completed).length}/6`, "werelden")
+      this.badge("🏆", `${Object.values(data.progress.worlds).filter((w) => w.completed).length}/6`, "werelden"),
+      treasureMeter(this.game)
     );
 
     const grid = document.createElement("div");
@@ -110,6 +112,7 @@ export class HubScene extends BaseScene {
     const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin));
     this.root.appendChild(buddy.el);
     buddy.setMood("happy", 1500);
+    spawnTreasureChest(this.game, this.root, buddy);
     if (!this.greeted) {
       this.greeted = true;
       buddy.say(`Hoi! Ik ben ${buddy.name}. Wat spelen we?`);

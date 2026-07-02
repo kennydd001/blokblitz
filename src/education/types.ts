@@ -208,6 +208,8 @@ export interface GameProgress {
   journey: JourneyProgress;
   /** Day key (yyyy-mm-dd) of the last opened daily gift chest. */
   dailyChestDay: string;
+  /** Finished activities toward the session treasure chest (full at 3). */
+  sessionChestFill: number;
 }
 
 export interface SaveData {

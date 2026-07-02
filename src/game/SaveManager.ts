@@ -60,7 +60,8 @@ export function defaultProgress(): GameProgress {
     worlds: makeWorldRecord(),
     stickers: [],
     journey: { nodeIndex: 0, completed: [] },
-    dailyChestDay: ""
+    dailyChestDay: "",
+    sessionChestFill: 0
   };
 }
 
@@ -284,9 +285,29 @@ export class SaveManager {
           const completed = backfillCompleted(data.progress?.journey?.completed ?? []);
           return { nodeIndex: frontierIndex(completed), completed };
         })(),
-        dailyChestDay: data.progress?.dailyChestDay ?? ""
+        dailyChestDay: data.progress?.dailyChestDay ?? "",
+        sessionChestFill: data.progress?.sessionChestFill ?? 0
       }
     };
+  }
+
+  /** Count a finished activity toward the treasure chest; caps at 3 (= full). */
+  bumpTreasure(): number {
+    this.data.progress.sessionChestFill = Math.min(3, (this.data.progress.sessionChestFill ?? 0) + 1);
+    this.save();
+    return this.data.progress.sessionChestFill;
+  }
+
+  treasureFull(): boolean {
+    return (this.data.progress.sessionChestFill ?? 0) >= 3;
+  }
+
+  /** Open the treasure chest (only when full); resets the meter. */
+  claimTreasure(): boolean {
+    if (!this.treasureFull()) return false;
+    this.data.progress.sessionChestFill = 0;
+    this.save();
+    return true;
   }
 
   /** Whether today's gift chest is still unopened. */

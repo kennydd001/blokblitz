@@ -153,6 +153,8 @@ export class RunScene extends BaseScene {
     this.game.save.award({ blocks: summary.coins, stars: summary.bonusStars });
     const before = this.game.data().progress.bestRunDistance;
     this.game.save.recordRunResult(summary.distanceMeters);
+    // A finished run also fills the treasure meter (chest at 3).
+    this.game.save.bumpTreasure();
     const { newWorldUnlocked } = this.game.save.recordWorldResult(this.world.id, stars);
     const afterData = this.game.data();
     const totalStars = afterData.progress.stars;

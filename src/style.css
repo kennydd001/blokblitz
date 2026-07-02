@@ -8367,6 +8367,84 @@ input {
   36% { transform: rotate(0); }
 }
 
+/* Session treasure loop: 3 gems fill -> a chest appears */
+.schat-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 3px solid var(--edge);
+  background: rgba(255, 252, 242, 0.94);
+  box-shadow: 0 4px 0 rgba(23, 32, 51, 0.18);
+}
+.schat-gem { font-size: 1rem; line-height: 1; filter: grayscale(1); opacity: 0.35; transition: filter 200ms ease, opacity 200ms ease, transform 200ms ease; }
+.schat-gem.filled { filter: none; opacity: 1; transform: scale(1.12); }
+.schat-chest {
+  position: fixed;
+  left: 14px;
+  top: 30%;
+  z-index: 34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 84px;
+  padding: 10px 6px;
+  border-radius: 22px;
+  border: 5px solid var(--edge);
+  background: linear-gradient(160deg, #d9f7e8, #35c983);
+  box-shadow: 0 7px 0 rgba(23, 32, 51, 0.26), 0 0 26px rgba(53, 201, 131, 0.65);
+  font-size: 2.3rem;
+  line-height: 1.1;
+  cursor: pointer;
+  animation: chest-wiggle 1.4s ease-in-out infinite;
+}
+.schat-chest small { font-size: 0.72rem; font-weight: 900; color: var(--ink); }
+.schat-chest.opened { animation: results-pop 0.5s ease; opacity: 0; transition: opacity 0.8s ease 0.1s; }
+.schat-burst { z-index: 44; }
+
+/* Sticker unboxing: full-screen gift -> sticker pop */
+.sticker-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(120% 120% at 50% 30%, rgba(60, 34, 92, 0.6), rgba(12, 8, 26, 0.85));
+  cursor: pointer;
+  animation: reis-story-fade 0.25s ease;
+}
+.sticker-reveal-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  background: linear-gradient(165deg, #fffdf4 0%, #ffe9b8 100%);
+  border: 5px solid var(--edge);
+  border-radius: 26px;
+  padding: 26px 34px;
+  box-shadow: 0 14px 0 rgba(23, 32, 51, 0.26), 0 0 38px rgba(255, 210, 90, 0.5);
+  animation: results-pop 0.45s ease;
+}
+.sticker-reveal-gift { font-size: 4.6rem; line-height: 1; animation: chest-wiggle 0.9s ease-in-out infinite; }
+.sticker-reveal-sticker { display: none; font-size: 5rem; line-height: 1; }
+.sticker-reveal.open .sticker-reveal-gift { display: none; }
+.sticker-reveal.open .sticker-reveal-sticker { display: block; animation: sticker-pop-in 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.sticker-reveal-card strong { font-size: 1.5rem; color: var(--ink); }
+.sticker-reveal-card em { font-size: 1.1rem; font-weight: 800; color: #7a5c14; }
+.sticker-reveal-card small { margin-top: 6px; font-size: 0.8rem; font-weight: 700; color: #8a90a4; }
+.sticker-reveal-burst { display: none; z-index: 71; }
+.sticker-reveal.open .sticker-reveal-burst { display: grid; }
+@keyframes sticker-pop-in {
+  0% { transform: scale(0.1) rotate(-20deg); opacity: 0; }
+  60% { transform: scale(1.25) rotate(8deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
 @media (max-width: 380px) {
   .reis-quest-copy strong { font-size: 1rem; }
   .reis-quest-copy em { font-size: 0.78rem; }

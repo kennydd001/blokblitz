@@ -20,6 +20,7 @@ import { buildBossArt } from "./bossArt";
 import { skinById } from "../runner/skins";
 import { cssHex, getWorld, type PropStyle } from "../runner/worlds";
 import { createBuddy, type Buddy } from "./buddy";
+import { spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
 // Mix a hex colour toward white (0 = unchanged, 1 = white) for the soft band tops.
@@ -81,7 +82,7 @@ export class ReisScene extends BaseScene {
     progressPill.setAttribute("aria-label", "Sterrenreis voortgang");
     progressPill.innerHTML = `<span aria-hidden="true">🛤️</span><strong>${journeyProgressLabel(completedIds)}</strong>`;
     bag.classList.add("reis-bag");
-    top.append(stars, progressPill, bag);
+    top.append(stars, treasureMeter(this.game), progressPill, bag);
 
     const quest = this.buildQuest(here, frontier);
 
@@ -154,6 +155,7 @@ export class ReisScene extends BaseScene {
 
     this.root.append(top, quest, track, scroll, meadow);
     this.maybeDailyChest();
+    spawnTreasureChest(this.game, this.root, this.buddy);
     this.maybeRegionBanner(here);
 
     // Centre the frontier node so only current + next need to be on screen.

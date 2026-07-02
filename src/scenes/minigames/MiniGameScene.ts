@@ -8,7 +8,7 @@ import { skinById } from "../../runner/skins";
 import { cssHex, getWorld } from "../../runner/worlds";
 import { createBuddy, type Buddy } from "../buddy";
 import { BaseScene } from "../SceneUtils";
-import { buildDoneScreen, starsFromPerfect } from "./miniUi";
+import { buildDoneScreen, showStickerReveal, starsFromPerfect } from "./miniUi";
 
 // Shared shell for the calm, tap-based learning modes. No timer, no game over:
 // the child answers at their own pace, a wrong tap just gives a gentle nudge and
@@ -227,6 +227,8 @@ export abstract class MiniGameScene extends BaseScene {
     this.buddy?.say("Joepie!");
     // In story mode, finishing this stop drops a stone for Buddy's star.
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
+    // Every finished activity fills the treasure meter (chest at 3).
+    this.game.save.bumpTreasure();
     const stars = starsFromPerfect(this.perfectRounds, this.total);
     this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
     const newStickers = this.game.save
@@ -248,6 +250,8 @@ export abstract class MiniGameScene extends BaseScene {
       })
     );
     if (this.buddy) this.root.appendChild(this.buddy.el);
+    // New sticker? Big unboxing moment on top of the done screen.
+    showStickerReveal(this.root, newStickers);
   }
 
   protected mountReplay(): void {
