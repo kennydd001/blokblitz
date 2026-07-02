@@ -52,6 +52,7 @@ export type SceneId =
   | "kloktoren"
   | "geldmarkt"
   | "meetwerf"
+  | "verkeerspad"
   | "numberOfDay"
   | "runner"
   | "webwoud"
@@ -294,7 +295,8 @@ export type CurriculumSkill =
   | "wordBuild"
   | "rhyme"
   | "vocabulary"
-  | "listeningQuestion";
+  | "listeningQuestion"
+  | "trafficSafety";
 
 export interface LearningTarget {
   id: string;

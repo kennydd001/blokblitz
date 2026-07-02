@@ -539,7 +539,8 @@ describe("Speeltuin hub + calm game modes", () => {
       "vormenburcht",
       "kloktoren",
       "geldmarkt",
-      "meetwerf"
+      "meetwerf",
+      "verkeerspad"
     ];
     expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
     expected.forEach((mode) => {
@@ -1135,6 +1136,34 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(mw.id);
     expect(game.mastery.getAttempts().some((a) => a.domain === "math-measurement")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Verkeerspad from the journey: picture cards, finishing advances + logs traffic", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const vpIndex = JOURNEY.findIndex((node) => node.scene === "verkeerspad");
+    const vp = JOURNEY[vpIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, vpIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${vp.id}"]`)!.click();
+    expect(root.querySelector(".verkeer-play")).toBeTruthy();
+    expect(root.querySelectorAll(".verkeer-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.verkeer-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(vp.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "world-traffic")).toBe(true);
     vi.useRealTimers();
   });
 

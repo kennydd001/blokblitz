@@ -42,6 +42,7 @@ import { OrderScene } from "../scenes/minigames/OrderScene";
 import { SplitbordScene } from "../scenes/minigames/SplitbordScene";
 import { TienbrugScene } from "../scenes/minigames/TienbrugScene";
 import { TientalhuisScene } from "../scenes/minigames/TientalhuisScene";
+import { VerkeerspadScene } from "../scenes/minigames/VerkeerspadScene";
 import { VormenburchtScene } from "../scenes/minigames/VormenburchtScene";
 import { WoordbouwplaatsScene } from "../scenes/minigames/WoordbouwplaatsScene";
 import { ZoemrouteScene } from "../scenes/minigames/ZoemrouteScene";
@@ -374,6 +375,7 @@ export class Game {
     this.scenes.register("kloktoren", (game) => new KloktorenScene(game));
     this.scenes.register("geldmarkt", (game) => new GeldmarktScene(game));
     this.scenes.register("meetwerf", (game) => new MeetwerfScene(game));
+    this.scenes.register("verkeerspad", (game) => new VerkeerspadScene(game));
     this.scenes.register("boss", (game) => new BossScene(game));
     this.scenes.register("numberOfDay", (game) => new NumberOfDayScene(game));
     this.scenes.register("runner", (game) => new BlokBlitzScene(game));

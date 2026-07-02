@@ -7477,6 +7477,14 @@ input {
 .hub-card.letterkompas { background: linear-gradient(160deg, #cde8d6, #57b894); }
 .hub-card.zoemroute { background: linear-gradient(160deg, #fff0a8, #f2c43a); }
 .hub-card.woordbouw { background: linear-gradient(160deg, #e0d2ff, #8f6fe6); }
+.hub-card.verkeer { background: linear-gradient(160deg, #ffe0d6, #f07a3c); }
+
+/* ===== Verkeerspad — traffic safety picture cards ===== */
+.verkeer-play { gap: 16px; }
+.verkeer-choices { gap: 14px; flex-wrap: wrap; }
+.verkeer-choice { min-width: 104px; max-width: 150px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 10px; }
+.verkeer-pic { display: block; font-size: 3rem; line-height: 1; }
+.verkeer-text { font-size: 0.82rem; font-weight: 800; color: #44506a; line-height: 1.2; text-align: center; }
 
 /* =====================================================================
    De Sterrenreis - one story road instead of separate activities
