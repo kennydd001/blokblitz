@@ -36,7 +36,10 @@ const MODES: ModeCard[] = [
   { scene: "zoemroute", emoji: "🐝", name: "Zoemroute", desc: "Zoem tot een woord", tone: "zoemroute" },
   { scene: "woordbouwplaats", emoji: "🔤", name: "Woordbouw", desc: "Bouw het woord", tone: "woordbouw" },
   // Vormen & meten
-  { scene: "vormenburcht", emoji: "🔷", name: "Vormenburcht", desc: "Vormen en patronen", tone: "vormen" }
+  { scene: "vormenburcht", emoji: "🔷", name: "Vormenburcht", desc: "Vormen en patronen", tone: "vormen" },
+  { scene: "kloktoren", emoji: "🕐", name: "Kloktoren", desc: "Lees de klok", tone: "klok" },
+  { scene: "geldmarkt", emoji: "🪙", name: "Geldmarkt", desc: "Tel het geld", tone: "geld" },
+  { scene: "meetwerf", emoji: "📐", name: "Meetwerf", desc: "Langer of korter", tone: "meet" }
 ];
 
 export class HubScene extends BaseScene {

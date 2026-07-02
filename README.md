@@ -11,7 +11,7 @@ Local-first TypeScript/Vite **number-sense game for children aged 4-7**, built a
 - **🧠 Memory** — flip cards to match each number to a group with the same amount (cross-representation + memory).
 - **🗺️ Avontuur** — a 3D voxel runner across six themed worlds, steering through **number gates** whose quantities appear as canonical cube/dice/bead/… patterns.
 
-The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back. A simple sum-based parent gate sits in front of the dashboard and settings.
+The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. The primary voice is a local Hestia voice-pack generated build-time with Deepgram Aura-2; early reading uses the browser speech engine directly for isolated letters and "zoemend lezen", because generated isolated phoneme clips were rejected in listening QA. Browser speech is also the fallback for dynamic lines. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back. A simple sum-based parent gate sits in front of the dashboard and settings.
 
 ## Run Locally
 
@@ -80,7 +80,7 @@ Settings (behind the parent gate, from the menu):
 
 - Speed changes the run pace (a gentle option for younger players).
 - Sound can be muted.
-- Spoken voice (reading + counting + praise) can be turned on or off.
+- Spoken voice, reading phoneme audio, counting, and praise can be turned on or off.
 - Phone vibration feedback can be turned on or off.
 - High contrast can be toggled.
 
@@ -100,7 +100,7 @@ The full representation/mastery/adaptive education engine drives every gate unde
 
 ## Architecture
 
-- `src/game`: app shell, Three.js world, input, audio, haptics, persistence, scene manager
+- `src/game`: app shell, Three.js world, input, audio, Hestia voice-pack playback, browser-based reading phoneme prompts, haptics, persistence, scene manager
 - `src/runner`: the revamped real-time runner — pure `RunnerCore` simulation, `RunnerView` voxel rendering, the adaptive gate provider, and unlockable hero skins
 - `src/scenes`: Boot, `HubScene` (Speeltuin), `MainMenuScene` (world map), `RunScene`, `ResultsScene`, plus the retained guided scenes (number of day, legacy runner, WebWoud, city, minigames, summary, dashboard, settings)
 - `src/scenes/minigames`: the calm tap modes — `MiniGameScene` base + `miniUi` (shared done screen) + `CountScene`, `MatchScene`, `CompareScene`, `FillScene`, `OneMoreLessScene`, `OrderScene`, `MemoryScene`, and `miniChallenges` (their Challenge builders)
@@ -168,9 +168,8 @@ Numbers are arranged as 1 single, 2 pair, 3 triangle, 4 square or 2+2, 5 complet
 
 ## Asset Policy
 
-Runtime assets are local. Current visuals are generated from SVG, CSS, Three.js primitives, Web Audio, and optional browser vibration patterns. No downloaded external assets are used. The manifest is `assets/ASSET_MANIFEST.json`.
+Runtime assets are local. Current visuals are generated from SVG, CSS, Three.js primitives, Web Audio, and optional browser vibration patterns. The spoken Dutch voice uses local MP3 clips in `public/audio/voice/nl/hestia/`, generated build-time with Deepgram Aura-2 Hestia and documented in `assets/ASSET_MANIFEST.json`. Early reading currently uses the browser speech engine through `src/game/ReadingAudioManager.ts` for isolated letters, digraphs, and "zoemend lezen"; this avoids shipping the rejected generated phoneme clips.
 
 The production build also registers a local same-origin service worker from `public/sw.js` to cache the app shell for installed/offline play. It does not cache or request any remote assets.
 
-External assets may be added only when the license is clear and permissive. Store the asset locally and document source, license, author, download date, used files, and notes in the manifest.
-
+External-source assets may be added only when the license is clear and usage is allowed for the project. Store the asset locally and document source, license/terms, author/provider, generation or download date, used files, and notes in the manifest. The game must not call paid TTS APIs during child play.

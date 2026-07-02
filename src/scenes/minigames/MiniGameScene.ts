@@ -64,6 +64,7 @@ export abstract class MiniGameScene extends BaseScene {
     for (const id of this.timers) window.clearTimeout(id);
     this.timers = [];
     this.resolving = false;
+    this.game.readingAudio.cancel();
     this.game.voice.cancel();
     super.unmount();
   }

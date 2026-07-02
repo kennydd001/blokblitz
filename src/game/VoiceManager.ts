@@ -1,11 +1,34 @@
 import type { GameSettings } from "../education/types";
+import { VOICE_LINE_BASE_PATH, VOICE_LINE_SLUGS, voiceLineFile, voiceLineSlug } from "./voiceLineManifest";
 
 // Spoken Dutch helper. For a 4-7 year old who can't read yet, hearing the task
-// ("Tik de grootste!"), the count ("één… twee… drie…") and warm praise is the
-// single biggest clarity and engagement win. Fully local (Web Speech API), and a
-// silent no-op when speech synthesis isn't available (e.g. in tests).
+// ("Tik de grootste!"), the count ("een... twee... drie...") and warm praise is
+// the single biggest clarity win. Prefer local Hestia clips; fall back to Web
+// Speech only for dynamic lines that were not pre-generated.
 
-const NUMBER_WORDS = ["nul", "één", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen", "tien"];
+const NUMBER_WORDS = [
+  "nul",
+  "\u00e9\u00e9n",
+  "twee",
+  "drie",
+  "vier",
+  "vijf",
+  "zes",
+  "zeven",
+  "acht",
+  "negen",
+  "tien",
+  "elf",
+  "twaalf",
+  "dertien",
+  "veertien",
+  "vijftien",
+  "zestien",
+  "zeventien",
+  "achttien",
+  "negentien",
+  "twintig"
+];
 const PRAISE = ["Goed zo!", "Knap!", "Super!", "Wauw!", "Yes!", "Top!", "Hoera!", "Heel goed!"];
 const ENCOURAGE = ["Bijna! Probeer nog eens.", "Tel rustig mee.", "Kijk nog eens goed.", "Je kan het!"];
 
@@ -15,6 +38,7 @@ export class VoiceManager {
   private enabled = true;
   private praiseIndex = 0;
   private countTimers: number[] = [];
+  private activeAudio = new Set<HTMLAudioElement>();
   private duckHook?: (durationMs: number) => void;
 
   setSettings(settings: GameSettings): void {
@@ -42,12 +66,29 @@ export class VoiceManager {
     return voices.find((v) => /^nl/i.test(v.lang)) ?? voices.find((v) => /dutch|nederlands/i.test(v.name));
   }
 
-  speak(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
+  private stopCurrentSpeech(): void {
+    for (const audio of this.activeAudio) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        // ignore
+      }
+    }
+    this.activeAudio.clear();
+    try {
+      this.synth?.cancel();
+    } catch {
+      // ignore
+    }
+  }
+
+  private speakBrowser(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
     const synth = this.synth;
     if (!this.enabled || !synth || typeof SpeechSynthesisUtterance === "undefined") return;
     try {
       this.duckHook?.(text.length * 65 + 450);
-      if (options.interrupt) synth.cancel();
+      if (options.interrupt) this.stopCurrentSpeech();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "nl-NL";
       utterance.rate = options.rate ?? 0.95;
@@ -61,15 +102,60 @@ export class VoiceManager {
     }
   }
 
-  /** Speak a number 0-10 as a Dutch word. */
+  private playLocalClip(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): boolean {
+    if (typeof Audio === "undefined") return false;
+    if (typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent)) return false;
+    const slug = voiceLineSlug(text);
+    if (!VOICE_LINE_SLUGS.has(slug)) return false;
+
+    try {
+      if (options.interrupt) this.stopCurrentSpeech();
+      this.duckHook?.(text.length * 70 + 550);
+      const audio = new Audio(`${VOICE_LINE_BASE_PATH}${voiceLineFile(slug)}`);
+      audio.preload = "auto";
+      audio.playbackRate = Math.max(0.55, Math.min(1.35, options.rate ?? 1));
+      this.activeAudio.add(audio);
+      const cleanup = () => this.activeAudio.delete(audio);
+      audio.addEventListener("ended", cleanup, { once: true });
+      audio.addEventListener(
+        "error",
+        () => {
+          cleanup();
+          this.speakBrowser(text, options);
+        },
+        { once: true }
+      );
+      void audio.play().catch(() => {
+        cleanup();
+        this.speakBrowser(text, options);
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  speak(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
+    if (!this.enabled) return;
+    if (this.playLocalClip(text, options)) return;
+    this.speakBrowser(text, options);
+  }
+
+  /** Speak dynamic/didactic text with the browser voice, bypassing pre-generated Hestia clips. */
+  speakBrowserOnly(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
+    if (!this.enabled) return;
+    this.speakBrowser(text, options);
+  }
+
+  /** Speak a number 0-20 as a Dutch word. */
   sayNumber(n: number, options: { interrupt?: boolean } = {}): void {
-    const word = NUMBER_WORDS[Math.max(0, Math.min(10, Math.round(n)))];
+    const word = NUMBER_WORDS[Math.max(0, Math.min(20, Math.round(n)))];
     this.speak(word, { rate: 1, ...options });
   }
 
   /** Count out loud from 1 to n with a clear, spaced rhythm so each number is distinct. */
   countTo(n: number): void {
-    if (!this.enabled || !this.synth) return;
+    if (!this.enabled) return;
     const count = Math.max(1, Math.min(10, Math.round(n)));
     this.cancel();
     for (let i = 1; i <= count; i += 1) {
@@ -89,11 +175,7 @@ export class VoiceManager {
   cancel(): void {
     for (const id of this.countTimers) window.clearTimeout(id);
     this.countTimers = [];
-    try {
-      this.synth?.cancel();
-    } catch {
-      // ignore
-    }
+    this.stopCurrentSpeech();
   }
 }
 
@@ -102,5 +184,5 @@ export function praiseWord(index: number): string {
 }
 
 export function numberWord(n: number): string {
-  return NUMBER_WORDS[Math.max(0, Math.min(10, Math.round(n)))];
+  return NUMBER_WORDS[Math.max(0, Math.min(20, Math.round(n)))];
 }

@@ -42,7 +42,7 @@ export class ZoemrouteScene extends MiniGameScene {
       stone.className = "zoemroute-stone";
       stone.textContent = unit;
       stone.setAttribute("aria-label", `klank ${unit}`);
-      stone.addEventListener("click", () => this.game.voice.speak(unit, { interrupt: true, rate: 0.7 }));
+      stone.addEventListener("click", () => this.game.readingAudio.playPhoneme(unit, { interrupt: true, rate: 0.7 }));
       route.appendChild(stone);
     });
 
@@ -72,7 +72,7 @@ export class ZoemrouteScene extends MiniGameScene {
 
   // Speak the stretched, connected blend, then the whole word.
   private zoem(rate = 0.7): void {
-    this.game.voice.speak(`${this.currentRound.units.join("... ")}... ${this.currentRound.word.word}`, { interrupt: true, rate });
+    this.game.readingAudio.playZoemWord(this.currentRound.units, this.currentRound.word.word, { interrupt: true, rate });
   }
 
   protected logAttempt(option: ChallengeOption): boolean {

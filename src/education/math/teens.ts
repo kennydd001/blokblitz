@@ -35,7 +35,11 @@ function shuffle<T>(items: T[]): T[] {
 }
 
 function numberOptions(correct: number, pool: number[]): Array<{ label: string; value: number; isCorrect: boolean }> {
-  const distractors = shuffle(pool.filter((n) => n !== correct)).slice(0, 2);
+  const fallbackMax = correct <= 9 ? 9 : 20;
+  const fallbackMin = correct <= 9 ? 0 : 10;
+  const fallback = Array.from({ length: fallbackMax - fallbackMin + 1 }, (_, index) => fallbackMin + index);
+  const distractors = shuffle([...new Set([...pool, correct - 1, correct + 1, correct - 2, correct + 2, ...fallback])]
+    .filter((n) => n >= fallbackMin && n <= fallbackMax && n !== correct)).slice(0, 2);
   return shuffle([{ label: String(correct), value: correct, isCorrect: true }, ...distractors.map((n) => ({ label: String(n), value: n, isCorrect: false }))]);
 }
 

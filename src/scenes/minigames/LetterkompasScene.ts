@@ -57,7 +57,7 @@ export class LetterkompasScene extends MiniGameScene {
   }
 
   private speakSound(rate = 0.85): void {
-    this.game.voice.speak(this.currentRound.say, { interrupt: true, rate });
+    this.game.readingAudio.playPhoneme(this.currentRound.say, { interrupt: true, rate });
   }
 
   protected logAttempt(option: ChallengeOption): boolean {

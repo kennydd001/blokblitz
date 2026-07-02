@@ -66,10 +66,18 @@ async function main() {
     });
     await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await cdp.send("Page.navigate", { url: `${baseUrl}?qa=mobile-touch-${Date.now()}` });
-    await waitForSelector(".play-now", 8_000);
-    await assertNoHorizontalOverflow("menu");
+    await waitForGameHook(8_000);
+    await assertNoHorizontalOverflow("journey");
 
-    await tap(".play-now", "start adventure");
+    await openGameScene("run");
+    await waitForSelector(".run-scene", 5_000);
+    await assertNoHorizontalOverflow("real runner");
+    await tap(".run-ctrl-right", "real-runner right control");
+    await tap(".run-ctrl-left", "real-runner left control");
+    await tap(".run-ctrl-jump", "real-runner jump control");
+    await swipe("canvas", -96, "real-runner swipe left");
+
+    await openGameScene("numberOfDay");
     await waitForSelector(".number-day-panel", 5_000);
     await tap(".wake-button", "wake number portal");
     await waitForSelector(".portal-run-button", 5_000);
@@ -155,6 +163,27 @@ async function completeLiveChoices(sourceSelector, nextSelector, maxSteps, label
     if (await evaluate(`Boolean(document.querySelector(${JSON.stringify(nextSelector)}))`)) return;
   }
   await waitForSelector(nextSelector, 2_000);
+}
+
+async function openGameScene(scene) {
+  const opened = await evaluate(`
+    (() => {
+      const game = window.__blokblitzGame;
+      if (!game) return false;
+      game.showScene(${JSON.stringify(scene)});
+      return true;
+    })()
+  `);
+  if (!opened) throw new Error(`Could not open game scene ${scene}`);
+}
+
+async function waitForGameHook(timeoutMs) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (await evaluate(`Boolean(window.__blokblitzGame)`)) return;
+    await delay(100);
+  }
+  throw new Error("Timed out waiting for QA game hook");
 }
 
 async function assertSelectedChangesWithTouch(fieldSelector, controlsScopeSelector, label) {

@@ -536,7 +536,10 @@ describe("Speeltuin hub + calm game modes", () => {
       "letterkompas",
       "zoemroute",
       "woordbouwplaats",
-      "vormenburcht"
+      "vormenburcht",
+      "kloktoren",
+      "geldmarkt",
+      "meetwerf"
     ];
     expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
     expected.forEach((mode) => {
@@ -1048,6 +1051,90 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(vb.id);
     expect(game.mastery.getAttempts().some((a) => a.domain === "math-geometry")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Kloktoren from the journey: clock reading, finishing advances + logs measurement", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const ktIndex = JOURNEY.findIndex((node) => node.scene === "kloktoren");
+    const kt = JOURNEY[ktIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, ktIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${kt.id}"]`)!.click();
+    expect(root.querySelector(".klok-play")).toBeTruthy();
+    expect(root.querySelectorAll(".klok-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.klok-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(kt.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-measurement")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Geldmarkt from the journey: coins, finishing advances + logs measurement", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const gmIndex = JOURNEY.findIndex((node) => node.scene === "geldmarkt");
+    const gm = JOURNEY[gmIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, gmIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${gm.id}"]`)!.click();
+    expect(root.querySelector(".geld-play")).toBeTruthy();
+    expect(root.querySelectorAll(".geld-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.geld-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(gm.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-measurement")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Meetwerf from the journey: length + measuring, finishing advances + logs measurement", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const mwIndex = JOURNEY.findIndex((node) => node.scene === "meetwerf");
+    const mw = JOURNEY[mwIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, mwIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${mw.id}"]`)!.click();
+    expect(root.querySelector(".meet-play")).toBeTruthy();
+    expect(root.querySelectorAll(".meet-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.meet-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(mw.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-measurement")).toBe(true);
     vi.useRealTimers();
   });
 

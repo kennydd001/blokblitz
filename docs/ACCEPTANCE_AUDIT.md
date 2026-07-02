@@ -1,6 +1,6 @@
 # Acceptance Audit
 
-Last updated: 2026-06-23.
+Last updated: 2026-06-25.
 
 This audit maps the Codex goal completion criteria to concrete project evidence. It is intentionally stricter than the automated test suite and includes browser UI/gameplay verification.
 
@@ -8,16 +8,16 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 
 - Install: `npm.cmd install` has passed for this project and dependencies are locked.
 - Static checks: `npm.cmd run typecheck` and `npm.cmd run lint` pass.
-- Tests: `npm.cmd run test` passes with 5 test files / 63 tests.
+- Tests: `npm.cmd run test` passes with 5 test files / 67 tests.
 - Production build: `npm.cmd run build` passes without warnings.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
 - Local server smoke: `http://127.0.0.1:5273/` returned HTTP 200.
-- Cloudflare smoke: `https://logged-intend-chat-medicaid.trycloudflare.com` returned HTTP 200.
-- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 15 Chrome viewport scenarios: `menu-mobile`, `menu-narrow-mobile`, `number-mobile`, `runner-mobile`, `runner-narrow-mobile`, `runner-scaffold-mobile`, `runner-short-desktop`, `web-mobile`, `web-reward-mobile`, `minigame-mobile`, `city-overview-mobile`, `city-build-mobile`, `city-build-narrow-mobile`, `summary-mobile`, and `summary-narrow-mobile`.
-- Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. Latest run completed 38 touch steps from Start -> Number Portal -> Sprint -> WebWoud -> Sterrenstad -> Summary, logged 23 attempts through the real attempt pipeline, restored 1 district, and verified runner/WebWoud/city left-right controls plus swipe-left/swipe-right gestures.
+- Cloudflare smoke: `https://definition-some-cat-involvement.trycloudflare.com` returned HTTP 200.
+- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 16 Chrome viewport scenarios: `menu-mobile`, `menu-narrow-mobile`, `number-mobile`, `real-runner-mobile`, `runner-mobile`, `runner-narrow-mobile`, `runner-scaffold-mobile`, `runner-short-desktop`, `web-mobile`, `web-reward-mobile`, `minigame-mobile`, `city-overview-mobile`, `city-build-mobile`, `city-build-narrow-mobile`, `summary-mobile`, and `summary-narrow-mobile`.
+- Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. Latest run completed 41 touch steps, touched the real `run` scene controls, then completed the Number Portal -> Sprint -> WebWoud -> Sterrenstad -> Summary path, logged 22 attempts through the real attempt pipeline, restored 1 district, and verified runner/WebWoud/city left-right controls plus swipe-left/swipe-right gestures.
 - Browser layout checks: no console errors, no horizontal overflow, no tiny visible buttons, no visible button overlap, non-flat screenshots, and nonzero Three.js canvas across the automated viewport set.
 - Story-mode browser QA: in-app browser at `390x844` opened the Sterrenreis map, verified 26 journey nodes with one active frontier, Buddy, the friend meadow, a child-facing quest card, the progress pill, completed the first story activity, returned to the map with one done node and a new active node, and confirmed the page itself no longer scrolls outside the internal journey road.
-- Visual inspection: latest mobile screenshots for menu, 360px narrow menu, Number Portal, runner, 360px narrow runner, runner gate clarity, WebWoud, reward state, city overview, city build, 360px narrow city build, summary, 360px narrow summary, real-touch summary, and Sterrenreis story mode including the expanded quest-card state were inspected during product-readiness passes.
+- Visual inspection: latest mobile screenshots for menu, 360px narrow menu, Number Portal, real runner with big in-world numerals, runner, 360px narrow runner, runner gate clarity, WebWoud, reward state, city overview, city build, 360px narrow city build, summary, 360px narrow summary, real-touch summary, and Sterrenreis story mode including the expanded quest-card state were inspected during product-readiness passes.
 - Procedural device-feedback checks: tests verify distinct local Web Audio cue patterns, short optional vibration patterns, persisted haptic settings, and shared attempt-pipeline routing for Snap, rescue, city-building, herd rescue, and gentle retry feedback.
 - Asset policy: `assets/ASSET_MANIFEST.json` documents generated local assets and no external runtime assets.
 
@@ -54,7 +54,7 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 - Narrow mobile viewport `360x740`: main menu, Runner, Sterrenstad build, and Summary, with child actions reachable and no control overlap or blocked playfield.
 - Mobile touch route `390x844`: start adventure, wake Number Portal, enter Sprint, move with left/right controls and swipes, complete runner choices, move through WebWoud controls and swipes, complete WebWoud choices, use city `Bouw nu`, move through city build controls and swipes, restore a district, and reach Summary through coordinate touch events rather than DOM `.click()`.
 - Story-mode viewport `390x844`: Sterrenreis default route, active frontier node, Buddy, free-play backpack, progress pill, quest card, friend meadow, story activity completion, bloom return state, and no document-level page scroll.
-- QA URL: `https://logged-intend-chat-medicaid.trycloudflare.com`.
+- QA URL: `https://definition-some-cat-involvement.trycloudflare.com`.
 - Result: no console errors, no horizontal overflow, no tiny visible buttons, no visible button overlap, and nonzero canvas size.
 
 ## Remaining Required Proof
@@ -87,12 +87,12 @@ Current follow-up evidence:
 - Child start and replay gestures now make a safe best-effort fullscreen request through `requestFullscreenPlay`; denied or unsupported requests are caught so gameplay continues normally.
 - Visible child-facing progression now exists in the menu progress strip, non-skippable Number Portal wake gate, Number Portal adventure bridge, route transition toasts, route/rescue milestone rewards, city build rewards, summary treasure trail, and first-viewport summary replay actions.
 - The revamp branch now uses De Sterrenreis as the default adventure shell: boot opens the journey map, the hub `Sterrenreis` card returns to it, story-launched runner/minigame nodes advance saved journey progress, friend nodes rescue companions into the meadow, the final star completes the route, and the child returns to the map through `Verder` instead of falling back into disconnected activity menus.
-- Runner gates now use high-contrast in-world lane readability: distinct colored lane pads, dark sign panels, larger quantity art, 5+n shelves, lane runway tokens, and near-hero road previews make the current three choices readable on mobile without relying only on color or adding flashcard overlays.
+- Runner gates now use high-contrast in-world lane readability: distinct colored lane pads, dark sign panels, dominant voxel numerals, larger quantity art, 5+n shelves, lane runway tokens, and near-hero 3D preview signs make the current three choices readable on mobile without relying only on color or adding flashcard overlays.
 - Memory now participates correctly in Sterrenreis progression: a story-launched Memory board advances its journey node and returns through `Verder`, so the route cannot get stuck before later runner gates.
 - The child-facing Summary now keeps detailed attempt/streak stats inside a closed `Voor ouders` details panel by default, reducing dashboard-like noise while keeping parent evidence accessible.
-- `npm.cmd run qa:viewport` covers menu, 360px narrow menu, number portal, mobile runner, 360px narrow runner, mobile wrong-choice scaffold, short desktop runner, mobile WebWoud, live WebWoud reward feedback, mobile Oefenwereld, mobile Sterrenstad overview, mobile Sterrenstad build, 360px narrow Sterrenstad build, mobile summary, and 360px narrow summary.
-- `npm.cmd run qa:mobile-touch` covers the full child route with real touch events and produces `.qa-artifacts/mobile-touch-qa/report.json` plus `summary-touch-mobile.png`.
-- Latest validation: `npm.cmd run verify` passes with 5 files / 63 tests and production build, targeted story-mode and runner-gate browser QA pass at `390x844`, and local/Cloudflare smokes return HTTP 200.
+- `npm.cmd run qa:viewport` covers menu, 360px narrow menu, number portal, real mobile runner, legacy mobile runner, 360px narrow runner, mobile wrong-choice scaffold, short desktop runner, mobile WebWoud, live WebWoud reward feedback, mobile Oefenwereld, mobile Sterrenstad overview, mobile Sterrenstad build, 360px narrow Sterrenstad build, mobile summary, and 360px narrow summary.
+- `npm.cmd run qa:mobile-touch` touches the real `run` controls, covers the longer child route with real touch events, and produces `.qa-artifacts/mobile-touch-qa/report.json` plus `summary-touch-mobile.png`.
+- Latest validation: `npm.cmd run verify` passes with 5 files / 67 tests and production build, `npm.cmd run qa:viewport` passes 16 scenarios, `npm.cmd run qa:mobile-touch` passes 41 touch steps, and local/Cloudflare smokes return HTTP 200.
 
 Remaining for the active product-readiness goal:
 

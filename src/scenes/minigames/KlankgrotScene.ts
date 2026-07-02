@@ -58,8 +58,7 @@ export class KlankgrotScene extends MiniGameScene {
   // Speak the target sound(s): a single sound for begin/end, the stretched units
   // for a blend ("mmm... aaa... nnn").
   private speakSound(rate = 0.85): void {
-    const text = this.currentRound.sayUnits.join(this.currentRound.mode === "blend" ? "... " : " ");
-    this.game.voice.speak(text, { interrupt: true, rate });
+    this.game.readingAudio.playPhonemeSequence(this.currentRound.sayUnits, { interrupt: true, rate });
   }
 
   // Literacy log path (overrides the number pipeline): a curriculum attempt.

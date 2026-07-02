@@ -89,12 +89,22 @@ describe("acceptance checklist audit", () => {
     ]);
   });
 
-  it("documents a local-first asset manifest with no external runtime assets", () => {
+  it("documents a local-first asset manifest with only same-origin runtime assets", () => {
     const manifest = JSON.parse(readFileSync("assets/ASSET_MANIFEST.json", "utf8")) as {
-      externalAssets: unknown[];
+      externalAssets: Array<{ name: string; usedFiles: string[]; notes: string }>;
       generatedAssets: Array<{ license: string; source: string }>;
     };
-    expect(manifest.externalAssets).toEqual([]);
+    expect(manifest.externalAssets.length).toBeGreaterThanOrEqual(1);
+    expect(manifest.externalAssets.some((asset) => asset.name === "Hestia Dutch voice-pack")).toBe(true);
+    const voicePack = manifest.externalAssets.find((asset) => asset.name === "Hestia Dutch voice-pack");
+    expect(voicePack?.usedFiles.every((file) => !file.includes("://"))).toBe(true);
+    expect(voicePack?.usedFiles).toContain("public/audio/voice/nl/hestia/");
+    expect(existsSync("public/audio/voice/nl/hestia/voice-lines.json")).toBe(true);
+    expect(existsSync("src/game/voiceLineManifest.ts")).toBe(true);
+    expect(voicePack?.notes).toContain("does not call Deepgram");
+    expect(manifest.externalAssets.some((asset) => asset.name === "Hestia Dutch reading phoneme pack")).toBe(false);
+    expect(existsSync("public/audio/reading/nl/hestia")).toBe(false);
+    expect(existsSync("src/game/ReadingAudioManager.ts")).toBe(true);
     expect(manifest.generatedAssets.length).toBeGreaterThanOrEqual(3);
     expect(manifest.generatedAssets.every((asset) => asset.license === "Project-generated")).toBe(true);
     expect(readFileSync("index.html", "utf8")).not.toContain("https://");

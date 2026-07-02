@@ -476,3 +476,146 @@ Product Quality Hardening - mobile/adaptive UX in progress.
 - Continue the 3D pivot: use the latest 390px and 360px viewport screenshots plus `.qa-artifacts/mobile-touch-qa/summary-touch-mobile.png` as the baseline, then run a full-session hands-on phone fun/intuitiveness pass.
 - Next product pass should focus on hands-on phone QA and final product-readiness audit against `docs/GAME_SPEC.md` / `docs/PLAN.md`: verify that all required mechanics are not only implemented but feel coherent across a full session, then close any acceptance gaps before considering completion.
 - Run hands-on phone QA through the Cloudflare URL with the latest game-world menu route and progress strip, Number Portal adventure bridge, full-screen mechanic-specific 3D Sprint with micro-goal chips and route milestones, full-screen 3D timed canopy/anchor WebWoud with rescue milestones, transition toasts, themed 3D live-world landmarks, low-poly animated dino hero, selected-path 5+n pickup chains, movement-only live controls, non-blocking reward pickups, Oefenwereld timed object-dash minigames, Sterrenstad city map/timed build-dash restoration yard, rescue/build 3D win moments, treasure-trail summary with finish bridge, dashboard, city finish-flow, mobile swipe-control changes, audio cues with mute off, and haptics on.
+
+## Curriculum Expansion Research - 2026-06-27
+
+Completed work:
+
+- Read the current game specification, milestone plan, implementation runbook, status log, education types, challenge factory, minigame templates, journey data, mastery tracker, adaptive engine, misconceptions, and voice manager.
+- Researched first-grade curriculum signals for Flanders using official minimumdoelen rollout information, the onderwijsdoelen entry point, a 2025-2026 first-grade school info booklet, and Veilig leren lezen Zoem-version didactic notes.
+- Added `docs/CURRICULUM_GAME_MODES_PROPOSAL.md` as the detailed Claude hand-off for more game modes and curriculum expansion.
+
+Decisions made:
+
+- Treat official Flemish goals as anchor goals rather than separate first-grade-only requirements, then map first-grade game content through common L1 method practice.
+- Keep the existing number-structure game as the foundation, but expand into a generic curriculum layer so reading, measurement, geometry, time, money, and traffic tasks are not forced into numeric-only attempt logs.
+- Prioritize `Splitbord Builder` first because it directly implements the 3-box part-whole board and all splits such as 5 = 0+5, 1+4, 2+3, 3+2, 4+1, and 5+0.
+- Prioritize literacy next with Klankgrot, Zoemroute, Woordbouwplaats, and Letterkompas, because first grade has a major reading focus.
+- Keep letter order and word lists configurable and local; do not clone one commercial reading method wholesale.
+
+Validation:
+
+- Docs-only research/proposal pass. No runtime files changed and no app validation was run.
+
+Next steps for Claude:
+
+- Start from `docs/CURRICULUM_GAME_MODES_PROPOSAL.md`.
+- Add curriculum type scaffolding without breaking existing number tests.
+- Implement Splitbord Builder, then the first literacy data/modes, then number-line/20, operations-to-20, and measurement/geometry/time/money.
+- Add tests, adaptive selection, persistence, dashboard panels, and mobile viewport QA for each new mode before marking it complete.
+
+## TTS Provider Shootout - 2026-06-30
+
+Completed work:
+
+- Researched current build-time TTS options for a natural female Dutch voice-pack: Deepgram Aura-2 Dutch voices, OpenAI `gpt-4o-mini-tts`, ElevenLabs current TTS models, and Cartesia Sonic models.
+- Added `scripts/deepgram-voice-samples.mjs` for a focused Deepgram-only Dutch female voice sample set.
+- Added `scripts/tts-provider-shootout.mjs`, a conditional multi-provider sample generator for Deepgram, OpenAI, ElevenLabs, and Cartesia.
+- Added `docs/TTS_PROVIDER_SHOOTOUT.md` with provider notes, required environment keys, generated artifact paths, and selection guidance.
+- Generated 30 Deepgram MP3 clips under `.qa-artifacts/tts-provider-shootout/` and a local listening page at `.qa-artifacts/tts-provider-shootout/index.html`.
+
+Decisions made:
+
+- Keep TTS as build-time generation only. The game should ship local voice clips and should not call paid TTS APIs during child play.
+- Use provider shootouts only to select a voice. Final approved clips must be copied into `public/audio/voice/...` and added to `assets/ASSET_MANIFEST.json`.
+- OpenAI, ElevenLabs, and Cartesia were not generated in this pass because no `OPENAI_API_KEY`, `ELEVENLABS_API_KEY` / `XI_API_KEY`, or `CARTESIA_API_KEY` was found in the local environment/OpenClaw scan.
+
+Validation:
+
+- `node --check scripts\tts-provider-shootout.mjs` passed.
+- `node --check scripts\deepgram-voice-samples.mjs` passed.
+- The multi-provider report confirmed 6 Deepgram voices with 5 clips each, and correctly marked OpenAI, ElevenLabs, and Cartesia as skipped due to missing keys.
+
+Next steps:
+
+- Listen to `.qa-artifacts/tts-provider-shootout/index.html` and shortlist the best Deepgram voices.
+- Add provider keys and rerun `node scripts\tts-provider-shootout.mjs` to generate OpenAI, ElevenLabs, and Cartesia samples on the same five lines.
+- Pick a primary voice and generate the full final BlokBlitz voice-pack.
+
+## Deepgram Agent Managed TTS Test - 2026-06-30
+
+Completed work:
+
+- Added `scripts/deepgram-agent-tts-samples.mjs` to test Deepgram Voice Agent TTS routing with the existing Deepgram key.
+- Verified the Voice Agent settings from Deepgram docs: wait for `Welcome`, send `Settings`, use `agent.greeting` for a direct spoken line, collect binary audio until `AgentAudioDone`.
+- Generated 6 working Deepgram-managed Cartesia Sonic 3.5 clips under `.qa-artifacts/deepgram-agent-tts-samples/`.
+- Added a listening page at `.qa-artifacts/deepgram-agent-tts-samples/index.html`.
+
+Findings:
+
+- Deepgram-managed Cartesia works with only the Deepgram key using `agent.speak.provider.type = "cartesia"`, `model_id = "sonic-3.5"`, and `language = "nl"`.
+- Cartesia Agent output must use `linear16`, `mulaw`, or `alaw`; the script wraps `linear16` output as local WAV files.
+- Deepgram Aura-2 Dutch voices still work through the direct `/v1/speak` route, but the tested Voice Agent Aura settings returned `FAILED_TO_SPEAK`, so direct Deepgram TTS remains the right route for Aura voice-pack generation.
+- OpenAI and ElevenLabs through Deepgram Agent remain BYO-key routes, not Deepgram-key-only routes.
+
+Validation:
+
+- `node scripts\deepgram-agent-tts-samples.mjs` generated 6 Cartesia WAV clips successfully.
+
+Next steps:
+
+- Listen to both `.qa-artifacts/tts-provider-shootout/index.html` and `.qa-artifacts/deepgram-agent-tts-samples/index.html`.
+- Compare Deepgram Aura-2 Dutch voices against Deepgram-managed Cartesia Sonic 3.5 voices for the child-game use case.
+
+Voice selection update:
+
+- User listened to the Deepgram shootout and picked `aura-2-hestia-nl` / Hestia as the likely best Dutch female voice.
+- Treat Hestia as the primary candidate for the first full local voice-pack generation pass.
+- Use direct Deepgram `/v1/speak` for Hestia MP3 generation, not Voice Agent.
+
+## Hestia Voice-Pack Generation - 2026-06-30
+
+Completed work:
+
+- Added `scripts/generate-hestia-voice-pack.mjs`, a resumable Deepgram `/v1/speak` generator for the selected Hestia voice.
+- Generated 737 local MP3 clips under `public/audio/voice/nl/hestia/`.
+- Generated `public/audio/voice/nl/hestia/voice-lines.json` with the full line inventory and `src/game/voiceLineManifest.ts` with runtime slug lookup.
+- Added `npm.cmd run voice:hestia` for future regeneration.
+- Replaced browser-first speech with local Hestia-first playback in `src/game/VoiceManager.ts`; Web Speech remains fallback for dynamic lines without a pre-generated clip.
+- Updated `assets/ASSET_MANIFEST.json` to document the Deepgram-generated local runtime voice-pack.
+- Updated README and TTS docs to describe the local Hestia voice-pack path.
+- Added automated checks that the voice-pack manifest maps common spoken lines to local MP3 files.
+
+Decisions made:
+
+- Keep the voice-pack same-origin/local at runtime. Deepgram is used only at build-time.
+- Keep direct Deepgram Aura-2 `/v1/speak` as the Hestia generation route because it reliably returns MP3 clips.
+- Do not try to pre-record highly dynamic lines with friend/sticker names yet; those continue through the fallback path.
+
+Validation:
+
+- Generation completed after a resumable retry: 737 line inventory, 737 local MP3 files.
+- Script retry logic was added after a transient socket close during generation.
+
+Next steps:
+
+- Run typecheck/tests/build after the voice-pack integration.
+- Listen to a small final sample directly from `public/audio/voice/nl/hestia/` during browser QA.
+
+## Reading Phoneme Audio Correction - 2026-07-01
+
+Completed work:
+
+- Added `src/education/literacy/phonemeInventory.ts` with a didactic reading-audio inventory for current letters, phoneme units, Dutch digraphs, and word clips.
+- Tried a generated Hestia reading phoneme pack, then rejected it after listening QA because it sounded worse than the older browser/computer voice for isolated letters and "zoemend lezen".
+- Removed the rejected generated reading clips from `public/audio/reading/`, removed the reading audio manifest, and removed the `reading:hestia` regeneration script.
+- Added `src/game/ReadingAudioManager.ts`, which now forces browser speech for reading prompts so generated Hestia sentence clips cannot be selected for `m`, `aa`, `n`, etc.
+- Wired Klankgrot, Letterkompas, Zoemroute, and Woordbouwplaats to `game.readingAudio`.
+- Updated `assets/ASSET_MANIFEST.json`, README, and the TTS shootout notes.
+
+Decisions made:
+
+- Keep normal Hestia sentence voice and reading phoneme audio as separate runtime paths.
+- Use the browser/computer voice for early reading until a genuinely better source is available, likely human-recorded clips or a provider proven on isolated Dutch phonemes.
+- Do not ship the rejected Hestia reading phoneme pack.
+- Keep Deepgram build-time only. The game does not call paid TTS APIs during child play.
+
+Validation:
+
+- Focused audio/acceptance test run passed after the correction: 5 files / 27 tests.
+- `npm.cmd run verify` passed after the correction with typecheck, lint, 14 test files / 116 tests, and production build.
+- Confirmed `public/audio/reading/`, `src/game/readingAudioManifest.ts`, and `scripts/generate-reading-audio-pack.mjs` are no longer present.
+
+Next steps:
+
+- Listen in-game to Klankgrot, Letterkompas, Zoemroute, and Woordbouwplaats with the browser voice. If that is still not good enough, switch strategy to a small human-recorded Dutch phoneme set instead of generated TTS.

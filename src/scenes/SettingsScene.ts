@@ -51,6 +51,7 @@ export class SettingsScene extends BaseScene {
       this.game.audio.setSettings(this.game.save.getMutableData().settings);
       this.game.haptics.setSettings(this.game.save.getMutableData().settings);
       this.game.voice.setSettings(this.game.save.getMutableData().settings);
+      this.game.readingAudio.setSettings(this.game.save.getMutableData().settings);
       document.body.classList.toggle("high-contrast", Boolean(contrast?.checked));
     };
     speed?.addEventListener("input", save);
@@ -62,5 +63,4 @@ export class SettingsScene extends BaseScene {
     this.root.append(sceneHeader("Instellingen"), panel);
   }
 }
-
 

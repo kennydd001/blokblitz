@@ -66,7 +66,7 @@ export class WoordbouwplaatsScene extends MiniGameScene {
   }
 
   private sayWord(rate = 0.7): void {
-    this.game.voice.speak(`${this.currentRound.units.join("... ")}... ${this.currentRound.word.word}`, { interrupt: true, rate });
+    this.game.readingAudio.playZoemWord(this.currentRound.units, this.currentRound.word.word, { interrupt: true, rate });
   }
 
   protected logAttempt(option: ChallengeOption): boolean {
