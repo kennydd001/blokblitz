@@ -43,7 +43,8 @@ const MODE_EMOJI: Record<string, string> = {
   kloktoren: "🕐",
   geldmarkt: "🪙",
   meetwerf: "📐",
-  verkeerspad: "🚦"
+  verkeerspad: "🚦",
+  luisterbos: "🌳"
 };
 
 const MODE_TITLE: Record<string, string> = {
@@ -66,7 +67,8 @@ const MODE_TITLE: Record<string, string> = {
   kloktoren: "Kloktoren",
   geldmarkt: "Geldmarkt",
   meetwerf: "Meetwerf",
-  verkeerspad: "Verkeerspad"
+  verkeerspad: "Verkeerspad",
+  luisterbos: "Luisterbos"
 };
 
 const MODE_ACTION: Record<string, string> = {
@@ -89,7 +91,8 @@ const MODE_ACTION: Record<string, string> = {
   kloktoren: "Lees de klok: hele en halve uren.",
   geldmarkt: "Tel het geld tot 10 euro.",
   meetwerf: "Vergelijk lengtes en meet met blokjes.",
-  verkeerspad: "Kies het veilige pad in het verkeer."
+  verkeerspad: "Kies het veilige pad in het verkeer.",
+  luisterbos: "Luister naar het verhaaltje en kies het plaatje."
 };
 
 // Ordered as a first-grade learning spiral: early counting, then letters and
@@ -103,7 +106,7 @@ interface RegionPlan {
 
 const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
-  { region: "muntgrot", stops: ["klankgrot", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
+  { region: "muntgrot", stops: ["klankgrot", "luisterbos", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
   { region: "ijsbaan", stops: ["compare", "letterkompas", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
   { region: "webwoud", stops: ["splitbord", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
   { region: "bouwdorp", stops: ["fill", "getallenlijn", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },

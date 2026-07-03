@@ -76,38 +76,44 @@ async function main() {
     await tap(".run-ctrl-left", "real-runner left control");
     await tap(".run-ctrl-jump", "real-runner jump control");
     await swipe("canvas", -96, "real-runner swipe left");
+    await swipe("canvas", 96, "real-runner swipe right");
 
-    await openGameScene("numberOfDay");
-    await waitForSelector(".number-day-panel", 5_000);
-    await tap(".wake-button", "wake number portal");
-    await waitForSelector(".portal-run-button", 5_000);
-    await tap(".portal-run-button", "enter Sprint");
-    await waitForSelector(".play-field-layer.runner", 5_000);
-    await assertSelectedChangesWithTouch(".play-field-layer.runner", ".scene.blokblitz", "runner");
-    await completeLiveChoices(".play-field-layer.runner", ".play-field-layer.web", 18, "runner");
+    // De Sterrenreis: dismiss the story card, then finish the frontier stop by touch.
+    await openGameScene("reis");
+    await waitForSelector(".reis-scene", 5_000);
+    if (await exists(".reis-story-start")) await tap(".reis-story-start", "journey story start");
+    await assertNoHorizontalOverflow("journey map");
+    await dismissRewardOverlays("journey map");
+    await waitForSelector(".reis-node.now", 5_000);
+    await tap(".reis-node.now", "journey frontier stop");
+    await waitForSelector(".mini-scene", 5_000);
+    await assertNoHorizontalOverflow("journey mini mode");
+    await completeMiniRounds("journey stop", 14);
+    await waitForSelector(".results-actions .btn.secondary", 5_000);
+    await dismissRewardOverlays("journey stop");
+    await tap(".results-actions .btn.secondary", "journey verder");
+    await waitForSelector(".reis-scene", 5_000);
 
-    await waitForSelector(".play-field-layer.web", 8_000);
-    await assertSelectedChangesWithTouch(".play-field-layer.web", ".scene.webwoud", "webwoud");
-    await completeLiveChoices(".play-field-layer.web", ".city-quick-build", 18, "webwoud");
-
-    await waitForSelector(".city-quick-build button[data-action='Bouw nu']", 8_000);
-    await assertNoHorizontalOverflow("city overview");
-    await tap(".city-quick-build button[data-action='Bouw nu']", "start city build");
-    await waitForSelector(".city-build-live", 5_000);
-    await assertSelectedChangesWithTouch(".city-build-live", ".city-build-live", "city");
-    await tap(".city-build-live button[data-correct='true']", "restore city district");
-    await waitForSelector(".city-next-actions button[data-action='Missie afronden']", 5_000);
-    await tap(".city-next-actions button[data-action='Missie afronden']", "finish mission");
-    await waitForSelector(".summary-replay-actions button[data-action='Nog een missie']", 5_000);
-    await assertNoHorizontalOverflow("summary");
+    // Vrij spelen: open the Speeltuin, play a reading mode by touch, return home.
+    await openGameScene("hub");
+    await waitForSelector(".hub-grid", 5_000);
+    await assertNoHorizontalOverflow("speeltuin hub");
+    await tap('.hub-card[data-mode="klankgrot"]', "open klankgrot");
+    await waitForSelector(".klankgrot-play", 5_000);
+    await completeMiniRounds("klankgrot", 14);
+    await waitForSelector(".results-actions .btn.secondary", 5_000);
+    await dismissRewardOverlays("klankgrot");
+    await tap(".results-actions .btn.secondary", "back to speeltuin");
+    await waitForSelector(".hub-scene", 5_000);
+    await dismissRewardOverlays("speeltuin");
 
     const metrics = await evaluate(`
       (() => ({
         scene: document.querySelector(".scene")?.className ?? "",
         hasGameHook: Boolean(window.__blokblitzGame),
         attempts: window.__blokblitzGame?.data().progress.attempts.length ?? -1,
-        restored: Object.values(window.__blokblitzGame?.data().progress.cityDistricts ?? {}).filter((district) => district.restored).length,
-        summaryActions: [...document.querySelectorAll(".summary-replay-actions .btn")].map((button) => button.textContent?.trim()),
+        journeyDone: window.__blokblitzGame?.data().progress.journey.completed.length ?? -1,
+        treasureFill: window.__blokblitzGame?.data().progress.sessionChestFill ?? -1,
         viewport: {
           width: innerWidth,
           height: innerHeight,
@@ -116,18 +122,10 @@ async function main() {
       }))()
     `);
     if (!metrics.hasGameHook) throw new Error("Missing QA game hook; mobile touch QA must run with ?qa=");
-    if (!metrics.scene.includes("summary")) throw new Error(`Expected summary scene, got ${metrics.scene}`);
-    if (metrics.attempts < 20) throw new Error(`Expected at least 20 tracked attempts after touch playthrough, got ${metrics.attempts}`);
-    if (metrics.restored < 1) throw new Error("Touch playthrough did not restore a city district");
-    if (metrics.summaryActions.join("|") !== "Nog een missie|Bouw verder") throw new Error(`Unexpected summary actions: ${metrics.summaryActions.join(", ")}`);
-    const coveredControls = new Set(
-      steps
-        .filter((step) => / (left|right) control$| swipe (left|right)$/.test(step.label))
-        .map((step) => step.label.split(" ")[0])
-    );
-    for (const label of ["runner", "webwoud", "city"]) {
-      if (!coveredControls.has(label)) throw new Error(`Mobile touch QA did not cover movement controls for ${label}`);
-    }
+    if (!metrics.scene.includes("hub")) throw new Error(`Expected hub scene at the end, got ${metrics.scene}`);
+    if (metrics.attempts < 14) throw new Error(`Expected at least 14 tracked attempts after the touch playthrough, got ${metrics.attempts}`);
+    if (metrics.journeyDone < 1) throw new Error("Touch playthrough did not advance De Sterrenreis");
+    if (metrics.treasureFill < 2 && metrics.treasureFill !== 0) throw new Error(`Expected the treasure meter to count both finished activities, got ${metrics.treasureFill}`);
     if (errors.length > 0) throw new Error(`Browser errors during touch QA:\n- ${errors.join("\n- ")}`);
 
     const screenshot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false });
@@ -135,7 +133,7 @@ async function main() {
     writeFileSync(screenshotPath, Buffer.from(screenshot.data, "base64"));
     const reportPath = path.join(artifactDir, "report.json");
     writeFileSync(reportPath, JSON.stringify({ generatedAt: new Date().toISOString(), steps, metrics, screenshot: screenshotPath }, null, 2));
-    console.log(`Mobile touch QA passed: ${steps.length} touch steps, ${metrics.attempts} tracked attempts, ${metrics.restored} restored district(s).`);
+    console.log(`Mobile touch QA passed: ${steps.length} touch steps, ${metrics.attempts} tracked attempts, journey ${metrics.journeyDone} node(s) done.`);
     console.log(`Artifacts: ${artifactDir}`);
   } finally {
     await cdp?.close().catch(() => {});
@@ -152,17 +150,33 @@ async function main() {
   }
 }
 
-async function completeLiveChoices(sourceSelector, nextSelector, maxSteps, label) {
-  for (let step = 0; step < maxSteps; step += 1) {
-    const stillInSource = await evaluate(`Boolean(document.querySelector(${JSON.stringify(sourceSelector)}))`);
-    if (!stillInSource) break;
-    const correctVisible = await evaluate(`Boolean(document.querySelector(${JSON.stringify(`${sourceSelector} button[data-correct='true']`)}))`);
-    if (!correctVisible) break;
-    await tap(`${sourceSelector} button[data-correct='true']`, `${label} correct ${step + 1}`);
-    await delay(740);
-    if (await evaluate(`Boolean(document.querySelector(${JSON.stringify(nextSelector)}))`)) return;
+// Reward moments (sticker unboxing, Buddy level-up) overlay the whole screen;
+// tap through them so the next control tap actually lands on its target.
+async function dismissRewardOverlays(label) {
+  for (let i = 0; i < 4; i += 1) {
+    if (await exists(".sticker-reveal")) {
+      await tap(".sticker-reveal", `${label} dismiss sticker reveal`);
+      continue;
+    }
+    if (await exists(".buddy-levelup")) {
+      await tap(".buddy-levelup", `${label} dismiss buddy level-up`);
+      continue;
+    }
+    return;
   }
-  await waitForSelector(nextSelector, 2_000);
+}
+
+async function completeMiniRounds(label, maxSteps) {
+  for (let step = 0; step < maxSteps; step += 1) {
+    if (await exists(".mini-done")) return;
+    if (!(await exists(".mini-choice[data-correct='true']"))) {
+      await delay(320);
+      continue;
+    }
+    await tap(".mini-choice[data-correct='true']", `${label} correct ${step + 1}`);
+    await delay(1150);
+  }
+  await waitForSelector(".mini-done", 3_000);
 }
 
 async function openGameScene(scene) {
@@ -186,44 +200,11 @@ async function waitForGameHook(timeoutMs) {
   throw new Error("Timed out waiting for QA game hook");
 }
 
-async function assertSelectedChangesWithTouch(fieldSelector, controlsScopeSelector, label) {
-  const before = await selectedIndex(fieldSelector);
-  if (before === null) throw new Error(`${label} has no selected target before touch movement`);
-  const rightSelector = `${controlsScopeSelector} .action-pad-button[data-pad-action='right']`;
-  const leftSelector = `${controlsScopeSelector} .action-pad-button[data-pad-action='left']`;
-  if (!(await exists(rightSelector))) throw new Error(`${label} missing right touch control`);
-  if (!(await exists(leftSelector))) throw new Error(`${label} missing left touch control`);
-
-  await tap(rightSelector, `${label} right control`);
-  const afterRight = await selectedIndex(fieldSelector);
-  if (afterRight === null || afterRight <= before) throw new Error(`${label} right touch did not move selection: ${before} -> ${afterRight}`);
-
-  await tap(leftSelector, `${label} left control`);
-  const afterLeft = await selectedIndex(fieldSelector);
-  if (afterLeft === null || afterLeft >= afterRight) throw new Error(`${label} left touch did not move selection back: ${afterRight} -> ${afterLeft}`);
-
-  await swipe(fieldSelector, -96, `${label} swipe left`);
-  const afterSwipeLeft = await selectedIndex(fieldSelector);
-  if (afterSwipeLeft === null || afterSwipeLeft >= afterLeft) throw new Error(`${label} left swipe did not move selection left: ${afterLeft} -> ${afterSwipeLeft}`);
-
-  await swipe(fieldSelector, 96, `${label} swipe right`);
-  const afterSwipeRight = await selectedIndex(fieldSelector);
-  if (afterSwipeRight === null || afterSwipeRight <= afterSwipeLeft) throw new Error(`${label} right swipe did not move selection right: ${afterSwipeLeft} -> ${afterSwipeRight}`);
-}
-
-async function selectedIndex(scopeSelector) {
-  return evaluate(`
-    (() => {
-      const scope = document.querySelector(${JSON.stringify(scopeSelector)});
-      const selected = scope?.querySelector("[data-option-index].selected");
-      const field = scope?.querySelector("[data-selected-index]");
-      const raw = selected?.dataset.optionIndex ?? field?.dataset.selectedIndex;
-      return raw == null ? null : Number(raw);
-    })()
-  `);
-}
-
 async function tap(selector, label) {
+  // Bring the target into the viewport first (map nodes / hub cards live in
+  // long scroll containers), so the touch point is actually hittable.
+  await evaluate(`document.querySelector(${JSON.stringify(selector)})?.scrollIntoView({ block: "center", inline: "center" })`);
+  await delay(160);
   const point = await centerPoint(selector);
   await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [point] });
   await delay(45);

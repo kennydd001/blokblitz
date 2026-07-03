@@ -8713,3 +8713,29 @@ input {
   60% { transform: translate(-50%, -66%) scale(1.35) rotate(10deg); opacity: 1; }
   100% { transform: translate(-50%, -78%) scale(1.1) rotate(0); opacity: 1; }
 }
+
+/* ===== Luisterbos — listening stories ===== */
+.hub-card.luister { background: linear-gradient(160deg, #d8f2c8, #6dbb4a); }
+.luister-play { gap: 16px; }
+.luister-story {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(420px, 94%);
+  padding: 12px 16px;
+  border-radius: 20px;
+  border: 4px solid var(--edge);
+  background: linear-gradient(160deg, #f2fbe8, #cdeeb2);
+  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.2);
+  cursor: pointer;
+  text-align: left;
+}
+.luister-story:active { transform: scale(0.97); }
+.luister-pic { font-size: 2.8rem; line-height: 1; }
+.luister-copy { display: flex; flex-direction: column; gap: 2px; }
+.luister-copy strong { font-size: 1.15rem; color: var(--ink); }
+.luister-copy small { font-size: 0.8rem; font-weight: 800; color: #55763c; }
+.luister-choices { gap: 14px; flex-wrap: wrap; }
+.luister-choice { min-width: 96px; max-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 10px; }
+.luister-option-pic { display: block; font-size: 2.8rem; line-height: 1; }
+.luister-option-text { font-size: 0.8rem; font-weight: 800; color: #44506a; line-height: 1.2; text-align: center; }

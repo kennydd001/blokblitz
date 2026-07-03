@@ -53,12 +53,7 @@ export type SceneId =
   | "geldmarkt"
   | "meetwerf"
   | "verkeerspad"
-  | "numberOfDay"
-  | "runner"
-  | "webwoud"
-  | "city"
-  | "minigame"
-  | "summary"
+  | "luisterbos"
   | "parentDashboard"
   | "settings";
 

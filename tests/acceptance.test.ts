@@ -1,7 +1,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { districtSeeds } from "../src/data/districts";
 import { ChallengeFactory } from "../src/education/challengeFactory";
 import { MINIGAME_TYPES, REPRESENTATIONS, SKILLS } from "../src/education/types";
 
@@ -23,14 +22,36 @@ const requiredScenes = [
   "BootScene",
   "ReisScene",
   "MainMenuScene",
-  "NumberOfDayScene",
-  "BlokBlitzScene",
-  "WebWoudScene",
-  "SterrenstadScene",
-  "MinigameScene",
-  "SummaryScene",
+  "HubScene",
+  "RunScene",
+  "ResultsScene",
   "ParentDashboardScene",
   "SettingsScene"
+];
+
+const requiredMiniScenes = [
+  "CountScene",
+  "MatchScene",
+  "CompareScene",
+  "FillScene",
+  "OneMoreLessScene",
+  "OrderScene",
+  "MemoryScene",
+  "SplitbordScene",
+  "KlankgrotScene",
+  "LetterkompasScene",
+  "TientalhuisScene",
+  "ZoemrouteScene",
+  "GetallenlijnScene",
+  "WoordbouwplaatsScene",
+  "TienbrugScene",
+  "VormenburchtScene",
+  "KloktorenScene",
+  "GeldmarktScene",
+  "MeetwerfScene",
+  "VerkeerspadScene",
+  "LuisterbosScene",
+  "BossScene"
 ];
 
 function walkFiles(path: string): string[] {
@@ -52,6 +73,14 @@ describe("acceptance checklist audit", () => {
       expect(existsSync(`src/scenes/${scene}.ts`), `${scene} file should exist`).toBe(true);
       expect(gameSource).toContain(`new ${scene}(game)`);
     }
+    for (const scene of requiredMiniScenes) {
+      expect(existsSync(`src/scenes/minigames/${scene}.ts`), `${scene} file should exist`).toBe(true);
+      expect(gameSource).toContain(`new ${scene}(game)`);
+    }
+    // The old prototype scenes are gone for good.
+    for (const legacy of ["BlokBlitzScene", "WebWoudScene", "SterrenstadScene", "NumberOfDayScene", "MinigameScene", "SummaryScene"]) {
+      expect(existsSync(`src/scenes/${legacy}.ts`), `${legacy} should stay deleted`).toBe(false);
+    }
   });
 
   it("exposes all required education dimensions", () => {
@@ -69,25 +98,6 @@ describe("acceptance checklist audit", () => {
     expect(MINIGAME_TYPES).toHaveLength(12);
   });
 
-  it("includes all required Sterrenstad districts", () => {
-    expect(districtSeeds).toHaveLength(14);
-    expect(districtSeeds.map((district) => district.name)).toEqual([
-      "Dot Card Plaza",
-      "Dice Cave",
-      "Domino Dock",
-      "Finger Treehouse",
-      "Five-Frame Farm",
-      "Ten-Frame Tower",
-      "Rekenrek Bridge",
-      "Block Stack Yard",
-      "Egg Nest Nursery",
-      "Pawprint Rescue HQ",
-      "Numeral Library",
-      "Mixed Match Observatory",
-      "Train of Ten Station",
-      "Dino Park"
-    ]);
-  });
 
   it("documents a local-first asset manifest with only same-origin runtime assets", () => {
     const manifest = JSON.parse(readFileSync("assets/ASSET_MANIFEST.json", "utf8")) as {
@@ -115,7 +125,7 @@ describe("acceptance checklist audit", () => {
     const css = readFileSync("src/style.css", "utf8");
     const gameSource = readFileSync("src/game/Game.ts", "utf8");
     const mainMenuSource = readFileSync("src/scenes/MainMenuScene.ts", "utf8");
-    const summarySource = readFileSync("src/scenes/SummaryScene.ts", "utf8");
+    const reisSource = readFileSync("src/scenes/ReisScene.ts", "utf8");
     expect(index).toContain("viewport-fit=cover");
     expect(index).toContain('name="mobile-web-app-capable" content="yes"');
     expect(index).toContain('name="apple-mobile-web-app-capable" content="yes"');
@@ -127,7 +137,7 @@ describe("acceptance checklist audit", () => {
     expect(gameSource).toContain("requestFullscreenPlay");
     expect(gameSource).toContain("requestFullscreen");
     expect(mainMenuSource).toContain("this.game.requestFullscreenPlay()");
-    expect(summarySource).toContain("this.game.requestFullscreenPlay()");
+    expect(reisSource).toContain("this.game.requestFullscreenPlay()");
 
     const webManifest = JSON.parse(readFileSync("public/site.webmanifest", "utf8")) as {
       name: string;
@@ -172,8 +182,10 @@ describe("acceptance checklist audit", () => {
     expect(script).toContain("Mobile touch QA passed");
     expect(script).toContain("swipe left");
     expect(script).toContain("swipe right");
-    expect(script).toContain(".city-quick-build button[data-action='Bouw nu']");
-    expect(script).toContain(".summary-replay-actions button[data-action='Nog een missie']");
+    // The touch route covers the REAL game: journey stop + a Speeltuin mode.
+    expect(script).toContain(".reis-node.now");
+    expect(script).toContain('.hub-card[data-mode="klankgrot"]');
+    expect(script).toContain(".mini-choice[data-correct='true']");
   });
 
   it("keeps runtime source free of remote dependencies and network APIs", () => {
@@ -188,35 +200,15 @@ describe("acceptance checklist audit", () => {
     expect(violations).toEqual([]);
   });
 
-  it("binds Sterrenstad restoration examples to deterministic number-structure challenges", () => {
+  it("generates a valid runner-gate challenge for every minigame type", () => {
+    // The education factory drives the real runner gates: every template must
+    // produce a playable challenge with exactly one correct option and local SVG.
     const factory = new ChallengeFactory();
-    const challenges = new Map(
-      districtSeeds.map((district) => [
-        district.id,
-        factory.createCityChallenge(district.id, {
-          quantity: district.targetQuantity,
-          representation: district.representation
-        })
-      ])
-    );
-
-    expect(challenges.get("block-yard")?.challengeType).toBe("build-the-number");
-    expect(challenges.get("rekenrek-bridge")?.challengeType).toBe("bead-bridge");
-    expect(challenges.get("train-station")?.challengeType).toBe("train-of-ten");
-    expect(challenges.get("numeral-library")?.challengeType).toBe("web-anchors");
-    expect(challenges.get("dot-plaza")?.challengeType).toBe("one-more-one-less");
-    expect(challenges.get("dino-park")?.challengeType).toBe("rescue-the-herd");
-
-    for (const district of districtSeeds) {
-      const challenge = challenges.get(district.id);
-      expect(challenge, `${district.name} should create a challenge`).toBeTruthy();
-      expect(challenge!.scene).toBe("city");
-      expect(challenge!.levelId).toBe(district.id);
-      expect(challenge!.options.some((option) => option.isCorrect)).toBe(true);
-      expect(challenge!.options.every((option) => option.svg.includes("<svg"))).toBe(true);
-      expect(challenge!.successEffect.length).toBeGreaterThan(8);
-      expect(challenge!.safeErrorEffect.length).toBeGreaterThan(8);
-      expect(challenge!.hint.length).toBeGreaterThan(8);
+    for (const type of MINIGAME_TYPES) {
+      const challenge = factory.createMinigame(type, { quantity: 6, representation: "dots", scene: "runner" });
+      expect(challenge.options.some((option) => option.isCorrect), `${type} should have a correct option`).toBe(true);
+      expect(challenge.options.every((option) => option.svg.includes("<svg")), `${type} options render SVG`).toBe(true);
+      expect(challenge.hint.length).toBeGreaterThan(8);
     }
   });
 

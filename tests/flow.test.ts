@@ -567,7 +567,8 @@ describe("Speeltuin hub + calm game modes", () => {
       "meetwerf",
       "geldmarkt",
       "kloktoren",
-      "verkeerspad"
+      "verkeerspad",
+      "luisterbos"
     ];
     expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
     expected.forEach((mode) => {
@@ -1403,6 +1404,34 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.advanceTimersByTime(900);
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(finalBoss.id);
+    vi.useRealTimers();
+  });
+
+  it("plays Luisterbos from the journey: story card + picture questions, finishing advances + logs listening", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const lbIndex = JOURNEY.findIndex((node) => node.scene === "luisterbos");
+    const lb = JOURNEY[lbIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, lbIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${lb.id}"]`)!.click();
+    expect(root.querySelector(".luister-story")).toBeTruthy();
+    expect(root.querySelectorAll(".luister-choice")).toHaveLength(3);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.luister-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(lb.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "listening-comprehension")).toBe(true);
     vi.useRealTimers();
   });
 

@@ -13,20 +13,16 @@ mkdirSync(artifactDir, { recursive: true });
 const scenarios = [
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
-  { name: "number-mobile", width: 390, height: 844, mobile: true, open: "number", expectAdventureBridge: true },
+  { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
+  { name: "hub-narrow-mobile", width: 360, height: 740, mobile: true, open: "hub", expectHub: true },
   { name: "real-runner-mobile", width: 390, height: 844, mobile: true, open: "real-runner", expectRealRunner: true },
-  { name: "runner-mobile", width: 390, height: 844, mobile: true, open: "runner" },
-  { name: "runner-narrow-mobile", width: 360, height: 740, mobile: true, open: "runner" },
-  { name: "runner-scaffold-mobile", width: 390, height: 844, mobile: true, open: "runner-scaffold", expectScaffold: true },
-  { name: "runner-short-desktop", width: 1280, height: 720, mobile: false, open: "runner" },
-  { name: "web-mobile", width: 390, height: 844, mobile: true, open: "webwoud" },
-  { name: "web-reward-mobile", width: 390, height: 844, mobile: true, open: "webwoud-reward", expectReward: true },
-  { name: "minigame-mobile", width: 390, height: 844, mobile: true, open: "minigame" },
-  { name: "city-overview-mobile", width: 390, height: 844, mobile: true, open: "city-overview", expectCityQuickBuild: true },
-  { name: "city-build-mobile", width: 390, height: 844, mobile: true, open: "city-build" },
-  { name: "city-build-narrow-mobile", width: 360, height: 740, mobile: true, open: "city-build" },
-  { name: "summary-mobile", width: 390, height: 844, mobile: true, open: "summary", expectSummaryProgress: true },
-  { name: "summary-narrow-mobile", width: 360, height: 740, mobile: true, open: "summary", expectSummaryProgress: true }
+  { name: "real-runner-narrow-mobile", width: 360, height: 740, mobile: true, open: "real-runner", expectRealRunner: true },
+  { name: "real-runner-short-desktop", width: 1280, height: 720, mobile: false, open: "real-runner", expectRealRunner: true },
+  { name: "klankgrot-mobile", width: 390, height: 844, mobile: true, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
+  { name: "splitbord-mobile", width: 390, height: 844, mobile: true, open: "splitbord", expectMiniMode: ".splitbord-board" },
+  { name: "tienbrug-narrow-mobile", width: 360, height: 740, mobile: true, open: "tienbrug", expectMiniMode: ".tienbrug-sum" },
+  { name: "kloktoren-mobile", width: 390, height: 844, mobile: true, open: "kloktoren", expectMiniMode: ".klok-play" },
+  { name: "boss-mobile", width: 390, height: 844, mobile: true, open: "boss", expectMiniMode: ".boss-arena" }
 ];
 
 const errors = [];
@@ -93,7 +89,7 @@ try {
     await openScenario(scenario.open);
     await delay(350);
 
-    const metrics = await collectMetrics();
+    const metrics = await collectMetrics(scenario);
     validateScenario(scenario, metrics, errors.slice(beforeErrorCount));
     const screenshot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false });
     const screenshotPath = path.join(artifactDir, `${scenario.name}.png`);
@@ -131,19 +127,15 @@ async function openScenario(open) {
     await waitForSelector(".reis-scene", 5_000);
     return;
   }
-  if (open === "number") {
-    await openGameScene("numberOfDay");
-    await waitForSelector(".number-day-panel", 5_000);
-    await waitForSelector(".adventure-bridge", 5_000);
-    const sprintAvailableBeforeWake = await evaluate(`Boolean(document.querySelector("button[data-action='Naar Sprint']"))`);
-    if (sprintAvailableBeforeWake) throw new Error("Number Portal allowed Sprint before wake action");
-    await click("button[data-action^='Wek']");
-    await waitForSelector("button[data-action='Naar Sprint']", 5_000);
+  if (open === "hub") {
+    await openGameScene("hub");
+    await waitForSelector(".hub-grid", 5_000);
     return;
   }
-  if (open === "runner") {
-    await openGameScene("runner");
-    await waitForSelector(".play-field-layer.runner", 5_000);
+  if (["klankgrot", "splitbord", "tienbrug", "kloktoren", "boss"].includes(open)) {
+    await openGameScene(open);
+    await waitForSelector(".mini-scene", 5_000);
+    await evaluate("document.querySelector('.boss-intro')?.remove()");
     return;
   }
   if (open === "real-runner") {
@@ -152,46 +144,6 @@ async function openScenario(open) {
     await waitForSelector(".run-target", 5_000);
     await delay(1_000);
     return;
-  }
-  if (open === "runner-scaffold") {
-    await openGameScene("runner");
-    await waitForSelector(".play-field-layer.runner", 5_000);
-    await click(".play-field-layer.runner button[data-correct='false']");
-    await waitForSelector(".scaffold-strip", 2_000);
-    return;
-  }
-  if (open === "webwoud") {
-    await openGameScene("webwoud");
-    await waitForSelector(".play-field-layer.web", 5_000);
-    return;
-  }
-  if (open === "webwoud-reward") {
-    await openGameScene("webwoud");
-    await waitForSelector(".play-field-layer.web", 5_000);
-    await click(".play-field-layer.web button[data-correct='true']");
-    await waitForSelector(".play-outcome .reward-badge[data-reward-icon]", 2_000);
-    return;
-  }
-  if (open === "minigame") {
-    await openGameScene("minigame");
-    await waitForSelector(".play-field-layer.mini", 5_000);
-    return;
-  }
-  if (open === "city-overview") {
-    await openGameScene("city");
-    await waitForSelector(".city-quick-build button[data-action='Bouw nu']", 5_000);
-    return;
-  }
-  if (open === "city-build") {
-    await openGameScene("city");
-    await waitForSelector(".city-quick-build button[data-action='Bouw nu']", 5_000);
-    await click(".city-quick-build button[data-action='Bouw nu']");
-    await waitForSelector(".city-build-live", 5_000);
-    return;
-  }
-  if (open === "summary") {
-    await playThroughToSummary();
-    await waitForSelector(".summary-treasure-trail", 5_000);
   }
 }
 
@@ -251,9 +203,11 @@ async function waitForSelector(selector, timeoutMs) {
   throw new Error(`Timed out waiting for ${selector}`);
 }
 
-async function collectMetrics() {
+async function collectMetrics(scenario = {}) {
+  const miniBoardSelector = JSON.stringify(scenario.expectMiniMode ?? "");
   return evaluate(`
     (() => {
+      const miniBoardSelector = ${miniBoardSelector};
       const rect = (selector) => {
         const el = document.querySelector(selector);
         if (!el) return null;
@@ -287,6 +241,11 @@ async function collectMetrics() {
         };
       });
       return {
+        hubGrid: rect(".hub-grid"),
+        hubCardCount: document.querySelectorAll(".hub-card").length,
+        menuGarage: rect(".menu-garage"),
+        miniBoardPresent: miniBoardSelector ? Boolean(document.querySelector(miniBoardSelector)) : false,
+        miniChoiceCount: document.querySelectorAll(".mini-choice").length,
         viewport: {
           width: innerWidth,
           height: innerHeight,
@@ -429,6 +388,19 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (metrics.cityBuildNow && (metrics.cityBuildNow.width < 44 || metrics.cityBuildNow.height < 54)) failures.push(`Bouw nu button too small: ${JSON.stringify(metrics.cityBuildNow)}`);
     if (metrics.cityRecommendedDistricts.length !== 1) failures.push(`expected one recommended city district, got ${metrics.cityRecommendedDistricts.length}`);
     if (metrics.cityBuildLivePresent) failures.push("city overview opened live build before Bouw nu");
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectHub) {
+    if (!metrics.hubGrid) failures.push("missing hub grid");
+    if (metrics.hubCardCount < 20) failures.push(`expected at least 20 hub cards, got ${metrics.hubCardCount}`);
+    if (!metrics.menuGarage) failures.push("missing hero garage");
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectMiniMode) {
+    if (!metrics.miniBoardPresent) failures.push(`missing mini board ${scenario.expectMiniMode}`);
+    if (metrics.miniChoiceCount < 1) failures.push("mini mode has no tappable choices");
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }
