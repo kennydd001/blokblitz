@@ -92,8 +92,9 @@ const MODE_ACTION: Record<string, string> = {
   verkeerspad: "Kies het veilige pad in het verkeer."
 };
 
-// Ordered by each region's number cap (5 -> 6 -> 8 -> 8 -> 10 -> 10), so difficulty
-// rises along the road for free. Each region ends in its runner GATE, then a friend.
+// Ordered as a first-grade learning spiral: early counting, then letters and
+// splits, then structures to 20. Clock reading stays late because it combines
+// number sense, position, language, and half-hour notation.
 interface RegionPlan {
   region: string;
   stops: string[];
@@ -102,11 +103,11 @@ interface RegionPlan {
 
 const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
-  { region: "muntgrot", stops: ["klankgrot", "match", "kloktoren", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
+  { region: "muntgrot", stops: ["klankgrot", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
   { region: "ijsbaan", stops: ["compare", "letterkompas", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
-  { region: "webwoud", stops: ["memory", "compare", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
-  { region: "bouwdorp", stops: ["fill", "splitbord", "getallenlijn", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
-  { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
+  { region: "webwoud", stops: ["splitbord", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
+  { region: "bouwdorp", stops: ["fill", "getallenlijn", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
+  { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "kloktoren", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];
 
 // Each region's climax: a colour-stealing boss that guards the trapped friend.

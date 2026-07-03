@@ -25,6 +25,7 @@ export abstract class MiniGameScene extends BaseScene {
   protected resolving = false;
   private celebrateCount = 0;
   private streak = 0;
+  protected goldenRound = false;
   protected buddy?: Buddy;
   /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
   protected timers: number[] = [];
@@ -82,11 +83,28 @@ export abstract class MiniGameScene extends BaseScene {
     this.resolving = false;
     this.startedAt = performance.now();
     this.root.replaceChildren(this.buildHeader(), this.instructionBar(), this.renderPlay(this.current));
+    // Golden bonus round: now and then a round glitters — a correct answer pays
+    // DOUBLE stars. Variable reward, never on round 1 (warm-up stays calm).
+    this.goldenRound = this.rollGolden();
+    this.root.classList.toggle("golden-round", this.goldenRound);
+    if (this.goldenRound) {
+      const banner = document.createElement("div");
+      banner.className = "mini-golden-banner";
+      banner.setAttribute("aria-label", "Gouden ronde: dubbele sterren");
+      banner.innerHTML = `<span aria-hidden="true">✨</span> Gouden ronde — dubbel! <span aria-hidden="true">✨</span>`;
+      this.root.appendChild(banner);
+      this.game.audio.play("snap");
+    }
     if (this.buddy) {
       this.root.appendChild(this.buddy.el);
       this.buddy.setMood("think", 1100);
     }
     this.game.voice.speak(this.instruction, { interrupt: true });
+  }
+
+  /** Whether this round goes golden (~1 in 6, never the first round). */
+  protected rollGolden(): boolean {
+    return this.round > 1 && Math.random() < 1 / 6;
   }
 
   // How an answer is logged + scored. Default = the number pipeline; literacy /
@@ -102,6 +120,11 @@ export abstract class MiniGameScene extends BaseScene {
       this.resolving = true;
       this.correctRounds += 1;
       if (!this.hintUsed) this.perfectRounds += 1;
+      if (this.goldenRound) {
+        // The golden payoff: double the base star/block reward.
+        this.game.save.award({ stars: 1, blocks: 1 });
+        this.game.flashMessage("Dubbel! ⭐⭐", "good");
+      }
       this.celebrate();
       this.round += 1;
       this.later(() => (this.round > this.total ? this.finish() : this.startRound()), 1000);

@@ -619,3 +619,163 @@ Validation:
 Next steps:
 
 - Listen in-game to Klankgrot, Letterkompas, Zoemroute, and Woordbouwplaats with the browser voice. If that is still not good enough, switch strategy to a small human-recorded Dutch phoneme set instead of generated TTS.
+
+## Journey Order and ElevenLabs Reading Shootout - 2026-07-02
+
+Completed work:
+
+- Moved `kloktoren` out of the early Muntgrot region and into the final `sterrenrace` region, after `zoemroute` and `tienbrug`.
+- Reordered the Speeltuin hub cards so clock reading is also visually late in the free-play list.
+- Restored `src/game/ReadingAudioManager.ts` to browser-only speech for isolated letters, phoneme sequences, and zoemend lezen. Normal Hestia sentence clips remain active through `VoiceManager`.
+- Added `scripts/elevenlabs-reading-shootout.mjs` plus `npm.cmd run voice:elevenlabs-reading` for QA-only ElevenLabs phoneme tests.
+- Generated 144 ElevenLabs MP3 samples under `.qa-artifacts/elevenlabs-reading-shootout/`, covering Lily, Alice, and Sarah across `eleven_v3`, `eleven_multilingual_v2`, and `eleven_flash_v2_5`.
+
+Decisions made:
+
+- Do not route reading phonemes through the Hestia voice-pack. It regressed the actual reading use case even if full-sentence speech is acceptable.
+- Do not call ElevenLabs at runtime. If a sample wins listening QA, generate a local reading pack from that exact voice/model later.
+- If ElevenLabs still fails on isolated Dutch phonemes, use a tiny human-recorded Dutch phoneme pack instead of more generic TTS attempts.
+
+Artifacts:
+
+- Listening page: `.qa-artifacts/elevenlabs-reading-shootout/index.html`.
+- Metadata: `.qa-artifacts/elevenlabs-reading-shootout/results.json`.
+
+Validation:
+
+- `npm.cmd run typecheck` passed.
+- `npm.cmd run test -- tests/audio.test.ts tests/flow.test.ts` passed: 2 files / 74 tests.
+- `npm.cmd run verify` passed: typecheck, lint, 18 test files / 140 tests, and production build.
+- `node --check scripts\elevenlabs-reading-shootout.mjs` passed.
+
+Next steps:
+
+- Listen to the ElevenLabs page and score first on isolated phonemes (`m`, `s`, `aa`, `ui`, `eu`) and only then on full-sentence warmth.
+- If one model/voice passes, generate a local `public/audio/reading/...` pack and keep it separate from the normal sentence voice-pack.
+
+## ElevenLabs Reading Iteration - 2026-07-02
+
+Completed work:
+
+- User selected `eleven_v3` as the best current ElevenLabs model family.
+- User rejected the raw isolated `aa`, `ui`, `eu`, and `b` clips, while confirming `buh` works better for the `b` phoneme.
+- Extended `scripts/elevenlabs-reading-shootout.mjs` with `ELEVENLABS_SAMPLE_SET=problem-phonemes-v2`, per-line voice settings, text-normalization control, and temporary IPA pronunciation-dictionary support.
+- Generated a focused Lily / `eleven_v3` iteration set under `.qa-artifacts/elevenlabs-reading-iteration-v2/`.
+
+Artifacts:
+
+- Listening page: `.qa-artifacts/elevenlabs-reading-iteration-v2/index.html`.
+- Metadata: `.qa-artifacts/elevenlabs-reading-iteration-v2/results.json`.
+
+Generation details:
+
+- 26 clips generated.
+- 0 skipped.
+- Temporary ElevenLabs pronunciation dictionary was archived after generation.
+
+Validation:
+
+- `node --check scripts\elevenlabs-reading-shootout.mjs` passed.
+- Iteration metadata check passed: 26 rows, 0 skipped, temporary dictionary archived.
+
+Decision update:
+
+- Treat raw `b` as rejected for generated reading packs. Use the existing `buh` fallback text for `b`.
+- Score the new `aa`, `ui`, and `eu` rows by isolated phoneme quality first. Carrier rows are only useful if we decide a longer prompt is acceptable.
+
+## ElevenLabs Rating Page Update - 2026-07-02
+
+Completed work:
+
+- Added `++`, `+`, `-`, and `--` rating buttons to the ElevenLabs QA HTML renderer.
+- Ratings persist in browser `localStorage` per listening page.
+- Added live JSON summary, copy button, download button, and clear button so the ratings can be reused for later iteration.
+- Added `ELEVENLABS_RENDER_ONLY=1` so an existing `results.json` can be re-rendered as HTML without calling the ElevenLabs API again.
+- Added `scripts/tts-rating-server.mjs` and `npm.cmd run voice:ratings-server` so the ratings page can save to `.qa-artifacts/tts-ratings/latest.json` through a local-only endpoint.
+- Added a `Save to Codex` button plus autosave attempts to the rating page.
+- Re-rendered `.qa-artifacts/elevenlabs-reading-iteration-v2/index.html` from its existing metadata.
+- Started the local rating server on `http://127.0.0.1:5391`.
+
+Validation:
+
+- `node --check scripts\elevenlabs-reading-shootout.mjs` passed.
+- `node --check scripts\tts-rating-server.mjs` passed.
+- Confirmed the rendered HTML contains rating buttons, localStorage persistence, JSON copy, and JSON download controls.
+- Confirmed `GET http://127.0.0.1:5391/ratings` returns 404 before the first save, which means the server is reachable and waiting for saved ratings.
+
+## ElevenLabs V2 Ratings and Final TTS Iteration - 2026-07-02
+
+Completed work:
+
+- Read `.qa-artifacts/tts-ratings/latest.json` after the user saved ratings from the browser page.
+- Ratings covered all 26 V2 rows: 7 `++`, 3 `+`, 6 `-`, and 10 `--`.
+- Added `ELEVENLABS_SAMPLE_SET=problem-phonemes-v3`, focused on short carrier forms and chain-ready fragments rather than raw isolated vowel tokens.
+- Generated `.qa-artifacts/elevenlabs-reading-iteration-v3/` with 29 Lily / `eleven_v3` clips and the same `++/+/-/--` rating UI.
+
+Score conclusions from V2:
+
+- Good: full-sentence control, `aa/ui/eu` carrier phrases (`Zeg de ...-klank zoals in ...`), `buh`, `buh.`, and the `b` IPA token.
+- Weak or rejected: raw isolated `aa`, all raw/IPA `ui` attempts, raw/IPA `eu` attempts, and long zoem blends such as `hhh... ui... sss... huis`.
+- Practical interpretation: ElevenLabs can likely provide reading instructions and carrier prompts, but it is still not reliable enough for pure phoneme stones or full generated zoem blends.
+
+Artifacts:
+
+- V2 saved ratings: `.qa-artifacts/tts-ratings/latest.json`.
+- V3 listening page: `.qa-artifacts/elevenlabs-reading-iteration-v3/index.html`.
+- V3 metadata: `.qa-artifacts/elevenlabs-reading-iteration-v3/results.json`.
+
+Decision update:
+
+- If V3 short carriers do not produce enough `++` clips for `aa`, `ui`, and `eu`, stop iterating with generic TTS and record the small phoneme set manually.
+- For a production reading pack, prefer separate local clips for each sound/unit and chain them in `ReadingAudioManager`; do not depend on one generated full zoem sentence.
+
+## Human Reading Recording Studio - 2026-07-02
+
+Completed work:
+
+- Added `scripts/reading-recording-studio.mjs`, a local-only recording studio for first-grade reading sounds.
+- Added `npm.cmd run voice:record-reading`.
+- The studio runs at `http://127.0.0.1:5393/` and records browser microphone input as mono WAV.
+- Recordings are trimmed, normalized, and saved under `.qa-artifacts/reading-recordings/raw/<klank>.wav`.
+- Added a local word builder that assembles current `PHONICS_WORDS` into:
+  - `.qa-artifacts/reading-recordings/words/<word>.wav`
+  - `.qa-artifacts/reading-recordings/blends/<word>.wav`
+- The word builder uses pure Node WAV parsing/encoding because `ffmpeg` is not installed on this machine.
+
+Validation:
+
+- `node --check scripts\reading-recording-studio.mjs` passed.
+- `GET http://127.0.0.1:5393/` returned 200.
+- `GET http://127.0.0.1:5393/api/state` returned 32 phonemes.
+- `POST http://127.0.0.1:5393/api/build-words` returned 200 and correctly listed missing phonemes before any recordings exist.
+
+Next steps:
+
+- Record the needed phonemes in the studio.
+- Click `Maak woorden` after recording; then review the generated word and zoem WAVs.
+- Once the human clips pass listening QA, copy the approved WAVs into a runtime reading pack and update `ReadingAudioManager` to prefer local human clips before browser fallback.
+
+## Human Zoem Recording Update - 2026-07-02
+
+Completed work:
+
+- User recorded all 32 reading phonemes and built 14 generated word/zoem clips.
+- The generated zoem clips still did not sound natural enough.
+- Updated `scripts/reading-recording-studio.mjs` so every word now has a `Record Zoem` button.
+- Manual zoem recordings are saved under `.qa-artifacts/reading-recordings/blends-manual/<word>.wav`.
+- Final blend clips live under `.qa-artifacts/reading-recordings/blends/<word>.wav`; if a manual clip exists it is used as the final clip, otherwise the generated fallback is used.
+- Generated fallbacks now live separately under `.qa-artifacts/reading-recordings/blends-generated/<word>.wav`.
+- Improved generated fallback assembly with light crossfade and shorter gaps, but manual full-word zoem recording is now the preferred path.
+- Restarted the studio on `http://127.0.0.1:5393/`.
+
+Validation:
+
+- `node --check scripts\reading-recording-studio.mjs` passed.
+- Rebuilt generated fallback clips for all 14 current reading words.
+- `GET /api/state` now reports 32 raw phonemes, 14 word clips, 14 final blend clips, 14 generated blend clips, and 0 manual blend clips before manual word recording starts.
+
+Next steps:
+
+- Refresh `http://127.0.0.1:5393/`.
+- For each target word, use `Record Zoem` and speak the shown prompt as one smooth phrase, e.g. `mmm ... aa ... nnn ... maan`.
+- Use `Play handmatig` and `Play eindclip` to QA. The game integration should use `blends/` as the final approved source.

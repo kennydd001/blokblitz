@@ -22,25 +22,26 @@ const MODES: ModeCard[] = [
   { scene: "count", emoji: "🐣", name: "Tel mee", desc: "Tel de diertjes", tone: "count" },
   { scene: "match", emoji: "🧩", name: "Zoek hetzelfde", desc: "Vind even veel", tone: "match" },
   { scene: "compare", emoji: "🦖", name: "Wat is meer?", desc: "Kies de grootste", tone: "compare" },
-  { scene: "fill", emoji: "🔟", name: "Vul de tien", desc: "Maak het getal", tone: "fill" },
   { scene: "onemoreless", emoji: "➕", name: "Eentje erbij", desc: "Meer of minder", tone: "onemore" },
   { scene: "order", emoji: "🔢", name: "Op volgorde", desc: "Klein naar groot", tone: "order" },
   { scene: "memory", emoji: "🧠", name: "Memory", desc: "Zoek de paren", tone: "memory" },
+  // Splitsen en de tien
+  { scene: "fill", emoji: "🔟", name: "Vul de tien", desc: "Maak het getal", tone: "fill" },
   { scene: "splitbord", emoji: "⚖️", name: "Splitsbord", desc: "Maak het getal samen", tone: "splitbord" },
-  // Rekenen tot 20
-  { scene: "tientalhuis", emoji: "🏠", name: "Tientalhuis", desc: "Tien en nog wat", tone: "tientalhuis" },
-  { scene: "getallenlijn", emoji: "📏", name: "Getallenlijn", desc: "De lijn tot 20", tone: "getallenlijn" },
-  { scene: "tienbrug", emoji: "🌉", name: "Tienbrug", desc: "Plus en min tot 20", tone: "tienbrug" },
   // Lezen
   { scene: "klankgrot", emoji: "🔊", name: "Klankgrot", desc: "Luister naar klanken", tone: "klankgrot" },
   { scene: "letterkompas", emoji: "🧭", name: "Letterkompas", desc: "Letter en klank", tone: "letterkompas" },
   { scene: "zoemroute", emoji: "🐝", name: "Zoemroute", desc: "Zoem tot een woord", tone: "zoemroute" },
   { scene: "woordbouwplaats", emoji: "🔤", name: "Woordbouw", desc: "Bouw het woord", tone: "woordbouw" },
+  // Rekenen tot 20
+  { scene: "tientalhuis", emoji: "🏠", name: "Tientalhuis", desc: "Tien en nog wat", tone: "tientalhuis" },
+  { scene: "getallenlijn", emoji: "📏", name: "Getallenlijn", desc: "De lijn tot 20", tone: "getallenlijn" },
+  { scene: "tienbrug", emoji: "🌉", name: "Tienbrug", desc: "Plus en min tot 20", tone: "tienbrug" },
   // Vormen & meten
   { scene: "vormenburcht", emoji: "🔷", name: "Vormenburcht", desc: "Vormen en patronen", tone: "vormen" },
-  { scene: "kloktoren", emoji: "🕐", name: "Kloktoren", desc: "Lees de klok", tone: "klok" },
-  { scene: "geldmarkt", emoji: "🪙", name: "Geldmarkt", desc: "Tel het geld", tone: "geld" },
   { scene: "meetwerf", emoji: "📐", name: "Meetwerf", desc: "Langer of korter", tone: "meet" },
+  { scene: "geldmarkt", emoji: "🪙", name: "Geldmarkt", desc: "Tel het geld", tone: "geld" },
+  { scene: "kloktoren", emoji: "🕐", name: "Kloktoren", desc: "Lees de klok", tone: "klok" },
   // Verkeer
   { scene: "verkeerspad", emoji: "🚦", name: "Verkeerspad", desc: "Veilig op straat", tone: "verkeer" }
 ];

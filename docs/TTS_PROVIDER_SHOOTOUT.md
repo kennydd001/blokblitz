@@ -180,6 +180,170 @@ reading scenes now use `ReadingAudioManager` to force the browser speech engine
 for reading prompts, while Hestia remains the primary voice for normal sentences,
 instructions, and feedback.
 
+ElevenLabs reading-phoneme shootout:
+
+```powershell
+$env:ELEVENLABS_API_KEY = "..."
+npm.cmd run voice:elevenlabs-reading
+```
+
+Generated QA page:
+
+```text
+.qa-artifacts/elevenlabs-reading-shootout/index.html
+```
+
+The 2026-07-02 run generated 144 local MP3 clips for:
+
+- models: `eleven_v3`, `eleven_multilingual_v2`, `eleven_flash_v2_5`
+- voices: `Lily - Velvety Actress`, `Alice - Clear, Engaging Educator`, `Sarah - Mature, Reassuring, Confident`
+- test cases: isolated `m`, `s`, `v`, `aa`, `ui`, `eu`, `b`, `k`, carrier phrases, and zoem blends such as `mmm... aa... nnn... maan`
+
+One Dutch/Flemish professional library voice was discoverable
+(`Dynamische Vlaamse Vrouwenstem`), but the current ElevenLabs account rejected
+library/professional API synthesis with `paid_plan_required`, so it is not part
+of the generated sample set.
+
+Use the listening page to decide. If no ElevenLabs model says isolated Dutch
+phonemes cleanly, stop trying generic TTS for this path and use a tiny
+human-recorded Dutch reading pack. Keep reading phoneme clips separate from the
+normal Hestia sentence pack.
+
+Iteration note - 2026-07-02:
+
+The user selected `eleven_v3` as the best ElevenLabs model family so far, but
+rejected raw isolated `aa`, `ui`, `eu`, and `b`. The `buh` fallback was accepted
+as a better `b` phoneme prompt.
+
+Focused rerun:
+
+```powershell
+$env:ELEVENLABS_API_KEY = "..."
+$env:ELEVENLABS_OUT_DIR = ".qa-artifacts\elevenlabs-reading-iteration-v2"
+$env:ELEVENLABS_SAMPLE_SET = "problem-phonemes-v2"
+$env:ELEVENLABS_MODELS = "eleven_v3"
+$env:ELEVENLABS_VOICE_IDS = "pFZP5JQG7iQjIQuC4Bku"
+npm.cmd run voice:elevenlabs-reading
+```
+
+Generated QA page:
+
+```text
+.qa-artifacts/elevenlabs-reading-iteration-v2/index.html
+```
+
+This run generated 26 Lily / `eleven_v3` clips with:
+
+- raw baselines for the rejected clips
+- slower, more stable voice settings
+- `apply_text_normalization = off` for short phoneme attempts
+- IPA pronunciation-dictionary token attempts for `aa`, `ui`, `eu`, and `b`
+- carrier phrase and zoem-word variants for context comparison
+
+The temporary pronunciation dictionary was archived after generation.
+
+Rating workflow:
+
+The generated ElevenLabs listening pages include `++`, `+`, `-`, and `--`
+buttons per clip. Ratings are stored in browser `localStorage` for that page and
+shown as JSON in the page. Use `Copy JSON` or `Download JSON` after listening so
+the next iteration can target only the weak clips.
+
+To re-render an existing results file without spending API credits:
+
+```powershell
+$env:ELEVENLABS_RENDER_ONLY = "1"
+$env:ELEVENLABS_OUT_DIR = ".qa-artifacts\elevenlabs-reading-iteration-v2"
+$env:ELEVENLABS_SAMPLE_SET = "problem-phonemes-v2"
+npm.cmd run voice:elevenlabs-reading
+```
+
+To let Codex read ratings without browser `localStorage` access:
+
+```powershell
+npm.cmd run voice:ratings-server
+```
+
+Then refresh the listening page and click `Save to Codex`. The page writes the
+current rating JSON to:
+
+```text
+.qa-artifacts/tts-ratings/latest.json
+```
+
+V2 score readout:
+
+- 26/26 clips rated.
+- Counts: 7 `++`, 3 `+`, 6 `-`, 10 `--`.
+- Good: normal sentence, `aa/ui/eu` carrier prompts, `buh`, `buh.`, and the `b` IPA token.
+- Bad: raw isolated `ui` and `eu`, raw/IPA attempts for those vowels, and one-piece zoem blends.
+
+Final TTS iteration:
+
+```powershell
+$env:ELEVENLABS_API_KEY = "..."
+$env:ELEVENLABS_OUT_DIR = ".qa-artifacts\elevenlabs-reading-iteration-v3"
+$env:ELEVENLABS_SAMPLE_SET = "problem-phonemes-v3"
+$env:ELEVENLABS_MODELS = "eleven_v3"
+$env:ELEVENLABS_VOICE_IDS = "pFZP5JQG7iQjIQuC4Bku"
+npm.cmd run voice:elevenlabs-reading
+```
+
+Generated QA page:
+
+```text
+.qa-artifacts/elevenlabs-reading-iteration-v3/index.html
+```
+
+This run tests shorter carrier prompts such as `ui zoals in huis`, `de ui-klank`,
+and chain-ready candidates such as `hhh. ui zoals in huis. sss. huis.`. If these
+still do not score well, use a small human-recorded phoneme pack for the pure
+reading sounds.
+
+Human-recording route:
+
+```powershell
+npm.cmd run voice:record-reading
+```
+
+Open:
+
+```text
+http://127.0.0.1:5393/
+```
+
+The studio records mono WAV clips per phoneme and saves them under:
+
+```text
+.qa-artifacts/reading-recordings/raw/
+```
+
+Click `Maak woorden` to assemble the current reading words from those clips:
+
+```text
+.qa-artifacts/reading-recordings/words/
+.qa-artifacts/reading-recordings/blends/
+```
+
+Zoem update:
+
+Generated zoem clips made from separate phoneme recordings still sounded too
+blocky. The studio therefore has a `Record Zoem` button per word. Manual
+zoem-word recordings are saved under:
+
+```text
+.qa-artifacts/reading-recordings/blends-manual/
+```
+
+The final approved blend path remains:
+
+```text
+.qa-artifacts/reading-recordings/blends/
+```
+
+If a manual zoem recording exists for a word, it becomes the final blend clip.
+Otherwise the improved generated fallback from `blends-generated/` is used.
+
 Provider selection:
 
 ```powershell

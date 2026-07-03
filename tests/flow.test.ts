@@ -524,22 +524,22 @@ describe("Speeltuin hub + calm game modes", () => {
       "count",
       "match",
       "compare",
-      "fill",
       "onemoreless",
       "order",
       "memory",
+      "fill",
       "splitbord",
-      "tientalhuis",
-      "getallenlijn",
-      "tienbrug",
       "klankgrot",
       "letterkompas",
       "zoemroute",
       "woordbouwplaats",
+      "tientalhuis",
+      "getallenlijn",
+      "tienbrug",
       "vormenburcht",
-      "kloktoren",
-      "geldmarkt",
       "meetwerf",
+      "geldmarkt",
+      "kloktoren",
       "verkeerspad"
     ];
     expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
@@ -688,6 +688,30 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".reis-buddy .buddy-acc-scarf")).toBeTruthy();
   });
 
+  it("golden bonus rounds glitter and pay double stars", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    // Force golden: random 0 => every round after the first goes golden.
+    const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
+    game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
+    // Round 1 is never golden.
+    expect(root.querySelector(".mini-golden-banner")).toBeNull();
+    root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')!.click();
+    vi.advanceTimersByTime(1100);
+    // Round 2 IS golden: banner + double payout on a correct tap.
+    expect(root.querySelector(".mini-golden-banner")).toBeTruthy();
+    expect(root.querySelector(".mini-scene.golden-round")).toBeTruthy();
+    const starsBefore = game.data().progress.stars;
+    root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')!.click();
+    expect(game.data().progress.stars).toBe(starsBefore + 2);
+    randomSpy.mockRestore();
+    vi.useRealTimers();
+  });
+
   it("offers a daily gift chest on the map, once per day", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
@@ -751,6 +775,15 @@ describe("Speeltuin hub + calm game modes", () => {
     for (const friend of FRIENDS) {
       expect(FRIEND_STORY[friend.id], `friend story for ${friend.id}`).toBeTruthy();
     }
+  });
+
+  it("keeps clock reading late in the first-grade learning spiral", () => {
+    const stops = JOURNEY.filter((node) => node.kind === "stop");
+    const indexOf = (scene: string) => stops.findIndex((node) => node.scene === scene);
+    expect(JOURNEY.find((node) => node.scene === "kloktoren")?.regionId).toBe("sterrenrace");
+    expect(indexOf("kloktoren")).toBeGreaterThan(indexOf("getallenlijn"));
+    expect(indexOf("kloktoren")).toBeGreaterThan(indexOf("tienbrug"));
+    expect(indexOf("kloktoren")).toBeGreaterThan(indexOf("zoemroute"));
   });
 
   it("guards every region's friend with a boss that has a name and a defeat line", () => {

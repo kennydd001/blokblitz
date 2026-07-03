@@ -14,6 +14,9 @@
     "qa:viewport": "node scripts/viewport-qa.mjs",
     "qa:mobile-touch": "node scripts/mobile-touch-qa.mjs",
     "voice:hestia": "node scripts/generate-hestia-voice-pack.mjs",
+    "voice:elevenlabs-reading": "node scripts/elevenlabs-reading-shootout.mjs",
+    "voice:ratings-server": "node scripts/tts-rating-server.mjs",
+    "voice:record-reading": "node scripts/reading-recording-studio.mjs",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
