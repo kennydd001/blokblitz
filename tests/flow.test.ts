@@ -229,6 +229,32 @@ describe("RunnerCore — real-time runner logic", () => {
     expect(finishedCount).toBe(1);
   });
 
+  it("combo fever (3+) doubles coin pickups and shows in the snapshot", () => {
+    // All gates correct from the middle lane -> combo climbs 1,2,3,... so later
+    // coins are collected in fever. Reconstruct the exact coin total from the
+    // event stream: 2 per fever coin, 1 otherwise, -2 per stumble (floored at 0).
+    const core = new RunnerCore({ provider: fixedGateProvider(1), gatesTotal: 6, rng: () => 0.5 });
+    let expected = 0;
+    let feverCoins = 0;
+    let sawFeverSnapshot = false;
+    for (let i = 0; i < 8000 && core.state !== "finished"; i += 1) {
+      core.update(0.05);
+      if (core.snapshot().fever) sawFeverSnapshot = true;
+      for (const event of core.drainEvents()) {
+        if (event.type === "coin") {
+          const fever = event.combo >= 3;
+          expected += fever ? 2 : 1;
+          if (fever) feverCoins += 1;
+        } else if (event.type === "stumble") {
+          expected = Math.max(0, expected - 2);
+        }
+      }
+    }
+    expect(sawFeverSnapshot).toBe(true);
+    expect(feverCoins).toBeGreaterThan(0);
+    expect(core.snapshot().coins).toBe(expected);
+  });
+
   it("lets the player change lanes within the three-lane band", () => {
     const core = new RunnerCore({ provider: fixedGateProvider(1), gatesTotal: 2 });
     core.input("left");
@@ -275,6 +301,7 @@ describe("RunnerView — clear mobile-readable gates", () => {
       jumpHeight: 0,
       speed: 11,
       speedRatio: 0.2,
+      fever: false,
       distanceMeters: 12,
       coins: 0,
       runStars: 0,

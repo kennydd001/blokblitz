@@ -99,6 +99,8 @@ export interface RunnerSnapshot {
   jumpHeight: number;
   speed: number;
   speedRatio: number;
+  /** Combo fever: 3+ combo, gold track, double coins. */
+  fever: boolean;
   distanceMeters: number;
   coins: number;
   runStars: number;
@@ -137,6 +139,8 @@ const LANE_LERP = 13; // higher = snappier lane changes
 // How far ahead (world units) a gate starts pulling the run into slow-motion so
 // the child has time to read the two numbers and commit to a lane.
 const GATE_SLOWMO_RANGE = 19;
+// Combo needed for coin fever: the track turns gold and every coin pays double.
+export const FEVER_COMBO = 3;
 
 export class RunnerCore {
   state: "running" | "finished" = "running";
@@ -300,7 +304,7 @@ export class RunnerCore {
     if (item.kind === "coin") {
       if (item.lane === heroLane) {
         item.collected = true;
-        this.coins += 1;
+        this.coins += this.combo >= FEVER_COMBO ? 2 : 1;
         this.events.push({ type: "coin", lane: item.lane, combo: this.combo });
       }
       return;
@@ -435,6 +439,7 @@ export class RunnerCore {
       jumpHeight,
       speed: this.speed,
       speedRatio: (this.speed - this.minSpeed) / Math.max(0.001, this.maxSpeed - this.minSpeed),
+      fever: this.combo >= FEVER_COMBO,
       distanceMeters: this.distanceMeters,
       coins: this.coins,
       runStars: this.runStars,

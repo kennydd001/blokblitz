@@ -120,6 +120,7 @@ export class RunnerView {
   private stripes: THREE.Mesh[] = [];
   private props: THREE.Object3D[] = [];
   private motes: THREE.Mesh[] = [];
+  private fever = false;
 
   private scroll = 0;
   private elapsed = 0;
@@ -207,6 +208,7 @@ export class RunnerView {
     for (let i = 0; i < count; i += 1) {
       const stripe = block(0, 0.01, 0, TRACK_WIDTH + 2.6, 0.06, 2, i % 2 === 0 ? lightMat : darkMat);
       stripe.userData.baseZ = i * STRIPE;
+      stripe.userData.baseMat = stripe.material;
       this.ground.add(stripe);
       this.stripes.push(stripe);
     }
@@ -356,6 +358,7 @@ export class RunnerView {
   sync(snapshot: RunnerSnapshot, dt: number): void {
     this.elapsed += dt;
     this.scroll += snapshot.speed * dt;
+    this.fever = snapshot.fever;
     this.updateGround();
     this.updateMotes();
     this.reconcileEntities(snapshot.entities);
@@ -373,7 +376,12 @@ export class RunnerView {
   }
 
   private updateGround(): void {
-    for (const stripe of this.stripes) stripe.position.z = this.wrapZ(stripe.userData.baseZ as number);
+    // Combo fever: the running stripes turn gold while it lasts.
+    const feverMat = mat(0xffd75e, { emissive: 0xffc61a, intensity: 0.55, rough: 0.3 });
+    for (const stripe of this.stripes) {
+      stripe.position.z = this.wrapZ(stripe.userData.baseZ as number);
+      stripe.material = this.fever ? feverMat : (stripe.userData.baseMat as THREE.Material);
+    }
     for (const prop of this.props) {
       prop.position.z = this.wrapZ(prop.userData.baseZ as number);
       prop.position.x = prop.userData.x as number;

@@ -108,7 +108,8 @@ export class RunScene extends BaseScene {
     } else if (event.type === "boost") {
       this.game.audio.play("boost");
       this.game.haptics.play("boost");
-      this.game.flashMessage(`Combo x${event.combo}! 🔥`, "good");
+      // Combo 3 kicks off coin fever: gold track + double coins.
+      this.game.flashMessage(event.combo === 3 ? "Combo-koorts! Dubbele munten! 🔥" : `Combo x${event.combo}! 🔥`, "good");
       this.game.voice.praise();
     } else if (event.type === "swing") {
       this.game.audio.play("boost");
