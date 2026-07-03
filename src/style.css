@@ -8681,3 +8681,35 @@ input {
   0%, 100% { box-shadow: 0 5px 0 rgba(23, 32, 51, 0.2), 0 0 16px rgba(244, 185, 66, 0.55); }
   50% { box-shadow: 0 5px 0 rgba(23, 32, 51, 0.2), 0 0 30px rgba(244, 185, 66, 0.95); }
 }
+
+/* ===== Sterrenrover finale: three escalating phases ===== */
+.boss-scene.boss-final .boss-face { transition: width 0.5s ease, height 0.5s ease; }
+.boss-scene.phase-2 .boss-face { width: 156px; height: 156px; }
+.boss-scene.phase-2 .boss-face .boss-art { filter: drop-shadow(0 6px 9px rgba(0, 0, 0, 0.28)) drop-shadow(0 0 16px rgba(229, 70, 70, 0.65)); }
+.boss-scene.phase-2 .boss-face { animation: boss-loom 1.6s ease-in-out infinite; }
+.boss-scene.phase-3 .boss-face { width: 176px; height: 176px; animation: boss-loom 0.9s ease-in-out infinite; }
+.boss-scene.phase-3 .boss-face .boss-art { filter: drop-shadow(0 6px 9px rgba(0, 0, 0, 0.28)) drop-shadow(0 0 26px rgba(255, 60, 60, 0.9)); }
+.boss-scene.phase-3 .boss-heart:not(.gone) { animation: heart-thump 0.7s ease-in-out infinite; }
+@keyframes heart-thump {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+
+/* The freed star at the finale's defeat beat */
+.boss-star-free {
+  position: absolute;
+  left: 50%;
+  top: 26%;
+  transform: translate(-50%, -50%);
+  font-size: 4.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 22px rgba(255, 211, 92, 0.95));
+  animation: star-free 0.9s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  pointer-events: none;
+  z-index: 45;
+}
+@keyframes star-free {
+  0% { transform: translate(-50%, -50%) scale(0.1) rotate(-30deg); opacity: 0; }
+  60% { transform: translate(-50%, -66%) scale(1.35) rotate(10deg); opacity: 1; }
+  100% { transform: translate(-50%, -78%) scale(1.1) rotate(0); opacity: 1; }
+}

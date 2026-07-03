@@ -24,6 +24,9 @@ export class BossScene extends MiniGameScene {
   private boss: BossSpec = DEFAULT_BOSS;
   private regionId = "grasland";
   private cap = 10;
+  /** The Sterrenrover finale: 7 hearts and three escalating phases. */
+  private isFinal = false;
+  private lastPhase = 1;
 
   protected get emoji(): string {
     return this.boss.emoji;
@@ -43,8 +46,12 @@ export class BossScene extends MiniGameScene {
     this.regionId = node?.regionId ?? "grasland";
     this.boss = BOSSES[this.regionId] ?? DEFAULT_BOSS;
     this.cap = getWorld(this.regionId).maxQuantity;
+    this.isFinal = this.regionId === "sterrenrace";
+    this.total = this.isFinal ? 7 : 5;
+    this.lastPhase = 1;
     super.mount();
     this.root.classList.add("boss-scene");
+    this.root.classList.toggle("boss-final", this.isFinal);
     // Set the fight in the boss's own world: a moody gradient in that region's
     // sky -> ground colours, so each arena feels like the ice cave, web wood, etc.
     const pal = getWorld(this.regionId).palette;
@@ -59,7 +66,7 @@ export class BossScene extends MiniGameScene {
     intro.setAttribute("aria-hidden", "true");
     intro.innerHTML =
       `<div class="boss-intro-card">` +
-      `<span class="boss-intro-vs">BAAS!</span>` +
+      `<span class="boss-intro-vs">${this.isFinal ? "EINDBAAS!" : "BAAS!"}</span>` +
       `<span class="boss-intro-face">${buildBossArt(this.regionId)}</span>` +
       `<strong>${this.boss.name}</strong>` +
       `<em>“${this.boss.taunt}”</em>` +
@@ -75,7 +82,25 @@ export class BossScene extends MiniGameScene {
     return subitizeChallenge(this.focusQuantity(2, Math.min(9, this.cap)), rep);
   }
 
+  /** Finale phases: 1 (calm) -> 2 at 3 hits (angry) -> 3 on the last heart. */
+  private phase(): number {
+    if (!this.isFinal) return 1;
+    if (this.correctRounds >= this.total - 1) return 3;
+    if (this.correctRounds >= 3) return 2;
+    return 1;
+  }
+
   protected renderPlay(challenge: Challenge): HTMLElement {
+    const phase = this.phase();
+    this.root.classList.toggle("phase-2", phase === 2);
+    this.root.classList.toggle("phase-3", phase === 3);
+    if (this.isFinal && phase > this.lastPhase) {
+      this.lastPhase = phase;
+      this.game.haptics.play("stumble");
+      this.game.audio.play("stumble");
+      this.game.flashMessage(phase === 3 ? "Laatste klap! ⚡" : "De Sterrenrover wordt boos! 😠", "warn");
+      this.game.voice.speak(phase === 3 ? "Laatste klap!" : "De Sterrenrover wordt boos!", { interrupt: false });
+    }
     const wrap = document.createElement("div");
     wrap.className = "mini-play boss-play";
 
@@ -145,7 +170,7 @@ export class BossScene extends MiniGameScene {
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
     this.game.audio.play("snap");
     this.game.haptics.play("win");
-    this.game.voice.speak(`${this.boss.name} is verslagen! ${this.boss.defeat}`, { interrupt: true, pitch: 1.2 });
+    this.game.voice.speak(this.isFinal ? `De Sterrenrover laat de ster los! ${this.boss.defeat}` : `${this.boss.name} is verslagen! ${this.boss.defeat}`, { interrupt: true, pitch: 1.2 });
     // Phase 1: the monster reels and dissolves into a burst of colour...
     this.root.querySelector(".boss-foe")?.classList.add("defeated");
     this.root.querySelectorAll(".boss-heart").forEach((heart) => heart.classList.add("gone"));
@@ -153,6 +178,14 @@ export class BossScene extends MiniGameScene {
     pop.className = "boss-pop";
     pop.setAttribute("aria-hidden", "true");
     (this.root.querySelector(".boss-arena") ?? this.root).appendChild(pop);
+    if (this.isFinal) {
+      // The stolen star breaks free — the whole journey's goal, made visible.
+      const star = document.createElement("div");
+      star.className = "boss-star-free";
+      star.setAttribute("aria-hidden", "true");
+      star.textContent = "⭐";
+      (this.root.querySelector(".boss-arena") ?? this.root).appendChild(star);
+    }
     this.later(() => this.showBossDone(), 850);
   }
 

@@ -1360,6 +1360,52 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("the Sterrenrover finale: 7 hearts, escalating phases, and the freed star", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const finalIndex = JOURNEY.findIndex((node) => node.kind === "boss" && node.regionId === "sterrenrace");
+    const finalBoss = JOURNEY[finalIndex];
+    expect(finalBoss).toBeTruthy();
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, finalIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${finalBoss.id}"]`)!.click();
+    // The finale: marked final, seven hearts, phase 1.
+    expect(root.querySelector(".boss-scene.boss-final")).toBeTruthy();
+    expect(root.querySelectorAll(".boss-heart")).toHaveLength(7);
+    expect(root.querySelector(".phase-2")).toBeNull();
+
+    const hit = (): void => {
+      root.querySelector<HTMLButtonElement>('.boss-choice[data-correct="true"]')!.click();
+      vi.advanceTimersByTime(1100);
+    };
+    hit();
+    hit();
+    hit();
+    // Three hits in: the Sterrenrover gets angry (phase 2).
+    expect(root.querySelector(".boss-scene.phase-2")).toBeTruthy();
+    hit();
+    hit();
+    hit();
+    // Last heart: phase 3.
+    expect(root.querySelector(".boss-scene.phase-3")).toBeTruthy();
+    // The final hit frees the star during the defeat beat...
+    root.querySelector<HTMLButtonElement>('.boss-choice[data-correct="true"]')!.click();
+    vi.advanceTimersByTime(1050);
+    expect(root.querySelector(".boss-star-free")).toBeTruthy();
+    // ...then the victory screen, with the journey advanced.
+    vi.advanceTimersByTime(900);
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(finalBoss.id);
+    vi.useRealTimers();
+  });
+
   it("advances story memory stops back to the Sterrenreis map", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
