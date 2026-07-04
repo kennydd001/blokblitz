@@ -844,3 +844,55 @@ Next steps:
 
 - Recheck `https://blokblitz.sprintsite.be/` from normal browsers after local/provider DNS cache catches up.
 - Use the same WSL Wrangler deploy command after future Claude changes.
+
+## Adventure Road AAA + Game Signature Moments + Offline Cache - 2026-07-04
+
+Completed work (Claude, merged to master in five milestones):
+
+- FIXED `regionBands()`: the top/bottom special cases were swapped, so the
+  sterrenrace band covered the whole map and hid all six world colours.
+- Adventure road: healing veils per region (grey lifts with completion, soft
+  mist edge), a golden progress trail over the travelled road, and portal
+  arches with world name plates at every border (sleeping grey / awake
+  colour, doorstep-aware name plates, exact bezier road anchoring).
+- Living world: fully healed regions render 7 animated critters keyed to
+  their world (butterflies/sparks/snow/fireflies/work-sparks/twinkles), the
+  rescued friend wanders around its rescue spot, a just-healed region's veil
+  sweeps away LIVE on arrival, and border gates flash gold when Buddy walks
+  through.
+- Finale cinematic: full-screen night sky, the star rises home, fireworks +
+  staggered chimes, all rescued friends hop in a parade, "Hoera!" returns to
+  a fully-coloured living map. Re-watchable via the star node.
+- Mini-game juice pack (all 22 modes): staggered tile entrances, a star that
+  flies into the round's progress dot (dot pops gold + coin chime), fever
+  glow at 3-in-a-row (breaks on a wrong answer), plus a protected
+  `onCorrect` hook.
+- Signature moments for EVERY mode: count wave, match twin-glow, compare
+  crown, fill cell-wave, one-more/less arrow, order row-dance, memory pair
+  sparks, splitbord snap + landing numbers, klankgrot crystal burst,
+  letterkompas compass spin, zoemroute bee + stone hops, woordbouw sound
+  snap, tientalhuis house glow + roof star, vormenburcht castle pop,
+  meetwerf tape slide, verkeerspad traffic light + green safe glow,
+  luisterbos story bloom + leaves, getallenlijn slide, tienbrug bridge
+  light-wave + runner, kloktoren bell, geldmarkt coin hops.
+- Service worker v2 for the live sprintsite deploy: content-hashed
+  `/assets/` bundles and the `/audio/` voice pack are now cache-first
+  (instant repeat loads, full offline play); the HTML shell stays
+  network-first so new deploys are picked up next visit.
+
+Validation:
+
+- Each signature moment was verified in a real browser with a freeze-frame
+  technique (block scene timers around the correct tap, then pause all CSS
+  animations mid-flight and screenshot). This caught and fixed the Splitbord
+  "?" box not receiving the real landing value and the Tienbrug light-wave
+  targeting circles while the ten-frame uses rects.
+- typecheck, lint, test (19 files / 154 tests), build, qa:viewport all green.
+
+Next steps:
+
+- Deploy via the WSL Wrangler command from the handleiding and smoke-test
+  both URLs.
+- Candidates: per-world ambient audio layer, parent dashboard depth,
+  lazy-loading the Three.js chunk (Game.ts owns the renderer, so this is a
+  bigger refactor).

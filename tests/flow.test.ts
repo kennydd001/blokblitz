@@ -787,11 +787,13 @@ describe("Speeltuin hub + calm game modes", () => {
     const ijsbaanGate = gates.find((gate) => gate.dataset.region === "ijsbaan")!;
     expect(ijsbaanGate.classList.contains("awake")).toBe(false);
     expect(ijsbaanGate.querySelector("text")!.textContent).toContain("IJsbaan");
-    // The healed grasland has come alive: animated critters, only there.
+    // The healed grasland has come alive: animated critters, only there —
+    // and the rescued friend wanders around its home spot.
     const life = [...root.querySelectorAll<SVGGElement>(".reis-life")];
     expect(life).toHaveLength(1);
     expect(life[0].dataset.region).toBe("grasland");
     expect(life[0].querySelectorAll(".reis-life-piece").length).toBeGreaterThan(4);
+    expect(life[0].querySelector(".life-wander text")?.textContent).toBe("🐰");
   });
 
   it("celebrates finishing a region live: the veil sweeps away and the border gate pops", async () => {

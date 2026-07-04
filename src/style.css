@@ -5124,6 +5124,14 @@ input {
 .life-fall { animation: life-fall 4.4s linear infinite; }
 .life-glow { animation: life-glow 2.6s ease-in-out infinite; }
 .life-twinkle { animation: life-twinkle 1.9s ease-in-out infinite alternate; }
+/* The rescued friend wanders around its home spot. */
+.life-wander { animation: life-wander 5.2s ease-in-out infinite alternate; }
+@keyframes life-wander {
+  0% { transform: translateX(0) translateY(0); }
+  30% { transform: translateX(12px) translateY(-4px); }
+  60% { transform: translateX(24px) translateY(0); }
+  100% { transform: translateX(36px) translateY(-3px); }
+}
 @keyframes life-flutter {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
   25% { transform: translate(7px, -9px) rotate(7deg); }

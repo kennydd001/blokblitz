@@ -166,10 +166,15 @@ describe("acceptance checklist audit", () => {
     expect(main).toContain("serviceWorker");
     expect(main).toContain('register("/sw.js")');
     expect(main).toContain("PROD");
-    expect(serviceWorker).toContain("CACHE_NAME");
+    // Two-tier cache: network-first shell + cache-first immutable assets, so
+    // hashed bundles and the voice pack load instantly and play offline.
+    expect(serviceWorker).toContain("SHELL_CACHE");
+    expect(serviceWorker).toContain("STATIC_CACHE");
     expect(serviceWorker).toContain('"/index.html"');
     expect(serviceWorker).toContain('"/site.webmanifest"');
     expect(serviceWorker).toContain("cache.addAll(APP_SHELL)");
+    expect(serviceWorker).toContain('url.pathname.startsWith("/assets/")');
+    expect(serviceWorker).toContain('url.pathname.startsWith("/audio/")');
     expect(serviceWorker).toContain("url.origin !== self.location.origin");
     expect(serviceWorker).not.toMatch(/https?:\/\//);
   });

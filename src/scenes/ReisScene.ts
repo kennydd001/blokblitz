@@ -218,7 +218,7 @@ export class ReisScene extends BaseScene {
     // (butterflies, sparkles, snow, fireflies...) — the reward for finishing
     // a region is a visibly living stretch of map. Deterministic positions.
     const life = bandList
-      .map((band) => {
+      .map((band, bandIndex) => {
         const nodes = JOURNEY.filter((node) => node.regionId === band.regionId);
         const done = nodes.filter((node) => completedIds.has(node.id)).length;
         if (!nodes.length || done < nodes.length) return "";
@@ -229,6 +229,16 @@ export class ReisScene extends BaseScene {
           const fx = 24 + ((Math.sin((i + 1) * 12.9 + band.topY * 0.13) + 1) / 2) * (JOURNEY_WIDTH - 48);
           const fy = band.topY + 46 + ((Math.sin((i + 1) * 7.3 + band.bottomY * 0.11) + 1) / 2) * (height - 92);
           pieces.push(this.lifePiece(world.palette.propStyle, fx.toFixed(0), fy.toFixed(0), ((i * 0.7) % 2.8).toFixed(1)));
+        }
+        // The rescued friend has moved back home: it wanders around the spot
+        // where it was freed. (FRIENDS is region-ordered, like bandList.)
+        const friend = FRIENDS[bandIndex];
+        const friendNode = nodes.find((node) => node.kind === "friend");
+        if (friend && friendNode) {
+          const fx = friendNode.x > JOURNEY_WIDTH / 2 ? friendNode.x - 96 : friendNode.x + 56;
+          pieces.push(
+            `<g transform="translate(${fx} ${friendNode.y + 4})"><g class="reis-life-piece life-wander"><text font-size="22" text-anchor="middle" dominant-baseline="central">${friend.emoji}</text></g></g>`
+          );
         }
         return `<g class="reis-life" data-region="${band.regionId}">${pieces.join("")}</g>`;
       })
