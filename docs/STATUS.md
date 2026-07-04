@@ -896,3 +896,10 @@ Next steps:
 - Candidates: per-world ambient audio layer, parent dashboard depth,
   lazy-loading the Three.js chunk (Game.ts owns the renderer, so this is a
   bigger refactor).
+
+Deploy note (Claude, 2026-07-04): after the milestones above, deployed via
+the WSL Wrangler command from the handleiding. Worker version
+`a6987cf0-d825-45a9-b4c3-bc8d0d1841da`; 4 changed assets uploaded
+(index.html, hashed JS/CSS, sw.js). Smoke tests: workers.dev root,
+blokblitz.sprintsite.be root, /sw.js and a voice clip all returned 200, and
+the live HTML references the freshly built bundle.
