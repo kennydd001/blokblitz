@@ -484,16 +484,54 @@ export class ReisScene extends BaseScene {
     this.game.haptics.play("win");
     this.render();
     this.buddy?.setMood("wow");
-    this.buddy?.say("Thuis!");
     const done = new Set(this.journey().completed);
-    const friendsRescued = FRIENDS.filter((friend) => done.has(friend.id)).length;
-    this.game.voice.speak(journeyFinale(friendsRescued), { interrupt: true, pitch: 1.25 });
-    const burst = document.createElement("div");
-    burst.className = "results-burst reis-finale";
-    burst.setAttribute("aria-hidden", "true");
-    burst.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>";
-    this.root.appendChild(burst);
-    this.addCleanup(() => burst.remove());
+    const rescued = FRIENDS.filter((friend) => done.has(friend.id));
+    this.game.voice.speak(journeyFinale(rescued.length), { interrupt: true, pitch: 1.25 });
+    this.showFinaleCinematic(rescued);
+  }
+
+  // The crown of the whole journey: a full-screen night-sky show — the star
+  // rises home, fireworks pop and every rescued friend hops in a parade.
+  // The star node stays tappable afterwards, so the ending can be re-watched.
+  private showFinaleCinematic(rescued: Array<{ id: string; name: string; emoji: string }>): void {
+    const overlay = document.createElement("div");
+    overlay.className = "finale-overlay";
+    const skyStars = Array.from({ length: 18 }, (_, i) => {
+      const left = (6 + ((Math.sin((i + 1) * 12.9) + 1) / 2) * 88).toFixed(0);
+      const top = (4 + ((Math.sin((i + 1) * 7.7) + 1) / 2) * 52).toFixed(0);
+      return `<i style="left:${left}%;top:${top}%;animation-delay:-${((i * 0.35) % 1.8).toFixed(2)}s"></i>`;
+    }).join("");
+    const sparks = Array.from({ length: 10 }, (_, i) => {
+      const left = (10 + ((Math.sin((i + 1) * 5.3) + 1) / 2) * 80).toFixed(0);
+      const top = (8 + ((Math.sin((i + 1) * 9.1) + 1) / 2) * 40).toFixed(0);
+      return `<span class="finale-spark" style="left:${left}%;top:${top}%;animation-delay:${(0.9 + i * 0.28).toFixed(2)}s" aria-hidden="true">🎆</span>`;
+    }).join("");
+    const friends = rescued
+      .map((friend, i) => `<span class="finale-friend" style="animation-delay:-${(i * 0.2).toFixed(1)}s" title="${friend.name}">${friend.emoji}</span>`)
+      .join("");
+    overlay.innerHTML = `
+      <div class="finale-sky" aria-hidden="true">${skyStars}</div>
+      <span class="finale-star" aria-hidden="true">⭐</span>
+      ${sparks}
+      <h2 class="finale-title">De ster is thuis!</h2>
+      <p class="finale-line">${journeyFinale(rescued.length)}</p>
+      <div class="finale-parade" aria-hidden="true">${friends}</div>
+      <button type="button" class="finale-done">Hoera!</button>
+    `;
+    overlay.querySelector<HTMLButtonElement>(".finale-done")!.addEventListener("click", () => {
+      overlay.remove();
+      this.buddy?.setMood("happy", 1500);
+      this.buddy?.say("Thuis!");
+    });
+    this.root.appendChild(overlay);
+    this.addCleanup(() => overlay.remove());
+    // Two extra chimes timed with the fireworks.
+    const chime = window.setTimeout(() => this.game.audio.play("rescue"), 1200);
+    const chime2 = window.setTimeout(() => this.game.audio.play("boost"), 2100);
+    this.addCleanup(() => {
+      window.clearTimeout(chime);
+      window.clearTimeout(chime2);
+    });
   }
 
   private celebrateArrival(): void {

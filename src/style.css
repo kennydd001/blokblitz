@@ -5051,3 +5051,100 @@ input {
   0% { transform: scale(0.55); opacity: 0.4; }
   100% { transform: scale(1.15); opacity: 1; }
 }
+
+/* ===== Finale cinematic: the star comes home ===== */
+.finale-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 26px;
+  background: radial-gradient(ellipse at 50% 16%, #2c3a68 0%, #141b33 55%, #0b1022 100%);
+  animation: finale-in 0.7s ease;
+  overflow: hidden;
+}
+.finale-sky i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0.8;
+  animation: life-glow 2.2s ease-in-out infinite;
+}
+.finale-star {
+  font-size: 5.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 26px rgba(255, 214, 90, 0.95));
+  animation: finale-star-rise 2.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+.finale-spark {
+  position: absolute;
+  font-size: 2.2rem;
+  opacity: 0;
+  animation: finale-spark-pop 1.4s ease forwards;
+}
+.finale-title {
+  margin: 0;
+  font-size: 2rem;
+  color: #fff2a8;
+  text-shadow: 0 3px 0 rgba(16, 19, 28, 0.5);
+  animation: finale-pop 0.6s ease 1.6s backwards;
+}
+.finale-line {
+  margin: 0;
+  max-width: 30rem;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #dbe6ff;
+  animation: finale-pop 0.6s ease 2s backwards;
+}
+.finale-parade {
+  display: flex;
+  gap: 10px;
+  font-size: 2.4rem;
+  animation: finale-pop 0.6s ease 2.2s backwards;
+}
+.finale-friend { display: inline-block; animation: finale-hop 1s ease-in-out infinite alternate; }
+.finale-done {
+  margin-top: 6px;
+  padding: 14px 34px;
+  font-family: inherit;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #3a2c00;
+  background: linear-gradient(180deg, #ffe08a, #ffc61a);
+  border: 4px solid #10131c;
+  border-radius: 999px;
+  box-shadow: 0 6px 0 rgba(16, 19, 28, 0.45);
+  cursor: pointer;
+  animation: finale-pop 0.6s ease 2.5s backwards;
+}
+.finale-done:active { transform: scale(0.95); }
+@keyframes finale-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes finale-star-rise {
+  0% { transform: translateY(38vh) scale(0.5); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-6vh) scale(1.25); opacity: 1; }
+}
+@keyframes finale-spark-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  35% { transform: scale(1.35); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0; }
+}
+@keyframes finale-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes finale-hop {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-14px); }
+}

@@ -1018,8 +1018,39 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(`.reis-node.now[data-node="${star.id}"]`)).toBeTruthy();
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${star.id}"]`)!.click();
     expect(game.save.journeyComplete()).toBe(true);
-    expect(root.querySelector(".reis-finale")).toBeTruthy();
+    expect(root.querySelector(".finale-overlay")).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(".finale-done")!.click();
     expect(root.querySelector(".reis-progress-pill")?.textContent).toContain("Ster thuis");
+  });
+
+  it("ends the journey with a full-screen star-home cinematic", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, -1).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>('.reis-node[data-kind="star"]')!.click();
+
+    const overlay = root.querySelector<HTMLElement>(".finale-overlay")!;
+    expect(overlay).toBeTruthy();
+    expect(overlay.querySelector(".finale-title")!.textContent).toContain("thuis");
+    // Every rescued friend hops along in the parade, and the line counts them.
+    expect(overlay.querySelectorAll(".finale-friend")).toHaveLength(6);
+    expect(overlay.querySelector(".finale-line")!.textContent).toContain("6 vriendjes");
+    expect(overlay.querySelectorAll(".finale-spark").length).toBeGreaterThan(4);
+
+    // "Hoera!" closes the show; the map beneath is fully healed and alive.
+    overlay.querySelector<HTMLButtonElement>(".finale-done")!.click();
+    expect(root.querySelector(".finale-overlay")).toBeNull();
+    expect(game.save.journeyComplete()).toBe(true);
+    expect([...root.querySelectorAll<SVGRectElement>(".reis-band-veil")].every((veil) => veil.getAttribute("opacity") === "0.00")).toBe(
+      true
+    );
+    expect(root.querySelectorAll(".reis-life")).toHaveLength(6);
   });
 
   it("fights and defeats a region boss, then frees the trapped friend", async () => {
