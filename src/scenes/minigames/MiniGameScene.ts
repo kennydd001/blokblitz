@@ -82,7 +82,14 @@ export abstract class MiniGameScene extends BaseScene {
     this.hintUsed = false;
     this.resolving = false;
     this.startedAt = performance.now();
-    this.root.replaceChildren(this.buildHeader(), this.instructionBar(), this.renderPlay(this.current));
+    const play = this.renderPlay(this.current);
+    this.root.replaceChildren(this.buildHeader(), this.instructionBar(), play);
+    // Juice: every tappable tile pops in one-by-one, so each round OPENS with
+    // a little show instead of appearing all at once.
+    play.querySelectorAll("button").forEach((tile, i) => {
+      tile.classList.add("tile-in");
+      tile.style.animationDelay = `${Math.min(i, 11) * 0.05}s`;
+    });
     // Golden bonus round: now and then a round glitters — a correct answer pays
     // DOUBLE stars. Variable reward, never on round 1 (warm-up stays calm).
     this.goldenRound = this.rollGolden();
@@ -125,12 +132,14 @@ export abstract class MiniGameScene extends BaseScene {
         this.game.save.award({ stars: 1, blocks: 1 });
         this.game.flashMessage("Dubbel! ⭐⭐", "good");
       }
+      this.onCorrect(option);
       this.celebrate();
       this.round += 1;
       this.later(() => (this.round > this.total ? this.finish() : this.startRound()), 1000);
     } else {
       this.hintUsed = true;
       this.streak = 0;
+      this.root.classList.remove("mini-fever");
       // Multi-sensory "oops" + a teaching scaffold, then let them retry.
       this.game.audio.play("soft-error");
       this.game.haptics.play("soft-error");
@@ -146,6 +155,9 @@ export abstract class MiniGameScene extends BaseScene {
   protected onWrong(): void {
     this.game.flashMessage(this.current.hint || "Bijna! Probeer nog eens.", "warn");
   }
+
+  /** Override for a mode's signature "yes!" moment (played before the shared celebrate). */
+  protected onCorrect(_option: ChallengeOption): void {}
 
   // Re-teach the concept visually after a wrong answer instead of just revealing it.
   protected showScaffold(option: ChallengeOption): void {
@@ -168,10 +180,36 @@ export abstract class MiniGameScene extends BaseScene {
   protected celebrate(): void {
     this.streak += 1;
     const big = this.streak >= 3;
+    // Three-in-a-row lights the whole arena: fever mode, just like the runner.
+    this.root.classList.toggle("mini-fever", big);
     this.game.voice.praise();
     this.buddy?.setMood(big ? "wow" : "happy", 1300);
     this.buddy?.say(this.streak >= 2 ? `${this.streak} op een rij!` : praiseWord(this.celebrateCount));
     this.game.flashMessage(`${praiseWord(this.celebrateCount++)} ⭐`, "good");
+
+    // A star flies from the play area up into this round's progress dot, so
+    // the header dots feel EARNED, not just ticked off.
+    const dot = this.root.querySelector<HTMLElement>(".mini-dot.now");
+    if (dot) {
+      const star = document.createElement("span");
+      star.className = "mini-star-fly";
+      star.setAttribute("aria-hidden", "true");
+      star.textContent = "⭐";
+      star.style.left = `${window.innerWidth / 2}px`;
+      star.style.top = `${window.innerHeight * 0.52}px`;
+      this.root.appendChild(star);
+      const rect = dot.getBoundingClientRect();
+      this.later(() => {
+        star.style.left = `${rect.left + rect.width / 2}px`;
+        star.style.top = `${rect.top + rect.height / 2}px`;
+        star.classList.add("away");
+      }, 30);
+      this.later(() => {
+        star.remove();
+        dot.classList.add("filled");
+        this.game.audio.play("coin");
+      }, 640);
+    }
 
     // Confetti that grows with the streak; each piece flies a random direction.
     const pieces = Math.min(22, 7 + this.streak * 3);

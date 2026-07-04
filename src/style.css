@@ -5148,3 +5148,136 @@ input {
   0% { transform: translateY(0); }
   100% { transform: translateY(-14px); }
 }
+
+/* ===== Mini-game juice pack: tile entrances, flying stars, fever ===== */
+.tile-in { animation: tile-in 0.34s cubic-bezier(0.3, 1.4, 0.5, 1) backwards; }
+@keyframes tile-in {
+  0% { transform: scale(0.4) translateY(14px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.mini-star-fly {
+  position: fixed;
+  z-index: 60;
+  font-size: 2.1rem;
+  line-height: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 8px rgba(255, 214, 90, 0.9));
+  transition: left 0.55s cubic-bezier(0.3, 0.7, 0.2, 1), top 0.55s cubic-bezier(0.55, -0.25, 0.55, 1), font-size 0.55s ease;
+}
+.mini-star-fly.away { font-size: 0.9rem; }
+.mini-dot.filled { animation: dot-pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1); background: #ffc61a; }
+@keyframes dot-pop {
+  0% { transform: scale(1); }
+  55% { transform: scale(1.7); }
+  100% { transform: scale(1); }
+}
+/* Three-in-a-row: the whole arena glows warm, like the runner's combo fever. */
+.mini-scene.mini-fever::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  box-shadow: inset 0 0 52px rgba(255, 150, 26, 0.5);
+  animation: fever-breathe 0.9s ease-in-out infinite alternate;
+}
+@keyframes fever-breathe {
+  0% { opacity: 0.55; }
+  100% { opacity: 1; }
+}
+
+/* Getallenlijn signature: the answer lands and a star slides down the line. */
+.getallenlijn-line { position: relative; }
+.getallenlijn-cell.landed { animation: dot-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); background: #d7f5c2; }
+.getallenlijn-slider {
+  position: absolute;
+  top: -26px;
+  left: 4px;
+  font-size: 1.7rem;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(255, 214, 90, 0.85));
+  animation: line-slide 0.85s cubic-bezier(0.35, 0, 0.4, 1) forwards;
+}
+@keyframes line-slide {
+  0% { transform: translateX(0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateX(min(66vw, 380px)) rotate(300deg); opacity: 1; }
+}
+
+/* Tienbrug signature: a light-wave over the ten-frame + a runner crossing it.
+   The ten-frame SVG = border rect + highlight rect, then the 10 cell rects —
+   so the wave targets rect 3..12. */
+.tienbrug-bridge { position: relative; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(n + 3) {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bridge-light 0.55s ease backwards;
+}
+.tienbrug-bridge.crossed svg rect:nth-of-type(3) { animation-delay: 0s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(4) { animation-delay: 0.06s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(5) { animation-delay: 0.12s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(6) { animation-delay: 0.18s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(7) { animation-delay: 0.24s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(8) { animation-delay: 0.3s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(9) { animation-delay: 0.36s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(10) { animation-delay: 0.42s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(11) { animation-delay: 0.48s; }
+.tienbrug-bridge.crossed svg rect:nth-of-type(12) { animation-delay: 0.54s; }
+@keyframes bridge-light {
+  0% { fill: #ffd75e; transform: scale(1); }
+  50% { fill: #ffd75e; transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.tienbrug-runner {
+  position: absolute;
+  top: -14px;
+  left: 6px;
+  font-size: 1.9rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: bridge-run 0.85s ease-in-out forwards;
+}
+
+/* Kloktoren signature: the clock swings and the tower bell rings. */
+.klok-prompt, .klok-choices { position: relative; }
+.klok-prompt.ringing svg, .klok-choices.ringing .klok-choice[data-correct="true"] svg { animation: klok-swing 0.8s ease-in-out; transform-origin: top center; }
+.klok-bell {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  font-size: 2rem;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: bell-ring 0.9s ease forwards;
+}
+@keyframes klok-swing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  55% { transform: rotate(-5deg); }
+  80% { transform: rotate(2.5deg); }
+}
+@keyframes bell-ring {
+  0% { transform: translateX(-50%) scale(0.3) rotate(0deg); opacity: 0; }
+  25% { transform: translateX(-50%) scale(1.25) rotate(-14deg); opacity: 1; }
+  50% { transform: translateX(-50%) scale(1.1) rotate(14deg); }
+  75% { transform: translateX(-50%) scale(1.05) rotate(-8deg); }
+  100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Geldmarkt signature: coins hop one by one, counted into the till. */
+.geld-prompt.paid svg, .geld-choices.paid svg { animation: coin-hop 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) backwards; }
+@keyframes coin-hop {
+  0% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-12px) scale(1.15); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes bridge-run {
+  0% { transform: translateX(0) translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  35% { transform: translateX(min(22vw, 120px)) translateY(-12px); }
+  70% { transform: translateX(min(44vw, 240px)) translateY(-16px); }
+  100% { transform: translateX(min(62vw, 330px)) translateY(0); opacity: 1; }
+}

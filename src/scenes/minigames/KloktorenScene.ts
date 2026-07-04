@@ -76,4 +76,17 @@ export class KloktorenScene extends MiniGameScene {
     this.root.querySelector('.klok-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Kijk naar de wijzers: kort = uur, lang = minuten.", "warn");
   }
+
+  // Signature moment: the clock tower RINGS — the clock swings and a bell
+  // pops up above it, like the hour striking.
+  protected onCorrect(): void {
+    const stage = this.root.querySelector<HTMLElement>(".klok-prompt") ?? this.root.querySelector<HTMLElement>(".klok-choices");
+    if (!stage) return;
+    stage.classList.add("ringing");
+    const bell = document.createElement("span");
+    bell.className = "klok-bell";
+    bell.setAttribute("aria-hidden", "true");
+    bell.textContent = "🔔";
+    stage.appendChild(bell);
+  }
 }

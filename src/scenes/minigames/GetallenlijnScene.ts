@@ -74,4 +74,23 @@ export class GetallenlijnScene extends MiniGameScene {
     this.root.querySelector('.getallenlijn-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Tel rustig langs de lijn.", "warn");
   }
+
+  // Signature moment: the answer lands in the gap and a star SLIDES down the
+  // line across every cell — this is the "glijbaan" the mode is named after.
+  protected onCorrect(): void {
+    const blank = this.root.querySelector<HTMLElement>(".getallenlijn-cell.blank");
+    if (blank) {
+      blank.classList.add("landed");
+      const label = blank.querySelector("b");
+      if (label) label.textContent = String(this.currentRound.target);
+    }
+    const line = this.root.querySelector<HTMLElement>(".getallenlijn-line");
+    if (line) {
+      const slider = document.createElement("span");
+      slider.className = "getallenlijn-slider";
+      slider.setAttribute("aria-hidden", "true");
+      slider.textContent = "⭐";
+      line.appendChild(slider);
+    }
+  }
 }

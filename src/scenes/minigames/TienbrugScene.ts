@@ -75,4 +75,17 @@ export class TienbrugScene extends MiniGameScene {
     this.game.voice.speak(this.currentRound.bridgeText, { interrupt: true, rate: 0.9 });
     this.game.flashMessage(this.currentRound.bridgeText, "warn");
   }
+
+  // Signature moment: a light-wave rolls across the ten-frame and a runner
+  // dashes OVER the bridge — the child literally sees the sum cross the ten.
+  protected onCorrect(): void {
+    const bridge = this.root.querySelector<HTMLElement>(".tienbrug-bridge");
+    if (!bridge) return;
+    bridge.classList.add("crossed");
+    const runner = document.createElement("span");
+    runner.className = "tienbrug-runner";
+    runner.setAttribute("aria-hidden", "true");
+    runner.textContent = "🏃";
+    bridge.appendChild(runner);
+  }
 }

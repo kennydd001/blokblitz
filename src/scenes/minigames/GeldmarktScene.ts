@@ -75,4 +75,16 @@ export class GeldmarktScene extends MiniGameScene {
     this.root.querySelector('.geld-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Tel de muntjes samen: 5, dan 2, dan 1.", "warn");
   }
+
+  // Signature moment: kassa! The coins hop one by one, like being counted
+  // into the till, with a coin chime.
+  protected onCorrect(): void {
+    const stage = this.root.querySelector<HTMLElement>(".geld-prompt") ?? this.root.querySelector<HTMLElement>(".geld-choices");
+    if (!stage) return;
+    stage.classList.add("paid");
+    stage.querySelectorAll<SVGElement>("svg").forEach((coin, i) => {
+      coin.style.animationDelay = `${i * 0.09}s`;
+    });
+    this.game.audio.play("coin");
+  }
 }

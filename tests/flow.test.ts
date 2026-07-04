@@ -1023,6 +1023,38 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".reis-progress-pill")?.textContent).toContain("Ster thuis");
   });
 
+  it("mini-games share the juice pack: tile entrances, flying stars and fever streaks", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    game.showScene("getallenlijn");
+    // Every answer tile pops in with its own staggered delay.
+    const tiles = [...root.querySelectorAll<HTMLButtonElement>(".mini-choices button")];
+    expect(tiles.length).toBeGreaterThan(1);
+    expect(tiles.every((tile) => tile.classList.contains("tile-in"))).toBe(true);
+    expect(tiles[1].style.animationDelay).not.toBe(tiles[0].style.animationDelay);
+
+    // Three correct answers in a row: stars fly to the dots, then fever mode.
+    for (let i = 0; i < 3; i += 1) {
+      root.querySelector<HTMLButtonElement>('.getallenlijn-choice[data-correct="true"]')!.click();
+      expect(root.querySelector(".mini-star-fly")).toBeTruthy();
+      if (i === 0) {
+        // Signature moment: the gap fills and the star slides down the line.
+        expect(root.querySelector(".getallenlijn-cell.landed")).toBeTruthy();
+        expect(root.querySelector(".getallenlijn-slider")).toBeTruthy();
+      }
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-scene.mini-fever")).toBeTruthy();
+
+    // A wrong answer breaks the fever.
+    root.querySelector<HTMLButtonElement>('.getallenlijn-choice[data-correct="false"]')!.click();
+    expect(root.querySelector(".mini-scene.mini-fever")).toBeNull();
+    vi.useRealTimers();
+  });
+
   it("ends the journey with a full-screen star-home cinematic", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
