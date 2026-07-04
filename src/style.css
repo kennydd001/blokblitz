@@ -4997,3 +4997,19 @@ input {
 .luister-choice { min-width: 96px; max-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 10px; }
 .luister-option-pic { display: block; font-size: 2.8rem; line-height: 1; }
 .luister-option-text { font-size: 0.8rem; font-weight: 800; color: #44506a; line-height: 1.2; text-align: center; }
+
+/* ===== Adventure road: healing world, golden trail, region gates ===== */
+.reis-band-veil { transition: opacity 1.2s ease; pointer-events: none; }
+.reis-road-trail { filter: drop-shadow(0 0 6px rgba(255, 198, 26, 0.8)); }
+.reis-road-trail-glow { animation: trail-breathe 2.4s ease-in-out infinite; }
+/* Gates ahead sleep in grey; the arch wakes up (full colour) once Buddy passes. */
+.reis-region-gate {
+  filter: drop-shadow(0 3px 3px rgba(16, 19, 28, 0.35)) grayscale(0.75) opacity(0.8);
+  transition: filter 1.2s ease;
+}
+.reis-region-gate.awake { filter: drop-shadow(0 3px 3px rgba(16, 19, 28, 0.35)); }
+.reis-region-gate text { font-family: inherit; letter-spacing: 0.02em; }
+@keyframes trail-breathe {
+  0%, 100% { opacity: 0.22; }
+  50% { opacity: 0.4; }
+}

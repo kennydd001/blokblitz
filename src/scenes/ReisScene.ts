@@ -182,7 +182,10 @@ export class ReisScene extends BaseScene {
             `<linearGradient id="band-${band.regionId}" x1="0" y1="${band.topY}" x2="0" y2="${band.bottomY}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${lightenHex(band.color, 0.55)}"/><stop offset="1" stop-color="${band.color}"/></linearGradient>`
         )
         .join("") +
-      `<radialGradient id="reis-sun"><stop offset="0" stop-color="#fff7c0" stop-opacity="0.95"/><stop offset="1" stop-color="#fff7c0" stop-opacity="0"/></radialGradient>`;
+      `<radialGradient id="reis-sun"><stop offset="0" stop-color="#fff7c0" stop-opacity="0.95"/><stop offset="1" stop-color="#fff7c0" stop-opacity="0"/></radialGradient>` +
+      // Sleeping-world veil: solid grey that melts away near its bottom edge,
+      // so the border with the healed world below reads as soft morning mist.
+      `<linearGradient id="reis-veil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a6478"/><stop offset="0.94" stop-color="#5a6478"/><stop offset="1" stop-color="#5a6478" stop-opacity="0"/></linearGradient>`;
     const bands = bandList
       .map((band) => `<rect x="0" y="${band.topY}" width="${JOURNEY_WIDTH}" height="${band.bottomY - band.topY}" fill="url(#band-${band.regionId})"/>`)
       .join("");
@@ -198,6 +201,19 @@ export class ReisScene extends BaseScene {
     // A warm sun glow low down (the start of the journey, in daylight).
     const sun = `<circle cx="${JOURNEY_WIDTH - 56}" cy="${JOURNEY_HEIGHT - 130}" r="130" fill="url(#reis-sun)"/><circle cx="${JOURNEY_WIDTH - 56}" cy="${JOURNEY_HEIGHT - 130}" r="32" fill="#fff2a8"/>`;
 
+    // World healing: regions ahead sleep under a grey veil that lifts as their
+    // nodes are completed — the child literally SEES the colours come back.
+    const completedIds = new Set(this.journey().completed);
+    const veils = bandList
+      .map((band) => {
+        const nodes = JOURNEY.filter((node) => node.regionId === band.regionId);
+        const done = nodes.filter((node) => completedIds.has(node.id)).length;
+        const completion = nodes.length ? done / nodes.length : 0;
+        const opacity = (0.48 * (1 - completion)).toFixed(2);
+        return `<rect class="reis-band-veil" data-region="${band.regionId}" data-completion="${completion.toFixed(2)}" x="0" y="${band.topY}" width="${JOURNEY_WIDTH}" height="${band.bottomY - band.topY}" fill="url(#reis-veil)" opacity="${opacity}"/>`;
+      })
+      .join("");
+
     // Smooth climbing road through the node coordinates.
     let path = `M ${JOURNEY[0].x} ${JOURNEY[0].y}`;
     for (let i = 1; i < JOURNEY.length; i += 1) {
@@ -206,16 +222,86 @@ export class ReisScene extends BaseScene {
       const midY = (a.y + b.y) / 2;
       path += ` C ${a.x} ${midY}, ${b.x} ${midY}, ${b.x} ${b.y}`;
     }
+
+    // The golden trail: the stretch of road Buddy has already travelled.
+    const frontier = frontierIndex(this.journey().completed);
+    const progressPct = Math.max(0, Math.min(100, (frontier / (JOURNEY.length - 1)) * 100));
+    const trail =
+      progressPct > 0
+        ? `<path class="reis-road-trail-glow" d="${path}" fill="none" stroke="#ffd75e" stroke-width="22" stroke-linecap="round" opacity="0.3" pathLength="100" stroke-dasharray="${progressPct.toFixed(1)} 100"/>` +
+          `<path class="reis-road-trail" data-progress="${Math.round(progressPct)}" d="${path}" fill="none" stroke="#ffc61a" stroke-width="13" stroke-linecap="round" pathLength="100" stroke-dasharray="${progressPct.toFixed(1)} 100"/>`
+        : "";
+
+    // Region gates: a welcoming arch over the road at each world border, with
+    // the next world's name on the beam. Band borders fall exactly on segment
+    // midpoints, where the bezier's x is the average of the neighbouring nodes.
+    // Gates ahead of Buddy sleep in grey; passing the border wakes them up.
+    const frontierRegion = JOURNEY[Math.min(frontier, JOURNEY.length - 1)].regionId;
+    const reachedBand = bandList.findIndex((band) => band.regionId === frontierRegion);
+    const gates = bandList
+      .slice(1)
+      .map((band, idx) => {
+        const y = band.bottomY;
+        const below = [...JOURNEY].reverse().find((node) => node.y >= y);
+        const aboveIndex = below ? JOURNEY.indexOf(below) + 1 : -1;
+        const above = aboveIndex >= 0 && aboveIndex < JOURNEY.length ? JOURNEY[aboveIndex] : undefined;
+        if (!below || !above) return "";
+        // Anchor the arch a little BEFORE the border (on the previous region's
+        // stretch) so it never collides with the node circles on either side.
+        // Solve the road bezier for the exact point at that y, so the gate
+        // always stands ON the road even in curvy segments.
+        const gateY = y + 52;
+        const midY = (below.y + above.y) / 2;
+        const cubic = (p0: number, p1: number, p2: number, p3: number, t: number) => {
+          const u = 1 - t;
+          return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+        };
+        let lo = 0;
+        let hi = 1;
+        for (let k = 0; k < 24; k += 1) {
+          const t = (lo + hi) / 2;
+          if (cubic(below.y, midY, midY, above.y, t) > gateY) lo = t;
+          else hi = t;
+        }
+        const tGate = (lo + hi) / 2;
+        const x = cubic(below.x, below.x, above.x, above.x, tGate).toFixed(0);
+        const world = getWorld(band.regionId);
+        const pillar = lightenHex(band.color, -0.25);
+        const beam = lightenHex(band.color, 0.4);
+        const awake = idx + 1 <= reachedBand;
+        // Buddy standing on this gate's doorstep (the region's first node)?
+        // Then the "volgende stap" label pill hangs exactly where the name
+        // plate sits — drop the plate for now; the welcome banner names the
+        // world, and the plate returns as soon as Buddy walks on.
+        const doorstep = JOURNEY[Math.min(frontier, JOURNEY.length - 1)] === above;
+        const plate = doorstep
+          ? ""
+          : `<rect x="-54" y="-46" width="108" height="26" rx="12" fill="${beam}" stroke="#10131c" stroke-width="2.5"/>
+          <text x="0" y="-27.5" text-anchor="middle" font-size="13" font-weight="800" fill="#10131c">${world.emoji} ${world.name}</text>`;
+        return `<g class="reis-region-gate${awake ? " awake" : ""}" data-region="${band.regionId}" transform="translate(${x} ${gateY})">
+          <rect x="-46" y="-50" width="12" height="52" rx="4" fill="${pillar}" stroke="#10131c" stroke-width="2.5"/>
+          <rect x="34" y="-50" width="12" height="52" rx="4" fill="${pillar}" stroke="#10131c" stroke-width="2.5"/>
+          <circle cx="-40" cy="-52" r="7" fill="${beam}" stroke="#10131c" stroke-width="2.5"/>
+          <circle cx="40" cy="-52" r="7" fill="${beam}" stroke="#10131c" stroke-width="2.5"/>
+          <path d="M -40 -59 l 0 -13 l 14 5 l -14 5" fill="#f4b942" stroke="#10131c" stroke-width="2" stroke-linejoin="round"/>
+          ${plate}
+        </g>`;
+      })
+      .join("");
+
     holder.innerHTML = `<svg viewBox="0 0 ${JOURNEY_WIDTH} ${JOURNEY_HEIGHT}" width="${JOURNEY_WIDTH}" height="${JOURNEY_HEIGHT}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>${defs}</defs>
       <g class="reis-bands">${bands}</g>
       ${sun}
       <g class="reis-starfield">${stars}</g>
       <g class="reis-decor">${this.decorations()}</g>
+      <g class="reis-veils">${veils}</g>
       <path d="${path}" fill="none" stroke="#10131c" stroke-width="32" stroke-linecap="round" opacity="0.16"/>
       <path d="${path}" fill="none" stroke="#fff3d8" stroke-width="27" stroke-linecap="round"/>
       <path d="${path}" fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round" opacity="0.5"/>
+      ${trail}
       <path d="${path}" fill="none" stroke="#f4b942" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 24"/>
+      <g class="reis-gates">${gates}</g>
     </svg>`;
     return holder;
   }

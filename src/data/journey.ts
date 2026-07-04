@@ -185,12 +185,14 @@ export function regionBands(): RegionBand[] {
     const ys = JOURNEY.filter((node) => node.regionId === plan.region).map((node) => node.y);
     const top = Math.min(...ys);
     const bottom = Math.max(...ys);
-    const next = index < REGIONS.length - 1;
     bands.push({
       regionId: plan.region,
       color: cssHex(getWorld(plan.region).palette.sky),
+      // The road climbs: region 0 (grasland) sits at the BOTTOM of the map and
+      // stretches to the bottom edge; the last region (sterrenrace) sits at the
+      // TOP and stretches to y=0. Regions in between meet at segment midpoints.
       topY: index === REGIONS.length - 1 ? 0 : top - SPACING / 2,
-      bottomY: next ? bottom + SPACING / 2 : JOURNEY_HEIGHT
+      bottomY: index === 0 ? JOURNEY_HEIGHT : bottom + SPACING / 2
     });
   });
   return bands;

@@ -740,6 +740,53 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("paints the adventure road: healing veils, a golden trail, and region gates", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    // Fresh journey: every region sleeps under a veil, no trail yet.
+    game.showScene("reis");
+    let veils = [...root.querySelectorAll<SVGRectElement>(".reis-band-veil")];
+    expect(veils).toHaveLength(6);
+    expect(veils.every((veil) => Number(veil.dataset.completion) === 0)).toBe(true);
+    expect(root.querySelector(".reis-road-trail")).toBeNull();
+    // One portal arch at every world border, all still asleep (grey) and all
+    // showing their world's name plate.
+    let gates = [...root.querySelectorAll<SVGGElement>(".reis-region-gate")];
+    expect(gates).toHaveLength(5);
+    expect(gates.every((gate) => !gate.classList.contains("awake"))).toBe(true);
+    expect(gates.every((gate) => gate.querySelector("text") !== null)).toBe(true);
+
+    // Complete the whole first region: its veil lifts and the trail appears.
+    const graslandNodes = JOURNEY.filter((node) => node.regionId === "grasland");
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = graslandNodes.map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    game.showScene("hub");
+    game.showScene("reis");
+    veils = [...root.querySelectorAll<SVGRectElement>(".reis-band-veil")];
+    const grasland = veils.find((veil) => veil.dataset.region === "grasland")!;
+    expect(Number(grasland.dataset.completion)).toBe(1);
+    expect(grasland.getAttribute("opacity")).toBe("0.00");
+    const muntgrot = veils.find((veil) => veil.dataset.region === "muntgrot")!;
+    expect(Number(muntgrot.dataset.completion)).toBe(0);
+    const trail = root.querySelector<SVGPathElement>(".reis-road-trail")!;
+    expect(trail).toBeTruthy();
+    expect(Number(trail.dataset.progress)).toBeGreaterThan(0);
+    expect(Number(trail.dataset.progress)).toBeLessThan(50);
+    // Buddy now stands on muntgrot's doorstep: that gate woke up (colour) but
+    // hides its name plate so the "volgende stap" label never covers it.
+    gates = [...root.querySelectorAll<SVGGElement>(".reis-region-gate")];
+    const muntgrotGate = gates.find((gate) => gate.dataset.region === "muntgrot")!;
+    expect(muntgrotGate.classList.contains("awake")).toBe(true);
+    expect(muntgrotGate.querySelector("text")).toBeNull();
+    const ijsbaanGate = gates.find((gate) => gate.dataset.region === "ijsbaan")!;
+    expect(ijsbaanGate.classList.contains("awake")).toBe(false);
+    expect(ijsbaanGate.querySelector("text")!.textContent).toContain("IJsbaan");
+  });
+
   it("offers a daily gift chest on the map, once per day", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
