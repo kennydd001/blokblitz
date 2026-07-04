@@ -1,0 +1,11 @@
+name = "blokblitz"
+compatibility_date = "2026-07-04"
+workers_dev = true
+preview_urls = false
+routes = [
+  { pattern = "blokblitz.sprintsite.be", custom_domain = true }
+]
+
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"

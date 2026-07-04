@@ -15,14 +15,20 @@ const scenarios = [
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
   { name: "hub-narrow-mobile", width: 360, height: 740, mobile: true, open: "hub", expectHub: true },
+  { name: "menu-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "menu", expectJourneyMap: true },
+  { name: "hub-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "hub", expectHub: true },
   { name: "real-runner-mobile", width: 390, height: 844, mobile: true, open: "real-runner", expectRealRunner: true },
   { name: "real-runner-narrow-mobile", width: 360, height: 740, mobile: true, open: "real-runner", expectRealRunner: true },
   { name: "real-runner-short-desktop", width: 1280, height: 720, mobile: false, open: "real-runner", expectRealRunner: true },
+  { name: "real-runner-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "klankgrot-mobile", width: 390, height: 844, mobile: true, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
+  { name: "klankgrot-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
   { name: "splitbord-mobile", width: 390, height: 844, mobile: true, open: "splitbord", expectMiniMode: ".splitbord-board" },
   { name: "tienbrug-narrow-mobile", width: 360, height: 740, mobile: true, open: "tienbrug", expectMiniMode: ".tienbrug-sum" },
   { name: "kloktoren-mobile", width: 390, height: 844, mobile: true, open: "kloktoren", expectMiniMode: ".klok-play" },
-  { name: "boss-mobile", width: 390, height: 844, mobile: true, open: "boss", expectMiniMode: ".boss-arena" }
+  { name: "boss-mobile", width: 390, height: 844, mobile: true, open: "boss", expectMiniMode: ".boss-arena" },
+  { name: "boss-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "boss", expectMiniMode: ".boss-arena" },
+  { name: "real-runner-landscape-mobile", width: 844, height: 390, mobile: true, open: "real-runner", expectRealRunner: true }
 ];
 
 const errors = [];

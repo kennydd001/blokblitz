@@ -3024,6 +3024,103 @@ input {
   box-shadow: 0 2px 0 rgba(23, 32, 51, 0.28);
 }
 
+@media (max-height: 520px) and (min-width: 700px) {
+  .scene.run {
+    padding: calc(6px + env(safe-area-inset-top)) 10px calc(6px + env(safe-area-inset-bottom));
+    gap: 4px;
+  }
+
+  .run-top {
+    min-height: 38px;
+  }
+
+  .run-pause {
+    min-width: 38px;
+    min-height: 38px;
+    border-width: 3px;
+  }
+
+  .run-stats {
+    gap: 4px;
+  }
+
+  .run-stat {
+    gap: 4px;
+    padding: 3px 8px;
+    border-width: 2px;
+    font-size: 0.82rem;
+  }
+
+  .run-stat .run-stat-icon {
+    font-size: 0.95rem;
+  }
+
+  .run-progress {
+    height: 9px;
+    border-width: 2px;
+  }
+
+  .run-target {
+    gap: 2px;
+    padding: 3px 12px;
+    margin-top: -4px;
+    border-width: 3px;
+    border-radius: 14px;
+    box-shadow: 0 4px 0 rgba(23, 32, 51, 0.2);
+  }
+
+  .run-target-text {
+    font-size: 0.92rem;
+    line-height: 1.05;
+  }
+
+  .run-target-art .quantity-svg {
+    width: 48px;
+    max-height: 26px;
+  }
+
+  .run-target-compare {
+    height: 24px;
+    gap: 4px;
+  }
+
+  .run-target-compare .cmp {
+    width: 12px;
+    border-width: 2px;
+  }
+
+  .run-target-compare .cmp.s { height: 10px; }
+  .run-target-compare .cmp.m { height: 16px; }
+  .run-target-compare .cmp.l { height: 24px; }
+
+  .run-controls {
+    gap: 8px;
+  }
+
+  .run-ctrl {
+    border-width: 3px;
+    border-radius: 17px;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 0 rgba(23, 32, 51, 0.26);
+  }
+
+  .run-ctrl-left,
+  .run-ctrl-right,
+  .run-ctrl-jump {
+    min-height: 64px;
+  }
+
+  .run-ctrl-left,
+  .run-ctrl-right {
+    max-width: 100px;
+  }
+
+  .run-ctrl-jump {
+    max-width: 180px;
+    font-size: 1rem;
+  }
+}
+
 /* ---- Results / celebration ---- */
 .scene.results-scene {
   justify-content: center;

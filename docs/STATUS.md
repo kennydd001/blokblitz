@@ -779,3 +779,68 @@ Next steps:
 - Refresh `http://127.0.0.1:5393/`.
 - For each target word, use `Record Zoem` and speak the shown prompt as one smooth phrase, e.g. `mmm ... aa ... nnn ... maan`.
 - Use `Play handmatig` and `Play eindclip` to QA. The game integration should use `blends/` as the final approved source.
+
+## Fullscreen Landscape Visibility Fix - 2026-07-04
+
+Completed work:
+
+- Reproduced the browser fullscreen visibility issue as a mobile-landscape runner regression at `844x390`.
+- Expanded `scripts/viewport-qa.mjs` with desktop fullscreen coverage for journey, hub, real runner, Klankgrot, and boss scenes, plus a mobile-landscape real runner case.
+- Added a targeted `max-height: 520px` and `min-width: 700px` runner HUD compaction rule.
+- In short landscape/fullscreen heights, the runner now uses a smaller top bar, progress meter, target card, target art, and compact but still 64px-high controls.
+
+Validation:
+
+- `npm.cmd run qa:viewport` passed with the new fullscreen and landscape scenarios.
+- Inspected `.qa-artifacts/viewport-qa/real-runner-landscape-mobile.png`: target, road, dino, progress, menu, stats, and bottom controls are fully visible.
+- Inspected `.qa-artifacts/viewport-qa/real-runner-fullscreen-desktop.png`: desktop fullscreen remains spacious and intact.
+- `npm.cmd install` passed with no package changes; npm still reports one low-severity audit item.
+- `npm.cmd run typecheck` passed.
+- `npm.cmd run lint` passed.
+- `npm.cmd run test` passed: 19 files, 153 tests. Vitest still logs the known jsdom canvas `getContext()` warnings.
+- `npm.cmd run build` passed.
+
+Next steps:
+
+- If the user sees another hidden UI case, reproduce it as a viewport scenario before changing layout.
+- Add landscape coverage for more minigame scenes if children are expected to play in phone landscape routinely.
+
+## Sprintsite Hosting Setup - 2026-07-04
+
+Completed work:
+
+- Checked OpenClaw and WSL sprintsite context.
+- Confirmed WSL `Ubuntu-24.04` loads a Cloudflare token from `/home/kenny/.openclaw/credentials/cloudflare.token`; the token value was not copied into the repo.
+- Confirmed `wrangler whoami` works in WSL for account `07ae25240af8e83084372827b6d5a9a2`.
+- Confirmed Cloudflare Pages currently fails with auth code `10000`, so the current token is not suitable for Pages deploys.
+- Added Cloudflare Worker Static Assets config in `wrangler.toml` for Worker `blokblitz`.
+- Added explicit `workers_dev = true` and a custom-domain route for `blokblitz.sprintsite.be`.
+- Added `deploy:sprintsite` and `deploy:sprintsite:dry-run` package scripts for environments where Wrangler has auth.
+- Wrote the durable handoff guide at `C:\Users\de_do\Documents\BLOKBLITZ_SPRINTSITE_HANDLEIDING.md`.
+- Deployed Worker `blokblitz` through WSL Wrangler.
+
+Decisions made:
+
+- Use Cloudflare Worker Static Assets first because existing WSL Wrangler auth works for Workers, while Pages auth does not.
+- Keep the game local-first at runtime; hosting is only static distribution of built local assets.
+- Do not store Cloudflare, TTS, or other API keys in this repository or the handoff guide.
+- Use `blokblitz.sprintsite.be` as the sprintsite custom domain; leave existing sprintsite production subdomains untouched.
+
+Validation:
+
+- `npm.cmd install` passed; npm still reports one low-severity audit item.
+- `npm.cmd run typecheck` passed.
+- `npm.cmd run lint` passed.
+- `npm.cmd run test` passed: 19 files, 153 tests. Vitest still logs the known jsdom canvas `getContext()` warnings.
+- `npm.cmd run build` passed.
+- `npm.cmd run qa:viewport` passed across 18 scenarios.
+- WSL Wrangler dry-run passed for Worker Static Assets.
+- WSL Wrangler deploy succeeded for Worker `blokblitz`; latest deployed version with `workers.dev`, preview URLs disabled, and custom domain config is `06de0106-679a-4eb2-b3e0-6b662b2e5fd7`.
+- `https://blokblitz.kennydd001.workers.dev/` returned 200 for HTML, JS, CSS, and SPA fallback.
+- Cloudflare DNS (`1.1.1.1`) returned A/AAAA records for `blokblitz.sprintsite.be`.
+- A forced-resolve HTTP check for `https://blokblitz.sprintsite.be/` returned 200. The default Windows/provider resolver had not picked up the new DNS record yet immediately after deploy.
+
+Next steps:
+
+- Recheck `https://blokblitz.sprintsite.be/` from normal browsers after local/provider DNS cache catches up.
+- Use the same WSL Wrangler deploy command after future Claude changes.
