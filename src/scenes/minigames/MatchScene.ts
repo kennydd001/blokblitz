@@ -55,4 +55,10 @@ export class MatchScene extends MiniGameScene {
     this.root.querySelector('.match-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Tel beide groepjes en kijk goed.", "warn");
   }
+
+  // Signature moment: the target and its twin light up together — "same!".
+  protected onCorrect(): void {
+    this.root.querySelector(".match-target")?.classList.add("twin-glow");
+    this.root.querySelector('.match-choice[data-correct="true"]')?.classList.add("twin-glow");
+  }
 }

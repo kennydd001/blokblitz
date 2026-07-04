@@ -99,4 +99,19 @@ export class ZoemrouteScene extends MiniGameScene {
     this.zoem(0.55);
     this.game.flashMessage("Zoem rustig: rek de klanken aan elkaar.", "warn");
   }
+
+  // Signature moment: a bee zooms along the stones as they hop in reading order.
+  protected onCorrect(): void {
+    const stones = this.root.querySelector<HTMLElement>(".zoemroute-stones");
+    if (!stones) return;
+    stones.classList.add("zoomed");
+    stones.querySelectorAll<HTMLElement>(".zoemroute-stone").forEach((stone, i) => {
+      stone.style.animationDelay = `${i * 0.12}s`;
+    });
+    const bee = document.createElement("span");
+    bee.className = "zoemroute-bee";
+    bee.setAttribute("aria-hidden", "true");
+    bee.textContent = "🐝";
+    stones.appendChild(bee);
+  }
 }

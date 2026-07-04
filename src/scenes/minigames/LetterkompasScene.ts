@@ -84,4 +84,9 @@ export class LetterkompasScene extends MiniGameScene {
     this.speakSound(0.6);
     this.game.flashMessage("Luister naar de klank.", "warn");
   }
+
+  // Signature moment: the compass spins a full turn — letter found!
+  protected onCorrect(): void {
+    this.root.querySelector(".letterkompas-compass")?.classList.add("found");
+  }
 }

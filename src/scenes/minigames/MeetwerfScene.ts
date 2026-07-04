@@ -71,4 +71,16 @@ export class MeetwerfScene extends MiniGameScene {
     this.root.querySelector('.meet-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Leg ze naast elkaar en vergelijk.", "warn");
   }
+
+  // Signature moment: the measuring tape rolls across the yard.
+  protected onCorrect(): void {
+    const stage = this.root.querySelector<HTMLElement>(".meet-prompt") ?? this.root.querySelector<HTMLElement>(".meet-choices");
+    if (!stage) return;
+    stage.classList.add("measured");
+    const tape = document.createElement("span");
+    tape.className = "meet-tape";
+    tape.setAttribute("aria-hidden", "true");
+    tape.textContent = "📏";
+    stage.appendChild(tape);
+  }
 }

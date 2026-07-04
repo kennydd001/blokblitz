@@ -71,4 +71,16 @@ export class VormenburchtScene extends MiniGameScene {
     this.root.querySelector('.vormen-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Kijk goed naar de vorm.", "warn");
   }
+
+  // Signature moment: the castle pops up — another tower built!
+  protected onCorrect(): void {
+    const stage = this.root.querySelector<HTMLElement>(".vormen-prompt") ?? this.root.querySelector<HTMLElement>(".vormen-choices");
+    if (!stage) return;
+    stage.classList.add("built");
+    const castle = document.createElement("span");
+    castle.className = "vormen-castle";
+    castle.setAttribute("aria-hidden", "true");
+    castle.textContent = "🏰";
+    stage.appendChild(castle);
+  }
 }

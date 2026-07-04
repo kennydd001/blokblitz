@@ -69,4 +69,14 @@ export class OrderScene extends MiniGameScene {
       this.game.flashMessage("Zoek het kleinste getal dat nog over is.", "warn");
     }
   }
+
+  // Signature moment: the finished row dances in order, small to big.
+  protected onCorrect(): void {
+    const row = this.root.querySelector<HTMLElement>(".order-row");
+    if (!row) return;
+    row.classList.add("wave");
+    row.querySelectorAll<HTMLElement>(".order-card").forEach((card, i) => {
+      card.style.animationDelay = `${i * 0.09}s`;
+    });
+  }
 }

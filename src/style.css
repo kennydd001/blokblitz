@@ -5274,6 +5274,132 @@ input {
   45% { transform: translateY(-12px) scale(1.15); }
   100% { transform: translateY(0) scale(1); }
 }
+
+/* ===== Signature moments for every remaining mode ===== */
+/* Count: the counted animals do a happy wave, one by one. */
+.count-field.celebrating .count-item { animation: coin-hop 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) backwards; }
+/* Match: target + twin light up together. */
+.twin-glow { animation: twin-glow 0.9s ease; border-radius: 18px; }
+@keyframes twin-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0); }
+  40% { box-shadow: 0 0 0 9px rgba(61, 220, 132, 0.55); }
+}
+/* Compare/Vormen/Tientalhuis/Verkeer: a centered popper drops in (reuses bell-ring). */
+.compare-choice.winner, .vormen-prompt.built, .vormen-choices.built, .tientalhuis-board.lit, .verkeer-play.safe { position: relative; }
+.compare-crown, .vormen-castle, .tientalhuis-roofstar, .verkeer-licht {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  z-index: 3;
+  font-size: 2rem;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: bell-ring 0.9s ease forwards;
+}
+/* Fill: the frame does a wave, cell by cell. */
+.ten-frame.filled-wave .ten-cell { animation: coin-hop 0.45s ease backwards; }
+/* One more/less: the group bounces; an arrow pops with the step. */
+.onemore-base.stepped { position: relative; animation: split-snap 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.onemore-arrow {
+  position: absolute;
+  top: -22px;
+  right: -12px;
+  font-size: 1.8rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: arrow-step 0.85s ease forwards;
+}
+@keyframes arrow-step {
+  0% { transform: translateY(10px) scale(0.4); opacity: 0; }
+  40% { transform: translateY(-8px) scale(1.25); opacity: 1; }
+  100% { transform: translateY(-14px) scale(1); opacity: 0.9; }
+}
+/* Order: the finished row dances small-to-big. */
+.order-row.wave .order-card { animation: coin-hop 0.5s ease backwards; }
+/* Splitbord: the split clicks together; missing numbers land in their boxes. */
+.splitbord-board.snapped { animation: split-snap 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.splitbord-total.landed, .splitbord-part.landed { animation: dot-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); background: #d7f5c2; }
+@keyframes split-snap {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.93); }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+/* Klankgrot: the sound crystal bursts into sparkles. */
+.klankgrot-crystal { position: relative; }
+.klankgrot-crystal.burst { animation: split-snap 0.7s ease; filter: drop-shadow(0 0 18px rgba(126, 217, 255, 0.95)); }
+.klankgrot-shard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 1.2rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: shard-fly 0.7s ease-out forwards;
+}
+@keyframes shard-fly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--shard-x)), calc(-50% + var(--shard-y))) scale(0.6); opacity: 0; }
+}
+/* Letterkompas: the compass spins a full turn. */
+.letterkompas-compass.found { animation: kompas-spin 0.85s cubic-bezier(0.3, 0.7, 0.3, 1); }
+@keyframes kompas-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* Zoemroute: stones hop in reading order; a bee zooms across. */
+.zoemroute-stones { position: relative; }
+.zoemroute-stones.zoomed .zoemroute-stone { animation: coin-hop 0.5s ease backwards; }
+.zoemroute-bee, .meet-tape {
+  position: absolute;
+  top: -14px;
+  left: 6px;
+  z-index: 3;
+  font-size: 1.8rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: bridge-run 0.85s ease-in-out forwards;
+}
+/* Woordbouw: the missing sound snaps into its box. */
+.woordbouw-box.snapped { animation: dot-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); background: #d7f5c2; }
+/* Tientalhuis: the whole house lights up. */
+.tientalhuis-board.lit { animation: house-glow 0.95s ease; }
+@keyframes house-glow {
+  0%, 100% { filter: brightness(1); }
+  45% { filter: brightness(1.35) drop-shadow(0 0 14px rgba(255, 214, 90, 0.8)); }
+}
+/* Meetwerf: the prompt gets measured (tape reuses the bee slide). */
+.meet-prompt.measured, .meet-choices.measured { position: relative; }
+/* Verkeer: the correct card glows green — safe! */
+.verkeer-play.safe .verkeer-choice[data-correct="true"] { animation: twin-glow 0.9s ease; }
+/* Luisterbos: the story card blooms; leaves drift down. */
+.luister-story.bloom { position: relative; animation: split-snap 0.6s ease; }
+.luister-leaf {
+  position: absolute;
+  top: -8px;
+  font-size: 1.3rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: leaf-fall 1s ease-in forwards;
+}
+@keyframes leaf-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(48px) rotate(120deg); opacity: 0; }
+}
+/* Memory: matched twins spark. */
+.memory-card.matched { position: relative; }
+.memory-spark {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: bell-ring 0.8s ease forwards;
+}
 @keyframes bridge-run {
   0% { transform: translateX(0) translateY(0); opacity: 0; }
   12% { opacity: 1; }

@@ -93,4 +93,13 @@ export class WoordbouwplaatsScene extends MiniGameScene {
     this.sayWord(0.55);
     this.game.flashMessage("Zeg het woord traag en luister.", "warn");
   }
+
+  // Signature moment: the missing sound SNAPS into its box.
+  protected onCorrect(option: ChallengeOption): void {
+    const blank = this.root.querySelector<HTMLElement>(".woordbouw-box.blank");
+    if (!blank) return;
+    blank.classList.add("snapped");
+    const label = blank.querySelector("b");
+    if (label) label.textContent = String(option.label ?? option.value);
+  }
 }

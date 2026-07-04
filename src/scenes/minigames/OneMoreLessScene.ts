@@ -53,4 +53,16 @@ export class OneMoreLessScene extends MiniGameScene {
     this.root.querySelector('.numeral-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage(this.more ? "Tel eentje verder." : "Tel eentje terug.", "warn");
   }
+
+  // Signature moment: the group bounces and an arrow shows the step taken.
+  protected onCorrect(): void {
+    const base = this.root.querySelector<HTMLElement>(".onemore-base");
+    if (!base) return;
+    base.classList.add("stepped");
+    const arrow = document.createElement("span");
+    arrow.className = "onemore-arrow";
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.textContent = this.more ? "⬆️" : "⬇️";
+    base.appendChild(arrow);
+  }
 }

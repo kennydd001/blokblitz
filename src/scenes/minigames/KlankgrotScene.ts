@@ -87,4 +87,20 @@ export class KlankgrotScene extends MiniGameScene {
     this.speakSound(0.6); // re-stretch slower
     this.game.flashMessage("Luister nog eens goed.", "warn");
   }
+
+  // Signature moment: the sound crystal BURSTS into sparkles.
+  protected onCorrect(): void {
+    const crystal = this.root.querySelector<HTMLElement>(".klankgrot-crystal");
+    if (!crystal) return;
+    crystal.classList.add("burst");
+    for (let i = 0; i < 6; i += 1) {
+      const shard = document.createElement("span");
+      shard.className = "klankgrot-shard";
+      shard.setAttribute("aria-hidden", "true");
+      shard.textContent = "✨";
+      shard.style.setProperty("--shard-x", `${Math.round(Math.cos((i / 6) * Math.PI * 2) * 72)}px`);
+      shard.style.setProperty("--shard-y", `${Math.round(Math.sin((i / 6) * Math.PI * 2) * 72)}px`);
+      crystal.appendChild(shard);
+    }
+  }
 }

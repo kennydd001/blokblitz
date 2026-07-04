@@ -71,4 +71,14 @@ export class CountScene extends MiniGameScene {
     this.root.querySelector('.numeral-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Tel nog eens rustig mee.", "warn");
   }
+
+  // Signature moment: the counted animals do a happy wave, one by one.
+  protected onCorrect(): void {
+    const field = this.root.querySelector<HTMLElement>(".count-field");
+    if (!field) return;
+    field.classList.add("celebrating");
+    field.querySelectorAll<HTMLElement>(".count-item").forEach((item, i) => {
+      item.style.animationDelay = `${i * 0.07}s`;
+    });
+  }
 }

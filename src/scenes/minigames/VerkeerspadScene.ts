@@ -83,4 +83,16 @@ export class VerkeerspadScene extends MiniGameScene {
     this.game.voice.speak(this.currentRound.card.lesson, { interrupt: true });
     this.game.flashMessage(this.currentRound.card.lesson, "warn");
   }
+
+  // Signature moment: the light jumps to green — safe to go!
+  protected onCorrect(): void {
+    const play = this.root.querySelector<HTMLElement>(".verkeer-play");
+    if (!play) return;
+    play.classList.add("safe");
+    const light = document.createElement("span");
+    light.className = "verkeer-licht";
+    light.setAttribute("aria-hidden", "true");
+    light.textContent = "🚦";
+    play.appendChild(light);
+  }
 }

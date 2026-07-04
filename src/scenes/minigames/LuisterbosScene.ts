@@ -105,4 +105,20 @@ export class LuisterbosScene extends MiniGameScene {
     this.tellStory();
     this.game.flashMessage("Luister nog eens naar het verhaaltje.", "warn");
   }
+
+  // Signature moment: the story card blooms and leaves drift down.
+  protected onCorrect(): void {
+    const story = this.root.querySelector<HTMLElement>(".luister-story");
+    if (!story) return;
+    story.classList.add("bloom");
+    for (let i = 0; i < 4; i += 1) {
+      const leaf = document.createElement("span");
+      leaf.className = "luister-leaf";
+      leaf.setAttribute("aria-hidden", "true");
+      leaf.textContent = "🍃";
+      leaf.style.left = `${18 + i * 22}%`;
+      leaf.style.animationDelay = `${i * 0.12}s`;
+      story.appendChild(leaf);
+    }
+  }
 }

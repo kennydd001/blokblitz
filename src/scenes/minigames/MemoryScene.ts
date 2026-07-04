@@ -118,6 +118,14 @@ export class MemoryScene extends BaseScene {
       card.matched = true;
       first.el.classList.add("matched");
       card.el.classList.add("matched");
+      // Signature moment: both twins of the pair get a spark.
+      for (const el of [first.el, card.el]) {
+        const spark = document.createElement("span");
+        spark.className = "memory-spark";
+        spark.setAttribute("aria-hidden", "true");
+        spark.textContent = "💫";
+        el.appendChild(spark);
+      }
       this.game.voice.praise();
       this.matchedCount += 1;
       if (this.matchedCount >= PAIRS) {

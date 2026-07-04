@@ -50,4 +50,16 @@ export class CompareScene extends MiniGameScene {
     this.root.querySelector('.compare-choice[data-correct="true"]')?.classList.add("reveal");
     this.game.flashMessage("Tel de stippen: welke heeft er meer?", "warn");
   }
+
+  // Signature moment: the winning group gets the crown.
+  protected onCorrect(): void {
+    const winner = this.root.querySelector<HTMLElement>('.compare-choice[data-correct="true"]');
+    if (!winner) return;
+    winner.classList.add("winner");
+    const crown = document.createElement("span");
+    crown.className = "compare-crown";
+    crown.setAttribute("aria-hidden", "true");
+    crown.textContent = "👑";
+    winner.appendChild(crown);
+  }
 }
