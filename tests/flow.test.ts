@@ -757,6 +757,8 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(gates).toHaveLength(5);
     expect(gates.every((gate) => !gate.classList.contains("awake"))).toBe(true);
     expect(gates.every((gate) => gate.querySelector("text") !== null)).toBe(true);
+    // Nothing lives in a sleeping world yet.
+    expect(root.querySelectorAll(".reis-life")).toHaveLength(0);
 
     // Complete the whole first region: its veil lifts and the trail appears.
     const graslandNodes = JOURNEY.filter((node) => node.regionId === "grasland");
@@ -785,6 +787,39 @@ describe("Speeltuin hub + calm game modes", () => {
     const ijsbaanGate = gates.find((gate) => gate.dataset.region === "ijsbaan")!;
     expect(ijsbaanGate.classList.contains("awake")).toBe(false);
     expect(ijsbaanGate.querySelector("text")!.textContent).toContain("IJsbaan");
+    // The healed grasland has come alive: animated critters, only there.
+    const life = [...root.querySelectorAll<SVGGElement>(".reis-life")];
+    expect(life).toHaveLength(1);
+    expect(life[0].dataset.region).toBe("grasland");
+    expect(life[0].querySelectorAll(".reis-life-piece").length).toBeGreaterThan(4);
+  });
+
+  it("celebrates finishing a region live: the veil sweeps away and the border gate pops", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const graslandNodes = JOURNEY.filter((node) => node.regionId === "grasland");
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = graslandNodes.map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    // Arriving back from the region's final activity triggers the celebration.
+    game.lastJourneyNode = graslandNodes[graslandNodes.length - 1].id;
+    game.showScene("reis");
+
+    // The veil is re-lifted for the live sweep, then falls to clear.
+    const veil = root.querySelector<SVGRectElement>('.reis-band-veil[data-region="grasland"]')!;
+    expect(veil.getAttribute("opacity")).toBe("0.44");
+    vi.advanceTimersByTime(120);
+    expect(veil.getAttribute("opacity")).toBe("0.00");
+
+    // Buddy walks across the border: the muntgrot gate pops shortly after.
+    vi.advanceTimersByTime(800);
+    const gate = root.querySelector<SVGGElement>('.reis-region-gate[data-region="muntgrot"]')!;
+    expect(gate.classList.contains("passing")).toBe(true);
+    vi.useRealTimers();
   });
 
   it("offers a daily gift chest on the map, once per day", async () => {

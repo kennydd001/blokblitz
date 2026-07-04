@@ -214,6 +214,26 @@ export class ReisScene extends BaseScene {
       })
       .join("");
 
+    // Fully healed regions come ALIVE: little animated critters per world
+    // (butterflies, sparkles, snow, fireflies...) — the reward for finishing
+    // a region is a visibly living stretch of map. Deterministic positions.
+    const life = bandList
+      .map((band) => {
+        const nodes = JOURNEY.filter((node) => node.regionId === band.regionId);
+        const done = nodes.filter((node) => completedIds.has(node.id)).length;
+        if (!nodes.length || done < nodes.length) return "";
+        const world = getWorld(band.regionId);
+        const height = band.bottomY - band.topY;
+        const pieces: string[] = [];
+        for (let i = 0; i < 7; i += 1) {
+          const fx = 24 + ((Math.sin((i + 1) * 12.9 + band.topY * 0.13) + 1) / 2) * (JOURNEY_WIDTH - 48);
+          const fy = band.topY + 46 + ((Math.sin((i + 1) * 7.3 + band.bottomY * 0.11) + 1) / 2) * (height - 92);
+          pieces.push(this.lifePiece(world.palette.propStyle, fx.toFixed(0), fy.toFixed(0), ((i * 0.7) % 2.8).toFixed(1)));
+        }
+        return `<g class="reis-life" data-region="${band.regionId}">${pieces.join("")}</g>`;
+      })
+      .join("");
+
     // Smooth climbing road through the node coordinates.
     let path = `M ${JOURNEY[0].x} ${JOURNEY[0].y}`;
     for (let i = 1; i < JOURNEY.length; i += 1) {
@@ -302,6 +322,7 @@ export class ReisScene extends BaseScene {
       ${trail}
       <path d="${path}" fill="none" stroke="#f4b942" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 24"/>
       <g class="reis-gates">${gates}</g>
+      <g class="reis-life-layer">${life}</g>
     </svg>`;
     return holder;
   }
@@ -339,6 +360,31 @@ export class ReisScene extends BaseScene {
       const x = i % 2 === 0 ? 34 : JOURNEY_WIDTH - 34;
       return this.prop(world.palette.propStyle, cssHex(color), x, node.y);
     }).join("");
+  }
+
+  // One animated life particle for a healed region. Outer g = static position
+  // (attribute transform); inner g = CSS keyframe animation, because a CSS
+  // transform would otherwise override the positioning attribute.
+  private lifePiece(style: PropStyle, x: string, y: string, delay: string): string {
+    const wrap = (cls: string, inner: string): string =>
+      `<g transform="translate(${x} ${y})"><g class="reis-life-piece ${cls}" style="animation-delay:-${delay}s">${inner}</g></g>`;
+    if (style === "tree")
+      return wrap(
+        "life-flutter",
+        `<ellipse cx="-4" cy="0" rx="4.5" ry="3" fill="#ff8fb5" stroke="#10131c" stroke-width="1.4" transform="rotate(-22)"/><ellipse cx="4" cy="0" rx="4.5" ry="3" fill="#ffb3cd" stroke="#10131c" stroke-width="1.4" transform="rotate(22)"/><rect x="-1" y="-3.4" width="2" height="7" rx="1" fill="#10131c"/>`
+      );
+    if (style === "crystal")
+      return wrap("life-rise", `<polygon points="0,-5 4,0 0,5 -4,0" fill="#ffd75e" stroke="#b8860b" stroke-width="1"/>`);
+    if (style === "ice")
+      return wrap(
+        "life-fall",
+        `<circle cx="0" cy="0" r="3" fill="#ffffff" opacity="0.95"/><circle cx="0" cy="0" r="5.5" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.5"/>`
+      );
+    if (style === "mushroom") return wrap("life-glow", `<circle cx="0" cy="0" r="3.4" fill="#c9f76f"/>`);
+    if (style === "star")
+      return wrap("life-twinkle", `<path d="M 0 -6 L 1.7 -1.7 L 6 0 L 1.7 1.7 L 0 6 L -1.7 1.7 L -6 0 L -1.7 -1.7 Z" fill="#fff2a8"/>`);
+    // cactus (bouwdorp): warm little work-sparks drifting up from the village.
+    return wrap("life-rise", `<rect x="-3" y="-3" width="6" height="6" rx="1.5" fill="#ffa94d" stroke="#10131c" stroke-width="1.2"/>`);
   }
 
   private prop(style: PropStyle, color: string, x: number, y: number): string {
@@ -459,15 +505,51 @@ export class ReisScene extends BaseScene {
       // Buddy walks along the road from the stone it just dropped to the next one.
       const fromIndex = nodeIndexById(justDone);
       const toIndex = Math.min(frontierIndex(completed), JOURNEY.length - 1);
-      if (fromIndex >= 0) this.walkBuddy(JOURNEY[fromIndex], JOURNEY[toIndex]);
+      const from = fromIndex >= 0 ? JOURNEY[fromIndex] : undefined;
+      const to = JOURNEY[toIndex];
+      if (from) this.walkBuddy(from, to);
       this.buddy?.setMood("happy", 1400);
-      this.game.voice.speak(this.game.save.journeyComplete() ? "Helemaal thuis! Knap gedaan!" : "Goed zo! Verder met de reis!", {
-        interrupt: true,
-        pitch: 1.2
-      });
+      // Did that step finish a whole region? Sweep its veil away LIVE — the
+      // emotional payoff of the healing loop is watching the colours flood in.
+      const healed = from && JOURNEY.filter((node) => node.regionId === from.regionId).every((node) => completed.includes(node.id));
+      if (healed && from) this.sweepVeil(from.regionId);
+      // Crossing a world border: the gate Buddy walks through pops awake.
+      if (from && from.regionId !== to.regionId) this.celebrateGatePass(to.regionId);
+      const line = this.game.save.journeyComplete()
+        ? "Helemaal thuis! Knap gedaan!"
+        : healed && from
+          ? `Kijk! De kleuren zijn terug in ${getWorld(from.regionId).name}!`
+          : "Goed zo! Verder met de reis!";
+      this.game.voice.speak(line, { interrupt: true, pitch: 1.2 });
     } else {
       this.game.voice.speak("Verder met de reis!", { interrupt: true });
     }
+  }
+
+  // Animate a just-healed region's veil from grey to clear (the render itself
+  // already draws it at its final opacity, so re-lift it and let it fall).
+  private sweepVeil(regionId: string): void {
+    const veil = this.root.querySelector<SVGRectElement>(`.reis-band-veil[data-region="${regionId}"]`);
+    if (!veil) return;
+    veil.setAttribute("opacity", "0.44");
+    const drop = (): void => veil.setAttribute("opacity", "0.00");
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => window.requestAnimationFrame(drop));
+    } else {
+      drop();
+    }
+    this.game.audio.play("win");
+  }
+
+  // A quick golden pop on the gate Buddy just walked through.
+  private celebrateGatePass(regionId: string): void {
+    const gate = this.root.querySelector<SVGGElement>(`.reis-region-gate[data-region="${regionId}"]`);
+    if (!gate) return;
+    const timer = window.setTimeout(() => {
+      gate.classList.add("passing");
+      this.game.audio.play("boost");
+    }, 750);
+    this.addCleanup(() => window.clearTimeout(timer));
   }
 
   // Slide Buddy from one node to the next so the road feels travelled, not teleported.
