@@ -903,3 +903,31 @@ the WSL Wrangler command from the handleiding. Worker version
 (index.html, hashed JS/CSS, sw.js). Smoke tests: workers.dev root,
 blokblitz.sprintsite.be root, /sw.js and a voice clip all returned 200, and
 the live HTML references the freshly built bundle.
+
+## Lazy Three.js: 63% smaller boot bundle - 2026-07-05
+
+Completed work (Claude):
+
+- Split the WebGL layer out of `Game` into `src/game/Stage3D.ts`
+  (renderer/scene/camera/menu backdrop/per-frame render). `Game` no longer
+  imports three; it exposes `stage3d?` + `ensureStage3d()` (dynamic import)
+  and warms the chunk in `start()` while the child is on the DOM-only map.
+- `resetWorld(theme)` remembers the requested theme and applies it when the
+  chunk lands; resize/update are no-ops until then.
+- `RunScene` runs HEADLESS until the view lands: HUD, countdown, input and
+  RunnerCore all work without 3D; the view attaches via
+  `Promise.all([ensureStage3d(), import(RunnerView)])` guarded by a mount
+  token. In practice the chunk is warm before the first run.
+- `numberColor` moved to three-free `src/runner/numberColor.ts` (re-exported
+  from voxelNumber) so the HUD tint doesn't drag three into the boot bundle.
+- `scripts/viewport-qa.mjs`: scene-graph metrics now read
+  `game.stage3d.world` and the real-runner open step polls until in-world
+  gate numerals exist before validating.
+
+Result: boot JS 745 kB -> 262 kB (gzip 190 kB -> 71 kB). three (475 kB),
+Stage3D and RunnerView are lazy chunks fetched in the background after boot,
+cache-first offline via sw.js v2.
+
+Validation: typecheck, lint, 153 tests, build, qa:viewport 18/18 green; live
+preview check confirmed the runner builds its world via the lazy chunks with
+zero console errors.

@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import { AdaptiveEngine } from "../education/adaptiveEngine";
 import { buildAttemptLog } from "../education/challengeLogger";
 import { ChallengeFactory } from "../education/challengeFactory";
@@ -45,14 +44,14 @@ import { VormenburchtScene } from "../scenes/minigames/VormenburchtScene";
 import { WoordbouwplaatsScene } from "../scenes/minigames/WoordbouwplaatsScene";
 import { ZoemrouteScene } from "../scenes/minigames/ZoemrouteScene";
 import { SettingsScene } from "../scenes/SettingsScene";
+import type { Stage3D } from "./Stage3D";
 
 export class Game {
   readonly root: HTMLElement;
   readonly stage: HTMLElement;
   readonly overlay: HTMLElement;
-  readonly renderer: THREE.WebGLRenderer;
-  readonly world: THREE.Scene;
-  readonly camera: THREE.PerspectiveCamera;
+  /** The lazily-loaded WebGL layer (Three.js). Undefined until its chunk lands. */
+  stage3d?: Stage3D;
   readonly input = new InputManager();
   readonly audio = new AudioManager();
   readonly haptics = new HapticManager();
@@ -73,8 +72,8 @@ export class Game {
   journeyLastRegion?: string;
 
   private readonly loop: GameLoop;
-  private readonly animatedObjects: THREE.Object3D[] = [];
-  private readonly gameplayObjects: THREE.Object3D[] = [];
+  private stage3dPromise?: Promise<Stage3D>;
+  private worldTheme: "menu" | "summary" = "menu";
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -84,19 +83,6 @@ export class Game {
     this.overlay = document.createElement("main");
     this.overlay.className = "scene-layer";
     this.root.replaceChildren(this.stage, this.overlay);
-
-    this.world = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
-    this.camera.position.set(0, 4.2, 8.5);
-    this.camera.lookAt(0, 0.6, 0);
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.08;
-    this.stage.appendChild(this.renderer.domElement);
 
     this.mastery = new MasteryTracker(this.save.getMutableData().progress.attempts);
     this.adaptive = new AdaptiveEngine(this.mastery);
@@ -118,6 +104,26 @@ export class Game {
     this.input.attach();
     this.scenes.goTo("boot");
     this.loop.start();
+    // Warm up the WebGL chunk in the background while the child is on the
+    // (pure DOM) journey map, so the runner is ready the moment it's tapped.
+    void this.ensureStage3d();
+  }
+
+  /**
+   * Lazily load Three.js + the WebGL stage. Scenes that need 3D await this;
+   * everything else boots without the ~475 kB chunk.
+   */
+  ensureStage3d(): Promise<Stage3D> {
+    if (!this.stage3dPromise) {
+      this.stage3dPromise = import("./Stage3D").then(({ Stage3D }) => {
+        const stage3d = new Stage3D(this.stage);
+        this.stage3d = stage3d;
+        stage3d.resetWorld(this.worldTheme);
+        this.resize();
+        return stage3d;
+      });
+    }
+    return this.stage3dPromise;
   }
 
   stop(): void {
@@ -205,32 +211,10 @@ export class Game {
   }
 
   resetWorld(theme: "menu" | "summary" = "menu"): void {
-    this.world.clear();
-    this.animatedObjects.length = 0;
-    this.gameplayObjects.length = 0;
-    this.setCameraForTheme(theme);
-    const palette = {
-      menu: { sky: 0xb9e8ff, ground: 0x6ee7b7, accent: 0xf6c453 },
-      summary: { sky: 0xfffbeb, ground: 0xa7f3d0, accent: 0xf6c453 }
-    }[theme];
-    this.world.background = new THREE.Color(palette.sky);
-
-    const ambient = new THREE.HemisphereLight(0xffffff, 0x335533, 2.4);
-    this.world.add(ambient);
-    const sun = new THREE.DirectionalLight(0xffffff, 1.9);
-    sun.position.set(3, 7, 5);
-    sun.castShadow = true;
-    this.world.add(sun);
-
-    const ground = new THREE.Mesh(
-      new THREE.BoxGeometry(18, 0.3, 20),
-      new THREE.MeshStandardMaterial({ color: palette.ground, roughness: 0.85 })
-    );
-    ground.position.set(0, -0.24, -2);
-    ground.receiveShadow = true;
-    this.world.add(ground);
-
-    this.addMenuWorld(palette.accent);
+    // Remember the requested theme: if the 3D layer is still downloading it
+    // applies this theme the moment it lands.
+    this.worldTheme = theme;
+    this.stage3d?.resetWorld(theme);
   }
 
   private registerScenes(): void {
@@ -269,18 +253,12 @@ export class Game {
   private resize(): void {
     const width = this.root.clientWidth || window.innerWidth;
     const height = this.root.clientHeight || window.innerHeight;
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(width, height, false);
+    this.stage3d?.resize(width, height);
   }
 
   private update(dt: number, elapsed: number): void {
-    for (const object of this.animatedObjects) {
-      object.rotation.y += dt * 0.35;
-      object.position.y += Math.sin(elapsed * 1.5 + object.position.x) * 0.002;
-    }
     this.scenes.update(dt);
-    this.renderer.render(this.world, this.camera);
+    this.stage3d?.update(dt, elapsed);
   }
 
   private soundCueForCorrectAttempt(challenge: Challenge, isSnap: boolean): SoundCue {
@@ -290,21 +268,4 @@ export class Game {
     return "success";
   }
 
-  private setCameraForTheme(_theme: "menu" | "summary"): void {
-    this.camera.position.set(0, 4.2, 8.5);
-    this.camera.lookAt(0, 0.6, 0);
-  }
-
-  private addMenuWorld(accent: number): void {
-    const base = new THREE.Mesh(new THREE.DodecahedronGeometry(1.25, 0), new THREE.MeshStandardMaterial({ color: accent, roughness: 0.5 }));
-    base.position.set(0, 1.4, -2.7);
-    this.world.add(base);
-    this.animatedObjects.push(base);
-    for (let i = 0; i < 10; i += 1) {
-      const star = new THREE.Mesh(new THREE.TetrahedronGeometry(0.18, 0), new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.4 }));
-      star.position.set(Math.cos(i) * 4, 1.2 + (i % 3) * 0.5, -3 + Math.sin(i) * 2);
-      this.world.add(star);
-      this.animatedObjects.push(star);
-    }
-  }
 }

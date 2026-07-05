@@ -3,15 +3,19 @@ import type { Challenge } from "../education/types";
 import type { Game } from "../game/Game";
 import { AdaptiveGateProvider } from "../runner/gateProvider";
 import { RunnerCore, type RunnerEvent } from "../runner/RunnerCore";
-import { RunnerView } from "../runner/RunnerView";
-import { numberColor } from "../runner/voxelNumber";
+import type { RunnerView } from "../runner/RunnerView";
+import { numberColor } from "../runner/numberColor";
 import { newlyUnlockedSkins, skinById, unlockedSkinIds } from "../runner/skins";
 import { getWorld, starsForRun, type WorldDef } from "../runner/worlds";
 import { BaseScene } from "./SceneUtils";
 
 export class RunScene extends BaseScene {
   private core!: RunnerCore;
-  private view!: RunnerView;
+  // The 3D view arrives async (Three.js is a lazy chunk); the run logic, HUD
+  // and countdown all work headless until it lands — usually instantly, since
+  // Game.start() already warmed the chunk during boot.
+  private view?: RunnerView;
+  private loadToken = 0;
   private world!: WorldDef;
   private starsAtStart = 0;
   private ended = false;
@@ -50,8 +54,16 @@ export class RunScene extends BaseScene {
       speedScale: data.settings.speed * this.world.speed,
       mechanics: this.world.mechanics
     });
-    this.view = new RunnerView(this.game.world, this.game.camera, skinById(data.progress.cosmetics.activeSkin), this.world.palette);
-    this.view.build();
+    // Attach the 3D view as soon as its lazy chunk is here (usually already
+    // warmed at boot). The countdown gives it a ~3.5s head start on top.
+    const token = ++this.loadToken;
+    const skin = skinById(data.progress.cosmetics.activeSkin);
+    void Promise.all([this.game.ensureStage3d(), import("../runner/RunnerView")]).then(([stage3d, { RunnerView }]) => {
+      if (token !== this.loadToken || this.ended) return;
+      this.view = new RunnerView(stage3d.world, stage3d.camera, skin, this.world.palette);
+      this.view.build();
+      this.view.sync(this.core.snapshot(), 0);
+    });
 
     this.buildHud();
     this.countdown = 3.5;
@@ -67,8 +79,10 @@ export class RunScene extends BaseScene {
   }
 
   unmount(): void {
+    this.loadToken += 1;
     this.game.audio.stopMusic();
     this.view?.dispose();
+    this.view = undefined;
     super.unmount();
   }
 
@@ -77,14 +91,14 @@ export class RunScene extends BaseScene {
     if (this.countdown > 0) {
       this.countdown -= dt;
       this.tickCountdown();
-      this.view.sync(this.core.snapshot(), 0);
+      this.view?.sync(this.core.snapshot(), 0);
       return;
     }
     this.core.update(dt);
     for (const event of this.core.drainEvents()) this.handleEvent(event);
     if (this.ended) return;
     const snapshot = this.core.snapshot();
-    this.view.sync(snapshot, dt);
+    this.view?.sync(snapshot, dt);
     this.updateHud(snapshot.distanceMeters, snapshot.coins, snapshot.runStars + snapshot.bonusStars, snapshot.combo, snapshot.gatesResolved, snapshot.gatesTotal, snapshot.target?.id);
     this.refreshTarget(snapshot.target?.id, snapshot.target?.meta as Challenge | undefined, snapshot.target?.targetText);
   }
@@ -98,7 +112,7 @@ export class RunScene extends BaseScene {
   }
 
   private handleEvent(event: RunnerEvent): void {
-    this.view.onEvent(event);
+    this.view?.onEvent(event);
     if (event.type === "coin") {
       this.game.audio.play("coin");
       this.game.haptics.play("coin");

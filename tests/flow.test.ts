@@ -486,8 +486,13 @@ describe("game shell — menu, run, results", () => {
     expect(root.querySelector(".run-scene")).toBeTruthy();
     expect(root.querySelectorAll(".run-ctrl")).toHaveLength(3);
     expect(root.querySelector(".run-target")).toBeTruthy();
-    // The 3D world is populated by the runner view.
-    expect((game.world as unknown as { children: unknown[] }).children.length).toBeGreaterThan(2);
+    // Three.js is a lazy chunk now: once the stage lands, the 3D world fills
+    // up (runner view build, or at minimum the themed backdrop).
+    const stage3d = await game.ensureStage3d();
+    for (let i = 0; i < 20 && stage3d.world.children.length <= 2; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    expect(stage3d.world.children.length).toBeGreaterThan(2);
   });
 
   it("plays a full run that logs number attempts and ends on the results screen", async () => {

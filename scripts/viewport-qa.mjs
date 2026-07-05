@@ -148,7 +148,24 @@ async function openScenario(open) {
     await openGameScene("run");
     await waitForSelector(".run-scene", 5_000);
     await waitForSelector(".run-target", 5_000);
-    await delay(1_000);
+    // Three.js + RunnerView load as a lazy chunk; wait until the in-world
+    // gates exist before collecting scene-graph metrics.
+    for (let attempt = 0; attempt < 40; attempt += 1) {
+      const gatesReady = await evaluate(`(() => {
+        const game = window.__blokblitzGame;
+        let numerals = 0;
+        const visit = (node) => {
+          if (!node || typeof node !== "object") return;
+          if (node.userData?.blokblitzRole === "runner-gate-big-numeral") numerals += 1;
+          if (Array.isArray(node.children)) node.children.forEach(visit);
+        };
+        visit(game?.stage3d?.world);
+        return numerals >= 2;
+      })()`);
+      if (gatesReady) break;
+      await delay(250);
+    }
+    await delay(400);
     return;
   }
 }
@@ -277,7 +294,7 @@ async function collectMetrics(scenario = {}) {
         selectedCorrectHint: Boolean(document.querySelector(".option-card.selected[data-correct='true'], .mini-object.selected[data-correct='true'], .build-choice.selected[data-correct='true']")),
         scaffoldBeaconCount: (() => {
           const game = window.__blokblitzGame;
-          return game?.world?.children?.filter((child) => child.userData?.blokblitzRole === "scaffold-target-beacon").length ?? 0;
+          return game?.stage3d?.world?.children?.filter((child) => child.userData?.blokblitzRole === "scaffold-target-beacon").length ?? 0;
         })(),
         menuProgress: rect(".kid-progress-strip"),
         menuProgressTokens: rects(".kid-progress-token"),
@@ -328,7 +345,8 @@ async function collectMetrics(scenario = {}) {
             if (role) roles[role] = (roles[role] ?? 0) + 1;
             if (Array.isArray(node.children)) node.children.forEach(visit);
           };
-          visit(game?.world);
+          // The 3D layer is a lazy chunk: the world lives on game.stage3d.
+          visit(game?.stage3d?.world);
           return roles;
         })()
       };
