@@ -1,4 +1,6 @@
 import { AdaptiveEngine } from "../education/adaptiveEngine";
+import { journeyTier, recentAccuracy, type DifficultyTier } from "../education/difficulty";
+import { JOURNEY, nodeIndexById } from "../data/journey";
 import { buildAttemptLog } from "../education/challengeLogger";
 import { ChallengeFactory } from "../education/challengeFactory";
 import { MasteryTracker } from "../education/masteryTracker";
@@ -200,6 +202,24 @@ export class Game {
       this.haptics.play("soft-error");
     }
     return attempt.wasCorrect;
+  }
+
+  /**
+   * The dynamic difficulty tier for the activity being played: rises with the
+   * Sterrenronde, with how deep into the path the launching node sits, and
+   * with strong recent accuracy (drops when the child struggles). Free play
+   * (no launching node) uses the current frontier position.
+   */
+  difficultyTier(): DifficultyTier {
+    const journey = this.data().progress.journey;
+    const nodeIndex = this.lastJourneyNode ? Math.max(0, nodeIndexById(this.lastJourneyNode)) : Math.min(journey.nodeIndex, JOURNEY.length - 1);
+    const { accuracy, count } = recentAccuracy(this.mastery.getAttempts());
+    return journeyTier({
+      round: journey.round ?? 1,
+      pathProgress: nodeIndex / Math.max(1, JOURNEY.length - 1),
+      recentAccuracy: accuracy,
+      attemptCount: count
+    });
   }
 
   flashMessage(message: string, tone: "good" | "warn" = "good"): void {

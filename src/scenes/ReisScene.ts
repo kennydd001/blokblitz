@@ -80,7 +80,8 @@ export class ReisScene extends BaseScene {
     const progressPill = document.createElement("div");
     progressPill.className = "reis-progress-pill";
     progressPill.setAttribute("aria-label", "Sterrenreis voortgang");
-    progressPill.innerHTML = `<span aria-hidden="true">🛤️</span><strong>${journeyProgressLabel(completedIds)}</strong>`;
+    const round = this.game.save.journeyRound();
+    progressPill.innerHTML = `<span aria-hidden="true">🛤️</span><strong>${round > 1 ? `R${round} • ` : ""}${journeyProgressLabel(completedIds)}</strong>`;
     bag.classList.add("reis-bag");
     top.append(stars, treasureMeter(this.game), progressPill, bag);
 
@@ -130,11 +131,14 @@ export class ReisScene extends BaseScene {
 
     scroll.appendChild(map);
 
-    // Friends rescued so far + ghost slots for the rest.
+    // Friends rescued so far + ghost slots for the rest. Once rescued, a
+    // friend STAYS rescued: a later Sterrenronde resets the road, not the
+    // friendships (round 2+ can only exist after every friend was saved).
     const meadow = document.createElement("div");
     meadow.className = "reis-meadow";
+    const laterRound = this.game.save.journeyRound() > 1;
     FRIENDS.forEach((friend) => {
-      const has = completed.has(friend.id);
+      const has = completed.has(friend.id) || laterRound;
       const slot = document.createElement(has ? "button" : "div") as HTMLElement;
       slot.className = `reis-friend${has ? " has" : ""}`;
       slot.dataset.friend = friend.id;
@@ -526,12 +530,30 @@ export class ReisScene extends BaseScene {
       <h2 class="finale-title">De ster is thuis!</h2>
       <p class="finale-line">${journeyFinale(rescued.length)}</p>
       <div class="finale-parade" aria-hidden="true">${friends}</div>
-      <button type="button" class="finale-done">Hoera!</button>
+      <div class="finale-actions">
+        <button type="button" class="finale-done">Hoera!</button>
+        <button type="button" class="finale-next-round">Nog een reis! 🔁</button>
+      </div>
     `;
     overlay.querySelector<HTMLButtonElement>(".finale-done")!.addEventListener("click", () => {
       overlay.remove();
       this.buddy?.setMood("happy", 1500);
       this.buddy?.say("Thuis!");
+    });
+    // The path continues: a new Sterrenronde on the same map, one difficulty
+    // tier higher and still shaped by the adaptive engine. Stars, stickers,
+    // friends and Buddy's level all stay earned; only the road resets.
+    overlay.querySelector<HTMLButtonElement>(".finale-next-round")!.addEventListener("click", () => {
+      overlay.remove();
+      this.game.save.startNewJourneyRound();
+      this.game.journeySeenCompleted = 0;
+      this.game.journeyLastRegion = undefined;
+      const round = this.game.save.journeyRound();
+      this.render();
+      this.game.voice.speak(`Ronde ${round}! De sterren willen nog een reis — het wordt ietsje moeilijker. Ga je mee?`, {
+        interrupt: true,
+        pitch: 1.2
+      });
     });
     this.root.appendChild(overlay);
     this.addCleanup(() => overlay.remove());
@@ -679,15 +701,22 @@ export class ReisScene extends BaseScene {
   }
 
   // The opening story beat: a tappable card that sets up the whole adventure.
+  // From Sterrenronde 2 the story shifts: same world, a bolder journey.
   private showStoryCard(): void {
+    const round = this.game.save.journeyRound();
+    const title = round > 1 ? `Sterrenronde ${round}` : JOURNEY_INTRO.title;
+    const lines =
+      round > 1
+        ? ["De sterren willen nog een reis!", "Dezelfde weg, maar alles is een beetje moeilijker.", "Laat zien hoe sterk je geworden bent!"]
+        : JOURNEY_INTRO.lines;
     const overlay = document.createElement("div");
     overlay.className = "reis-story-overlay";
     const card = document.createElement("div");
     card.className = "reis-story-card";
     card.innerHTML =
-      `<div class="reis-story-star" aria-hidden="true">⭐</div>` +
-      `<h2>${JOURNEY_INTRO.title}</h2>` +
-      JOURNEY_INTRO.lines.map((line) => `<p>${line}</p>`).join("");
+      `<div class="reis-story-star" aria-hidden="true">${round > 1 ? "🔁" : "⭐"}</div>` +
+      `<h2>${title}</h2>` +
+      lines.map((line) => `<p>${line}</p>`).join("");
     const start = document.createElement("button");
     start.type = "button";
     start.className = "btn primary reis-story-start";
@@ -703,7 +732,7 @@ export class ReisScene extends BaseScene {
     this.root.appendChild(overlay);
     this.addCleanup(() => overlay.remove());
     // Read the story aloud for a pre-reader.
-    this.game.voice.speak(JOURNEY_INTRO.lines.join(" "), { interrupt: true });
+    this.game.voice.speak(lines.join(" "), { interrupt: true });
   }
 
   private bloom(nodeId: string): void {

@@ -70,11 +70,23 @@ export abstract class MiniGameScene extends BaseScene {
     super.unmount();
   }
 
-  /** A friendly quantity for this round, nudged by the adaptive engine but kept in range. */
+  /** The dynamic difficulty tier for this activity (round + path + mastery). */
+  protected tier(): 1 | 2 | 3 {
+    return this.game.difficultyTier();
+  }
+
+  /**
+   * A friendly quantity for this round, nudged by the adaptive engine and
+   * shaped by the difficulty tier: tier 1 keeps numbers small (max 5), tier 2
+   * uses the mode's full range, tier 3 biases toward the harder end.
+   */
   protected focusQuantity(min: number, max: number): number {
+    const tier = this.tier();
+    const cappedMax = tier === 1 ? Math.max(min + 1, Math.min(max, 5)) : max;
+    const raisedMin = tier === 3 ? Math.min(cappedMax - 1, Math.max(min, 4)) : min;
     const focus = this.game.adaptive.recommendFocus().quantity;
     const jitter = Math.floor(Math.random() * 3) - 1;
-    return Math.max(min, Math.min(max, focus + jitter));
+    return Math.max(raisedMin, Math.min(cappedMax, focus + jitter));
   }
 
   protected startRound(): void {

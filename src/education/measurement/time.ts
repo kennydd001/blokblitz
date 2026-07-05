@@ -66,9 +66,13 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function clockRound(mode: ClockMode = pickOne(["read-clock", "which-clock"] as ClockMode[])): ClockRound {
+/**
+ * One clock round. `tier` shapes it dynamically: tier 1 reads whole hours
+ * only, tier 2 mixes whole and half hours, tier 3 is half-hour heavy.
+ */
+export function clockRound(mode: ClockMode = pickOne(["read-clock", "which-clock"] as ClockMode[]), tier: 1 | 2 | 3 = 2): ClockRound {
   const hour = pickInt(1, 12);
-  const minute = pickOne([0, 30]);
+  const minute = tier === 1 ? 0 : pickOne(tier === 3 ? [30, 30, 0] : [0, 30]);
   const key = `${hour}:${minute}`;
 
   // Distractor times: the other half/whole of this hour + a neighbour hour.

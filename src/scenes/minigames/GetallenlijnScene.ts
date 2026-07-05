@@ -17,7 +17,7 @@ export class GetallenlijnScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = lineRound();
+    this.currentRound = lineRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return lineChallenge(this.currentRound);
   }

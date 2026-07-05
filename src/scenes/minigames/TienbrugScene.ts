@@ -18,7 +18,7 @@ export class TienbrugScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = bridgeRound();
+    this.currentRound = bridgeRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return bridgeChallenge(this.currentRound);
   }

@@ -931,3 +931,32 @@ cache-first offline via sw.js v2.
 Validation: typecheck, lint, 153 tests, build, qa:viewport 18/18 green; live
 preview check confirmed the runner builds its world via the lazy chunks with
 zero console errors.
+
+## Dynamic Difficulty + Sterrenrondes (the path continues) - 2026-07-05
+
+Completed work (Claude):
+
+- New pure `src/education/difficulty.ts`: `journeyTier()` combines three
+  transparent signals into a tier 1..3 — the Sterrenronde (base), how deep
+  into the path the launching node sits (second half = +1), and recent
+  accuracy over the last 20 attempts (>=0.9 bumps up, <0.6 drops down,
+  ignored under 10 attempts, never below tier 1).
+- `Game.difficultyTier()` exposes it (story mode uses the launching node,
+  free play the frontier); `MiniGameScene.tier()` + tiered `focusQuantity`
+  (tier 1 caps quantities at 5, tier 3 biases 4+) gives ALL number modes
+  dynamic difficulty for free.
+- Tier-aware generators: getallenlijn (1..9 / full line / 9..19 + no
+  "before" mode at tier 1), tienbrug (to-ten-heavy / mix / add-sub only),
+  kloktoren (whole hours / mix / half-hour heavy), klankgrot (begin-end /
+  mix / blend-heavy). Runner pace scales 0.92/1/1.08 by tier.
+- Sterrenrondes: `journey.round` (additive save field, migrated to 1),
+  `SaveManager.startNewJourneyRound()`. The finale cinematic now offers
+  "Nog een reis!" next to "Hoera!": the road resets (world sleeps again),
+  the round-2+ story card reframes the journey ("Sterrenronde N"), the
+  progress pill shows "RN •", and every mode plays one tier higher. Stars,
+  stickers, Buddy level AND the friend meadow stay earned (friendships
+  survive the reset).
+
+Validation: 162 tests (new difficulty.test.ts + Sterrenronde flow test +
+migration fix), build, qa:viewport 18/18; live preview click-through of
+finale -> Nog een reis -> R2 map with veils back, story card, tier 2.

@@ -1092,6 +1092,43 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelectorAll(".reis-life")).toHaveLength(6);
   });
 
+  it("continues the path after the finale: a new Sterrenronde, harder and tailored", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    // Fresh save plays round 1 at tier 1 (start of the path, no mastery yet).
+    expect(game.save.journeyRound()).toBe(1);
+    expect(game.difficultyTier()).toBe(1);
+
+    // Bring the star home, then choose "Nog een reis!".
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, -1).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    game.showScene("reis");
+    const starsBefore = game.data().progress.stars;
+    root.querySelector<HTMLButtonElement>('.reis-node[data-kind="star"]')!.click();
+    root.querySelector<HTMLButtonElement>(".finale-next-round")!.click();
+
+    // The path continues: round 2, road reset, world asleep again — but
+    // everything earned stays.
+    expect(game.save.journeyRound()).toBe(2);
+    expect(game.data().progress.journey.completed).toHaveLength(0);
+    expect(game.data().progress.stars).toBeGreaterThanOrEqual(starsBefore);
+    const veils = [...root.querySelectorAll<SVGRectElement>(".reis-band-veil")];
+    expect(veils.every((veil) => Number(veil.dataset.completion) === 0)).toBe(true);
+    expect(root.querySelector(".reis-progress-pill")?.textContent).toContain("R2");
+    // Friendships survive the round reset: the meadow keeps all six friends.
+    expect(root.querySelectorAll(".reis-friend.has")).toHaveLength(6);
+    // Round 2 raises the difficulty tier for every mode.
+    expect(game.difficultyTier()).toBe(2);
+    // The round-2 story card frames the new journey.
+    game.showScene("hub");
+    game.showScene("reis");
+    expect(root.querySelector(".reis-story-card h2")?.textContent).toContain("Sterrenronde 2");
+  });
+
   it("fights and defeats a region boss, then frees the trapped friend", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -1878,7 +1915,7 @@ describe("De Sterrenreis — story mode", () => {
     localStorage.setItem("blokblitz-save-v1", JSON.stringify({ version: 1, settings: { muted: false }, progress: { stars: 7 } }));
     const { SaveManager } = await import("../src/game/SaveManager");
     const save = new SaveManager();
-    expect(save.getData().progress.journey).toEqual({ nodeIndex: 0, completed: [] });
+    expect(save.getData().progress.journey).toEqual({ nodeIndex: 0, completed: [], round: 1 });
     expect(save.getData().progress.stars).toBe(7);
   });
 });

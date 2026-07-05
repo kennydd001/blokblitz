@@ -175,6 +175,12 @@ export interface JourneyProgress {
   nodeIndex: number;
   /** Ids of completed journey nodes. */
   completed: string[];
+  /**
+   * The Sterrenronde: bringing the star home finishes a round, after which the
+   * path continues — same map, one difficulty tier higher, tailored by the
+   * adaptive engine. 1 = the first journey; older saves are migrated to 1.
+   */
+  round?: number;
 }
 
 export interface GameProgress {

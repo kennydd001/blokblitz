@@ -44,8 +44,18 @@ function numberOptions(correct: number): Array<{ label: string; value: number; i
   return shuffle([{ label: String(correct), value: correct, isCorrect: true }, ...distractors.map((n) => ({ label: String(n), value: n, isCorrect: false }))]);
 }
 
-export function lineRound(mode: LineMode = pickOne(MODES)): LineRound {
-  const target = pickInt(1, 19);
+/**
+ * One number-line round. `tier` shapes the range dynamically: tier 1 stays on
+ * the friendly 1..9 stretch (and skips the trickier "before" mode), tier 2 is
+ * the full line to 20, tier 3 lives on the harder 9..19 stretch.
+ */
+export function lineRound(mode?: LineMode, tier: 1 | 2 | 3 = 2): LineRound {
+  const pickedMode = mode ?? pickOne(tier === 1 ? (["missing", "after"] as LineMode[]) : MODES);
+  const target = tier === 1 ? pickInt(1, 9) : tier === 3 ? pickInt(9, 19) : pickInt(1, 19);
+  return lineRoundFor(pickedMode, target);
+}
+
+function lineRoundFor(mode: LineMode, target: number): LineRound {
   const window = windowFor(target);
   let prompt = "Welk getal is weg?";
   if (mode === "after") prompt = `Welk getal komt na de ${target - 1}?`;

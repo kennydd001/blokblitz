@@ -59,7 +59,7 @@ export function defaultProgress(): GameProgress {
     cosmetics: { activeSkin: "blitz", unlockedSkins: ["blitz"] },
     worlds: makeWorldRecord(),
     stickers: [],
-    journey: { nodeIndex: 0, completed: [] },
+    journey: { nodeIndex: 0, completed: [], round: 1 },
     dailyChestDay: "",
     sessionChestFill: 0,
     buddyLevelSeen: 1
@@ -191,6 +191,25 @@ export class SaveManager {
     return this.data.progress.journey.nodeIndex >= JOURNEY.length;
   }
 
+  /** The current Sterrenronde (1 = the first journey). */
+  journeyRound(): number {
+    return this.data.progress.journey.round ?? 1;
+  }
+
+  /**
+   * Start the next Sterrenronde: the path continues on the same map, one
+   * difficulty tier higher. Node progress resets so the world "sleeps" again;
+   * stars, stickers, friends-in-the-bag and Buddy's level all stay earned.
+   */
+  startNewJourneyRound(): SaveData {
+    const journey = this.data.progress.journey;
+    journey.round = this.journeyRound() + 1;
+    journey.completed = [];
+    journey.nodeIndex = 0;
+    this.save();
+    return this.getData();
+  }
+
   /** Award any newly earned stickers from current progress. Returns the ids that are new. */
   syncStickers(): string[] {
     const earned = earnedStickerIds(this.data.progress);
@@ -284,7 +303,7 @@ export class SaveManager {
         // region bosses) keep a clean linear prefix instead of jumping backwards.
         journey: (() => {
           const completed = backfillCompleted(data.progress?.journey?.completed ?? []);
-          return { nodeIndex: frontierIndex(completed), completed };
+          return { nodeIndex: frontierIndex(completed), completed, round: data.progress?.journey?.round ?? 1 };
         })(),
         dailyChestDay: data.progress?.dailyChestDay ?? "",
         sessionChestFill: data.progress?.sessionChestFill ?? 0,

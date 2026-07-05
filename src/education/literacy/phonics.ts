@@ -62,7 +62,19 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function phonicsRound(mode: PhonicsMode = pickOne(MODES)): PhonicsRound {
+/**
+ * One phonics round. `tier` shapes the mix dynamically: tier 1 practises
+ * begin-sounds only (the entry skill), tier 2 mixes everything, tier 3 leans
+ * on the harder blend rounds.
+ */
+export function phonicsRound(mode?: PhonicsMode, tier: 1 | 2 | 3 = 2): PhonicsRound {
+  const pickedMode =
+    mode ??
+    pickOne(tier === 1 ? (["begin", "begin", "end"] as PhonicsMode[]) : tier === 3 ? (["blend", "blend", "end"] as PhonicsMode[]) : MODES);
+  return phonicsRoundFor(pickedMode);
+}
+
+function phonicsRoundFor(mode: PhonicsMode): PhonicsRound {
   if (mode === "begin") {
     const target = pickOne(PHONICS_WORDS);
     const sound = target.begin;

@@ -19,7 +19,7 @@ export class KlankgrotScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = phonicsRound();
+    this.currentRound = phonicsRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return phonicsChallenge(this.currentRound);
   }

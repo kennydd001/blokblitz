@@ -44,7 +44,25 @@ function numberOptions(correct: number): Array<{ label: string; value: number; i
   return shuffle([{ label: String(correct), value: correct, isCorrect: true }, ...distractors.map((n) => ({ label: String(n), value: n, isCorrect: false }))]);
 }
 
-export function bridgeRound(mode: BridgeMode = pickOne(MODES)): BridgeRound {
+/**
+ * One ten-bridge round. `tier` shapes the mix dynamically: tier 1 leans on
+ * the gentle "maak de tien vol" rounds, tier 2 mixes everything, tier 3 drops
+ * to-ten and plays mostly the harder add/subtract-over-ten sums.
+ */
+export function bridgeRound(mode?: BridgeMode, tier: 1 | 2 | 3 = 2): BridgeRound {
+  const pickedMode =
+    mode ??
+    pickOne(
+      tier === 1
+        ? (["to-ten", "to-ten", "add"] as BridgeMode[])
+        : tier === 3
+          ? (["add", "sub", "sub"] as BridgeMode[])
+          : MODES
+    );
+  return bridgeRoundFor(pickedMode);
+}
+
+function bridgeRoundFor(mode: BridgeMode): BridgeRound {
   if (mode === "to-ten") {
     const a = pickInt(6, 9);
     const answer = 10 - a;

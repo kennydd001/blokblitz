@@ -17,7 +17,7 @@ export class KloktorenScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = clockRound();
+    this.currentRound = clockRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return clockChallenge(this.currentRound);
   }

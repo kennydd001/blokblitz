@@ -48,10 +48,13 @@ export class RunScene extends BaseScene {
       gateTypes: this.world.gateTypes,
       representations: this.world.representations
     });
+    // Dynamic difficulty: the pace follows the child's tier (round + path +
+    // mastery) — a struggling child runs a touch calmer, an acing one faster.
+    const tierSpeed = [0.92, 1, 1.08][this.game.difficultyTier() - 1];
     this.core = new RunnerCore({
       provider,
       gatesTotal: this.world.gatesTotal,
-      speedScale: data.settings.speed * this.world.speed,
+      speedScale: data.settings.speed * this.world.speed * tierSpeed,
       mechanics: this.world.mechanics
     });
     // Attach the 3D view as soon as its lazy chunk is here (usually already
