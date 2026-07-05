@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, expect, it } from "vitest";
 import {
   allSplits,
@@ -61,5 +62,39 @@ describe("splitbord challenge generation + logging", () => {
     const node = JOURNEY.find((n) => n.scene === "splitbord");
     expect(node).toBeTruthy();
     expect(node!.kind).toBe("stop");
+  });
+
+  it("pick-missing rounds are hands-on: eggs move into the empty box and the numeral lights up", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    localStorage.clear();
+    const { Game } = await import("../src/game/Game");
+    const { SplitbordScene } = await import("../src/scenes/minigames/SplitbordScene");
+    const game = new Game(document.querySelector<HTMLElement>("#app")!);
+    class ForcedMissing extends SplitbordScene {
+      protected makeChallenge() {
+        const challenge = splitbordChallenge(5, "pick-missing");
+        this.instruction = challenge.prompt;
+        return challenge;
+      }
+    }
+    const scene = new ForcedMissing(game);
+    scene.mount();
+    const overlay = game.overlay;
+
+    // One tappable egg per "samen" (the whole rekenbordje amount).
+    expect(overlay.querySelectorAll(".splitbord-tray .splitbord-egg")).toHaveLength(5);
+    // Tap two eggs: they land in the empty box's nest.
+    (overlay.querySelector(".splitbord-tray .splitbord-egg") as HTMLButtonElement).click();
+    (overlay.querySelector(".splitbord-tray .splitbord-egg") as HTMLButtonElement).click();
+    expect(overlay.querySelectorAll(".splitbord-part.empty .splitbord-nest .splitbord-egg")).toHaveLength(2);
+    // If "2" is among the numerals, it lights up as the built suggestion.
+    const two = overlay.querySelector('.splitbord-choice[data-value="2"]');
+    if (two) expect(two.classList.contains("suggest")).toBe(true);
+    // Tapping a nested egg puts it back on the tray.
+    (overlay.querySelector(".splitbord-nest .splitbord-egg") as HTMLButtonElement).click();
+    expect(overlay.querySelectorAll(".splitbord-nest .splitbord-egg")).toHaveLength(1);
+    // The answer flow is unchanged: numeral buttons still resolve the round.
+    expect(overlay.querySelector('.splitbord-choice[data-correct="true"]')).toBeTruthy();
+    scene.unmount();
   });
 });

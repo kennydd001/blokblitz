@@ -960,3 +960,35 @@ Completed work (Claude):
 Validation: 162 tests (new difficulty.test.ts + Sterrenronde flow test +
 migration fix), build, qa:viewport 18/18; live preview click-through of
 finale -> Nog een reis -> R2 map with veils back, story card, tier 2.
+
+## Per-Domain Difficulty + Hands-on Splitbord + Playable Intro - 2026-07-05
+
+Completed work (Claude, from the ChatGPT idea list: picked #4, #3 and #2):
+
+- Per-domain difficulty: recentAccuracy() now scopes to ONE learning domain
+  (undefined = the classic number modes) and SCENE_DOMAINS maps every
+  curriculum scene to its domain. Game.difficultyTier(domain?) +
+  MiniGameScene.tier() pass the mode's own domain, so a child strong in
+  rekenen but growing in lezen plays each at its own level.
+- Hands-on Splitbord: "3 is 2 en hoeveel?" rounds get a tray with ALL the
+  eggs (the samen-amount); the child taps eggs INTO the dashed empty box
+  (and back out), the numeral matching what they built lights up as a
+  suggestion, and the tap on the numeral stays the confirmation — same
+  challenge + logging as before. Overshoot is allowed on purpose: seeing
+  "too many" is part of the learning.
+- Playable intro micro-cinematic (round 1): three visual beats with barely
+  any reading — the star falls from the night sky, the world's colour blocks
+  drain grey, Buddy catches the star — tap anywhere to skip ahead, voice
+  carries the story, then "Start het avontuur!". All beat content stays in
+  the DOM (CSS reveals), so screen readers and tests see everything.
+  Sterrenronde 2+ keeps the short round card.
+- QA harness robustness: collectMetrics now neutralises CSS animations
+  synchronously while measuring. This fixed a REAL flake: the journey quest
+  card has a pulsing scale animation, so getBoundingClientRect sampled a
+  random animation phase and the width check failed intermittently. Also:
+  the menu scenario dismisses the (dark) intro cinematic before validating,
+  and .reis-quest is border-box so its 96% width includes borders.
+
+Validation: 164 tests (per-domain accuracy test, hands-on splitbord DOM
+test, cinematic beats in the intro flow test), build, qa:viewport 18/18;
+live checks of the cinematic (all beats + centered Buddy) and the egg tray.

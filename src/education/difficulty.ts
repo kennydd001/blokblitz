@@ -33,10 +33,37 @@ export function journeyTier(signals: TierSignals): DifficultyTier {
   return Math.max(1, Math.min(3, tier)) as DifficultyTier;
 }
 
-/** Accuracy over the last `window` attempts, across ALL domains. */
-export function recentAccuracy(attempts: AttemptLog[], window = 20): { accuracy: number; count: number } {
-  const recent = attempts.slice(-window);
+/**
+ * Accuracy over the last `window` attempts WITHIN one learning domain, so a
+ * child who is strong in rekenen but still growing in lezen gets a separate
+ * tier per domain. `domain` undefined = the classic 1-10 number modes (their
+ * attempts carry no domain tag).
+ */
+export function recentAccuracy(attempts: AttemptLog[], window = 20, domain?: string): { accuracy: number; count: number } {
+  const inDomain = domain === undefined ? attempts.filter((attempt) => !attempt.domain) : attempts.filter((attempt) => attempt.domain === domain);
+  const recent = inDomain.slice(-window);
   if (recent.length === 0) return { accuracy: 0, count: 0 };
   const correct = recent.filter((attempt) => attempt.wasCorrect).length;
   return { accuracy: correct / recent.length, count: recent.length };
 }
+
+/**
+ * Which learning domain each scene's attempts are logged under, so the
+ * difficulty tier listens to the RIGHT skill history. Scenes not listed
+ * (count, match, splitbord...) log classic number attempts (no domain tag).
+ */
+export const SCENE_DOMAINS: Record<string, string> = {
+  klankgrot: "literacy-phonemic",
+  letterkompas: "literacy-reading",
+  zoemroute: "literacy-reading",
+  woordbouwplaats: "literacy-reading",
+  luisterbos: "listening-comprehension",
+  tientalhuis: "math-number",
+  getallenlijn: "math-number",
+  tienbrug: "math-operations",
+  vormenburcht: "math-geometry",
+  kloktoren: "math-measurement",
+  geldmarkt: "math-measurement",
+  meetwerf: "math-measurement",
+  verkeerspad: "world-traffic"
+};

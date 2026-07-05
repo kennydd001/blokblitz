@@ -1,5 +1,6 @@
 import { JOURNEY } from "../../data/journey";
 import { stickerById } from "../../data/stickers";
+import { SCENE_DOMAINS } from "../../education/difficulty";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -70,9 +71,13 @@ export abstract class MiniGameScene extends BaseScene {
     super.unmount();
   }
 
-  /** The dynamic difficulty tier for this activity (round + path + mastery). */
+  /**
+   * The dynamic difficulty tier for this activity (round + path + mastery).
+   * The mastery signal is scoped to this mode's own learning domain, so a
+   * strong rekenaar who still practises lezen plays each at its own level.
+   */
   protected tier(): 1 | 2 | 3 {
-    return this.game.difficultyTier();
+    return this.game.difficultyTier(SCENE_DOMAINS[this.name]);
   }
 
   /**

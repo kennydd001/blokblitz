@@ -209,11 +209,15 @@ export class Game {
    * Sterrenronde, with how deep into the path the launching node sits, and
    * with strong recent accuracy (drops when the child struggles). Free play
    * (no launching node) uses the current frontier position.
+   *
+   * `domain` scopes the accuracy signal to ONE learning domain, so a child
+   * who is strong in rekenen but still growing in lezen gets a separate tier
+   * per domain. Undefined = the classic 1-10 number modes.
    */
-  difficultyTier(): DifficultyTier {
+  difficultyTier(domain?: string): DifficultyTier {
     const journey = this.data().progress.journey;
     const nodeIndex = this.lastJourneyNode ? Math.max(0, nodeIndexById(this.lastJourneyNode)) : Math.min(journey.nodeIndex, JOURNEY.length - 1);
-    const { accuracy, count } = recentAccuracy(this.mastery.getAttempts());
+    const { accuracy, count } = recentAccuracy(this.mastery.getAttempts(), 20, domain);
     return journeyTier({
       round: journey.round ?? 1,
       pathProgress: nodeIndex / Math.max(1, JOURNEY.length - 1),

@@ -3900,6 +3900,7 @@ input {
   font-weight: 900;
 }
 .reis-quest {
+  box-sizing: border-box;
   width: min(430px, 96%);
   display: grid;
   grid-template-columns: 54px minmax(0, 1fr) 30px;
@@ -5442,6 +5443,127 @@ input {
 /* Splitbord: the split clicks together; missing numbers land in their boxes. */
 .splitbord-board.snapped { animation: split-snap 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); }
 .splitbord-total.landed, .splitbord-part.landed { animation: dot-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); background: #d7f5c2; }
+
+/* Hands-on rekenbordje: tap eggs from the tray into the empty box. */
+.splitbord-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 3px dashed rgba(23, 32, 51, 0.3);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+}
+.splitbord-egg {
+  padding: 2px;
+  font-size: 1.5rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: 34px;
+  min-height: 34px;
+}
+.splitbord-egg.hop { animation: coin-hop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.splitbord-nest { display: flex; flex-wrap: wrap; gap: 0; justify-content: center; max-width: 90px; }
+.splitbord-nest .splitbord-egg { font-size: 1.1rem; min-width: 24px; min-height: 24px; }
+/* The numeral matching what the child built lights up as a suggestion. */
+.splitbord-choice.suggest {
+  border-color: #34c759;
+  box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.35), 0 6px 0 rgba(23, 32, 51, 0.2);
+  animation: suggest-pulse 1s ease-in-out infinite alternate;
+}
+@keyframes suggest-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.07); }
+}
+
+/* ===== Playable intro cinematic: star falls -> world greys -> Buddy catches it ===== */
+.reis-cine-overlay {
+  background: radial-gradient(ellipse at 50% 20%, #2c3a68 0%, #141b33 60%, #0b1022 100%);
+  transition: background 1s ease;
+}
+.reis-cine {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: min(30rem, 92vw);
+  min-height: 380px;
+  text-align: center;
+}
+.cine-star {
+  font-size: 4.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 22px rgba(255, 214, 90, 0.95));
+  animation: cine-star-fall 2.2s cubic-bezier(0.35, 0, 0.6, 1) forwards;
+}
+@keyframes cine-star-fall {
+  0% { transform: translateY(-38vh) rotate(-18deg) scale(0.6); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(0) rotate(8deg) scale(1); opacity: 1; }
+}
+.cine-world { display: flex; gap: 8px; }
+.cine-world i {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 3px solid #10131c;
+  transition: filter 1.4s ease, opacity 1.4s ease;
+}
+.cine-world i:nth-child(1) { background: #6ee7b7; }
+.cine-world i:nth-child(2) { background: #f6c453; }
+.cine-world i:nth-child(3) { background: #7dd3fc; }
+.cine-world i:nth-child(4) { background: #c4b5fd; }
+.cine-world i:nth-child(5) { background: #fda4af; }
+.cine-world i:nth-child(6) { background: #9be35a; }
+/* Beat 2: the colours drain away. */
+.reis-cine[data-beat="2"] .cine-world i, .reis-cine[data-beat="3"] .cine-world i { filter: grayscale(1) brightness(0.75); }
+/* Beat 3: Buddy catches the star; title + start reveal. The buddy element is
+   normally fixed bottom-left (map layout) — inside the cinematic it sits in
+   the middle of the show. */
+.reis-cine .cine-buddy.buddy {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  width: 92px;
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.reis-cine[data-beat="3"] .cine-buddy.buddy { transform: scale(1); }
+.reis-cine[data-beat="3"] .cine-star { animation: cine-star-caught 1.2s ease forwards; }
+@keyframes cine-star-caught {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(6px) scale(0.82); }
+}
+.cine-title {
+  margin: 0;
+  font-size: 1.7rem;
+  color: #fff2a8;
+  text-shadow: 0 3px 0 rgba(16, 19, 28, 0.5);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.reis-cine[data-beat="3"] .cine-title { opacity: 1; transform: scale(1); }
+.cine-line {
+  margin: 0;
+  min-height: 2.6em;
+  max-width: 26rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #dbe6ff;
+  display: none;
+}
+.reis-cine[data-beat="1"] .cine-line[data-line="1"],
+.reis-cine[data-beat="2"] .cine-line[data-line="2"],
+.reis-cine[data-beat="3"] .cine-line[data-line="3"] { display: block; animation: finale-pop 0.4s ease; }
+.reis-cine .reis-story-start { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+.reis-cine[data-beat="3"] .reis-story-start { opacity: 1; pointer-events: auto; animation: finale-pop 0.5s ease; }
 @keyframes split-snap {
   0% { transform: scale(1); }
   35% { transform: scale(0.93); }

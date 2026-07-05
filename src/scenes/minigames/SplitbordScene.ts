@@ -23,7 +23,7 @@ export class SplitbordScene extends MiniGameScene {
 
   protected renderPlay(challenge: Challenge): HTMLElement {
     // mechanic = "split|<mode>|<totalDisplay>|<leftDisplay>|<rightDisplay>"
-    const [, , totalD = "?", leftD = "?", rightD = "?"] = challenge.mechanic.split("|");
+    const [, mode, totalD = "?", leftD = "?", rightD = "?"] = challenge.mechanic.split("|");
     const wrap = document.createElement("div");
     wrap.className = "mini-play splitbord-play";
 
@@ -33,9 +33,9 @@ export class SplitbordScene extends MiniGameScene {
       <div class="splitbord-total ${totalD === "?" ? "empty" : ""}"><span class="splitbord-box-label">samen</span><b>${totalD}</b></div>
       <div class="splitbord-stem" aria-hidden="true"></div>
       <div class="splitbord-parts">
-        <div class="splitbord-part ${leftD === "?" ? "empty" : ""}"><b>${leftD}</b></div>
+        <div class="splitbord-part ${leftD === "?" ? "empty" : ""}"><b>${leftD}</b><span class="splitbord-nest" aria-hidden="true"></span></div>
         <span class="splitbord-plus" aria-hidden="true">+</span>
-        <div class="splitbord-part ${rightD === "?" ? "empty" : ""}"><b>${rightD}</b></div>
+        <div class="splitbord-part ${rightD === "?" ? "empty" : ""}"><b>${rightD}</b><span class="splitbord-nest" aria-hidden="true"></span></div>
       </div>
     `;
 
@@ -46,14 +46,60 @@ export class SplitbordScene extends MiniGameScene {
       button.type = "button";
       button.className = "mini-choice splitbord-choice";
       button.dataset.correct = String(option.isCorrect);
+      button.dataset.value = String(option.value ?? option.label);
       button.setAttribute("aria-label", option.label);
       button.innerHTML = `<span class="splitbord-choice-num">${option.label}</span>`;
       button.addEventListener("click", () => this.pick(option));
       choices.appendChild(button);
     });
 
-    wrap.append(board, choices);
+    wrap.appendChild(board);
+    // Hands-on rekenbordje: for the "which part is missing?" rounds the child
+    // gets a tray with ALL the eggs (the total) and taps them INTO the empty
+    // box — seeing and feeling how many still fit. When the built amount
+    // matches an answer, that numeral lights up; the tap on it stays the
+    // confirmation (same challenge + logging as before).
+    if (mode === "pick-missing" && totalD !== "?") {
+      wrap.appendChild(this.buildEggTray(Number(totalD), board, choices));
+    }
+    wrap.appendChild(choices);
     return wrap;
+  }
+
+  private buildEggTray(total: number, board: HTMLElement, choices: HTMLElement): HTMLElement {
+    const tray = document.createElement("div");
+    tray.className = "splitbord-tray";
+    tray.setAttribute("aria-label", "Tik eieren in het lege vak");
+    const nest = board.querySelector<HTMLElement>(".splitbord-part.empty .splitbord-nest");
+    const sync = (): void => {
+      const built = nest?.childElementCount ?? 0;
+      choices.querySelectorAll<HTMLElement>(".splitbord-choice").forEach((button) => {
+        button.classList.toggle("suggest", Number(button.dataset.value) === built && built > 0);
+      });
+    };
+    for (let i = 0; i < total; i += 1) {
+      const egg = document.createElement("button");
+      egg.type = "button";
+      egg.className = "splitbord-egg";
+      egg.setAttribute("aria-label", "ei");
+      egg.textContent = "🥚";
+      egg.addEventListener("click", () => {
+        if (this.resolving || !nest) return;
+        if (egg.parentElement === tray) {
+          nest.appendChild(egg);
+          this.game.audio.play("coin");
+        } else {
+          tray.appendChild(egg);
+          this.game.audio.play("snap");
+        }
+        egg.classList.remove("hop");
+        void egg.offsetWidth;
+        egg.classList.add("hop");
+        sync();
+      });
+      tray.appendChild(egg);
+    }
+    return tray;
   }
 
   protected onWrong(): void {

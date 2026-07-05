@@ -131,6 +131,10 @@ async function openScenario(open) {
   if (open === "menu") {
     await openGameScene("reis");
     await waitForSelector(".reis-scene", 5_000);
+    // A fresh profile opens with the intro cinematic (dark night sky) over
+    // the map; start the adventure so the scenario validates the map itself.
+    await evaluate("document.querySelector('.reis-story-start')?.click()");
+    await delay(250);
     return;
   }
   if (open === "hub") {
@@ -231,6 +235,13 @@ async function collectMetrics(scenario = {}) {
   return evaluate(`
     (() => {
       const miniBoardSelector = ${miniBoardSelector};
+      // Neutralise CSS animations while measuring: pulse/idle animations scale
+      // elements, so getBoundingClientRect samples a random animation phase
+      // and layout checks become flaky. Synchronous inject + remove, so
+      // screenshots are unaffected.
+      const freeze = document.createElement("style");
+      freeze.textContent = "* { animation: none !important; transition: none !important; }";
+      document.head.appendChild(freeze);
       const rect = (selector) => {
         const el = document.querySelector(selector);
         if (!el) return null;
@@ -263,7 +274,7 @@ async function collectMetrics(scenario = {}) {
           pointerEvents: cs.pointerEvents
         };
       });
-      return {
+      const metrics = {
         hubGrid: rect(".hub-grid"),
         hubCardCount: document.querySelectorAll(".hub-card").length,
         menuGarage: rect(".menu-garage"),
@@ -300,6 +311,12 @@ async function collectMetrics(scenario = {}) {
         menuProgressTokens: rects(".kid-progress-token"),
         journeyTop: rect(".reis-top"),
         journeyQuest: rect(".reis-quest"),
+        journeyQuestDebug: (() => {
+          const quest = document.querySelector(".reis-quest");
+          if (!quest) return null;
+          const cs = getComputedStyle(quest);
+          return { cssWidth: cs.width, boxSizing: cs.boxSizing, parentWidth: quest.parentElement?.getBoundingClientRect().width, storyOverlayUp: Boolean(document.querySelector(".reis-story-overlay")) };
+        })(),
         journeyScroll: rect(".reis-scroll"),
         journeyMap: rect(".reis-map"),
         journeyProgress: rect(".reis-progress-pill"),
@@ -350,6 +367,8 @@ async function collectMetrics(scenario = {}) {
           return roles;
         })()
       };
+      freeze.remove();
+      return metrics;
     })()
   `);
 }
@@ -367,7 +386,8 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (!metrics.journeyScroll) failures.push("missing journey scroll map");
     if (!metrics.journeyMap) failures.push("missing journey map");
     if (metrics.journeyTop && metrics.journeyTop.width > viewport.width - 10) failures.push(`journey top too wide: ${metrics.journeyTop.width}`);
-    if (metrics.journeyQuest && metrics.journeyQuest.width > viewport.width - 10) failures.push(`journey quest too wide: ${metrics.journeyQuest.width}`);
+    if (metrics.journeyQuest && metrics.journeyQuest.width > viewport.width - 10)
+      failures.push(`journey quest too wide: ${metrics.journeyQuest.width} (${JSON.stringify(metrics.journeyQuestDebug)})`);
     if (metrics.journeyQuest && metrics.journeyQuest.height < 72) failures.push(`journey quest too short: ${metrics.journeyQuest.height}`);
     if (metrics.journeyScroll && metrics.journeyScroll.height < viewport.height * 0.5) failures.push(`journey map viewport too short: ${metrics.journeyScroll.height}`);
     if (metrics.journeyActiveNodes.length !== 1) failures.push(`expected one active journey node, got ${metrics.journeyActiveNodes.length}`);

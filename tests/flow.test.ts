@@ -944,16 +944,23 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(frontierIndex(repaired)).toBe(friendIndex + 1);
   });
 
-  it("opens a brand-new journey with a tappable story card", async () => {
+  it("opens a brand-new journey with a playable micro-cinematic", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
 
     game.showScene("reis");
-    const overlay = root.querySelector(".reis-story-overlay");
+    const overlay = root.querySelector<HTMLElement>(".reis-story-overlay");
     expect(overlay).toBeTruthy();
     expect(overlay?.textContent).toContain(JOURNEY_INTRO.title);
     expect(overlay?.textContent).toContain(JOURNEY_INTRO.lines[0]);
+    // Three visual beats: star falls -> colours drain -> Buddy catches it.
+    const stage = root.querySelector<HTMLElement>(".reis-cine")!;
+    expect(stage.dataset.beat).toBe("1");
+    overlay!.click();
+    expect(stage.dataset.beat).toBe("2");
+    overlay!.click();
+    expect(stage.dataset.beat).toBe("3");
     const start = root.querySelector<HTMLButtonElement>(".reis-story-start");
     expect(start?.textContent).toBe(JOURNEY_INTRO.start);
     start!.click();

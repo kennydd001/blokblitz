@@ -51,6 +51,26 @@ describe("dynamic difficulty (tier = ronde + pad + kunnen)", () => {
     expect(accuracy).toBe(1);
     expect(recentAccuracy([], 20)).toEqual({ accuracy: 0, count: 0 });
   });
+
+  it("scopes accuracy per learning domain, so strong rekenen never hardens lezen", () => {
+    const reading = (wasCorrect: boolean): AttemptLog => ({ ...attempt(wasCorrect), domain: "literacy-reading" }) as AttemptLog;
+    // A child acing numbers (20/20) but struggling with reading (4/20).
+    const attempts = [
+      ...Array.from({ length: 20 }, () => attempt(true)),
+      ...Array.from({ length: 20 }, (_, i) => reading(i < 4))
+    ];
+    // Number modes (no domain tag) see only the number history: perfect.
+    expect(recentAccuracy(attempts, 20)).toEqual({ accuracy: 1, count: 20 });
+    // Reading modes see only the reading history: struggling.
+    const lezen = recentAccuracy(attempts, 20, "literacy-reading");
+    expect(lezen.count).toBe(20);
+    expect(lezen.accuracy).toBeLessThan(0.6);
+    // So the same child plays rekenen a tier HIGHER than lezen.
+    const rekenTier = journeyTier({ round: 1, pathProgress: 0, ...{ recentAccuracy: 1, attemptCount: 20 } });
+    const leesTier = journeyTier({ round: 2, pathProgress: 0, recentAccuracy: lezen.accuracy, attemptCount: lezen.count });
+    expect(rekenTier).toBe(2);
+    expect(leesTier).toBe(1);
+  });
 });
 
 describe("tier-shaped generators", () => {

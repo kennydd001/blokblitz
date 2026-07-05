@@ -700,23 +700,22 @@ export class ReisScene extends BaseScene {
     this.game.voice.speak("Verder met de reis! Waar gaan we heen?", { interrupt: true });
   }
 
-  // The opening story beat: a tappable card that sets up the whole adventure.
-  // From Sterrenronde 2 the story shifts: same world, a bolder journey.
+  // The opening story beat. Round 1 gets a PLAYABLE micro-cinematic (three
+  // visual beats, tap-to-advance, barely any reading); later rounds keep the
+  // short "Sterrenronde N" card.
   private showStoryCard(): void {
     const round = this.game.save.journeyRound();
-    const title = round > 1 ? `Sterrenronde ${round}` : JOURNEY_INTRO.title;
-    const lines =
-      round > 1
-        ? ["De sterren willen nog een reis!", "Dezelfde weg, maar alles is een beetje moeilijker.", "Laat zien hoe sterk je geworden bent!"]
-        : JOURNEY_INTRO.lines;
+    if (round === 1) {
+      this.showIntroCinematic();
+      return;
+    }
+    const title = `Sterrenronde ${round}`;
+    const lines = ["De sterren willen nog een reis!", "Dezelfde weg, maar alles is een beetje moeilijker.", "Laat zien hoe sterk je geworden bent!"];
     const overlay = document.createElement("div");
     overlay.className = "reis-story-overlay";
     const card = document.createElement("div");
     card.className = "reis-story-card";
-    card.innerHTML =
-      `<div class="reis-story-star" aria-hidden="true">${round > 1 ? "🔁" : "⭐"}</div>` +
-      `<h2>${title}</h2>` +
-      lines.map((line) => `<p>${line}</p>`).join("");
+    card.innerHTML = `<div class="reis-story-star" aria-hidden="true">🔁</div><h2>${title}</h2>` + lines.map((line) => `<p>${line}</p>`).join("");
     const start = document.createElement("button");
     start.type = "button";
     start.className = "btn primary reis-story-start";
@@ -733,6 +732,64 @@ export class ReisScene extends BaseScene {
     this.addCleanup(() => overlay.remove());
     // Read the story aloud for a pre-reader.
     this.game.voice.speak(lines.join(" "), { interrupt: true });
+  }
+
+  // The playable opening: three visual beats with barely any reading —
+  // 1. the star falls from the night sky, 2. the world's colours drain grey,
+  // 3. Buddy catches the star and the adventure button appears. A tap
+  // anywhere skips ahead; the voice carries the story. All beat content is in
+  // the DOM from the start (CSS reveals per beat), so it stays screen-reader
+  // and test friendly.
+  private showIntroCinematic(): void {
+    const lines = JOURNEY_INTRO.lines;
+    const overlay = document.createElement("div");
+    overlay.className = "reis-story-overlay reis-cine-overlay";
+    const stage = document.createElement("div");
+    stage.className = "reis-cine";
+    stage.dataset.beat = "1";
+    stage.innerHTML = `
+      <span class="cine-star" aria-hidden="true">⭐</span>
+      <div class="cine-world" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <h2 class="cine-title">${JOURNEY_INTRO.title}</h2>
+      ${lines.map((line, i) => `<p class="cine-line" data-line="${i + 1}">${line}</p>`).join("")}
+    `;
+    const buddy = createBuddy(skinById(this.game.data().progress.cosmetics.activeSkin), this.game.data().progress.stars);
+    buddy.el.classList.add("cine-buddy");
+    stage.appendChild(buddy.el);
+    const start = document.createElement("button");
+    start.type = "button";
+    start.className = "btn primary reis-story-start";
+    start.textContent = JOURNEY_INTRO.start;
+    start.addEventListener("click", (event) => {
+      event.stopPropagation();
+      overlay.remove();
+      this.buddy?.setMood("wow", 1400);
+      this.buddy?.say("Daar gaan we!");
+      this.game.voice.speak("Daar gaan we! Volg de weg.", { interrupt: true });
+    });
+    stage.appendChild(start);
+    overlay.appendChild(stage);
+    this.root.appendChild(overlay);
+    this.addCleanup(() => overlay.remove());
+
+    const timers: number[] = [];
+    const toBeat = (beat: number): void => {
+      if (!overlay.isConnected || Number(stage.dataset.beat) >= beat) return;
+      stage.dataset.beat = String(beat);
+      const line = lines[Math.min(beat, lines.length) - 1];
+      if (line) this.game.voice.speak(line, { interrupt: true });
+      if (beat === 2) this.game.audio.play("stumble");
+      if (beat === 3) {
+        this.game.audio.play("rescue");
+        buddy.setMood("wow", 1600);
+      }
+    };
+    // Tap anywhere = next beat; otherwise the show advances on its own.
+    overlay.addEventListener("click", () => toBeat(Math.min(3, Number(stage.dataset.beat) + 1)));
+    timers.push(window.setTimeout(() => toBeat(2), 2600));
+    timers.push(window.setTimeout(() => toBeat(3), 5200));
+    this.addCleanup(() => timers.forEach((timer) => window.clearTimeout(timer)));
+    this.game.voice.speak(lines[0], { interrupt: true });
   }
 
   private bloom(nodeId: string): void {
