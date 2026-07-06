@@ -117,7 +117,7 @@ export abstract class MiniGameScene extends BaseScene {
       banner.setAttribute("aria-label", "Gouden ronde: dubbele sterren");
       banner.innerHTML = `<span aria-hidden="true">✨</span> Gouden ronde — dubbel! <span aria-hidden="true">✨</span>`;
       this.root.appendChild(banner);
-      this.game.audio.play("snap");
+      this.game.audio.play("golden");
     }
     if (this.buddy) {
       this.root.appendChild(this.buddy.el);

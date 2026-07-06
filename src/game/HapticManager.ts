@@ -14,7 +14,9 @@ const hapticPatterns: Record<HapticCue, readonly number[]> = {
   boost: [12, 18, 24],
   win: [16, 24, 16, 28],
   stumble: [26],
-  "start-race": [16, 8, 16, 24]
+  "start-race": [16, 8, 16, 24],
+  golden: [10, 14, 10, 18],
+  "boss-defeat": [22, 30, 22, 36]
 };
 
 export function hapticPattern(name: HapticCue): readonly number[] {

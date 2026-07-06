@@ -20,6 +20,18 @@ describe("procedural audio cues", () => {
     }
   });
 
+  it("adds a sparkly golden-round jingle and a triumphant boss-defeat stinger", () => {
+    for (const cue of ["golden", "boss-defeat"] as SoundCue[]) {
+      const pattern = soundPattern(cue);
+      expect(pattern.length, cue).toBeGreaterThanOrEqual(4);
+      expect(pattern.every((step) => step.frequency > 0 && step.duration > 0 && step.gain > 0 && step.gain <= 0.08)).toBe(true);
+    }
+    // Golden climbs to a bright sparkle; the boss stinger resolves upward too.
+    const golden = soundPattern("golden");
+    expect(golden[golden.length - 1].frequency).toBeGreaterThan(golden[0].frequency);
+    expect(Math.max(...golden.map((s) => s.frequency))).toBeGreaterThan(1500);
+  });
+
   it("keeps Snap bright, retries gentle, and build cues block-like", () => {
     const snap = soundPattern("snap");
     const retry = soundPattern("soft-error");
@@ -50,11 +62,11 @@ describe("mobile haptic cues", () => {
     Object.defineProperty(navigator, "vibrate", { configurable: true, value: vibrate });
 
     const haptics = new HapticManager();
-    haptics.setSettings({ speed: 1, muted: false, haptics: false, highContrast: false, voice: true });
+    haptics.setSettings({ speed: 1, muted: false, music: true, sound: true, haptics: false, highContrast: false, voice: true });
     haptics.play("snap");
     expect(vibrate).not.toHaveBeenCalled();
 
-    haptics.setSettings({ speed: 1, muted: false, haptics: true, highContrast: false, voice: true });
+    haptics.setSettings({ speed: 1, muted: false, music: true, sound: true, haptics: true, highContrast: false, voice: true });
     haptics.play("snap");
     expect(vibrate).toHaveBeenCalledWith([...hapticPattern("snap")]);
 

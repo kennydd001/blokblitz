@@ -168,7 +168,7 @@ export class BossScene extends MiniGameScene {
   protected finish(): void {
     // Beating the boss completes this journey node (frees the friend next).
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
-    this.game.audio.play("snap");
+    this.game.audio.play("boss-defeat");
     this.game.haptics.play("win");
     this.game.voice.speak(this.isFinal ? `De Sterrenrover laat de ster los! ${this.boss.defeat}` : `${this.boss.name} is verslagen! ${this.boss.defeat}`, { interrupt: true, pitch: 1.2 });
     // Phase 1: the monster reels and dissolves into a burst of colour...

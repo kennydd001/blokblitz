@@ -19,11 +19,15 @@ export class SettingsScene extends BaseScene {
         <input id="speed" type="range" min="0.7" max="1.4" step="0.1" value="${data.settings.speed}">
       </label>
       <label class="setting-row">
-        <span>Geluid uit</span>
-        <input id="muted" type="checkbox" ${data.settings.muted ? "checked" : ""}>
+        <span>🎵 Muziek</span>
+        <input id="music" type="checkbox" ${data.settings.music ? "checked" : ""}>
       </label>
       <label class="setting-row">
-        <span>Voorlezen (stem)</span>
+        <span>🔊 Geluidjes</span>
+        <input id="sound" type="checkbox" ${data.settings.sound ? "checked" : ""}>
+      </label>
+      <label class="setting-row">
+        <span>🗣️ Voorlezen (stem)</span>
         <input id="voice" type="checkbox" ${data.settings.voice ? "checked" : ""}>
       </label>
       <label class="setting-row">
@@ -36,14 +40,18 @@ export class SettingsScene extends BaseScene {
       </label>
     `;
     const speed = panel.querySelector<HTMLInputElement>("#speed");
-    const muted = panel.querySelector<HTMLInputElement>("#muted");
+    const music = panel.querySelector<HTMLInputElement>("#music");
+    const sound = panel.querySelector<HTMLInputElement>("#sound");
     const voice = panel.querySelector<HTMLInputElement>("#voice");
     const haptics = panel.querySelector<HTMLInputElement>("#haptics");
     const contrast = panel.querySelector<HTMLInputElement>("#contrast");
     const save = (): void => {
       this.game.save.updateSettings((settings) => {
         settings.speed = Number(speed?.value ?? 1);
-        settings.muted = Boolean(muted?.checked);
+        settings.music = Boolean(music?.checked);
+        settings.sound = Boolean(sound?.checked);
+        // Keep the legacy master in sync: muted iff everything audio is off.
+        settings.muted = !music?.checked && !sound?.checked && !voice?.checked;
         settings.voice = Boolean(voice?.checked);
         settings.haptics = Boolean(haptics?.checked);
         settings.highContrast = Boolean(contrast?.checked);
@@ -53,9 +61,14 @@ export class SettingsScene extends BaseScene {
       this.game.voice.setSettings(this.game.save.getMutableData().settings);
       this.game.readingAudio.setSettings(this.game.save.getMutableData().settings);
       document.body.classList.toggle("high-contrast", Boolean(contrast?.checked));
+      // A tiny confirmation so a parent hears the effects toggle take effect.
+      if (sound?.checked) this.game.audio.play("coin");
+      if (music?.checked) this.game.audio.startMusic("hub");
+      else this.game.audio.stopMusic();
     };
     speed?.addEventListener("input", save);
-    muted?.addEventListener("change", save);
+    music?.addEventListener("change", save);
+    sound?.addEventListener("change", save);
     voice?.addEventListener("change", save);
     haptics?.addEventListener("change", save);
     contrast?.addEventListener("change", save);

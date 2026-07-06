@@ -1925,6 +1925,25 @@ describe("De Sterrenreis — story mode", () => {
     expect(save.getData().progress.journey).toEqual({ nodeIndex: 0, completed: [], round: 1 });
     expect(save.getData().progress.stars).toBe(7);
   });
+
+  it("splits the legacy mute setting into independent music + sound toggles", async () => {
+    const { SaveManager } = await import("../src/game/SaveManager");
+    // Old save that was fully muted -> both music and effects start off.
+    localStorage.setItem("blokblitz-save-v1", JSON.stringify({ version: 1, settings: { muted: true }, progress: {} }));
+    let settings = new SaveManager().getData().settings;
+    expect(settings.music).toBe(false);
+    expect(settings.sound).toBe(false);
+    // Old save with sound on -> both on.
+    localStorage.setItem("blokblitz-save-v1", JSON.stringify({ version: 1, settings: { muted: false }, progress: {} }));
+    settings = new SaveManager().getData().settings;
+    expect(settings.music).toBe(true);
+    expect(settings.sound).toBe(true);
+    // An already-split save is preserved verbatim.
+    localStorage.setItem("blokblitz-save-v1", JSON.stringify({ version: 1, settings: { muted: false, music: false, sound: true }, progress: {} }));
+    settings = new SaveManager().getData().settings;
+    expect(settings.music).toBe(false);
+    expect(settings.sound).toBe(true);
+  });
 });
 
 describe("input mapping", () => {

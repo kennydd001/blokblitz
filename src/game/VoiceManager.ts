@@ -40,6 +40,26 @@ export class VoiceManager {
   private countTimers: number[] = [];
   private activeAudio = new Set<HTMLAudioElement>();
   private duckHook?: (durationMs: number) => void;
+  private cachedVoice?: SpeechSynthesisVoice;
+
+  constructor() {
+    // Warm up the voice list. Chrome (esp. on a tablet) returns an empty
+    // getVoices() on the very first synchronous call, so without this the very
+    // first spoken line ("Op een nacht viel er een sterretje...") gets read by
+    // the English default voice. Caching on `voiceschanged` guarantees Dutch.
+    const synth = this.synth;
+    if (!synth) return;
+    const refresh = (): void => {
+      const voice = this.pickVoice(synth);
+      if (voice) this.cachedVoice = voice;
+    };
+    refresh();
+    try {
+      synth.addEventListener?.("voiceschanged", refresh);
+    } catch {
+      // Older engines: getVoices was already populated by refresh() above.
+    }
+  }
 
   setSettings(settings: GameSettings): void {
     this.enabled = settings.voice;
@@ -62,6 +82,7 @@ export class VoiceManager {
   }
 
   private pickVoice(synth: SpeechSynth): SpeechSynthesisVoice | undefined {
+    if (this.cachedVoice) return this.cachedVoice;
     const voices = synth.getVoices?.() ?? [];
     return voices.find((v) => /^nl/i.test(v.lang)) ?? voices.find((v) => /dutch|nederlands/i.test(v.name));
   }

@@ -992,3 +992,33 @@ Completed work (Claude, from the ChatGPT idea list: picked #4, #3 and #2):
 Validation: 164 tests (per-domain accuracy test, hands-on splitbord DOM
 test, cinematic beats in the intro flow test), build, qa:viewport 18/18;
 live checks of the cinematic (all beats + centered Buddy) and the egg tray.
+
+## Audio Pass: cold-start voice + independent mixer + new stingers - 2026-07-05
+
+Audio check + three safe, audible improvements (the reading-audio browser-only
+path was left untouched — that is the user's separate iteration and is pinned
+by audio.test.ts):
+
+- Cold-start Dutch voice: VoiceManager now warms up getVoices() and caches the
+  Dutch voice on `voiceschanged`. Chrome (esp. tablet) returns an empty voice
+  list on the first synchronous call, so the very first spoken line ("Op een
+  nacht viel er een sterretje...") was being read by the English default
+  voice. Verified live: the first browser-only line now uses "Microsoft Frank
+  - Dutch". This also improves the reading fallback (guaranteed Dutch).
+- Independent audio mixer: split the single "Geluid uit" master into three
+  positive toggles — Muziek, Geluidjes, Voorlezen (stem). GameSettings gains
+  `music` + `sound`; AudioManager gates music and effects separately;
+  SaveManager migrates old `muted` saves (fully muted -> both off). A parent
+  can now silence the music but keep the effects (or vice versa) on a tablet.
+- Richer stingers: a sparkly ascending "golden" jingle for golden bonus rounds
+  (replaces the reused snap) and a triumphant "boss-defeat" stinger, both with
+  matching haptic patterns.
+
+Findings noted for later (not changed): Hestia clip coverage of prompts is
+partial (e.g. "Tik de grootste!" and "Tel de diertjes" fall back to browser
+TTS); all 14 phonics words DO have recorded clips, so zoemend lezen could one
+day end on the natural recorded word.
+
+Validation: 166 tests (golden/boss cue patterns, legacy-mute migration split),
+build, qa:viewport 18/18 (one transient kloktoren "too flat" flake, green on
+re-run), live browser checks of the cached Dutch voice + three-toggle screen.

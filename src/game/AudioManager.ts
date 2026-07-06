@@ -11,7 +11,9 @@ export type SoundCue =
   | "boost"
   | "win"
   | "stumble"
-  | "start-race";
+  | "start-race"
+  | "golden"
+  | "boss-defeat";
 
 export interface SoundStep {
   frequency: number;
@@ -82,6 +84,22 @@ const cuePatterns: Record<SoundCue, readonly SoundStep[]> = {
     { frequency: 440, start: 0, duration: 0.1, gain: 0.05, wave: "square" },
     { frequency: 587, start: 0.1, duration: 0.1, gain: 0.055, wave: "square" },
     { frequency: 880, start: 0.2, duration: 0.22, gain: 0.07, wave: "triangle" }
+  ],
+  // A sparkly ascending arpeggio that says "this round is special" — plays when
+  // a golden bonus round opens.
+  golden: [
+    { frequency: 784, start: 0, duration: 0.08, gain: 0.05, wave: "triangle" },
+    { frequency: 988, start: 0.08, duration: 0.08, gain: 0.055, wave: "triangle" },
+    { frequency: 1319, start: 0.16, duration: 0.09, gain: 0.06, wave: "sine" },
+    { frequency: 1568, start: 0.26, duration: 0.14, gain: 0.06, wave: "sine" },
+    { frequency: 2093, start: 0.4, duration: 0.2, gain: 0.05, wave: "sine" }
+  ],
+  // A triumphant descending-then-rising stinger for beating a region boss.
+  "boss-defeat": [
+    { frequency: 330, start: 0, duration: 0.14, gain: 0.06, wave: "sawtooth" },
+    { frequency: 494, start: 0.14, duration: 0.14, gain: 0.06, wave: "triangle" },
+    { frequency: 659, start: 0.28, duration: 0.16, gain: 0.07, wave: "sine" },
+    { frequency: 988, start: 0.46, duration: 0.3, gain: 0.07, wave: "sine" }
   ]
 };
 
@@ -117,7 +135,10 @@ const MUSIC_VARIANTS: Record<string, MusicVariant> = {
 
 export class AudioManager {
   private context?: AudioContext;
-  private muted = false;
+  // Independent so a parent can keep the sound effects but silence the music
+  // (or vice versa) on a tablet. `muted` remains a legacy master.
+  private musicOn = true;
+  private soundOn = true;
   private musicTimer?: ReturnType<typeof setInterval>;
   private musicStep = 0;
   private musicVariant = "";
@@ -126,18 +147,21 @@ export class AudioManager {
   private duckTimer?: ReturnType<typeof setTimeout>;
 
   setSettings(settings: GameSettings): void {
-    this.muted = settings.muted;
-    if (this.muted) this.stopMusic();
+    this.musicOn = settings.music ?? !settings.muted;
+    this.soundOn = settings.sound ?? !settings.muted;
+    if (!this.musicOn) this.stopMusic();
   }
 
+  /** Legacy master mute: silences both music and effects. */
   setMuted(muted: boolean): void {
-    this.muted = muted;
+    this.musicOn = !muted;
+    this.soundOn = !muted;
     if (muted) this.stopMusic();
   }
 
   play(name: SoundCue): void {
     const AudioContextCtor = getAudioContextConstructor();
-    if (this.muted || !AudioContextCtor) return;
+    if (!this.soundOn || !AudioContextCtor) return;
     const context = this.context ?? new AudioContextCtor();
     this.context = context;
 
@@ -152,7 +176,7 @@ export class AudioManager {
   }
 
   startMusic(variant = "default"): void {
-    if (this.muted) return;
+    if (!this.musicOn) return;
     const id = MUSIC_VARIANTS[variant] ? variant : "default";
     if (this.musicTimer !== undefined && this.musicVariant === id) return; // already playing this theme
     this.stopMusic();
@@ -186,7 +210,7 @@ export class AudioManager {
 
   private musicTick(): void {
     const context = this.context;
-    if (this.muted || !context) {
+    if (!this.musicOn || !context) {
       this.stopMusic();
       return;
     }

@@ -134,7 +134,12 @@ export interface Challenge {
 
 export interface GameSettings {
   speed: number;
+  /** Legacy master mute. Kept for old saves; the live UI uses music + sound. */
   muted: boolean;
+  /** Background melodies on/off (independent of sound effects). */
+  music: boolean;
+  /** Gameplay sound effects (coins, snaps, wins) on/off. */
+  sound: boolean;
   haptics: boolean;
   highContrast: boolean;
   /** Spoken Dutch voice (instructions, counting, praise). */

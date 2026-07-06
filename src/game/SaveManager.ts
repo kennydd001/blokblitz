@@ -25,6 +25,8 @@ export function defaultSettings(): GameSettings {
   return {
     speed: 1,
     muted: false,
+    music: true,
+    sound: true,
     haptics: true,
     highContrast: false,
     voice: true
@@ -284,9 +286,18 @@ export class SaveManager {
       unlockedSkins:
         savedCosmetics?.unlockedSkins?.length ? [...new Set(savedCosmetics.unlockedSkins)] : [...fallback.progress.cosmetics.unlockedSkins]
     };
+    // Old saves only had a single `muted` master; split it into music + sound
+    // so a returning child keeps whatever they had (both off if it was muted).
+    const savedSettings = data.settings ?? {};
+    const legacyMuted = savedSettings.muted === true;
     return {
       version: 1,
-      settings: { ...fallback.settings, ...(data.settings ?? {}) },
+      settings: {
+        ...fallback.settings,
+        ...savedSettings,
+        music: savedSettings.music ?? !legacyMuted,
+        sound: savedSettings.sound ?? !legacyMuted
+      },
       progress: {
         ...fallback.progress,
         ...(data.progress ?? {}),
