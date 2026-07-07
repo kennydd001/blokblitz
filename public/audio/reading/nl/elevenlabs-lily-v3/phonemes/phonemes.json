@@ -1,0 +1,249 @@
+{
+  "generatedAt": "2026-07-06T16:09:24.377Z",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "voice": "Lily - Velvety Actress",
+  "voiceId": "pFZP5JQG7iQjIQuC4Bku",
+  "route": "direct /v1/text-to-speech",
+  "scope": "isolated reading phonemes only; word splitting and zoemend lezen are excluded",
+  "voiceSettings": {
+    "stability": 0.62,
+    "similarity_boost": 0.78,
+    "style": 0,
+    "use_speaker_boost": true,
+    "speed": 0.82
+  },
+  "seed": 11611,
+  "lineCount": 32,
+  "phonemes": [
+    {
+      "key": "m",
+      "display": "m",
+      "spokenText": "mmm",
+      "durationMs": 520,
+      "file": "m.mp3"
+    },
+    {
+      "key": "s",
+      "display": "s",
+      "spokenText": "sss",
+      "durationMs": 520,
+      "file": "s.mp3"
+    },
+    {
+      "key": "v",
+      "display": "v",
+      "spokenText": "vvv",
+      "durationMs": 500,
+      "file": "v.mp3"
+    },
+    {
+      "key": "r",
+      "display": "r",
+      "spokenText": "rrr",
+      "durationMs": 480,
+      "file": "r.mp3"
+    },
+    {
+      "key": "n",
+      "display": "n",
+      "spokenText": "nnn",
+      "durationMs": 500,
+      "file": "n.mp3"
+    },
+    {
+      "key": "z",
+      "display": "z",
+      "spokenText": "zzz",
+      "durationMs": 500,
+      "file": "z.mp3"
+    },
+    {
+      "key": "h",
+      "display": "h",
+      "spokenText": "hhh",
+      "durationMs": 420,
+      "file": "h.mp3"
+    },
+    {
+      "key": "l",
+      "display": "l",
+      "spokenText": "lll",
+      "durationMs": 480,
+      "file": "l.mp3"
+    },
+    {
+      "key": "f",
+      "display": "f",
+      "spokenText": "fff",
+      "durationMs": 500,
+      "file": "f.mp3"
+    },
+    {
+      "key": "w",
+      "display": "w",
+      "spokenText": "www",
+      "durationMs": 470,
+      "file": "w.mp3"
+    },
+    {
+      "key": "b",
+      "display": "b",
+      "spokenText": "buh",
+      "durationMs": 230,
+      "applyTextNormalization": "off",
+      "file": "b.mp3"
+    },
+    {
+      "key": "d",
+      "display": "d",
+      "spokenText": "duh",
+      "durationMs": 230,
+      "applyTextNormalization": "off",
+      "file": "d.mp3"
+    },
+    {
+      "key": "k",
+      "display": "k",
+      "spokenText": "kuh",
+      "durationMs": 230,
+      "applyTextNormalization": "off",
+      "file": "k.mp3"
+    },
+    {
+      "key": "p",
+      "display": "p",
+      "spokenText": "puh",
+      "durationMs": 230,
+      "applyTextNormalization": "off",
+      "file": "p.mp3"
+    },
+    {
+      "key": "t",
+      "display": "t",
+      "spokenText": "tuh",
+      "durationMs": 230,
+      "applyTextNormalization": "off",
+      "file": "t.mp3"
+    },
+    {
+      "key": "a",
+      "display": "a",
+      "spokenText": "a zoals in kat",
+      "durationMs": 500,
+      "file": "a.mp3"
+    },
+    {
+      "key": "e",
+      "display": "e",
+      "spokenText": "e zoals in ster",
+      "durationMs": 420,
+      "file": "e.mp3"
+    },
+    {
+      "key": "i",
+      "display": "i",
+      "spokenText": "i zoals in vis",
+      "durationMs": 420,
+      "file": "i.mp3"
+    },
+    {
+      "key": "o",
+      "display": "o",
+      "spokenText": "o zoals in zon",
+      "durationMs": 450,
+      "file": "o.mp3"
+    },
+    {
+      "key": "u",
+      "display": "u",
+      "spokenText": "u zoals in bus",
+      "durationMs": 420,
+      "file": "u.mp3"
+    },
+    {
+      "key": "aa",
+      "display": "aa",
+      "spokenText": "aa zoals in maan",
+      "durationMs": 560,
+      "file": "aa.mp3"
+    },
+    {
+      "key": "ee",
+      "display": "ee",
+      "spokenText": "ee zoals in twee",
+      "durationMs": 540,
+      "file": "ee.mp3"
+    },
+    {
+      "key": "oo",
+      "display": "oo",
+      "spokenText": "oo zoals in boom",
+      "durationMs": 560,
+      "file": "oo.mp3"
+    },
+    {
+      "key": "uu",
+      "display": "uu",
+      "spokenText": "uu zoals in muur",
+      "durationMs": 540,
+      "file": "uu.mp3"
+    },
+    {
+      "key": "oe",
+      "display": "oe",
+      "spokenText": "oe zoals in boek",
+      "durationMs": 540,
+      "file": "oe.mp3"
+    },
+    {
+      "key": "ie",
+      "display": "ie",
+      "spokenText": "ie zoals in fiets",
+      "durationMs": 540,
+      "file": "ie.mp3"
+    },
+    {
+      "key": "eu",
+      "display": "eu",
+      "spokenText": "eu zoals in neus",
+      "durationMs": 540,
+      "file": "eu.mp3"
+    },
+    {
+      "key": "ui",
+      "display": "ui",
+      "spokenText": "ui zoals in huis",
+      "durationMs": 560,
+      "file": "ui.mp3"
+    },
+    {
+      "key": "ei",
+      "display": "ei",
+      "spokenText": "ei zoals in geit",
+      "durationMs": 540,
+      "file": "ei.mp3"
+    },
+    {
+      "key": "ij",
+      "display": "ij",
+      "spokenText": "ij zoals in ijs",
+      "durationMs": 540,
+      "file": "ij.mp3"
+    },
+    {
+      "key": "ou",
+      "display": "ou",
+      "spokenText": "ou zoals in hout",
+      "durationMs": 540,
+      "file": "ou.mp3"
+    },
+    {
+      "key": "au",
+      "display": "au",
+      "spokenText": "au zoals in pauw",
+      "durationMs": 540,
+      "file": "au.mp3"
+    }
+  ]
+}

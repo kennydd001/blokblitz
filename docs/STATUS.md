@@ -1014,11 +1014,70 @@ by audio.test.ts):
   (replaces the reused snap) and a triumphant "boss-defeat" stinger, both with
   matching haptic patterns.
 
-Findings noted for later (not changed): Hestia clip coverage of prompts is
-partial (e.g. "Tik de grootste!" and "Tel de diertjes" fall back to browser
-TTS); all 14 phonics words DO have recorded clips, so zoemend lezen could one
-day end on the natural recorded word.
+Earlier finding, now superseded by the 2026-07-06 ElevenLabs migration below:
+Hestia clip coverage of prompts was partial and reading phoneme clips were not
+good enough for isolated sounds.
 
 Validation: 166 tests (golden/boss cue patterns, legacy-mute migration split),
 build, qa:viewport 18/18 (one transient kloktoren "too flat" flake, green on
 re-run), live browser checks of the cached Dutch voice + three-toggle screen.
+
+## ElevenLabs Voice-Pack Migration - 2026-07-06
+
+Goal:
+
+- Replace the normal game voice-pack with local ElevenLabs `eleven_v3` clips
+  using voice `Lily - Velvety Actress`.
+- Use ElevenLabs for all normal voice lines and isolated reading phoneme taps.
+- Keep word splitting / zoemend lezen on the separate fallback path; generated
+  stretched blend clips were not accepted in listening QA.
+
+Implemented:
+
+- Added `scripts/generate-elevenlabs-voice-pack.mjs`, a resumable generator for
+  the full sentence/instruction inventory. It reads the current voice-line
+  inventory, skips already-generated MP3 files, and only rewrites
+  `src/game/voiceLineManifest.ts` after a complete successful run.
+- Added `scripts/generate-elevenlabs-reading-phoneme-pack.mjs` for the 32
+  isolated reading phoneme clips used by `ReadingAudioManager.playPhoneme()`.
+- Added `scripts/audit-elevenlabs-audio.mjs` plus `npm.cmd run
+  voice:elevenlabs-audit` to prove the pack is complete and active.
+- Updated `ReadingAudioManager` so isolated phonemes can use the dedicated local
+  reading pack, while `playPhonemeSequence()` and `playZoemWord()` still use the
+  browser-only fallback.
+- Generated the full local ElevenLabs runtime pack:
+  `public/audio/voice/nl/elevenlabs-lily-v3/` now has 935 MP3 clips plus
+  `voice-lines.json`.
+- Generated the full isolated reading phoneme pack:
+  `public/audio/reading/nl/elevenlabs-lily-v3/phonemes/` now has 32 MP3 clips
+  plus `phonemes.json`.
+- `src/game/voiceLineManifest.ts` now points at
+  `/audio/voice/nl/elevenlabs-lily-v3/`.
+- `src/game/readingAudioManifest.ts` now points at
+  `/audio/reading/nl/elevenlabs-lily-v3/phonemes/`.
+- Updated tests, README, and `assets/ASSET_MANIFEST.json` so ElevenLabs is the
+  documented active runtime audio source.
+- Removed the old `public/audio/voice/nl/hestia/` runtime asset directory so the
+  app no longer ships two complete voice-packs.
+
+Regeneration command:
+
+```powershell
+$env:ELEVENLABS_API_KEY = "<key>"
+npm.cmd run voice:elevenlabs
+npm.cmd run voice:elevenlabs-audit
+Remove-Item Env:\ELEVENLABS_API_KEY
+```
+
+Validation:
+
+- `npm.cmd run voice:elevenlabs-audit` passed: 935/935 general voice clips and
+  32/32 reading phoneme clips present, 12/12 dynamic runtime voice examples
+  present, runtime manifests point at ElevenLabs, and the old Hestia runtime
+  directory is gone.
+- `npm.cmd install` passed.
+- `npm.cmd run typecheck` passed.
+- `npm.cmd run lint` passed.
+- `npm.cmd run test` passed: 20 files, 166 tests.
+- `npm.cmd run build` passed.
+- Vite dev server was started and checked at `http://127.0.0.1:5287/`.

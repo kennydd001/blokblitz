@@ -1,15 +1,35 @@
 # TTS Provider Shootout
 
-Date: 2026-06-30
+Date: 2026-06-30, updated 2026-07-06
 
 Goal: compare natural female Dutch TTS for a local-first BlokBlitz voice-pack.
-QA samples remain under `.qa-artifacts`; the selected Hestia voice-pack is now
-stored under `public/audio/voice/...` and documented in
-`assets/ASSET_MANIFEST.json`.
+QA samples remain under `.qa-artifacts`.
 
-## Current Test Result
+## Current Production Result
 
-Generated:
+- Active sentence/instruction voice-pack:
+  `C:\Users\de_do\Documents\miel\public\audio\voice\nl\elevenlabs-lily-v3\`
+- 935 local ElevenLabs MP3 clips, generated build-time with `eleven_v3` and
+  voice `Lily - Velvety Actress`.
+- Active isolated reading phoneme pack:
+  `C:\Users\de_do\Documents\miel\public\audio\reading\nl\elevenlabs-lily-v3\phonemes\`
+- 32 local ElevenLabs MP3 clips for isolated phoneme taps.
+- Runtime manifests:
+  `C:\Users\de_do\Documents\miel\src\game\voiceLineManifest.ts` and
+  `C:\Users\de_do\Documents\miel\src\game\readingAudioManifest.ts`.
+- Word splitting and zoemend lezen still use the browser fallback because
+  generated stretched blend clips did not pass listening QA.
+
+Verify with:
+
+```powershell
+npm.cmd run voice:elevenlabs-audit
+```
+
+## 2026-06-30 Deepgram/Hestia Result
+
+Generated in the first pass; the old runtime Hestia directory was removed after
+the 2026-07-06 ElevenLabs migration:
 
 - `C:\Users\de_do\Documents\miel\public\audio\voice\nl\hestia\`
 - 737 local Hestia MP3 clips for the first full voice-pack pass

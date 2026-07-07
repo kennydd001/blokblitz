@@ -3,7 +3,7 @@ import { VOICE_LINE_BASE_PATH, VOICE_LINE_SLUGS, voiceLineFile, voiceLineSlug } 
 
 // Spoken Dutch helper. For a 4-7 year old who can't read yet, hearing the task
 // ("Tik de grootste!"), the count ("een... twee... drie...") and warm praise is
-// the single biggest clarity win. Prefer local Hestia clips; fall back to Web
+// the single biggest clarity win. Prefer local ElevenLabs clips; fall back to Web
 // Speech only for dynamic lines that were not pre-generated.
 
 const NUMBER_WORDS = [
@@ -162,7 +162,7 @@ export class VoiceManager {
     this.speakBrowser(text, options);
   }
 
-  /** Speak dynamic/didactic text with the browser voice, bypassing pre-generated Hestia clips. */
+  /** Speak dynamic/didactic text with the browser voice, bypassing pre-generated local clips. */
   speakBrowserOnly(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
     if (!this.enabled) return;
     this.speakBrowser(text, options);

@@ -550,7 +550,7 @@ export class ReisScene extends BaseScene {
       this.game.journeyLastRegion = undefined;
       const round = this.game.save.journeyRound();
       this.render();
-      this.game.voice.speak(`Ronde ${round}! De sterren willen nog een reis — het wordt ietsje moeilijker. Ga je mee?`, {
+      this.game.voice.speak("De sterren willen nog een reis. Het wordt ietsje moeilijker. Ga je mee?", {
         interrupt: true,
         pitch: 1.2
       });

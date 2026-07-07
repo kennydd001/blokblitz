@@ -4,6 +4,7 @@ import { HapticManager, hapticPattern } from "../src/game/HapticManager";
 import { existsSync, readFileSync } from "node:fs";
 import { PHONICS_WORDS } from "../src/education/literacy/phonics";
 import { READING_PHONEMES, READING_WORD_CLIPS, readingInventoryIssues } from "../src/education/literacy/phonemeInventory";
+import { READING_PHONEME_BASE_PATH, READING_PHONEME_FILES, READING_PHONEME_KEYS } from "../src/game/readingAudioManifest";
 import { VOICE_LINE_BASE_PATH, VOICE_LINE_SLUGS, voiceLineSlug } from "../src/game/voiceLineManifest";
 
 describe("procedural audio cues", () => {
@@ -74,27 +75,32 @@ describe("mobile haptic cues", () => {
   });
 });
 
-describe("local Hestia voice-pack", () => {
+describe("local ElevenLabs voice-pack", () => {
   it("maps high-frequency spoken lines to local MP3 clips", () => {
-    expect(VOICE_LINE_BASE_PATH).toBe("/audio/voice/nl/hestia/");
+    expect(VOICE_LINE_BASE_PATH).toBe("/audio/voice/nl/elevenlabs-lily-v3/");
     for (const text of ["Goed zo!", "Bijna! Probeer nog eens.", "vijf", "Zoem de klanken samen. Welk plaatje is het?"]) {
       const slug = voiceLineSlug(text);
       expect(VOICE_LINE_SLUGS.has(slug), text).toBe(true);
-      expect(existsSync(`public/audio/voice/nl/hestia/${slug}.mp3`), text).toBe(true);
+      expect(existsSync(`public/audio/voice/nl/elevenlabs-lily-v3/${slug}.mp3`), text).toBe(true);
     }
-    expect(VOICE_LINE_SLUGS.size).toBeGreaterThan(700);
+    expect(VOICE_LINE_SLUGS.size).toBe(935);
   });
 });
 
-describe("browser reading audio path", () => {
+describe("reading audio path", () => {
   it("covers every current reading letter, phoneme unit, and word in the didactic inventory", () => {
     expect(readingInventoryIssues()).toEqual([]);
     expect(READING_PHONEMES.length).toBeGreaterThanOrEqual(30);
     expect(READING_WORD_CLIPS.map((clip) => clip.word).sort()).toEqual(PHONICS_WORDS.map((word) => word.word).sort());
-    expect(existsSync("public/audio/reading/nl/hestia")).toBe(false);
+    expect(READING_PHONEME_BASE_PATH).toBe("/audio/reading/nl/elevenlabs-lily-v3/phonemes/");
+    expect(READING_PHONEME_KEYS.size).toBe(READING_PHONEMES.length);
+    for (const phoneme of READING_PHONEMES) {
+      expect(READING_PHONEME_KEYS.has(phoneme.key), phoneme.key).toBe(true);
+      expect(existsSync(`public/audio/reading/nl/elevenlabs-lily-v3/phonemes/${READING_PHONEME_FILES[phoneme.key]}`), phoneme.key).toBe(true);
+    }
   });
 
-  it("routes isolated letters and zoemend lezen through the browser-only ReadingAudioManager", () => {
+  it("routes isolated letters through the dedicated phoneme path and keeps zoemend lezen browser-only", () => {
     const sources = [
       "src/scenes/minigames/KlankgrotScene.ts",
       "src/scenes/minigames/LetterkompasScene.ts",
@@ -110,14 +116,15 @@ describe("browser reading audio path", () => {
     expect(sources).not.toContain("voice.speak(unit");
     expect(sources).not.toContain('units.join("... ")');
 
-    // Browser-only: generated Hestia sentence clips are good for full prompts,
-    // but were rejected for isolated letters and zoemend lezen.
+    // Isolated phonemes may use a dedicated local reading pack once generated.
+    // Zoemend lezen and word splitting keep using browser-only fallback because
+    // generated stretched blend clips were rejected in listening QA.
     const managerSource = readFileSync("src/game/ReadingAudioManager.ts", "utf8");
+    expect(managerSource).toContain("READING_PHONEME_FILES");
+    expect(managerSource).toContain("new Audio(");
     expect(managerSource).toContain("speakBrowserOnly");
-    expect(managerSource).toContain("browser speech");
+    expect(managerSource).toContain("word-splitting");
     expect(managerSource).not.toContain("VOICE_LINE_SLUGS");
     expect(managerSource).not.toContain("voiceLineFile");
-    expect(managerSource).not.toContain("new Audio(");
-    expect(managerSource).not.toContain("readingAudioManifest");
   });
 });

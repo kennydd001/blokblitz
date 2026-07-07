@@ -12,7 +12,7 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const base = path.resolve("public", "audio", "voice", "nl", "hestia");
+const base = path.resolve("public", "audio", "voice", "nl", "elevenlabs-lily-v3");
 
 // [file, substrings that should appear in the transcript (any match passes)]
 const CHECKS = [

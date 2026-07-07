@@ -16,7 +16,10 @@
     "deploy:sprintsite": "npm run build && npx --yes wrangler@latest deploy",
     "deploy:sprintsite:dry-run": "npm run build && npx --yes wrangler@latest deploy --dry-run",
     "voice:hestia": "node scripts/generate-hestia-voice-pack.mjs",
-    "voice:elevenlabs-reading": "node scripts/elevenlabs-reading-shootout.mjs",
+    "voice:elevenlabs": "node scripts/generate-elevenlabs-voice-pack.mjs && node scripts/generate-elevenlabs-reading-phoneme-pack.mjs",
+    "voice:elevenlabs-reading": "node scripts/generate-elevenlabs-reading-phoneme-pack.mjs",
+    "voice:elevenlabs-reading-shootout": "node scripts/elevenlabs-reading-shootout.mjs",
+    "voice:elevenlabs-audit": "node scripts/audit-elevenlabs-audio.mjs",
     "voice:ratings-server": "node scripts/tts-rating-server.mjs",
     "voice:record-reading": "node scripts/reading-recording-studio.mjs",
     "preview": "vite preview --host 127.0.0.1"
