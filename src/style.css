@@ -2,7 +2,8 @@
   color-scheme: light;
   font-family: Inter, Arial, Helvetica, sans-serif;
   color: #172033;
-  background: #dff6ff;
+  /* "Sunlit playground": a warm sunrise wash under the whole app. */
+  background: linear-gradient(160deg, #fef5e7 0%, #dff6ff 100%);
   --ink: #172033;
   --muted: #526071;
   --panel: rgba(255, 252, 242, 0.92);
@@ -15,7 +16,11 @@
   --violet: #6f59d9;
   --teal: #159a9c;
   --danger: #b42318;
-  --shadow: 0 18px 44px rgba(23, 32, 51, 0.18);
+  /* Layered soft depth so every panel floats instead of sitting flat. */
+  --shadow: 0 4px 12px rgba(23, 32, 51, 0.14), 0 18px 40px rgba(23, 32, 51, 0.12);
+  --glow: 0 0 24px rgba(29, 123, 216, 0.1);
+  /* Springy tap easing used across every interactive surface. */
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * {
@@ -65,6 +70,22 @@ input {
   overflow: auto;
   padding: 18px;
   pointer-events: none;
+  /* An opaque, sunlit-playground sky so the 3D menu world (a lazy Three.js
+     chunk that stays mounted for the runner) never bleeds through behind the
+     DOM scenes. Warm peach sun top-right, cool sky, soft meadow foot — enough
+     distinct hues to feel like a real world, soft enough to keep cream cards
+     readable. The runner re-exposes the canvas below. */
+  background:
+    radial-gradient(70% 44% at 88% 4%, rgba(255, 214, 140, 0.85), rgba(255, 214, 140, 0) 62%),
+    radial-gradient(90% 55% at 8% -6%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, #ffe3bd 0%, #bfe6ff 34%, #d5f0ea 72%, #cdeecb 100%);
+  background-color: #cfe9f4;
+}
+
+/* The runner IS the 3D scene: let its world show through. */
+.scene-layer:has(> .scene.run) {
+  background: transparent;
+  background-color: transparent;
 }
 
 .scene {
@@ -120,7 +141,7 @@ input {
   min-height: 48px;
   cursor: pointer;
   box-shadow: 0 4px 0 rgba(23, 32, 51, 0.22);
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  transition: transform 130ms var(--spring), box-shadow 130ms ease, background 120ms ease;
 }
 
 .btn:hover,
@@ -128,8 +149,8 @@ input {
 .option-card:hover,
 .district-card:hover,
 .mission-step:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 7px 0 rgba(23, 32, 51, 0.2);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 0 rgba(23, 32, 51, 0.2);
 }
 
 .btn:active,
@@ -137,7 +158,7 @@ input {
 .option-card:active,
 .district-card:active,
 .mission-step:active {
-  transform: translateY(1px);
+  transform: translateY(2px) scale(0.98);
   box-shadow: 0 2px 0 rgba(23, 32, 51, 0.25);
 }
 
@@ -230,15 +251,15 @@ input {
 }
 
 .btn.primary {
-  background: var(--gold);
+  background: linear-gradient(180deg, #f6c453, #e0af38);
 }
 
 .btn.secondary {
-  background: #a7f3d0;
+  background: linear-gradient(180deg, #a7f3d0, #6ee7b7);
 }
 
 .btn.ghost {
-  background: rgba(255, 255, 255, 0.75);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 252, 242, 0.85));
 }
 
 .btn.danger {
@@ -262,7 +283,7 @@ input {
   background: var(--panel);
   border: 3px solid var(--edge);
   border-radius: 8px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), var(--glow);
 }
 
 .menu-actions,
@@ -3349,9 +3370,33 @@ input {
    ===================================================================== */
 .scene.hub-scene { gap: 14px; justify-content: center; align-items: center; padding: 10px 0; }
 .hub-title { text-align: center; }
-.hub-title .menu-logo { font-size: 3rem; }
-.hub-title h1 { margin: 4px 0 0; font-size: 2.4rem; color: var(--ink); text-shadow: 0 2px 0 #fff, 0 5px 0 rgba(23, 32, 51, 0.2); }
+.hub-title .menu-logo { font-size: 3rem; display: inline-block; animation: dino-tilt 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+.hub-title h1 {
+  margin: 4px 0 0;
+  font-size: 2.4rem;
+  /* A sunny carnival sign: warm gradient text with a light+dark edge kept for
+     legibility, gently bouncing at rest. */
+  background: linear-gradient(135deg, #f6a821, #f07a3c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.85)) drop-shadow(0 4px 0 rgba(23, 32, 51, 0.22));
+  animation: title-bounce 1.8s ease-in-out infinite;
+}
 .hub-title p { margin: 2px 0 0; color: var(--muted); font-weight: 700; }
+.hub-card .hub-emoji { animation: emoji-pulse 1.6s ease-in-out infinite; }
+@keyframes title-bounce {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-5px) rotate(1deg); }
+}
+@keyframes dino-tilt {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes emoji-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
 
 .hub-grid {
   display: grid;
@@ -3383,15 +3428,51 @@ input {
 .hub-card.fill { background: linear-gradient(160deg, #e6d4ff, #9b7af0); }
 
 /* ---- shared mini-game shell ---- */
-.scene.mini-scene { gap: 12px; align-items: center; padding: 10px 0; }
+.scene.mini-scene {
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  /* An ambient sunlit world behind the play area: a warm sun, a soft cloud,
+     and a green meadow rise, over a multi-hue sky that shifts peach -> blue ->
+     lavender -> mint top-to-bottom so even a sparse mode has real colour depth.
+     Journey mode's themeArena() sets an inline region background over this. */
+  background:
+    radial-gradient(24% 15% at 82% 13%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 70%),
+    radial-gradient(42% 24% at 84% 11%, rgba(255, 190, 80, 0.92), rgba(255, 190, 80, 0) 72%),
+    /* Soft floating bokeh across the play area — distinct hues so the world
+       reads as colourful, not washed. */
+    radial-gradient(15% 9% at 26% 42%, rgba(255, 130, 175, 0.5), rgba(255, 130, 175, 0) 70%),
+    radial-gradient(15% 9% at 74% 38%, rgba(70, 195, 220, 0.5), rgba(70, 195, 220, 0) 70%),
+    radial-gradient(14% 8% at 50% 60%, rgba(165, 130, 245, 0.45), rgba(165, 130, 245, 0) 70%),
+    /* A sunlit meadow rise gives real brightness contrast against the bright
+       sky + sun, so the world reads as deep, not flat. */
+    radial-gradient(150% 42% at 50% 106%, #46b277 0%, rgba(70, 178, 119, 0) 72%),
+    linear-gradient(180deg, #ffdf9e 0%, #a9dcff 32%, #cbb8f2 60%, #9fe6b8 100%);
+}
 .mini-header { display: flex; align-items: center; gap: 10px; width: min(720px, 96%); }
 .mini-home { flex: 0 0 auto; }
 .mini-title { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; justify-content: center; font-weight: 900; font-size: 1.3rem; color: var(--ink); }
 .mini-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mini-title span { font-size: 1.6rem; }
 .mini-dots { display: flex; gap: 6px; flex: 0 0 auto; }
-.mini-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--edge); background: #fff; }
+.mini-dot { position: relative; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--edge); background: #fff; }
 .mini-dot.done { background: var(--green); }
+/* A finished round earns a tiny sparkle. */
+.mini-dot.done::before {
+  content: "✨";
+  position: absolute;
+  top: -9px;
+  right: -7px;
+  font-size: 0.6rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: dot-sparkle 0.8s ease;
+}
+@keyframes dot-sparkle {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  55% { transform: scale(1.2) rotate(160deg); opacity: 1; }
+  100% { transform: scale(1) rotate(180deg); opacity: 0.9; }
+}
 .mini-dot.now { background: var(--gold); animation: combo-pop 0.6s ease infinite; }
 
 .mini-instruction {
@@ -3411,11 +3492,13 @@ input {
 .mini-choice {
   border: 4px solid var(--edge);
   border-radius: 18px;
-  background: var(--panel-strong);
-  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.22), 0 10px 18px rgba(23, 32, 51, 0.1);
+  /* Top-lit bevel: a warm face with an inner highlight so tiles read as
+     chunky pressable blocks. */
+  background: linear-gradient(180deg, var(--panel-strong), #fef9f0);
+  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.22), 0 10px 18px rgba(23, 32, 51, 0.14), inset 0 -2px 0 rgba(255, 255, 255, 0.6), inset 0 3px 0 rgba(255, 255, 255, 0.85);
   cursor: pointer;
   padding: 12px;
-  transition: transform 140ms ease, box-shadow 140ms ease;
+  transition: transform 140ms var(--spring), box-shadow 140ms ease;
 }
 .mini-choice:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(23, 32, 51, 0.22), 0 14px 22px rgba(23, 32, 51, 0.14); }
 .mini-choice:active { transform: scale(0.95) translateY(2px); box-shadow: 0 2px 0 rgba(23, 32, 51, 0.22); }
@@ -3708,18 +3791,38 @@ input {
   z-index: 30;
 }
 .mini-correct-burst span {
+  position: relative;
   font-size: 5rem;
   color: var(--green);
   text-shadow: 0 3px 0 #fff, 0 6px 0 rgba(23, 32, 51, 0.2);
   animation: results-pop 0.5s ease;
 }
+/* A sunburst halo expands out from behind the checkmark. */
+.mini-correct-burst span::before {
+  content: "";
+  position: absolute;
+  inset: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(255, 200, 87, 0.55);
+  animation: star-halo 0.7s ease-out forwards;
+}
+@keyframes star-halo {
+  0% { box-shadow: 0 0 0 0 rgba(255, 200, 87, 0.6); }
+  100% { box-shadow: 0 0 0 66px rgba(255, 200, 87, 0); }
+}
+/* In fever the checkmark goes gold to match the on-fire streak. */
+.mini-scene.mini-fever .mini-correct-burst span { color: var(--gold); }
 .mini-correct-burst i {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
+  width: 15px;
+  height: 15px;
+  /* Spinning stars instead of plain squares. */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   background: var(--gold);
   animation: confetti 0.9s ease-out forwards;
 }
@@ -4402,7 +4505,8 @@ input {
   width: clamp(74px, 19vw, 108px);
   z-index: 25;
   pointer-events: none;
-  filter: drop-shadow(0 6px 0 rgba(23, 32, 51, 0.18));
+  /* A warm sunlit ground-glow under Buddy so he feels lit by the world. */
+  filter: drop-shadow(0 6px 0 rgba(23, 32, 51, 0.18)) drop-shadow(0 11px 14px rgba(240, 163, 115, 0.28));
 }
 .buddy-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .buddy-body { transform-box: fill-box; transform-origin: 50% 92%; }
@@ -4585,7 +4689,22 @@ input {
 .reis-node.friend { background: #ffe3f1; }
 .reis-node.star { background: #fff3c4; }
 .reis-node.done { background: #d8f7df; box-shadow: 0 0 0 3px var(--green), 0 5px 0 rgba(23, 32, 51, 0.22); }
-.reis-node.locked { background: #d3dae2; filter: grayscale(0.6) brightness(0.96); box-shadow: 0 4px 0 rgba(23, 32, 51, 0.14); }
+/* Locked nodes look dormant-not-dead: a little greyer, with a slow coloured
+   halo hinting at the colour that will bloom in. */
+.reis-node.locked { position: relative; background: #d3dae2; filter: grayscale(0.8) brightness(0.9); box-shadow: 0 4px 0 rgba(23, 32, 51, 0.14); }
+.reis-node.locked::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 0 0 rgba(120, 140, 170, 0.4);
+  animation: locked-breathe 2.4s ease-in-out infinite;
+}
+@keyframes locked-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(120, 140, 170, 0); }
+  50% { box-shadow: 0 0 10px 2px rgba(120, 140, 170, 0.35); }
+}
 .reis-node.now {
   width: 74px;
   height: 74px;
@@ -5302,11 +5421,11 @@ input {
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  box-shadow: inset 0 0 52px rgba(255, 150, 26, 0.5);
+  box-shadow: inset 0 0 90px rgba(255, 150, 26, 0.45), inset 0 0 160px rgba(255, 200, 100, 0.18);
   animation: fever-breathe 0.9s ease-in-out infinite alternate;
 }
 @keyframes fever-breathe {
-  0% { opacity: 0.55; }
+  0% { opacity: 0.7; }
   100% { opacity: 1; }
 }
 

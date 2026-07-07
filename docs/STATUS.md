@@ -1081,3 +1081,33 @@ Validation:
 - `npm.cmd run test` passed: 20 files, 166 tests.
 - `npm.cmd run build` passed.
 - Vite dev server was started and checked at `http://127.0.0.1:5287/`.
+
+## Visual glow-up: "Sunlit playground" - 2026-07-07
+
+A multi-agent visual audit (6 surface auditors + synthesis) produced a coherent
+"Sunlit playground" direction; implemented the shared, high-leverage wins:
+
+- FIXED the 3D-rock bleed: the lazy Three.js menu world stayed mounted for the
+  runner and showed through behind every DOM scene. .scene-layer now has an
+  opaque sunlit-sky background (transparent only for .scene.run via :has), and
+  .scene.mini-scene gets its own ambient world background (bright sun, soft
+  bokeh, green meadow rise, multi-hue sky). Journey mode's themeArena() still
+  overrides per region.
+- Shared depth: layered --shadow + new --glow token wired into the panel group;
+  bouncy --spring easing + hover scale on the shared .btn group; gradient
+  primary/secondary/ghost buttons; warm sunrise :root background.
+- Shared mini chrome: top-lit beveled answer cards; done-dot ✨ twinkle; warmer
+  whole-screen fever glow; star-halo + spinning-star confetti + gold fever
+  checkmark on the correct-answer burst.
+- Hub: gradient bouncing "Speeltuin" sign, tilting dino logo, pulsing card
+  emojis. Buddy: warm sunlit ground-glow. Map: denser life (7->11 critters),
+  dusk-indigo sleeping veil (atmospheric, was flat grey), breathing halo on
+  locked nodes.
+- Harness fix: viewport-qa now keeps its animation-freeze applied THROUGH the
+  screenshot. Removing it first restarted entrance animations (.tile-in opacity
+  0) so screenshots caught a mid-fade washed frame — a real self-inflicted
+  flake, not a visual regression.
+
+Validation: 166 tests, build, qa:viewport 18/18 all green; live browser checks
+of hub, mini modes (mobile + desktop), and the map confirm the cohesive warm
+look with no 3D bleed.

@@ -235,11 +235,14 @@ async function collectMetrics(scenario = {}) {
   return evaluate(`
     (() => {
       const miniBoardSelector = ${miniBoardSelector};
-      // Neutralise CSS animations while measuring: pulse/idle animations scale
-      // elements, so getBoundingClientRect samples a random animation phase
-      // and layout checks become flaky. Synchronous inject + remove, so
-      // screenshots are unaffected.
+      // Neutralise CSS animations while measuring AND for the screenshot that
+      // follows: pulse/idle animations scale elements (flaky getBoundingClientRect)
+      // and, crucially, entrance animations (.tile-in etc.) start at opacity 0 —
+      // so we must leave the freeze applied through the screenshot to capture the
+      // SETTLED screen, not a mid-fade one. The freeze is discarded on the next
+      // scenario's fresh navigation.
       const freeze = document.createElement("style");
+      freeze.setAttribute("data-qa-freeze", "true");
       freeze.textContent = "* { animation: none !important; transition: none !important; }";
       document.head.appendChild(freeze);
       const rect = (selector) => {
@@ -367,7 +370,8 @@ async function collectMetrics(scenario = {}) {
           return roles;
         })()
       };
-      freeze.remove();
+      // NOTE: freeze intentionally left applied so the screenshot below captures
+      // the settled screen (entrance animations at their final opacity, not 0).
       return metrics;
     })()
   `);

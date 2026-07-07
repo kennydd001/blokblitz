@@ -189,7 +189,7 @@ export class ReisScene extends BaseScene {
       `<radialGradient id="reis-sun"><stop offset="0" stop-color="#fff7c0" stop-opacity="0.95"/><stop offset="1" stop-color="#fff7c0" stop-opacity="0"/></radialGradient>` +
       // Sleeping-world veil: solid grey that melts away near its bottom edge,
       // so the border with the healed world below reads as soft morning mist.
-      `<linearGradient id="reis-veil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a6478"/><stop offset="0.94" stop-color="#5a6478"/><stop offset="1" stop-color="#5a6478" stop-opacity="0"/></linearGradient>`;
+      `<linearGradient id="reis-veil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4a72"/><stop offset="0.5" stop-color="#4a5578"/><stop offset="0.94" stop-color="#5a6478"/><stop offset="1" stop-color="#5a6478" stop-opacity="0"/></linearGradient>`;
     const bands = bandList
       .map((band) => `<rect x="0" y="${band.topY}" width="${JOURNEY_WIDTH}" height="${band.bottomY - band.topY}" fill="url(#band-${band.regionId})"/>`)
       .join("");
@@ -213,7 +213,7 @@ export class ReisScene extends BaseScene {
         const nodes = JOURNEY.filter((node) => node.regionId === band.regionId);
         const done = nodes.filter((node) => completedIds.has(node.id)).length;
         const completion = nodes.length ? done / nodes.length : 0;
-        const opacity = (0.48 * (1 - completion)).toFixed(2);
+        const opacity = (0.42 * (1 - completion)).toFixed(2);
         return `<rect class="reis-band-veil" data-region="${band.regionId}" data-completion="${completion.toFixed(2)}" x="0" y="${band.topY}" width="${JOURNEY_WIDTH}" height="${band.bottomY - band.topY}" fill="url(#reis-veil)" opacity="${opacity}"/>`;
       })
       .join("");
@@ -229,7 +229,9 @@ export class ReisScene extends BaseScene {
         const world = getWorld(band.regionId);
         const height = band.bottomY - band.topY;
         const pieces: string[] = [];
-        for (let i = 0; i < 7; i += 1) {
+        // A healed region hums with life: fill it with critters (deterministic
+        // positions, no per-frame RNG).
+        for (let i = 0; i < 11; i += 1) {
           const fx = 24 + ((Math.sin((i + 1) * 12.9 + band.topY * 0.13) + 1) / 2) * (JOURNEY_WIDTH - 48);
           const fy = band.topY + 46 + ((Math.sin((i + 1) * 7.3 + band.bottomY * 0.11) + 1) / 2) * (height - 92);
           pieces.push(this.lifePiece(world.palette.propStyle, fx.toFixed(0), fy.toFixed(0), ((i * 0.7) % 2.8).toFixed(1)));
