@@ -29,7 +29,39 @@ export const PHONICS_WORDS: PhonicsWord[] = [
   { word: "sok", emoji: "🧦", begin: "s", end: "k", units: ["s", "o", "k"] },
   { word: "ster", emoji: "⭐", begin: "s", end: "r", units: ["s", "t", "e", "r"] },
   { word: "huis", emoji: "🏠", begin: "h", end: "s", units: ["h", "ui", "s"] },
-  { word: "boot", emoji: "⛵", begin: "b", end: "t", units: ["b", "oo", "t"] }
+  { word: "boot", emoji: "⛵", begin: "b", end: "t", units: ["b", "oo", "t"] },
+  // Expanded decodable pool — every unit is in the reading phoneme inventory so
+  // readingInventoryIssues() stays empty. Keeps all four reading modes fresh.
+  { word: "pen", emoji: "🖊️", begin: "p", end: "n", units: ["p", "e", "n"] },
+  { word: "bel", emoji: "🔔", begin: "b", end: "l", units: ["b", "e", "l"] },
+  { word: "mes", emoji: "🔪", begin: "m", end: "s", units: ["m", "e", "s"] },
+  { word: "kip", emoji: "🐔", begin: "k", end: "p", units: ["k", "i", "p"] },
+  { word: "vos", emoji: "🦊", begin: "v", end: "s", units: ["v", "o", "s"] },
+  { word: "doos", emoji: "📦", begin: "d", end: "s", units: ["d", "oo", "s"] },
+  { word: "poes", emoji: "🐈", begin: "p", end: "s", units: ["p", "oe", "s"] },
+  { word: "koe", emoji: "🐄", begin: "k", end: "oe", units: ["k", "oe"] },
+  { word: "beer", emoji: "🐻", begin: "b", end: "r", units: ["b", "ee", "r"] },
+  { word: "peer", emoji: "🍐", begin: "p", end: "r", units: ["p", "ee", "r"] },
+  { word: "raam", emoji: "🪟", begin: "r", end: "m", units: ["r", "aa", "m"] },
+  { word: "kaas", emoji: "🧀", begin: "k", end: "s", units: ["k", "aa", "s"] },
+  { word: "zeep", emoji: "🧼", begin: "z", end: "p", units: ["z", "ee", "p"] },
+  { word: "duim", emoji: "👍", begin: "d", end: "m", units: ["d", "ui", "m"] },
+  { word: "hand", emoji: "✋", begin: "h", end: "d", units: ["h", "a", "n", "d"] },
+  { word: "tand", emoji: "🦷", begin: "t", end: "d", units: ["t", "a", "n", "d"] },
+  { word: "deur", emoji: "🚪", begin: "d", end: "r", units: ["d", "eu", "r"] },
+  { word: "vuur", emoji: "🔥", begin: "v", end: "r", units: ["v", "uu", "r"] },
+  { word: "muur", emoji: "🧱", begin: "m", end: "r", units: ["m", "uu", "r"] },
+  { word: "boek", emoji: "📖", begin: "b", end: "k", units: ["b", "oe", "k"] },
+  { word: "hoed", emoji: "🎩", begin: "h", end: "d", units: ["h", "oe", "d"] },
+  { word: "lamp", emoji: "💡", begin: "l", end: "p", units: ["l", "a", "m", "p"] },
+  { word: "wiel", emoji: "🛞", begin: "w", end: "l", units: ["w", "ie", "l"] },
+  { word: "foto", emoji: "📷", begin: "f", end: "o", units: ["f", "o", "t", "o"] },
+  { word: "fiets", emoji: "🚲", begin: "f", end: "s", units: ["f", "ie", "t", "s"] },
+  { word: "brood", emoji: "🍞", begin: "b", end: "d", units: ["b", "r", "oo", "d"] },
+  { word: "kroon", emoji: "👑", begin: "k", end: "n", units: ["k", "r", "oo", "n"] },
+  { word: "trein", emoji: "🚂", begin: "t", end: "n", units: ["t", "r", "ei", "n"] },
+  { word: "banaan", emoji: "🍌", begin: "b", end: "n", units: ["b", "a", "n", "aa", "n"] },
+  { word: "druif", emoji: "🍇", begin: "d", end: "f", units: ["d", "r", "ui", "f"] }
 ];
 
 export const PHONICS_MISCONCEPTIONS = ["first-sound-weak", "final-sound-weak", "blend-weak"] as const;

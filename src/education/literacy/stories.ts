@@ -162,6 +162,150 @@ export const LISTEN_STORIES: ListenStory[] = [
         ]
       }
     ]
+  },
+  {
+    id: "pinguin-ijs",
+    emoji: "🐧",
+    title: "Pim glijdt op het ijs",
+    text: "Pim de pinguïn glijdt de hele dag op zijn buik over het gladde ijs. Hij glijdt zo hard dat hij bijna in het koude water valt! Net op tijd stopt hij.",
+    questions: [
+      {
+        prompt: "Waar glijdt Pim op?",
+        options: [
+          { emoji: "🧊", label: "op het ijs", isCorrect: true },
+          { emoji: "🌊", label: "op de zee", isCorrect: false },
+          { emoji: "🏖️", label: "op het zand", isCorrect: false }
+        ]
+      },
+      {
+        prompt: "Waar glijdt Pim op?",
+        options: [
+          { emoji: "🫃", label: "op zijn buik", isCorrect: true },
+          { emoji: "🦶", label: "op zijn voeten", isCorrect: false },
+          { emoji: "🙌", label: "op zijn handen", isCorrect: false }
+        ]
+      }
+    ]
+  },
+  {
+    id: "kikker-vlieg",
+    emoji: "🐸",
+    title: "Bram vangt een vlieg",
+    text: "Bram de kikker zit stil op een blad in de vijver. Zoem! Daar komt een vlieg. Bram steekt zijn lange tong uit en hap — de vlieg is weg!",
+    questions: [
+      {
+        prompt: "Wat vangt Bram?",
+        options: [
+          { emoji: "🪰", label: "een vlieg", isCorrect: true },
+          { emoji: "🐟", label: "een vis", isCorrect: false },
+          { emoji: "🦋", label: "een vlinder", isCorrect: false }
+        ]
+      },
+      {
+        prompt: "Waarmee vangt Bram de vlieg?",
+        options: [
+          { emoji: "👅", label: "met zijn tong", isCorrect: true },
+          { emoji: "✋", label: "met zijn hand", isCorrect: false },
+          { emoji: "🕸️", label: "met een web", isCorrect: false }
+        ]
+      }
+    ]
+  },
+  {
+    id: "uil-nacht",
+    emoji: "🦉",
+    title: "Oeki blijft wakker",
+    text: "Als alle dieren gaan slapen, wordt Oeki de uil pas wakker. In het donker ziet zij heel goed. Ze vliegt door de nacht en telt de sterren aan de hemel.",
+    questions: [
+      {
+        prompt: "Wanneer is Oeki wakker?",
+        options: [
+          { emoji: "🌙", label: "in de nacht", isCorrect: true },
+          { emoji: "☀️", label: "in de dag", isCorrect: false },
+          { emoji: "🌧️", label: "in de regen", isCorrect: false }
+        ]
+      },
+      {
+        prompt: "Wat telt Oeki?",
+        options: [
+          { emoji: "⭐", label: "de sterren", isCorrect: true },
+          { emoji: "🐟", label: "de visjes", isCorrect: false },
+          { emoji: "🌳", label: "de bomen", isCorrect: false }
+        ]
+      }
+    ]
+  },
+  {
+    id: "konijn-wortel",
+    emoji: "🐰",
+    title: "Hippie zoekt een wortel",
+    text: "Hippie het konijn heeft honger. Hij hupt door de tuin en graaft met zijn pootjes in de grond. Daar! Een grote oranje wortel om lekker aan te knagen.",
+    questions: [
+      {
+        prompt: "Wat zoekt Hippie?",
+        options: [
+          { emoji: "🥕", label: "een wortel", isCorrect: true },
+          { emoji: "🍎", label: "een appel", isCorrect: false },
+          { emoji: "🧀", label: "een kaas", isCorrect: false }
+        ]
+      },
+      {
+        prompt: "Waarmee graaft Hippie?",
+        options: [
+          { emoji: "🐾", label: "met zijn pootjes", isCorrect: true },
+          { emoji: "🥄", label: "met een lepel", isCorrect: false },
+          { emoji: "👂", label: "met zijn oren", isCorrect: false }
+        ]
+      }
+    ]
+  },
+  {
+    id: "draak-ster",
+    emoji: "🐲",
+    title: "Sterre draagt het licht",
+    text: "Sterre de kleine draak vliegt hoog boven het bos. In haar pootjes draagt ze een klein sterretje naar huis. Overal waar ze vliegt, komen de kleuren terug.",
+    questions: [
+      {
+        prompt: "Wat draagt Sterre?",
+        options: [
+          { emoji: "⭐", label: "een sterretje", isCorrect: true },
+          { emoji: "🌷", label: "een bloem", isCorrect: false },
+          { emoji: "🎁", label: "een cadeau", isCorrect: false }
+        ]
+      },
+      {
+        prompt: "Wat komt er terug waar Sterre vliegt?",
+        options: [
+          { emoji: "🌈", label: "de kleuren", isCorrect: true },
+          { emoji: "🌧️", label: "de regen", isCorrect: false },
+          { emoji: "❄️", label: "de sneeuw", isCorrect: false }
+        ]
+      }
+    ]
+  },
+  {
+    id: "muis-kaas",
+    emoji: "🐭",
+    title: "Muis vindt de kaas",
+    text: "Een kleine muis ruikt iets lekkers in de keuken. Op de tafel ligt een groot stuk gele kaas. Stilletjes klimt de muis omhoog en neemt een klein hapje.",
+    questions: [
+      {
+        prompt: "Wat ruikt de muis?",
+        options: [
+          { emoji: "🧀", label: "de kaas", isCorrect: true },
+          { emoji: "🍰", label: "de taart", isCorrect: false },
+          { emoji: "🍞", label: "het brood", isCorrect: false }
+        ]
+      },
+      {
+        prompt: "Waar ligt de kaas?",
+        options: [
+          { emoji: "🪑", label: "op de tafel", isCorrect: true },
+          { emoji: "🛏️", label: "op het bed", isCorrect: false },
+          { emoji: "🌳", label: "in de boom", isCorrect: false }
+        ]
+      }
+    ]
   }
 ];
 

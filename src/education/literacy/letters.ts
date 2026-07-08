@@ -8,7 +8,13 @@ import { PHONICS_WORDS } from "./phonics";
 export type LetterMode = "sound-to-letter" | "letter-to-word";
 
 // Default starter order; swap this array for a school method's order later.
-export const LETTERS = ["m", "s", "v", "r", "n", "b", "k", "z", "h", "t", "l", "d", "p", "o", "a", "e", "i", "u"];
+export const LETTERS = [
+  // Single-letter graphemes (consonants + short vowels).
+  "m", "s", "v", "r", "n", "b", "k", "z", "h", "t", "l", "d", "p", "f", "w", "o", "a", "e", "i", "u",
+  // Two-letter graphemes (long vowels + digraphs) the decodable words use, so
+  // Letterkompas teaches "aa"/"ui" as one sound-picture instead of two letters.
+  "aa", "ee", "oo", "oe", "ie", "ui", "eu", "ij"
+];
 
 // Letters that have a picture word (for letter -> word rounds).
 const LETTERS_WITH_WORDS = [...new Set(PHONICS_WORDS.map((w) => w.begin))].filter((l) => LETTERS.includes(l));
