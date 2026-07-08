@@ -65,7 +65,7 @@ export class FillScene extends MiniGameScene {
     const target = this.current.quantity;
     const diff = target - this.built;
     const message = diff > 0 ? `Nog ${diff} erbij om ${target} te maken.` : `${Math.abs(diff)} te veel. Haal er ${Math.abs(diff)} weg.`;
-    this.game.flashMessage(message, "warn");
+    this.reteach(message);
   }
 
   // Signature moment: the filled frame does a wave, cell by cell.

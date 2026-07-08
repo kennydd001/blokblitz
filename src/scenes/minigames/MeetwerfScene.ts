@@ -69,7 +69,7 @@ export class MeetwerfScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.meet-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Leg ze naast elkaar en vergelijk.", "warn");
+    this.reteach("Leg ze naast elkaar en vergelijk.");
   }
 
   // Signature moment: the measuring tape rolls across the yard.

@@ -69,7 +69,7 @@ export class CountScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.numeral-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Tel nog eens rustig mee.", "warn");
+    this.reteach("Tel nog eens rustig mee.");
   }
 
   // Signature moment: the counted animals do a happy wave, one by one.

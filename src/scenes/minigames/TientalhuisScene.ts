@@ -74,7 +74,7 @@ export class TientalhuisScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.tientalhuis-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Eerst de volle tien, dan de losse.", "warn");
+    this.reteach("Eerst de volle tien, dan de losse.");
   }
 
   // Signature moment: the whole house lights up with a star on the roof.

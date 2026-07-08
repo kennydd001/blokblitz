@@ -857,6 +857,9 @@ describe("Speeltuin hub + calm game modes", () => {
 
     game.showScene("boot");
     vi.advanceTimersByTime(750);
+    expect(root.querySelector(".reis-scene")).toBeFalsy();
+    expect(root.querySelector(".splash-panel")).toBeTruthy();
+    root.querySelector<HTMLButtonElement>(".splash-panel .btn")!.click();
     expect(root.querySelector(".reis-scene")).toBeTruthy();
     expect(root.querySelectorAll(".reis-node")).toHaveLength(JOURNEY.length);
     expect(root.querySelectorAll(".reis-node.now")).toHaveLength(1);
@@ -1849,6 +1852,55 @@ describe("rewards, voice and parent gate", () => {
       voice.encourage();
       voice.cancel();
     }).not.toThrow();
+  });
+
+  it("does not replace a blocked local ElevenLabs clip with browser speech", async () => {
+    const originalAudio = globalThis.Audio;
+    const originalUtterance = globalThis.SpeechSynthesisUtterance;
+    const originalSpeech = window.speechSynthesis;
+    const originalUserAgent = navigator.userAgent;
+    const browserSpeak = vi.fn();
+
+    class FakeAudio {
+      preload = "";
+      playbackRate = 1;
+      currentTime = 0;
+      constructor(readonly src: string) {}
+      addEventListener() {}
+      pause() {}
+      play() {
+        return Promise.reject(new Error("autoplay blocked"));
+      }
+    }
+    class FakeUtterance {
+      lang = "";
+      rate = 1;
+      pitch = 1;
+      volume = 1;
+      voice?: SpeechSynthesisVoice;
+      constructor(readonly text: string) {}
+    }
+
+    Object.defineProperty(navigator, "userAgent", { configurable: true, value: "Chrome" });
+    Object.defineProperty(globalThis, "Audio", { configurable: true, value: FakeAudio });
+    Object.defineProperty(globalThis, "SpeechSynthesisUtterance", { configurable: true, value: FakeUtterance });
+    Object.defineProperty(window, "speechSynthesis", {
+      configurable: true,
+      value: { getVoices: () => [], speak: browserSpeak, cancel: vi.fn(), addEventListener: vi.fn() }
+    });
+
+    try {
+      const { VoiceManager } = await import("../src/game/VoiceManager");
+      const voice = new VoiceManager();
+      voice.speak("Goed zo!", { interrupt: true });
+      await Promise.resolve();
+      expect(browserSpeak).not.toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(navigator, "userAgent", { configurable: true, value: originalUserAgent });
+      Object.defineProperty(globalThis, "Audio", { configurable: true, value: originalAudio });
+      Object.defineProperty(globalThis, "SpeechSynthesisUtterance", { configurable: true, value: originalUtterance });
+      Object.defineProperty(window, "speechSynthesis", { configurable: true, value: originalSpeech });
+    }
   });
 });
 

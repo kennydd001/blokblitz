@@ -260,7 +260,7 @@ export const JOURNEY_INTRO = {
   title: "De Sterrenreis",
   lines: [
     "Op een nacht viel er een sterretje uit de hemel.",
-    "Alle kleuren verdwenen… maar samen brengen we ze terug!",
+    "Alle kleuren verdwenen... maar samen brengen we ze terug!",
     "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden."
   ],
   start: "Start het avontuur!"

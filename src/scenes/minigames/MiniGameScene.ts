@@ -157,10 +157,11 @@ export abstract class MiniGameScene extends BaseScene {
       this.hintUsed = true;
       this.streak = 0;
       this.root.classList.remove("mini-fever");
-      // Multi-sensory "oops" + a teaching scaffold, then let them retry.
+      // Multi-sensory "oops" + a teaching scaffold, then let them retry. The
+      // specific spoken re-teach comes from onWrong() (reteach), so no generic
+      // encourage() here that would cut it off.
       this.game.audio.play("soft-error");
       this.game.haptics.play("soft-error");
-      this.game.voice.encourage();
       this.buddy?.setMood("oops", 1400);
       this.buddy?.say("Probeer nog!");
       this.showScaffold(option);
@@ -168,9 +169,9 @@ export abstract class MiniGameScene extends BaseScene {
     }
   }
 
-  /** Override to highlight the right answer on a wrong tap (audio/voice handled by pick). */
+  /** Override to highlight the right answer on a wrong tap. Speaks + shows the hint. */
   protected onWrong(): void {
-    this.game.flashMessage(this.current.hint || "Bijna! Probeer nog eens.", "warn");
+    this.reteach(this.current.hint || "Bijna! Probeer nog eens.");
   }
 
   /** Override for a mode's signature "yes!" moment (played before the shared celebrate). */
@@ -291,11 +292,33 @@ export abstract class MiniGameScene extends BaseScene {
     return header;
   }
 
-  private instructionBar(): HTMLElement {
-    const bar = document.createElement("div");
+  // The instruction is a tappable button: a pre-reader who missed it (it is
+  // spoken once at round start) can tap to hear it again — the self-serve
+  // recovery a voice-led game needs, and a clear audio-off visual anchor.
+  private instructionBar(): HTMLButtonElement {
+    const bar = document.createElement("button");
+    bar.type = "button";
     bar.className = "mini-instruction";
-    bar.textContent = this.instruction;
+    bar.setAttribute("aria-label", `Herhaal: ${this.instruction}`);
+    bar.innerHTML = `<span class="mini-instruction-speaker" aria-hidden="true">🔊</span><span class="mini-instruction-text">${this.instruction}</span>`;
+    bar.addEventListener("click", () => this.replayPrompt());
     return bar;
+  }
+
+  /** Re-speak (and, for reading modes, re-play) this round's prompt on demand. */
+  protected replayPrompt(): void {
+    this.buddy?.setMood("think", 900);
+    this.game.voice.speak(this.instruction, { interrupt: true });
+  }
+
+  /**
+   * A wrong answer's teaching hint, spoken AND shown — the voice-first
+   * re-teach a non-reader needs (the recorded Lily clip already exists for most
+   * of these lines). Reading modes re-play the sound itself instead.
+   */
+  protected reteach(text: string): void {
+    this.game.flashMessage(text, "warn");
+    this.game.voice.speak(text, { interrupt: true });
   }
 
   protected finish(): void {

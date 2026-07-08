@@ -72,6 +72,10 @@ export class LuisterbosScene extends MiniGameScene {
   }
 
   /** Read the story aloud (slightly slower); optionally chain the question after. */
+  protected replayPrompt(): void {
+    this.tellStory(false);
+  }
+
   private tellStory(thenQuestion = false): void {
     this.game.voice.speak(this.currentRound.story.text, { interrupt: true, rate: 0.92 });
     if (thenQuestion) {

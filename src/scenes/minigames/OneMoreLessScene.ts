@@ -51,7 +51,7 @@ export class OneMoreLessScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.numeral-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage(this.more ? "Tel eentje verder." : "Tel eentje terug.", "warn");
+    this.reteach(this.more ? "Tel eentje verder." : "Tel eentje terug.");
   }
 
   // Signature moment: the group bounces and an arrow shows the step taken.

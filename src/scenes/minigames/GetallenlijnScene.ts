@@ -72,7 +72,7 @@ export class GetallenlijnScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.getallenlijn-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Tel rustig langs de lijn.", "warn");
+    this.reteach("Tel rustig langs de lijn.");
   }
 
   // Signature moment: the answer lands in the gap and a star SLIDES down the

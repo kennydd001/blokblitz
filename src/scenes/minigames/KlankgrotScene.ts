@@ -57,6 +57,10 @@ export class KlankgrotScene extends MiniGameScene {
 
   // Speak the target sound(s): a single sound for begin/end, the stretched units
   // for a blend ("mmm... aaa... nnn").
+  protected replayPrompt(): void {
+    this.speakSound(0.85);
+  }
+
   private speakSound(rate = 0.85): void {
     this.game.readingAudio.playPhonemeSequence(this.currentRound.sayUnits, { interrupt: true, rate });
   }

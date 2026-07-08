@@ -95,6 +95,11 @@ if (!existsSync(sourceManifestPath)) {
   }
 
   const requiredRuntimeTexts = [
+    "De Sterrenreis",
+    "Op een nacht viel er een sterretje uit de hemel.",
+    "Alle kleuren verdwenen... maar samen brengen we ze terug!",
+    "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
+    "Start het avontuur!",
     "Buddy groeit! Sterrendino!",
     "Hoi! Ik ben Bram de kikker!",
     "Hoera! Bram de kikker is gered en gaat mee! Bram de kikker springt van blok naar blok!",

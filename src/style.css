@@ -3477,15 +3477,37 @@ input {
 
 .mini-instruction {
   width: min(640px, 94%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   text-align: center;
   font-size: 1.3rem;
   font-weight: 800;
+  font-family: inherit;
   color: var(--ink);
   background: var(--panel-strong);
   border: 3px solid var(--edge);
   border-radius: 16px;
   padding: 10px 16px;
   box-shadow: 0 4px 0 rgba(23, 32, 51, 0.18);
+  cursor: pointer;
+  transition: transform 130ms var(--spring), box-shadow 130ms ease;
+}
+.mini-instruction:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(23, 32, 51, 0.18); }
+.mini-instruction:active { transform: translateY(2px) scale(0.99); box-shadow: 0 2px 0 rgba(23, 32, 51, 0.2); }
+/* The speaker glyph gently pulses so a pre-reader knows it can be tapped to hear it again. */
+.mini-instruction-speaker {
+  flex: 0 0 auto;
+  font-size: 1.15rem;
+  line-height: 1;
+  animation: speaker-hint 2.2s ease-in-out infinite;
+}
+.mini-instruction-text { min-width: 0; }
+@keyframes speaker-hint {
+  0%, 70%, 100% { transform: scale(1); }
+  80% { transform: scale(1.18); }
+  90% { transform: scale(1.05); }
 }
 .mini-play { width: min(680px, 96%); display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .mini-choices { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }

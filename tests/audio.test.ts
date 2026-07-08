@@ -83,7 +83,7 @@ describe("local ElevenLabs voice-pack", () => {
       expect(VOICE_LINE_SLUGS.has(slug), text).toBe(true);
       expect(existsSync(`public/audio/voice/nl/elevenlabs-lily-v3/${slug}.mp3`), text).toBe(true);
     }
-    expect(VOICE_LINE_SLUGS.size).toBe(935);
+    expect(VOICE_LINE_SLUGS.size).toBe(940);
   });
 });
 

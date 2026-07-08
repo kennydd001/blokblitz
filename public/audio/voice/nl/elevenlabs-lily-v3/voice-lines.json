@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T16:09:24.312Z",
+  "generatedAt": "2026-07-07T12:57:19.015Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 935,
+  "lineCount": 940,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -2905,6 +2905,14 @@
       "file": "achttien.mp3"
     },
     {
+      "id": "runtime-extra-3",
+      "slug": "alle-kleuren-verdwenen-maar-samen-brengen-we-ze-terug-uitroep",
+      "text": "Alle kleuren verdwenen... maar samen brengen we ze terug!",
+      "spokenText": "Alle kleuren verdwenen... maar samen brengen we ze terug!",
+      "category": "runtime-dynamic",
+      "file": "alle-kleuren-verdwenen-maar-samen-brengen-we-ze-terug-uitroep.mp3"
+    },
+    {
       "id": "sound-b",
       "slug": "b",
       "text": "b",
@@ -3159,6 +3167,14 @@
       "spokenText": "De sterren willen nog een reis! Dezelfde weg, maar alles is een beetje moeilijker. Laat zien hoe sterk je geworden bent!",
       "category": "runtime-dynamic",
       "file": "de-sterren-willen-nog-een-reis-uitroep-dezelfde-weg-maar-alles-is-een-beetje-moeilijker-laat-zie.mp3"
+    },
+    {
+      "id": "runtime-extra-1",
+      "slug": "de-sterrenreis",
+      "text": "De Sterrenreis",
+      "spokenText": "De Sterrenreis",
+      "category": "runtime-dynamic",
+      "file": "de-sterrenreis.mp3"
     },
     {
       "id": "runtime-extra-6",
@@ -3567,6 +3583,14 @@
       "spokenText": "Helemaal thuis! Knap gedaan!",
       "category": "common",
       "file": "helemaal-thuis-uitroep-knap-gedaan-uitroep.mp3"
+    },
+    {
+      "id": "runtime-extra-4",
+      "slug": "help-buddy-de-ster-naar-huis-te-dragen-en-onderweg-vriendjes-te-redden",
+      "text": "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
+      "spokenText": "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
+      "category": "runtime-dynamic",
+      "file": "help-buddy-de-ster-naar-huis-te-dragen-en-onderweg-vriendjes-te-redden.mp3"
     },
     {
       "id": "region-story-5",
@@ -4625,6 +4649,14 @@
       "file": "op-de-stoep.mp3"
     },
     {
+      "id": "runtime-extra-2",
+      "slug": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel",
+      "text": "Op een nacht viel er een sterretje uit de hemel.",
+      "spokenText": "Op een nacht viel er een sterretje uit de hemel.",
+      "category": "runtime-dynamic",
+      "file": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel.mp3"
+    },
+    {
       "id": "journey-intro",
       "slug": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel-alle-kleuren-verdwenen-maar-samen-brengen-we-ze-",
       "text": "Op een nacht viel er een sterretje uit de hemel. Alle kleuren verdwenen... maar samen brengen we ze terug! Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
@@ -4959,6 +4991,14 @@
       "spokenText": "Spring naar eentje meer dan 9.",
       "category": "number-prompts",
       "file": "spring-naar-eentje-meer-dan-9.mp3"
+    },
+    {
+      "id": "runtime-extra-5",
+      "slug": "start-het-avontuur-uitroep",
+      "text": "Start het avontuur!",
+      "spokenText": "Start het avontuur!",
+      "category": "runtime-dynamic",
+      "file": "start-het-avontuur-uitroep.mp3"
     },
     {
       "id": "verkeer-lesson-1",

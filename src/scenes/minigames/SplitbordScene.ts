@@ -104,7 +104,7 @@ export class SplitbordScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.splitbord-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage(this.current.hint || "Samen is het nog niet zoveel. Kijk naar het lege vak.", "warn");
+    this.reteach(this.current.hint || "Samen is het nog niet zoveel. Kijk naar het lege vak.");
   }
 
   // Signature moment: the split CLICKS together and the missing numbers LAND

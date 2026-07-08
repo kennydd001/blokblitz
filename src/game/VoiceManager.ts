@@ -148,7 +148,9 @@ export class VoiceManager {
       );
       void audio.play().catch(() => {
         cleanup();
-        this.speakBrowser(text, options);
+        // A real user gesture is required on some browsers before MP3 playback
+        // is allowed. If a local clip exists, do not replace it with robotic
+        // browser speech; the next tapped line can play naturally.
       });
       return true;
     } catch {

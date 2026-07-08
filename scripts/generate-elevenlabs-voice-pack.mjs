@@ -146,6 +146,12 @@ function addSupplementalRuntimeLines(bySlug) {
   stickers.forEach((name, index) => addRuntimeLine(bySlug, `runtime-sticker-${index + 1}`, `Je verdiende een nieuwe sticker: ${name}!`));
 
   [
+    "De Sterrenreis",
+    "Op een nacht viel er een sterretje uit de hemel.",
+    "Alle kleuren verdwenen... maar samen brengen we ze terug!",
+    "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
+    "Start het avontuur!",
+    "Op een nacht viel er een sterretje uit de hemel. Alle kleuren verdwenen... maar samen brengen we ze terug! Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
     "Knap! Een nieuwe wereld is open!",
     "Perfect gelopen!",
     "Hoera! Drie sterren erbij!",

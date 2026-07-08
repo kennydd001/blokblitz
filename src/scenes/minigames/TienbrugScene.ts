@@ -72,8 +72,7 @@ export class TienbrugScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.tienbrug-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.voice.speak(this.currentRound.bridgeText, { interrupt: true, rate: 0.9 });
-    this.game.flashMessage(this.currentRound.bridgeText, "warn");
+    this.reteach(this.currentRound.bridgeText);
   }
 
   // Signature moment: a light-wave rolls across the ten-frame and a runner

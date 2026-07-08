@@ -48,7 +48,7 @@ export class CompareScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.compare-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Tel de stippen: welke heeft er meer?", "warn");
+    this.reteach("Tel de stippen: welke heeft er meer?");
   }
 
   // Signature moment: the winning group gets the crown.

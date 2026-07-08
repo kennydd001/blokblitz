@@ -71,6 +71,10 @@ export class ZoemrouteScene extends MiniGameScene {
   }
 
   // Speak the stretched, connected blend, then the whole word.
+  protected replayPrompt(): void {
+    this.zoem(0.7);
+  }
+
   private zoem(rate = 0.7): void {
     this.game.readingAudio.playZoemWord(this.currentRound.units, this.currentRound.word.word, { interrupt: true, rate });
   }

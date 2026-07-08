@@ -1046,7 +1046,7 @@ Implemented:
   reading pack, while `playPhonemeSequence()` and `playZoemWord()` still use the
   browser-only fallback.
 - Generated the full local ElevenLabs runtime pack:
-  `public/audio/voice/nl/elevenlabs-lily-v3/` now has 935 MP3 clips plus
+  `public/audio/voice/nl/elevenlabs-lily-v3/` now has 940 MP3 clips plus
   `voice-lines.json`.
 - Generated the full isolated reading phoneme pack:
   `public/audio/reading/nl/elevenlabs-lily-v3/phonemes/` now has 32 MP3 clips
@@ -1059,6 +1059,14 @@ Implemented:
   documented active runtime audio source.
 - Removed the old `public/audio/voice/nl/hestia/` runtime asset directory so the
   app no longer ships two complete voice-packs.
+- Follow-up fix 2026-07-07: removed the automatic boot-to-intro jump so the
+  child's Start tap unlocks MP3 playback before the opening cinematic speaks.
+  Added the three individual opening cinematic lines, title, and start prompt to
+  the ElevenLabs pack. `VoiceManager` no longer replaces an existing local clip
+  with browser speech when `audio.play()` is rejected by autoplay policy.
+- Validation for the follow-up: `voice:elevenlabs-audit` passed with 940/940
+  voice clips, 32/32 reading phonemes, and 17/17 runtime voice checks;
+  `typecheck`, `lint`, `test` (167 tests), and `build` passed.
 
 Regeneration command:
 
@@ -1071,8 +1079,8 @@ Remove-Item Env:\ELEVENLABS_API_KEY
 
 Validation:
 
-- `npm.cmd run voice:elevenlabs-audit` passed: 935/935 general voice clips and
-  32/32 reading phoneme clips present, 12/12 dynamic runtime voice examples
+- `npm.cmd run voice:elevenlabs-audit` passed: 940/940 general voice clips and
+  32/32 reading phoneme clips present, 17/17 dynamic runtime voice examples
   present, runtime manifests point at ElevenLabs, and the old Hestia runtime
   directory is gone.
 - `npm.cmd install` passed.

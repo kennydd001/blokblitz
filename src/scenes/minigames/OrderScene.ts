@@ -66,7 +66,7 @@ export class OrderScene extends MiniGameScene {
       next?.classList.remove("hintnext");
       void next?.offsetWidth;
       next?.classList.add("hintnext");
-      this.game.flashMessage("Zoek het kleinste getal dat nog over is.", "warn");
+      this.reteach("Zoek het kleinste getal dat nog over is.");
     }
   }
 

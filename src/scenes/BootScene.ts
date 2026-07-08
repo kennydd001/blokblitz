@@ -2,8 +2,6 @@
 import { BaseScene, sceneHeader } from "./SceneUtils";
 
 export class BootScene extends BaseScene {
-  private timer = 0;
-
   constructor(game: Game) {
     super(game, "boot");
   }
@@ -16,8 +14,6 @@ export class BootScene extends BaseScene {
       sceneHeader("BlokBlitz", "Dino Redders van Sterrenstad"),
       this.game.assets.describe() ? this.makeSplash() : document.createElement("div")
     );
-    this.timer = window.setTimeout(() => this.game.showScene("reis"), 700);
-    this.addCleanup(() => window.clearTimeout(this.timer));
   }
 
   private makeSplash(): HTMLElement {

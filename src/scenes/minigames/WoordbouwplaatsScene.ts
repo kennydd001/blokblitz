@@ -65,6 +65,10 @@ export class WoordbouwplaatsScene extends MiniGameScene {
     return wrap;
   }
 
+  protected replayPrompt(): void {
+    this.sayWord(0.7);
+  }
+
   private sayWord(rate = 0.7): void {
     this.game.readingAudio.playZoemWord(this.currentRound.units, this.currentRound.word.word, { interrupt: true, rate });
   }

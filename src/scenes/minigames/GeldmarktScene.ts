@@ -73,7 +73,7 @@ export class GeldmarktScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.geld-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Tel de muntjes samen: 5, dan 2, dan 1.", "warn");
+    this.reteach("Tel de muntjes samen: 5, dan 2, dan 1.");
   }
 
   // Signature moment: kassa! The coins hop one by one, like being counted

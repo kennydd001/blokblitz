@@ -74,7 +74,7 @@ export class KloktorenScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.klok-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.flashMessage("Kijk naar de wijzers: kort = uur, lang = minuten.", "warn");
+    this.reteach("Kijk naar de wijzers: kort = uur, lang = minuten.");
   }
 
   // Signature moment: the clock tower RINGS — the clock swings and a bell

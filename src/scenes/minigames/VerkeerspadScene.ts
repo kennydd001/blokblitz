@@ -80,8 +80,7 @@ export class VerkeerspadScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.verkeer-choice[data-correct="true"]')?.classList.add("reveal");
-    this.game.voice.speak(this.currentRound.card.lesson, { interrupt: true });
-    this.game.flashMessage(this.currentRound.card.lesson, "warn");
+    this.reteach(this.currentRound.card.lesson);
   }
 
   // Signature moment: the light jumps to green — safe to go!
