@@ -1,5 +1,5 @@
 import { stableQuantityFromDate } from "../education/quantityLayouts";
-import type { AttemptLog, DistrictProgress, GameProgress, GameSettings, SaveData, WorldProgress } from "../education/types";
+import type { AttemptLog, DayStreak, DistrictProgress, GameProgress, GameSettings, SaveData, WorldProgress } from "../education/types";
 import { districtSeeds } from "../data/districts";
 import { JOURNEY, backfillCompleted, frontierIndex } from "../data/journey";
 import { earnedStickerIds } from "../data/stickers";
@@ -63,9 +63,19 @@ export function defaultProgress(): GameProgress {
     stickers: [],
     journey: { nodeIndex: 0, completed: [], round: 1 },
     dailyChestDay: "",
+    streak: { count: 0, best: 0, lastDay: "" },
     sessionChestFill: 0,
     buddyLevelSeen: 1
   };
+}
+
+/** The yyyy-mm-dd one day before the given day key. */
+export function previousDayKey(dayKey: string): string {
+  const [y, m, d] = dayKey.split("-").map(Number);
+  if (!y || !m || !d) return "";
+  const date = new Date(Date.UTC(y, m - 1, d));
+  date.setUTCDate(date.getUTCDate() - 1);
+  return date.toISOString().slice(0, 10);
 }
 
 export function defaultSaveData(): SaveData {
@@ -317,6 +327,7 @@ export class SaveManager {
           return { nodeIndex: frontierIndex(completed), completed, round: data.progress?.journey?.round ?? 1 };
         })(),
         dailyChestDay: data.progress?.dailyChestDay ?? "",
+        streak: data.progress?.streak ?? { count: 0, best: 0, lastDay: "" },
         sessionChestFill: data.progress?.sessionChestFill ?? 0,
         buddyLevelSeen: data.progress?.buddyLevelSeen ?? 1
       }
@@ -353,9 +364,21 @@ export class SaveManager {
     return this.data.progress.dailyChestDay !== dayKey;
   }
 
-  /** Open today's chest (idempotent): returns true only the first time today. */
+  /** The come-back-tomorrow streak. */
+  dayStreak(): DayStreak {
+    return this.data.progress.streak ?? { count: 0, best: 0, lastDay: "" };
+  }
+
+  /**
+   * Open today's chest (idempotent): returns true only the first time today.
+   * Also advances the day streak — +1 if the last claim was yesterday, reset to
+   * 1 on a gap (never shamed) — and keeps the best.
+   */
   claimDailyChest(dayKey: string): boolean {
     if (!this.dailyChestAvailable(dayKey)) return false;
+    const streak = this.dayStreak();
+    const count = streak.lastDay === previousDayKey(dayKey) ? streak.count + 1 : 1;
+    this.data.progress.streak = { count, best: Math.max(streak.best, count), lastDay: dayKey };
     this.data.progress.dailyChestDay = dayKey;
     this.save();
     return true;

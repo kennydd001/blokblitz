@@ -4,7 +4,7 @@ import { HERO_SKINS, skinById, unlockedSkinIds } from "../runner/skins";
 import { cssHex } from "../runner/worlds";
 import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
-import { maybeBuddyLevelUp, spawnTreasureChest, treasureMeter } from "./treasure";
+import { maybeBuddyLevelUp, maybeDailyChest, spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
 interface ModeCard {
@@ -114,6 +114,7 @@ export class HubScene extends BaseScene {
     const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin), data.progress.stars);
     this.root.appendChild(buddy.el);
     buddy.setMood("happy", 1500);
+    maybeDailyChest(this.game, this.root, buddy);
     spawnTreasureChest(this.game, this.root, buddy);
     maybeBuddyLevelUp(this.game, this.root);
     if (!this.greeted) {

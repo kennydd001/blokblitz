@@ -6,6 +6,63 @@ import type { Game } from "../game/Game";
 import { skinById } from "../runner/skins";
 import { buddyLevel, createBuddy, type Buddy } from "./buddy";
 
+/**
+ * The daily gift chest + come-back-tomorrow streak. Shown once per day on the
+ * map AND the hub, so a free-play child sees it too. Opening it scales the
+ * reward with the day streak and shows a growing flame + week ribbon; a gap
+ * return is welcomed, never shamed.
+ */
+export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): HTMLButtonElement | null {
+  const dayKey = new Date().toISOString().slice(0, 10);
+  if (!game.save.dailyChestAvailable(dayKey)) return null;
+  const chest = document.createElement("button");
+  chest.type = "button";
+  chest.className = "reis-chest";
+  chest.dataset.dailyChest = "true";
+  chest.setAttribute("aria-label", "Open je dagelijkse cadeautje");
+  chest.innerHTML = `<span aria-hidden="true">🎁</span>`;
+  chest.addEventListener("click", () => {
+    if (!game.save.claimDailyChest(dayKey)) return;
+    const { count, best } = game.save.dayStreak();
+    const reward = 3 + Math.min(3, count - 1); // +3 today, growing to +6 by day 4
+    game.save.award({ stars: reward, blocks: reward });
+    game.audio.play("win");
+    game.haptics.play("win");
+    const line =
+      count >= 2
+        ? `Hoera, ${count} dagen op een rij! ${reward} sterren erbij. Kom morgen weer!`
+        : best >= 2
+          ? `Ik heb je gemist! Fijn dat je er weer bent. ${reward} sterren erbij!`
+          : `Hoera! ${reward} sterren erbij!`;
+    game.voice.speak(line, { interrupt: true, pitch: 1.2 });
+    buddy?.setMood("wow", 1600);
+    buddy?.say(count >= 2 ? `${count} dagen!` : "Een cadeautje!");
+    const burst = document.createElement("div");
+    burst.className = "results-burst reis-chest-burst";
+    burst.setAttribute("aria-hidden", "true");
+    burst.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>";
+    root.appendChild(burst);
+    root.appendChild(streakRibbon(count));
+    window.setTimeout(() => burst.remove(), 1100);
+    window.setTimeout(() => root.querySelector(".daglint")?.remove(), 2600);
+    chest.classList.add("opened");
+    chest.disabled = true;
+    window.setTimeout(() => chest.remove(), 900);
+  });
+  root.appendChild(chest);
+  return chest;
+}
+
+/** A transient flame + 7-day ribbon celebrating the current streak. */
+function streakRibbon(count: number): HTMLElement {
+  const wrap = document.createElement("div");
+  wrap.className = "daglint";
+  wrap.setAttribute("aria-label", `${count} dagen op een rij`);
+  const dots = Array.from({ length: 7 }, (_, i) => `<span class="daglint-dot${i < Math.min(7, count) ? " lit" : ""}" aria-hidden="true"></span>`).join("");
+  wrap.innerHTML = `<span class="daglint-flame" aria-hidden="true">🔥</span><strong>${count}</strong><span class="daglint-dots" aria-hidden="true">${dots}</span>`;
+  return wrap;
+}
+
 /** The 3-gem meter pill (💎💎◇). */
 export function treasureMeter(game: Game): HTMLElement {
   const fill = Math.min(3, game.data().progress.sessionChestFill ?? 0);

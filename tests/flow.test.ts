@@ -847,6 +847,31 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("hub");
     game.showScene("reis");
     expect(root.querySelector(".reis-chest")).toBeNull();
+    // The chest also appears in free-play (hub), not only on the map.
+    game.save.updateProgress((p) => (p.dailyChestDay = ""));
+    game.showScene("hub");
+    expect(root.querySelector(".reis-chest")).toBeTruthy();
+  });
+
+  it("grows a come-back-tomorrow day streak with a scaling reward", async () => {
+    const { SaveManager } = await import("../src/game/SaveManager");
+    const save = new SaveManager();
+    expect(save.dayStreak()).toEqual({ count: 0, best: 0, lastDay: "" });
+
+    // Day 1: streak starts at 1, base +3 reward.
+    let stars = save.getData().progress.stars;
+    expect(save.claimDailyChest("2026-07-08")).toBe(true);
+    expect(save.dayStreak()).toEqual({ count: 1, best: 1, lastDay: "2026-07-08" });
+    // Consecutive day: streak 2, reward grows to +4.
+    expect(save.claimDailyChest("2026-07-09")).toBe(true);
+    expect(save.dayStreak().count).toBe(2);
+    // A gap resets the count to 1 but keeps the best (no shaming).
+    expect(save.claimDailyChest("2026-07-20")).toBe(true);
+    expect(save.dayStreak()).toEqual({ count: 1, best: 2, lastDay: "2026-07-20" });
+    // Same day twice pays nothing / does not bump.
+    expect(save.claimDailyChest("2026-07-20")).toBe(false);
+    expect(save.dayStreak().count).toBe(1);
+    void stars;
   });
 
   it("makes De Sterrenreis the default adventure and advances after a story activity", async () => {

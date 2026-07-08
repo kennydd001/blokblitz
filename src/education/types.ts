@@ -214,10 +214,21 @@ export interface GameProgress {
   journey: JourneyProgress;
   /** Day key (yyyy-mm-dd) of the last opened daily gift chest. */
   dailyChestDay: string;
+  /** Come-back-tomorrow streak: consecutive days the daily chest was opened. */
+  streak: DayStreak;
   /** Finished activities toward the session treasure chest (full at 3). */
   sessionChestFill: number;
   /** Highest Buddy level already celebrated with the level-up moment. */
   buddyLevelSeen: number;
+}
+
+export interface DayStreak {
+  /** Consecutive days including today's claim. */
+  count: number;
+  /** Best streak ever reached. */
+  best: number;
+  /** Day key (yyyy-mm-dd) of the most recent claim. */
+  lastDay: string;
 }
 
 export interface SaveData {
