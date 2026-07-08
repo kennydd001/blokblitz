@@ -282,7 +282,10 @@ export class Game {
 
   private update(dt: number, elapsed: number): void {
     this.scenes.update(dt);
-    this.stage3d?.update(dt, elapsed);
+    // Only the runner shows the 3D world. Every other scene is pure DOM over an
+    // opaque sky, so rendering the WebGL scene there just burned battery/heat/GPU
+    // on a tablet for pixels the child never saw (~90% of playtime). Gate it.
+    if (this.scenes.getCurrentName() === "run") this.stage3d?.update(dt, elapsed);
   }
 
   private soundCueForCorrectAttempt(challenge: Challenge, isSnap: boolean): SoundCue {
