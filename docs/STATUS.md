@@ -1119,3 +1119,25 @@ A multi-agent visual audit (6 surface auditors + synthesis) produced a coherent
 Validation: 166 tests, build, qa:viewport 18/18 all green; live browser checks
 of hub, mini modes (mobile + desktop), and the map confirm the cohesive warm
 look with no 3D bleed.
+
+## Quick-wins batch (from the 7-dimension audit) - 2026-07-08
+
+Implemented the six audit-recommended quick wins, each its own commit:
+
+- Voice-first clarity: the mini-mode instruction bar is now a 🔊 button that
+  re-speaks the prompt (reading modes re-play the sound); wrong answers now
+  SPEAK the specific teaching hint (reteach() helper) instead of showing silent
+  text — the recorded clip already existed for most.
+- Perf: gate the WebGL render loop to the runner only (was rendering 60fps
+  behind the opaque DOM sky every scene ~90% of playtime).
+- Daglint: a consecutive-day streak (progress.streak) with a reward growing
+  +3->+6, a 🔥 + 7-day ribbon, and streak/comeback Buddy lines; the daily chest
+  moved to shared treasure.ts and now also appears on the hub.
+- Literacy content: PHONICS_WORDS 14->44, LETTERS 18->28 (added f/w + 8
+  digraph tiles), LISTEN_STORIES 6->12 — fixes the "memorised in a week" gap.
+- Boss Rush "Sterrenarena": a tier-scaling gauntlet of all six bosses,
+  unlocked once the star is home (hub 🏆 tile), ending on a champion screen.
+
+Validation: 169 tests (+ new streak, Boss Rush, content), tsc, build,
+qa:viewport 18/18 green; live-verified the replay button, spoken hint, hub
+chest + daglint, expanded reading content, and the Sterrenarena unlock.
