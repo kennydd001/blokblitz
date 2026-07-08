@@ -82,7 +82,12 @@ export class HubScene extends BaseScene {
 
     const grid = document.createElement("div");
     grid.className = "hub-grid";
-    MODES.forEach((mode) => {
+    // The Sterrenarena boss-rush unlocks once the star is home — a tier-scaling
+    // rematch of all six bosses for the "beat the game" child.
+    const modes = this.game.save.journeyComplete()
+      ? [{ scene: "bossRush", emoji: "🏆", name: "Sterrenarena", desc: "Versla alle bazen", tone: "adventure" } as ModeCard, ...MODES]
+      : MODES;
+    modes.forEach((mode) => {
       const card = document.createElement("button");
       card.type = "button";
       card.className = `hub-card ${mode.tone}`;

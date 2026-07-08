@@ -21,11 +21,11 @@ const DEFAULT_BOSS: BossSpec = { name: "De baas", emoji: "👾", taunt: "Hihi, m
 export class BossScene extends MiniGameScene {
   protected total = 5;
   protected instruction = "Hoeveel zie je? Tik het getal en raak de baas!";
-  private boss: BossSpec = DEFAULT_BOSS;
-  private regionId = "grasland";
-  private cap = 10;
+  protected boss: BossSpec = DEFAULT_BOSS;
+  protected regionId = "grasland";
+  protected cap = 10;
   /** The Sterrenrover finale: 7 hearts and three escalating phases. */
-  private isFinal = false;
+  protected isFinal = false;
   private lastPhase = 1;
 
   protected get emoji(): string {
@@ -41,26 +41,38 @@ export class BossScene extends MiniGameScene {
   }
 
   mount(): void {
-    // Theme from the journey node we were launched from (falls back for free play).
-    const node = JOURNEY.find((n) => n.id === this.game.lastJourneyNode && n.kind === "boss");
-    this.regionId = node?.regionId ?? "grasland";
-    this.boss = BOSSES[this.regionId] ?? DEFAULT_BOSS;
-    this.cap = getWorld(this.regionId).maxQuantity;
-    this.isFinal = this.regionId === "sterrenrace";
-    this.total = this.isFinal ? 7 : 5;
-    this.lastPhase = 1;
+    this.beginFight(this.resolveRegionId());
     super.mount();
     this.root.classList.add("boss-scene");
     this.root.classList.toggle("boss-final", this.isFinal);
-    // Set the fight in the boss's own world: a moody gradient in that region's
-    // sky -> ground colours, so each arena feels like the ice cave, web wood, etc.
-    const pal = getWorld(this.regionId).palette;
-    this.root.style.background = `radial-gradient(130% 100% at 50% 22%, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.34)), linear-gradient(180deg, ${cssHex(pal.sky)} 0%, ${cssHex(pal.ground)} 100%)`;
+    this.applyArenaTheme();
     this.showBossIntro();
   }
 
+  /** Which region's boss this fight is: the launching journey node (else grasland). */
+  protected resolveRegionId(): string {
+    const node = JOURNEY.find((n) => n.id === this.game.lastJourneyNode && n.kind === "boss");
+    return node?.regionId ?? "grasland";
+  }
+
+  /** Configure the fight for a region (called before startRound so cap is set). */
+  protected beginFight(regionId: string): void {
+    this.regionId = regionId;
+    this.boss = BOSSES[regionId] ?? DEFAULT_BOSS;
+    this.cap = getWorld(regionId).maxQuantity;
+    this.isFinal = regionId === "sterrenrace";
+    this.total = this.isFinal ? 7 : 5;
+    this.lastPhase = 1;
+  }
+
+  /** Moody gradient in the region's sky -> ground colours (ice cave, web wood...). */
+  protected applyArenaTheme(): void {
+    const pal = getWorld(this.regionId).palette;
+    this.root.style.background = `radial-gradient(130% 100% at 50% 22%, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.34)), linear-gradient(180deg, ${cssHex(pal.sky)} 0%, ${cssHex(pal.ground)} 100%)`;
+  }
+
   // A short, dramatic reveal so the boss feels like an EVENT, not just a screen.
-  private showBossIntro(): void {
+  protected showBossIntro(): void {
     const intro = document.createElement("div");
     intro.className = "boss-intro";
     intro.setAttribute("aria-hidden", "true");
@@ -186,11 +198,17 @@ export class BossScene extends MiniGameScene {
       star.textContent = "⭐";
       (this.root.querySelector(".boss-arena") ?? this.root).appendChild(star);
     }
-    this.later(() => this.showBossDone(), 850);
+    this.later(() => this.onBossDefeated(), 850);
+  }
+
+  /** What happens after a boss falls. Base = the victory screen; the rush chains
+   *  to the next boss instead. */
+  protected onBossDefeated(): void {
+    this.showBossDone();
   }
 
   // ...then phase 2: the victory screen.
-  private showBossDone(): void {
+  protected showBossDone(): void {
     this.game.audio.play("win");
     this.buddy?.setMood("wow");
     this.buddy?.say("Verslagen!");

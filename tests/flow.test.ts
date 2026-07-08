@@ -1164,6 +1164,43 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".reis-story-card h2")?.textContent).toContain("Sterrenronde 2");
   });
 
+  it("Sterrenarena boss rush: unlocks at journey end and chains all six bosses to a champion screen", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    // Locked until the star is home.
+    game.showScene("hub");
+    expect(root.querySelector('.hub-card[data-mode="bossRush"]')).toBeNull();
+
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+    expect(game.save.journeyComplete()).toBe(true);
+    game.showScene("hub");
+    expect(root.querySelector('.hub-card[data-mode="bossRush"]')).toBeTruthy();
+
+    // Enter the gauntlet: the first boss arena is up.
+    game.showScene("bossRush");
+    expect(root.querySelector(".boss-arena")).toBeTruthy();
+    const starsBefore = game.data().progress.stars;
+
+    // Beat every boss back-to-back; only the final champion screen is a .mini-done.
+    for (let i = 0; i < 120 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.boss-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    const done = root.querySelector(".mini-done");
+    expect(done).toBeTruthy();
+    expect(done?.textContent).toContain("Sterrenarena");
+    // A champion bonus lands on top of the per-hit rewards.
+    expect(game.data().progress.stars).toBeGreaterThan(starsBefore + 6);
+    vi.useRealTimers();
+  });
+
   it("fights and defeats a region boss, then frees the trapped friend", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");

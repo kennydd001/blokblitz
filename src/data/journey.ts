@@ -229,6 +229,9 @@ export function frontierIndex(completed: string[]): number {
 
 export const FRIENDS = REGIONS.map((plan) => plan.friend);
 
+/** The six region ids in journey order (grasland -> sterrenrace). */
+export const REGION_IDS = REGIONS.map((plan) => plan.region);
+
 // ---- the story spine -------------------------------------------------------
 // When the star fell, the colour drained out of every region. Buddy carries the
 // star home one region at a time; each region's colour blooms back as the child
