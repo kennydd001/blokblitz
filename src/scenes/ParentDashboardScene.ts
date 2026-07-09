@@ -1,6 +1,18 @@
 import type { Game } from "../game/Game";
 import { childFocusAction, childFocusTitle, childRepresentationName } from "../education/focusLabels";
+import type { CurriculumCell } from "../education/types";
 import { BaseScene, sceneHeader } from "./SceneUtils";
+
+const DOMAIN_LABELS: Record<string, string> = {
+  "literacy-phonemic": "Klanken horen",
+  "literacy-reading": "Letters & woorden",
+  "listening-comprehension": "Luisteren",
+  "math-number": "Getallen tot 20",
+  "math-operations": "Plus & min tot 20",
+  "math-geometry": "Vormen",
+  "math-measurement": "Meten, geld & klok",
+  "world-traffic": "Verkeer"
+};
 
 export class ParentDashboardScene extends BaseScene {
   constructor(game: Game) {
@@ -32,6 +44,7 @@ export class ParentDashboardScene extends BaseScene {
 
     dashboard.append(
       this.panel("Mastery per skill", tracker.masteryBySkill().map((item) => this.bar(childFocusTitle(item.skill), item.accuracy, `${item.exposures}x ${item.mastery}`))),
+      this.panel("Per doel: wat kan je kind al?", this.curriculumMasteryRows()),
       this.panel("Splits (rekenbordje)", this.splitRows()),
       this.panel("Lezen (klanken)", this.readingRows()),
       this.panel("Rekenen tot 20", this.math20Rows()),
@@ -134,6 +147,42 @@ export class ParentDashboardScene extends BaseScene {
     if (shapes.length) rows.push(this.line("Vormen", `${pct(shapes)}% uit ${shapes.length}`));
     if (patterns.length) rows.push(this.line("Patronen", `${pct(patterns)}% uit ${patterns.length}`));
     return rows;
+  }
+
+  // Per-target curriculum mastery: for each learning domain, how many specific
+  // targets (a sound, a word, a split, a teen) are secure/fluent vs still
+  // emerging, and which one to practise next. The payoff of the mastery model.
+  private curriculumMasteryRows(): HTMLElement[] {
+    const cells = this.game.mastery.curriculumCells();
+    if (cells.length === 0) return [];
+    const byDomain = new Map<string, CurriculumCell[]>();
+    for (const cell of cells) {
+      const list = byDomain.get(cell.domain) ?? [];
+      list.push(cell);
+      byDomain.set(cell.domain, list);
+    }
+    const rows: HTMLElement[] = [];
+    for (const [domain, list] of byDomain) {
+      const solid = list.filter((c) => c.mastery !== "emerging").length;
+      const weakest = [...list].sort((a, b) => a.accuracy - b.accuracy)[0];
+      const label = DOMAIN_LABELS[domain] ?? domain;
+      const detail =
+        weakest && weakest.mastery === "emerging" && weakest.exposures >= 3
+          ? `${solid}/${list.length} beheerst · oefen: ${this.humanTarget(weakest.targetKey)}`
+          : `${solid}/${list.length} beheerst`;
+      rows.push(this.line(label, detail));
+    }
+    return rows;
+  }
+
+  /** A friendly name for a target key ("letter-s" -> "letter s", "line-13" -> "getal 13"). */
+  private humanTarget(key: string): string {
+    const [head, ...rest] = key.split("-");
+    const tail = rest.join("-");
+    if (head === "letter") return `letter ${tail}`;
+    if (head === "line") return `getal ${tail}`;
+    if (head === "begin" || head === "end" || head === "blend") return tail;
+    return tail || key;
   }
 
   private panel(title: string, rows: HTMLElement[]): HTMLElement {

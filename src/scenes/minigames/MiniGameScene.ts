@@ -94,8 +94,25 @@ export abstract class MiniGameScene extends BaseScene {
     return Math.max(raisedMin, Math.min(cappedMax, focus + jitter));
   }
 
+  /**
+   * The target key of the round on screen. Curriculum scenes override this to
+   * return `this.currentRound.targetKey`; number modes leave it undefined and
+   * never re-roll.
+   */
+  protected currentTargetKey(): string | undefined {
+    return undefined;
+  }
+
   protected startRound(): void {
     this.current = this.makeChallenge();
+    // Adaptive resurfacing: if the child has a weak target in this mode's
+    // learning domain, re-roll a few times so that weak /s/, word or split
+    // comes back around instead of a uniform-random pick. Bounded so a rare
+    // target never starves the round.
+    const focus = this.game.adaptive.recommendCurriculumFocus(SCENE_DOMAINS[this.name]);
+    if (focus) {
+      for (let i = 0; i < 10 && this.currentTargetKey() !== focus; i += 1) this.current = this.makeChallenge();
+    }
     this.hintUsed = false;
     this.resolving = false;
     this.startedAt = performance.now();

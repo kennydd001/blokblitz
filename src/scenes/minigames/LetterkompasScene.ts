@@ -64,6 +64,10 @@ export class LetterkompasScene extends MiniGameScene {
     this.game.readingAudio.playPhoneme(this.currentRound.say, { interrupt: true, rate });
   }
 
+  protected currentTargetKey(): string | undefined {
+    return this.currentRound?.targetKey;
+  }
+
   protected logAttempt(option: ChallengeOption): boolean {
     const attempt = buildCurriculumAttempt({
       sessionId: this.game.save.getMutableData().progress.sessionId,
@@ -76,7 +80,7 @@ export class LetterkompasScene extends MiniGameScene {
       wasCorrect: option.isCorrect,
       reactionTimeMs: performance.now() - this.startedAt,
       hintUsed: this.hintUsed,
-      errorType: classifyLetterError(this.currentRound.letter)
+      errorType: classifyLetterError(this.currentRound.letter, String(option.value))
     });
     return this.game.recordCurriculumAttempt(attempt);
   }

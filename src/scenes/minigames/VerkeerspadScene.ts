@@ -59,6 +59,10 @@ export class VerkeerspadScene extends MiniGameScene {
     return wrap;
   }
 
+  protected currentTargetKey(): string | undefined {
+    return this.currentRound?.targetKey;
+  }
+
   protected logAttempt(option: ChallengeOption): boolean {
     const attempt = buildCurriculumAttempt({
       sessionId: this.game.save.getMutableData().progress.sessionId,

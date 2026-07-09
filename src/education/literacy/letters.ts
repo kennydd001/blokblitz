@@ -78,8 +78,20 @@ export function letterkompasRound(mode: LetterMode = pickOne(MODES)): LetterRoun
   };
 }
 
-export function classifyLetterError(letter: string): LetterMisconception {
-  return ["b", "d", "p", "q"].includes(letter) ? "letter-reversal-confusion" : "letter-sound-weak";
+const REVERSAL_LETTERS = new Set(["b", "d", "p", "q"]);
+
+/**
+ * Classify a wrong letter answer. A reversal confusion is picking a MIRROR of
+ * the target (b<->d, p<->q, b<->p...), so it must compare the child's actual
+ * response to the stimulus — not just look at the stimulus (the old bug flagged
+ * a reversal whenever the target happened to be b/d/p/q, even for an unrelated
+ * pick or a letter-to-word round).
+ */
+export function classifyLetterError(stimulus: string, response = ""): LetterMisconception {
+  if (stimulus !== response && REVERSAL_LETTERS.has(stimulus) && REVERSAL_LETTERS.has(response)) {
+    return "letter-reversal-confusion";
+  }
+  return "letter-sound-weak";
 }
 
 let letterCounter = 0;

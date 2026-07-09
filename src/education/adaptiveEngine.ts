@@ -50,6 +50,17 @@ export class AdaptiveEngine {
     };
   }
 
+  /**
+   * The curriculum target (in a domain) worth resurfacing now — a weak, shaky
+   * one — or undefined when nothing needs extra practice yet. Curriculum scenes
+   * bias their next round toward this so a stuck /s/, "vis" or teen 13 comes
+   * back instead of the old uniform-random roll.
+   */
+  recommendCurriculumFocus(domain?: string): string | undefined {
+    if (!domain) return undefined;
+    return this.tracker.weakCurriculumTarget(domain);
+  }
+
   pickNextMinigame(lastTypes: string[] = []): MinigameType {
     const stats = this.tracker.masteryBySkill();
     const practicedWeak = stats

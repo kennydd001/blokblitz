@@ -21,9 +21,15 @@ describe("letterkompas rounds", () => {
     }
   });
 
-  it("flags reversal-prone letters", () => {
-    expect(classifyLetterError("b")).toBe("letter-reversal-confusion");
-    expect(classifyLetterError("m")).toBe("letter-sound-weak");
+  it("flags a reversal only when the child actually picked a mirror letter", () => {
+    // Target b, child picked d -> a real b/d reversal confusion.
+    expect(classifyLetterError("b", "d")).toBe("letter-reversal-confusion");
+    expect(classifyLetterError("p", "q")).toBe("letter-reversal-confusion");
+    // Target b but the child picked an unrelated letter (or a word) -> not a reversal.
+    expect(classifyLetterError("b", "m")).toBe("letter-sound-weak");
+    expect(classifyLetterError("b", "vis")).toBe("letter-sound-weak");
+    // Target m -> never a reversal.
+    expect(classifyLetterError("m", "n")).toBe("letter-sound-weak");
     expect(LETTER_MISCONCEPTIONS).toContain("letter-reversal-confusion");
   });
 });

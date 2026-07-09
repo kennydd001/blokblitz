@@ -70,6 +70,21 @@ export interface MasteryCell {
   mastery: MasteryLevel;
 }
 
+// Per-target mastery for a curriculum domain (reading, math-to-20, measure...).
+// One cell per (domain, skill, targetKey) — e.g. the /s/ sound, the word "vis",
+// the split 5=2+3, the teen 13. Lets the game resurface weak targets and the
+// parent see exactly what is emerging vs secure.
+export interface CurriculumCell {
+  domain: string;
+  skill: string;
+  targetKey: string;
+  exposures: number;
+  accuracy: number;
+  hintRate: number;
+  recentErrors: string[];
+  mastery: MasteryLevel;
+}
+
 export interface AttemptLog {
   timestamp: number;
   sessionId: string;

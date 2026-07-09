@@ -79,6 +79,10 @@ export class ZoemrouteScene extends MiniGameScene {
     this.game.readingAudio.playZoemWord(this.currentRound.units, this.currentRound.word.word, { interrupt: true, rate });
   }
 
+  protected currentTargetKey(): string | undefined {
+    return this.currentRound?.targetKey;
+  }
+
   protected logAttempt(option: ChallengeOption): boolean {
     const attempt = buildCurriculumAttempt({
       sessionId: this.game.save.getMutableData().progress.sessionId,

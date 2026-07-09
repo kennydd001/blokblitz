@@ -329,3 +329,45 @@ describe("save manager persistence", () => {
     expect(reloaded.progress.sessions[0].endedAt).toBeTypeOf("number");
   });
 });
+
+describe("curriculum mastery + adaptive resurfacing", () => {
+  const cur = (targetKey: string, wasCorrect: boolean, over: Partial<AttemptLog> = {}): AttemptLog =>
+    attempt({ domain: "literacy-reading", skill: "letterSound", targetKey, rangeKey: "letters", wasCorrect, ...over });
+
+  it("groups domain-tagged attempts into per-target cells (kept out of the number views)", () => {
+    const tracker = new MasteryTracker([
+      // /s/ mastered: 6 tries, all correct.
+      ...Array.from({ length: 6 }, () => cur("letter-s", true)),
+      // /r/ shaky: 4 tries, mostly wrong.
+      ...Array.from({ length: 4 }, (_, i) => cur("letter-r", i === 0)),
+      // a maths-to-20 attempt in another domain.
+      attempt({ domain: "math-number", skill: "teenNumber", targetKey: "teen-13", rangeKey: "teens", wasCorrect: true })
+    ]);
+
+    const reading = tracker.curriculumCells("literacy-reading");
+    expect(reading).toHaveLength(2);
+    const s = reading.find((c) => c.targetKey === "letter-s")!;
+    const r = reading.find((c) => c.targetKey === "letter-r")!;
+    expect(s.mastery).toBe("fluent");
+    expect(r.mastery).toBe("emerging");
+    expect(r.accuracy).toBeLessThan(0.5);
+    // Domain filtering works; the maths attempt is its own cell.
+    expect(tracker.curriculumCells("math-number")).toHaveLength(1);
+    // None of this pollutes the number-mode mastery.
+    expect(tracker.masteryBySkill().every((m) => m.exposures === 0)).toBe(true);
+  });
+
+  it("resurfaces the weakest seen target and the adaptive engine surfaces it", () => {
+    const tracker = new MasteryTracker([
+      ...Array.from({ length: 6 }, () => cur("letter-s", true)),
+      ...Array.from({ length: 4 }, (_, i) => cur("letter-r", i === 0))
+    ]);
+    expect(tracker.weakCurriculumTarget("literacy-reading")).toBe("letter-r");
+    // Nothing weak in an untouched domain -> undefined (generator rolls freely).
+    expect(tracker.weakCurriculumTarget("math-operations")).toBeUndefined();
+
+    const engine = new AdaptiveEngine(tracker);
+    expect(engine.recommendCurriculumFocus("literacy-reading")).toBe("letter-r");
+    expect(engine.recommendCurriculumFocus(undefined)).toBeUndefined();
+  });
+});

@@ -1,6 +1,6 @@
 import { getQuantityRange, subitizeThresholdMs } from "./quantityLayouts";
 import { classifyError, misconceptionLabels } from "./misconceptions";
-import type { AttemptLog, MasteryCell, QuantityRange, Representation, Skill } from "./types";
+import type { AttemptLog, CurriculumCell, MasteryCell, QuantityRange, Representation, Skill } from "./types";
 import { QUANTITY_RANGES, REPRESENTATIONS, SKILLS } from "./types";
 
 function median(values: number[]): number {
@@ -144,6 +144,54 @@ export class MasteryTracker {
       const accuracy = exposures === 0 ? 1 : attempts.filter((attempt) => attempt.wasCorrect).length / exposures;
       return { range, accuracy, exposures };
     }).sort((a, b) => a.accuracy - b.accuracy || b.exposures - a.exposures);
+  }
+
+  // ---- Curriculum (domain-tagged) mastery -------------------------------
+  // Reading, math-to-20, measurement, geometry etc. carry a `domain` + a
+  // `targetKey` (the /s/ sound, the word "vis", the teen 13...). These were
+  // excluded from every number view; now they get their own per-target cells so
+  // weak targets can resurface and the parent can see what is emerging vs secure.
+
+  /** One mastery cell per (domain, skill, targetKey). Filter by domain if given. */
+  curriculumCells(domain?: string): CurriculumCell[] {
+    const tagged = this.attempts.filter((a) => a.domain && (domain === undefined || a.domain === domain));
+    const groups = new Map<string, AttemptLog[]>();
+    for (const attempt of tagged) {
+      const key = `${attempt.domain}::${attempt.skill}::${this.targetKeyOf(attempt)}`;
+      const list = groups.get(key) ?? [];
+      list.push(attempt);
+      groups.set(key, list);
+    }
+    const cells: CurriculumCell[] = [];
+    for (const [key, list] of groups) {
+      const [d, skill, targetKey] = key.split("::");
+      const exposures = list.length;
+      const correct = list.filter((a) => a.wasCorrect).length;
+      const hints = list.filter((a) => a.hintUsed).length;
+      const accuracy = correct / exposures;
+      const hintRate = hints / exposures;
+      const recentErrors = list
+        .slice(-8)
+        .filter((a) => !a.wasCorrect && a.errorType)
+        .map((a) => a.errorType as string);
+      let mastery: MasteryCell["mastery"] = "emerging";
+      if (exposures >= 6 && accuracy >= 0.85 && hintRate < 0.2) mastery = "fluent";
+      else if (exposures >= 3 && accuracy >= 0.7 && hintRate < 0.35) mastery = "secure";
+      cells.push({ domain: d, skill, targetKey, exposures, accuracy, hintRate, recentErrors, mastery });
+    }
+    return cells;
+  }
+
+  /**
+   * The target most worth practising again in a domain: a seen-but-shaky one
+   * (>=3 tries, <70% or emerging). Returns undefined when nothing is weak yet,
+   * so the generator rolls freely and keeps introducing new targets.
+   */
+  weakCurriculumTarget(domain: string): string | undefined {
+    const weak = this.curriculumCells(domain)
+      .filter((c) => c.exposures >= 3 && (c.accuracy < 0.7 || c.mastery === "emerging"))
+      .sort((a, b) => a.accuracy - b.accuracy || b.exposures - a.exposures)[0];
+    return weak?.targetKey;
   }
 
   reactionTimeTrend(limit = 12): number[] {
