@@ -179,6 +179,6 @@ Numbers are arranged as 1 single, 2 pair, 3 triangle, 4 square or 2+2, 5 complet
 
 Runtime assets are local. Current visuals are generated from SVG, CSS, Three.js primitives, Web Audio, and optional browser vibration patterns. The spoken Dutch voice uses local MP3 clips in `public/audio/voice/nl/elevenlabs-lily-v3/`, generated build-time with ElevenLabs `eleven_v3` and documented in `assets/ASSET_MANIFEST.json`. Isolated reading letters and digraphs use local clips in `public/audio/reading/nl/elevenlabs-lily-v3/phonemes/`; whole-word reading uses local Lily clips at a slower playback rate. Runtime code never calls a TTS service or browser speech synthesis.
 
-The production build also registers a local same-origin service worker from `public/sw.js` to cache the app shell for installed/offline play. It does not cache or request any remote assets.
+The production build also registers a local same-origin service worker from `public/sw.js` for installed/offline play. During installation it reads the current production HTML, precaches its hashed JS/CSS and their lazy Runner/Three chunks, then caches local voice clips on demand as they are heard. It does not cache or request any remote assets.
 
 External-source assets may be added only when the license is clear and usage is allowed for the project. Store the asset locally and document source, license/terms, author/provider, generation or download date, used files, and notes in the manifest. The game must not call paid TTS APIs during child play.

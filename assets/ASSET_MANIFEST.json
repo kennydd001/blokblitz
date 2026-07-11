@@ -76,7 +76,7 @@
         "public/site.webmanifest",
         "public/sw.js"
       ],
-      "notes": "Installable mobile shell metadata, the local SVG icon, and a same-origin offline cache service worker are generated for this project; no remote icons, app-store assets, or CDN caches are used."
+      "notes": "Installable mobile shell metadata, the local SVG icon, and a same-origin offline cache service worker are generated for this project. The worker precaches current hashed entry and lazy code bundles at install, while local voice clips cache on demand; no remote icons, app-store assets, or CDN caches are used."
     }
   ],
   "notes": "Runtime assets are loaded locally. External-source voice clips are generated build-time, stored under public/audio, and documented above; no runtime external asset requests or browser speech synthesis are used. Isolated reading phonemes use the local ElevenLabs phoneme pack, while whole words use the local Lily sentence pack."

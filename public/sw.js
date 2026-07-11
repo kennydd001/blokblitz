@@ -1,15 +1,37 @@
-const SHELL_CACHE = "blokblitz-shell-v2";
-const STATIC_CACHE = "blokblitz-static-v2";
+const SHELL_CACHE = "blokblitz-shell-v3";
+const STATIC_CACHE = "blokblitz-static-v3";
 const CACHES = [SHELL_CACHE, STATIC_CACHE];
 const APP_SHELL = ["/", "/index.html", "/favicon.svg", "/site.webmanifest"];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches
-      .open(SHELL_CACHE)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+const assetReferences = (source) =>
+  [...source.matchAll(/(?:\/)?assets\/[A-Za-z0-9_-]+\.(?:js|css)/g)].map((match) => (match[0].startsWith("/") ? match[0] : `/${match[0]}`));
+
+const cacheAsset = async (cache, path) => {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`Could not precache ${path}`);
+  await cache.put(path, response.clone());
+  return response;
+};
+
+const precacheProductionBundles = async () => {
+  const shell = await caches.open(SHELL_CACHE);
+  await shell.addAll(APP_SHELL);
+  const index = await shell.match("/index.html");
+  if (!index) throw new Error("Missing cached production index");
+
+  const html = await index.text();
+  const entryPaths = [...new Set(assetReferences(html))];
+  const staticCache = await caches.open(STATIC_CACHE);
+  const entryResponses = await Promise.all(entryPaths.map((path) => cacheAsset(staticCache, path)));
+  const entrySources = await Promise.all(
+    entryResponses.map((response, index) => (entryPaths[index].endsWith(".js") ? response.text() : Promise.resolve("")))
   );
+  const lazyPaths = [...new Set(entrySources.flatMap(assetReferences))].filter((path) => !entryPaths.includes(path));
+  await Promise.all(lazyPaths.map((path) => cacheAsset(staticCache, path)));
+};
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(precacheProductionBundles().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {

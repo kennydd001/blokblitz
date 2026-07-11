@@ -1478,3 +1478,22 @@ Validation:
 - Live Sprintsite checks returned 200 for the cache-busted root,
   `index-DZ4RsT24.js`, `index-mfJ8LEtW.css`, and a representative Lily MP3;
   content types were respectively HTML, JavaScript, CSS, and `audio/mpeg`.
+
+## First-Install Offline Hardening - 2026-07-11
+
+- Upgraded the service-worker caches to v3. During installation the worker now
+  reads the current production HTML, precaches its content-hashed entry JS/CSS,
+  scans the entry JavaScript for lazy chunk references, and precaches the
+  RunnerView, Stage3D, and Three.js chunks before activation.
+- This closes the first-visit gap where bundles loaded before the new worker
+  controlled the page and were therefore only guaranteed offline after a
+  second online visit. Local voice clips remain cache-on-first-hear to avoid a
+  forced 1587-file download; repeated clips are available offline.
+- Added an executable service-worker installation test with mocked caches and
+  production-style hashed references. It proves all two entry and three lazy
+  assets are fetched and stored before `skipWaiting`.
+- The parser was also run against the real production build and found exactly
+  `index-DZ4RsT24.js`, `index-mfJ8LEtW.css`, `RunnerView-COrt3nEL.js`,
+  `Stage3D-Ebj8xytC.js`, and `three-CsgmhPiE.js`.
+- `node --check public/sw.js`, targeted acceptance/offline tests, and typecheck
+  passed. Full validation follows in the release gate below.

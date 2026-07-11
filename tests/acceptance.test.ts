@@ -172,7 +172,10 @@ describe("acceptance checklist audit", () => {
     expect(serviceWorker).toContain("STATIC_CACHE");
     expect(serviceWorker).toContain('"/index.html"');
     expect(serviceWorker).toContain('"/site.webmanifest"');
-    expect(serviceWorker).toContain("cache.addAll(APP_SHELL)");
+    expect(serviceWorker).toContain("precacheProductionBundles");
+    expect(serviceWorker).toContain("shell.addAll(APP_SHELL)");
+    expect(serviceWorker).toContain("assetReferences(html)");
+    expect(serviceWorker).toContain("entrySources.flatMap(assetReferences)");
     expect(serviceWorker).toContain('url.pathname.startsWith("/assets/")');
     expect(serviceWorker).toContain('url.pathname.startsWith("/audio/")');
     expect(serviceWorker).toContain("url.origin !== self.location.origin");
