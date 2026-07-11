@@ -1473,3 +1473,8 @@ Validation:
   naming/size audit and proof that journey/hub first paint has no eager canvas.
 - `npm.cmd run qa:mobile-touch` passed 38 coordinate-touch steps, including the
   audio-gated Count rescue, with 12 attempts and one journey node completed.
+- GitHub `main` contains commit `6e634a9`. WSL Wrangler deployed that exact
+  build as Worker version `ca6088fd-2a45-463d-8630-05424f523966`.
+- Live Sprintsite checks returned 200 for the cache-busted root,
+  `index-DZ4RsT24.js`, `index-mfJ8LEtW.css`, and a representative Lily MP3;
+  content types were respectively HTML, JavaScript, CSS, and `audio/mpeg`.
