@@ -109,6 +109,26 @@ describe("within-session variation", () => {
     scene.unmount();
   });
 
+  it("breaks a third identical correct-answer position without alternating every round", () => {
+    const game = new Game(document.querySelector<HTMLElement>("#app")!);
+    const scene = new VariationScene(game, ["a", "b", "c"]);
+    scene.mount();
+    const correctIndex = (): number =>
+      [...document.querySelectorAll<HTMLButtonElement>(".variation-play .mini-choice")].findIndex(
+        (choice) => choice.dataset.correct === "true"
+      );
+
+    expect(correctIndex()).toBe(0);
+    document.querySelector<HTMLButtonElement>('.variation-play [data-correct="true"]')!.click();
+    vi.advanceTimersByTime(1100);
+    expect(correctIndex()).toBe(0);
+
+    document.querySelector<HTMLButtonElement>('.variation-play [data-correct="true"]')!.click();
+    vi.advanceTimersByTime(1100);
+    expect(correctIndex()).toBe(1);
+    scene.unmount();
+  });
+
   it("changes the rescued animal between consecutive Count rounds", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
     const game = new Game(document.querySelector<HTMLElement>("#app")!);

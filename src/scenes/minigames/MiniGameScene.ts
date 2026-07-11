@@ -29,6 +29,8 @@ export abstract class MiniGameScene extends BaseScene {
   private streak = 0;
   private spokenChoicePending = false;
   private previousTargetKey?: string;
+  private previousCorrectOptionIndex?: number;
+  private correctOptionPositionRun = 0;
   protected goldenRound = false;
   protected buddy?: Buddy;
   /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
@@ -123,6 +125,7 @@ export abstract class MiniGameScene extends BaseScene {
       break;
     }
     this.previousTargetKey = this.currentTargetKey();
+    this.breakCorrectOptionPositionStreak();
     this.hintUsed = false;
     this.resolving = false;
     this.spokenChoicePending = false;
@@ -152,6 +155,29 @@ export abstract class MiniGameScene extends BaseScene {
       this.buddy.setMood("think", 1100);
     }
     this.announceRound();
+  }
+
+  /** Keep random answer layouts from accidentally teaching "always tap middle". */
+  private breakCorrectOptionPositionStreak(): void {
+    const correctIndexes = this.current.options
+      .map((option, index) => (option.isCorrect ? index : -1))
+      .filter((index) => index >= 0);
+    if (correctIndexes.length !== 1 || this.current.options.length < 2) return;
+
+    let correctIndex = correctIndexes[0];
+    if (correctIndex === this.previousCorrectOptionIndex) this.correctOptionPositionRun += 1;
+    else this.correctOptionPositionRun = 1;
+
+    if (this.correctOptionPositionRun >= 3) {
+      const destination = (correctIndex + 1 + (this.round % (this.current.options.length - 1))) % this.current.options.length;
+      [this.current.options[correctIndex], this.current.options[destination]] = [
+        this.current.options[destination],
+        this.current.options[correctIndex]
+      ];
+      correctIndex = destination;
+      this.correctOptionPositionRun = 1;
+    }
+    this.previousCorrectOptionIndex = correctIndex;
   }
 
   /** Speak this round once its UI is ready. Special modes may sequence richer audio. */

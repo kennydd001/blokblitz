@@ -2100,3 +2100,31 @@ Release:
   `index-Bnc1LDNH.js` and unchanged `index-By3veXyl.css` with HTTP 200. Served
   JavaScript contains the session-aware curriculum-focus path and current Count
   flow and has the expected 386,537 bytes.
+
+## Answer-Position Fairness and Day-Boundary QA - 2026-07-12
+
+Completed work:
+
+- Added a shared calm-mode answer-layout guard for challenges with exactly one
+  correct option. Random placement remains untouched for the first two rounds;
+  only a third identical correct position is swapped to another slot. This
+  prevents `always tap left/middle/right` pattern learning without introducing
+  a predictable alternating pattern.
+- Repaired a pre-existing date-dependent flow test exposed when this run crossed
+  local midnight. The daily-mission completion test now pins the same local day
+  for planning, completion, and Hub rendering instead of mixing a fixed date
+  with the machine clock.
+
+Validation:
+
+- Behavioral coverage proves correct option positions `0, 0, 0` render as
+  `0, 0, 1`; the existing tests still prove explicit adaptive target repetition
+  and interleaving. The day-mission flow now passes independently of wall-clock
+  date.
+- `npm.cmd run verify` passes typecheck, lint, 35 test files / 304 tests, and a
+  production build. Entry assets are `index-DuYYqNZK.js` (102.70 kB gzip) and
+  unchanged `index-By3veXyl.css` (33.42 kB gzip).
+- `npm.cmd run qa:mobile-touch` passes 41 real touch steps with 12 tracked
+  attempts and one journey node; `npm.cmd run qa:viewport` passes all 59
+  scenarios after answer objects can change position.
+- No audio content or routing changed in this fairness pass.

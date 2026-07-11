@@ -583,10 +583,12 @@ describe("Speeltuin hub + calm game modes", () => {
   });
 
   it("awards the daily bonus exactly once and shows completed missions on return", async () => {
+    vi.useFakeTimers();
+    const now = new Date(2026, 6, 11, 12, 0, 0).getTime();
+    vi.setSystemTime(now);
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
-    const now = new Date(2026, 6, 11, 12, 0, 0).getTime();
     const plan = game.dailyPlan(now);
     const starsBefore = game.data().progress.stars;
 
