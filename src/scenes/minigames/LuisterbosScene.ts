@@ -56,10 +56,7 @@ export class LuisterbosScene extends MiniGameScene {
       button.dataset.correct = String(option.isCorrect);
       button.setAttribute("aria-label", String(option.value));
       button.innerHTML = `<span class="luister-option-pic" aria-hidden="true">${round?.emoji ?? option.label}</span><small class="luister-option-text">${option.value}</small>`;
-      button.addEventListener("click", () => {
-        this.game.voice.speak(String(option.value), { interrupt: true });
-        this.pick(option);
-      });
+      button.addEventListener("click", () => this.pickAfterSpeaking(option, String(option.value)));
       choices.appendChild(button);
     });
     wrap.appendChild(choices);

@@ -1420,3 +1420,56 @@ Validation:
   production build as Worker version `c88d32ed-e968-4d58-8663-e2d1cb8fabae`.
 - Live HTTP checks returned 200 for `https://blokblitz.sprintsite.be/`,
   `index-C8TEZ9ne.js`, and `index-wxPHmbqC.css` with the expected content types.
+
+## Natural Audio, Accessibility and Tablet Lifecycle - 2026-07-11
+
+Completed work:
+
+- Extended the single local voice queue with completion callbacks. Praise now
+  queues behind the active instruction, number, word, or answer instead of
+  interrupting it. Scene changes remain a hard boundary, so old feedback still
+  cannot leak into the next activity.
+- Voice-first Verkeerspad and Luisterbos choices disable their alternatives,
+  expose `aria-busy`, preserve the child's original reaction time, and resolve
+  only after the selected local ElevenLabs label has ended.
+- `Tel mee` now queues the complete natural number sequence and keeps numeral
+  choices locked until the final number clip ends. `Op volgorde` similarly
+  waits for its final spoken numeral before completing the round; Memory hears
+  both flipped numbers in order before resolving the pair.
+- Result praise and daily-mission lines queue after final-round feedback rather
+  than cutting it off. No browser voice or runtime network fallback was added.
+- Added pause/resume semantics for active HTML voice and procedural music.
+  Backgrounding the app pauses media and the idempotent animation loop; return
+  resumes from the same audio position and current world theme.
+- Deferred the Three.js/WebGL warmup until the first pointer or keyboard
+  interaction. Production HTML contains no preload for the 118.96 kB gzip
+  Three.js chunk; runner scenes still request it directly and retain their
+  countdown loading window.
+- Hardened fullscreen lifecycle for standard and WebKit fullscreen state,
+  resize/fullscreen listener cleanup, and safe restarts.
+- Made transient toast feedback a screen-reader status region and applied a
+  consistent focus-visible ring to every button/tab. Viewport QA now audits
+  every visible button for an accessible name and a 44x44px minimum target.
+- That broader audit found Splitsbord eggs at roughly 37x34px. Tray eggs are now
+  48x48px and eggs moved into a nest remain at least 44x44px.
+
+Audio and performance evidence:
+
+- Added MP3-end-controlled tests proving Count stays locked through the full
+  sequence and voice-first attempts are not scored before the answer label
+  finishes. Queue tests also prove praise does not pause active speech and
+  background pause/resume keeps playback position.
+- Added lifecycle tests for single-loop restart, deferred 3D warmup,
+  background media pause/resume, and accessible status announcements.
+- `npm.cmd run voice:elevenlabs-audit` passes at 1555/1555 files, 1487/1487
+  currently reachable lines, and 32/32 reading phonemes.
+
+Validation:
+
+- `npm.cmd run verify` passed with 31 files / 260 tests, typecheck, lint, and a
+  production build. The initial app chunk is 96.89 kB gzip; Three.js remains a
+  separate 118.96 kB gzip dynamic chunk.
+- `npm.cmd run qa:viewport` passed all 29 scenarios with the new global button
+  naming/size audit and proof that journey/hub first paint has no eager canvas.
+- `npm.cmd run qa:mobile-touch` passed 38 coordinate-touch steps, including the
+  audio-gated Count rescue, with 12 attempts and one journey node completed.

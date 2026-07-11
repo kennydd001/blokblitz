@@ -182,6 +182,7 @@ async function completeMiniRounds(label, maxSteps) {
     while (await exists(".count-item:not(.counted)")) {
       await tap(".count-item:not(.counted)", `${label} count animal`);
     }
+    if (await exists(".count-choices.locked")) await waitForSelector(".count-choices.ready", 8_000);
     if (!(await exists(".mini-choice[data-correct='true']"))) {
       await delay(320);
       continue;

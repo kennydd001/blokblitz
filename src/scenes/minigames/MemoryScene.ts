@@ -98,21 +98,31 @@ export class MemoryScene extends BaseScene {
     card.flipped = true;
     card.el.classList.add("flipped");
     card.el.innerHTML = card.contentHtml;
-    this.game.voice.sayNumber(card.quantity, { interrupt: true });
 
     if (!this.first) {
       this.first = card;
       this.attemptStart = performance.now();
+      this.game.voice.sayNumber(card.quantity, { interrupt: true });
       return;
     }
 
     const first = this.first;
     this.first = undefined;
+    this.lock = true;
     this.flips += 1;
     const matched = first.quantity === card.quantity;
     const { challenge, option } = memoryMatchChallenge(first.quantity, matched);
     this.game.recordAttempt(challenge, option, this.attemptStart, false);
+    this.game.voice.sayNumberThen(
+      card.quantity,
+      () => {
+        if (this.root.isConnected) this.resolvePair(first, card, matched);
+      },
+      { interrupt: false }
+    );
+  }
 
+  private resolvePair(first: MemoryCard, card: MemoryCard, matched: boolean): void {
     if (matched) {
       first.matched = true;
       card.matched = true;
@@ -131,9 +141,8 @@ export class MemoryScene extends BaseScene {
       if (this.matchedCount >= PAIRS) {
         this.lock = true;
         this.timers.push(window.setTimeout(() => this.finish(), 700));
-      }
+      } else this.lock = false;
     } else {
-      this.lock = true;
       this.timers.push(
         window.setTimeout(() => {
           for (const c of [first, card]) {
@@ -155,9 +164,9 @@ export class MemoryScene extends BaseScene {
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
     const daily = this.game.completeActivity(this.name);
     this.game.save.bumpTreasure();
-    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: true, pitch: 1.2 });
-    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: true, pitch: 1.18 });
-    else this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
+    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
+    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
+    else this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: false, pitch: 1.25 });
     const newStickers = this.game.save
       .syncStickers()
       .map((id) => stickerById(id))

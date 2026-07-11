@@ -492,6 +492,11 @@ describe("game shell — menu, run, results", () => {
     expect(root.querySelector(".run-scene")).toBeTruthy();
     expect(root.querySelectorAll(".run-ctrl")).toHaveLength(3);
     expect(root.querySelector(".run-target")).toBeTruthy();
+    fullscreenSpy.mockClear();
+    Object.defineProperty(document, "webkitFullscreenElement", { configurable: true, value: root });
+    game.requestFullscreenPlay();
+    expect(fullscreenSpy).not.toHaveBeenCalled();
+    delete (document as Document & { webkitFullscreenElement?: Element }).webkitFullscreenElement;
     // Three.js is a lazy chunk now: once the stage lands, the 3D world fills
     // up (runner view build, or at minimum the themed backdrop).
     const stage3d = await game.ensureStage3d();
@@ -2024,6 +2029,67 @@ describe("Speeltuin hub + calm game modes", () => {
     correct.click();
     expect(root.querySelector(".onemore-state.after.revealed.success")).toBeTruthy();
     expect(root.querySelector(".onemore-state.after.teaching")).toBeFalsy();
+  });
+
+  it("finishes spoken counting and voice-first choices before unlocking or scoring", async () => {
+    const originalAudio = globalThis.Audio;
+    const originalUserAgent = navigator.userAgent;
+
+    class SequencedAudio {
+      static instances: SequencedAudio[] = [];
+      preload = "";
+      playbackRate = 1;
+      currentTime = 0;
+      private readonly listeners = new Map<string, () => void>();
+
+      constructor(readonly src: string) {
+        SequencedAudio.instances.push(this);
+      }
+
+      addEventListener(type: string, listener: () => void): void {
+        this.listeners.set(type, listener);
+      }
+
+      play(): Promise<void> {
+        return Promise.resolve();
+      }
+
+      pause(): void {}
+
+      end(): void {
+        this.listeners.get("ended")?.();
+      }
+    }
+
+    Object.defineProperty(navigator, "userAgent", { configurable: true, value: "Chrome" });
+    Object.defineProperty(globalThis, "Audio", { configurable: true, value: SequencedAudio });
+
+    try {
+      const { Game } = await import("../src/game/Game");
+      const root = document.querySelector<HTMLElement>("#app")!;
+      const game = new Game(root);
+      game.showScene("count");
+      const animalCount = root.querySelectorAll(".count-item").length;
+      countEveryAnimal(root);
+      expect(root.querySelector(".count-choices.locked")).toBeTruthy();
+
+      for (let index = 0; index < animalCount; index += 1) SequencedAudio.instances[index + 1].end();
+      expect(root.querySelector(".count-choices.ready")).toBeTruthy();
+
+      game.showScene("verkeerspad");
+      const attemptsBefore = game.mastery.getAttempts().length;
+      root.querySelector<HTMLButtonElement>('.verkeer-choice[data-correct="true"]')!.click();
+      expect(root.querySelector(".verkeer-play")?.getAttribute("aria-busy")).toBe("true");
+      expect(game.mastery.getAttempts()).toHaveLength(attemptsBefore);
+
+      SequencedAudio.instances.at(-1)!.end();
+      expect(root.querySelector(".verkeer-play")?.hasAttribute("aria-busy")).toBe(false);
+      expect(game.mastery.getAttempts()).toHaveLength(attemptsBefore + 1);
+      game.showScene("hub");
+    } finally {
+      Object.defineProperty(navigator, "userAgent", { configurable: true, value: originalUserAgent });
+      Object.defineProperty(globalThis, "Audio", { configurable: true, value: originalAudio });
+    }
   });
 
   it("plays Op volgorde by tapping numbers small to big", async () => {

@@ -40,6 +40,7 @@ interface QueuedClip {
   src: string;
   label: string;
   rate: number;
+  onComplete?: () => void;
 }
 
 export class VoiceManager {
@@ -48,6 +49,8 @@ export class VoiceManager {
   private countTimers: number[] = [];
   private queue: QueuedClip[] = [];
   private activeAudio?: HTMLAudioElement;
+  private activeFinish?: () => void;
+  private paused = false;
   private duckHook?: (durationMs: number) => void;
   private readonly missingWarnings = new Set<string>();
 
@@ -66,14 +69,15 @@ export class VoiceManager {
   }
 
   /** Queue any approved local clip on the same channel as sentence voice. */
-  playLocalFile(src: string, label: string, options: VoicePlaybackOptions = {}): boolean {
+  playLocalFile(src: string, label: string, options: VoicePlaybackOptions = {}, onComplete?: () => void): boolean {
     if (!this.enabled || typeof Audio === "undefined") return false;
     if (typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent)) return false;
     if (options.interrupt) this.interruptPlayback();
     this.queue.push({
       src,
       label,
-      rate: Math.max(0.55, Math.min(1.35, options.rate ?? 1))
+      rate: Math.max(0.55, Math.min(1.35, options.rate ?? 1)),
+      onComplete
     });
     this.playNext();
     return true;
@@ -90,9 +94,31 @@ export class VoiceManager {
     this.playLocalFile(`${VOICE_LINE_BASE_PATH}${voiceLineFile(slug)}`, text, options);
   }
 
+  /** Run gameplay feedback only after the requested local clip is fully heard. */
+  speakThen(text: string, onComplete: () => void, options: VoicePlaybackOptions = {}): void {
+    if (!this.enabled) {
+      onComplete();
+      return;
+    }
+    const slug = voiceLineSlug(text);
+    if (!VOICE_LINE_SLUGS.has(slug)) {
+      if (options.interrupt) this.interruptPlayback();
+      this.reportMissingClip(text);
+      onComplete();
+      return;
+    }
+    const queued = this.playLocalFile(`${VOICE_LINE_BASE_PATH}${voiceLineFile(slug)}`, text, options, onComplete);
+    if (!queued) onComplete();
+  }
+
   sayNumber(n: number, options: { interrupt?: boolean } = {}): void {
     const word = NUMBER_WORDS[Math.max(0, Math.min(20, Math.round(n)))];
     this.speak(word, { rate: 1, ...options });
+  }
+
+  sayNumberThen(n: number, onComplete: () => void, options: { interrupt?: boolean } = {}): void {
+    const word = NUMBER_WORDS[Math.max(0, Math.min(20, Math.round(n)))];
+    this.speakThen(word, onComplete, { rate: 1, ...options });
   }
 
   /** Count 1..n; each number waits for the previous local clip to finish. */
@@ -107,7 +133,7 @@ export class VoiceManager {
 
   praise(): void {
     this.praiseIndex = (this.praiseIndex + 1) % PRAISE.length;
-    this.speak(PRAISE[this.praiseIndex], { interrupt: true, rate: 1.02, pitch: 1.2 });
+    this.speak(PRAISE[this.praiseIndex], { interrupt: false, rate: 1.02, pitch: 1.2 });
   }
 
   encourage(): void {
@@ -119,8 +145,28 @@ export class VoiceManager {
     this.stopAudio();
   }
 
+  pause(): void {
+    this.paused = true;
+    try {
+      this.activeAudio?.pause();
+    } catch {
+      // Backgrounding must never break the current scene.
+    }
+  }
+
+  resume(): void {
+    if (!this.enabled) return;
+    this.paused = false;
+    const audio = this.activeAudio;
+    if (!audio) {
+      this.playNext();
+      return;
+    }
+    void audio.play().catch(() => this.activeFinish?.());
+  }
+
   private playNext(): void {
-    if (!this.enabled || this.activeAudio || this.queue.length === 0) return;
+    if (!this.enabled || this.paused || this.activeAudio || this.queue.length === 0) return;
     const request = this.queue.shift();
     if (!request) return;
 
@@ -134,8 +180,14 @@ export class VoiceManager {
       const finish = (): void => {
         if (this.activeAudio !== audio) return;
         this.activeAudio = undefined;
-        this.playNext();
+        this.activeFinish = undefined;
+        try {
+          request.onComplete?.();
+        } finally {
+          this.playNext();
+        }
       };
+      this.activeFinish = finish;
       audio.addEventListener("ended", finish, { once: true });
       audio.addEventListener("error", finish, { once: true });
       void audio.play().catch(finish);
@@ -159,6 +211,7 @@ export class VoiceManager {
     this.queue = [];
     const audio = this.activeAudio;
     this.activeAudio = undefined;
+    this.activeFinish = undefined;
     if (!audio) return;
     try {
       audio.pause();

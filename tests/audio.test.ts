@@ -102,6 +102,7 @@ describe("local ElevenLabs voice-pack", () => {
       playbackRate = 1;
       currentTime = 0;
       paused = false;
+      playCount = 0;
       private readonly listeners = new Map<string, () => void>();
 
       constructor(readonly src: string) {
@@ -113,6 +114,8 @@ describe("local ElevenLabs voice-pack", () => {
       }
 
       play(): Promise<void> {
+        this.paused = false;
+        this.playCount += 1;
         return Promise.resolve();
       }
 
@@ -141,6 +144,37 @@ describe("local ElevenLabs voice-pack", () => {
       voice.speak("Super!", { interrupt: true });
       expect(FakeAudio.instances[1].paused).toBe(true);
       expect(FakeAudio.instances).toHaveLength(3);
+
+      const completed = vi.fn();
+      voice.speakThen("Wauw!", completed, { interrupt: false });
+      expect(FakeAudio.instances).toHaveLength(3);
+      FakeAudio.instances[2].end();
+      expect(FakeAudio.instances).toHaveLength(4);
+      expect(completed).not.toHaveBeenCalled();
+      FakeAudio.instances[3].end();
+      expect(completed).toHaveBeenCalledTimes(1);
+
+      voice.speak("Goed zo!", { interrupt: true });
+      const activePraiseBase = FakeAudio.instances[4];
+      voice.praise();
+      expect(activePraiseBase.paused).toBe(false);
+      expect(FakeAudio.instances).toHaveLength(5);
+      activePraiseBase.end();
+      expect(FakeAudio.instances).toHaveLength(6);
+
+      const activePraise = FakeAudio.instances[5];
+      activePraise.currentTime = 0.25;
+      voice.pause();
+      expect(activePraise.paused).toBe(true);
+      voice.resume();
+      expect(activePraise.paused).toBe(false);
+      expect(activePraise.playCount).toBe(2);
+      expect(activePraise.currentTime).toBe(0.25);
+
+      const mutedCompletion = vi.fn();
+      voice.setEnabled(false);
+      voice.speakThen("Knap!", mutedCompletion);
+      expect(mutedCompletion).toHaveBeenCalledTimes(1);
     } finally {
       Object.defineProperty(navigator, "userAgent", { configurable: true, value: originalUserAgent });
       Object.defineProperty(globalThis, "Audio", { configurable: true, value: originalAudio });

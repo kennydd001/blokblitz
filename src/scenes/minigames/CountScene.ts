@@ -70,8 +70,14 @@ export class CountScene extends MiniGameScene {
         countStrong.textContent = String(this.counted);
         this.game.audio.play("coin");
         this.game.haptics.play("coin");
-        this.game.voice.sayNumber(this.counted, { interrupt: true });
-        if (this.counted === challenge.quantity) unlockChoices();
+        const spokenCount = this.counted;
+        this.game.voice.sayNumberThen(
+          spokenCount,
+          () => {
+            if (this.root.isConnected && spokenCount === challenge.quantity) unlockChoices();
+          },
+          { interrupt: spokenCount === 1 }
+        );
       });
       field.appendChild(item);
     }

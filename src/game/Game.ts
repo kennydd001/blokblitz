@@ -84,6 +84,30 @@ export class Game {
   private readonly loop: GameLoop;
   private stage3dPromise?: Promise<Stage3D>;
   private worldTheme: "menu" | "summary" = "menu";
+  private active = false;
+
+  private readonly onResize = (): void => this.resize();
+
+  private readonly warmStage3d = (): void => {
+    window.removeEventListener("pointerdown", this.warmStage3d);
+    window.removeEventListener("keydown", this.warmStage3d);
+    void this.ensureStage3d();
+  };
+
+  private readonly onVisibilityChange = (): void => {
+    if (!this.active) return;
+    if (document.hidden) {
+      this.loop.stop();
+      this.voice.pause();
+      this.audio.pauseForBackground();
+      return;
+    }
+    this.audio.resumeFromBackground();
+    this.audio.duck(2200);
+    this.voice.resume();
+    this.loop.start();
+    this.resize();
+  };
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -106,16 +130,24 @@ export class Game {
     this.voice.setDuckHook((ms) => this.audio.duck(ms));
     this.registerScenes();
     this.resize();
-    window.addEventListener("resize", () => this.resize());
   }
 
   start(): void {
+    if (this.active) return;
+    this.active = true;
+    this.voice.resume();
     this.input.attach();
     this.scenes.goTo("boot");
     this.loop.start();
-    // Warm up the WebGL chunk in the background while the child is on the
-    // (pure DOM) journey map, so the runner is ready the moment it's tapped.
-    void this.ensureStage3d();
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
+    document.addEventListener("fullscreenchange", this.onResize);
+    document.addEventListener("webkitfullscreenchange", this.onResize);
+    window.addEventListener("resize", this.onResize);
+    // Keep passive first paint light; the first real interaction starts the 3D
+    // download while the child is still choosing a journey activity.
+    window.addEventListener("pointerdown", this.warmStage3d, { once: true, passive: true });
+    window.addEventListener("keydown", this.warmStage3d, { once: true });
+    if (document.hidden) this.onVisibilityChange();
   }
 
   /**
@@ -136,9 +168,18 @@ export class Game {
   }
 
   stop(): void {
+    if (!this.active) return;
+    this.active = false;
     this.input.detach();
     this.loop.stop();
+    this.audio.stopMusic();
     this.voice.cancel();
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
+    document.removeEventListener("fullscreenchange", this.onResize);
+    document.removeEventListener("webkitfullscreenchange", this.onResize);
+    window.removeEventListener("resize", this.onResize);
+    window.removeEventListener("pointerdown", this.warmStage3d);
+    window.removeEventListener("keydown", this.warmStage3d);
   }
 
   showScene(name: string, params?: unknown): void {
@@ -164,7 +205,8 @@ export class Game {
   }
 
   requestFullscreenPlay(): void {
-    if (document.fullscreenElement) return;
+    const fullscreenDocument = document as Document & { webkitFullscreenElement?: Element | null };
+    if (document.fullscreenElement || fullscreenDocument.webkitFullscreenElement) return;
     const target = this.root as HTMLElement & {
       webkitRequestFullscreen?: () => Promise<void> | void;
     };
@@ -293,6 +335,8 @@ export class Game {
   flashMessage(message: string, tone: "good" | "warn" = "good"): void {
     const node = document.createElement("div");
     node.className = `toast ${tone}`;
+    node.setAttribute("role", "status");
+    node.setAttribute("aria-atomic", "true");
     node.textContent = message;
     this.overlay.appendChild(node);
     window.setTimeout(() => node.remove(), 1300);

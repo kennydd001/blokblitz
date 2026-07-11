@@ -17,7 +17,7 @@ Representative modes include:
 - **🦘 Sprongpad** — cross a number path in jumps of 2, 5, or 10 (skip-counting).
 - **🗺️ Avontuur** — a 3D voxel runner across six themed worlds, steering through **number gates** whose quantities appear as canonical cube/dice/bead/… patterns.
 
-The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back.
+The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. One shared queue prevents instructions, answer labels, counting and praise from cutting across one another; voice-first choices resolve only after their label ends. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back.
 
 ## Run Locally
 
@@ -65,6 +65,8 @@ npm.cmd run qa:mobile-touch
 `qa:viewport` captures the core desktop/mobile scenes, including 360px narrow-phone checks for menu, live Runner, Sterrenstad build, and Summary.
 
 The child start and replay buttons also make a best-effort fullscreen request from the user gesture. Browsers may deny it, but the game treats that as optional and continues normally.
+
+The pure DOM journey and calm modes paint before WebGL is requested. The Three.js runner chunk starts warming after the first user interaction, stays lazy in the production HTML, and the game loop plus local audio pause while the page is in the background. This keeps passive startup and tablet battery use lower without changing runner gameplay.
 
 ## Controls
 

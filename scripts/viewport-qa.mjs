@@ -315,6 +315,20 @@ async function collectMetrics(scenario = {}) {
           const title = document.querySelector(".mini-title strong");
           return title ? title.scrollWidth > title.clientWidth + 1 : false;
         })(),
+        visibleButtonAudit: [...document.querySelectorAll("button")].map((button) => {
+          const r = button.getBoundingClientRect();
+          const cs = getComputedStyle(button);
+          const visible = cs.display !== "none" && cs.visibility !== "hidden" && Number(cs.opacity) > 0.05 && r.width > 1 && r.height > 1;
+          const name = button.getAttribute("aria-label")?.trim() || button.textContent?.trim() || button.getAttribute("title")?.trim() || "";
+          return {
+            visible,
+            name,
+            semanticName: name.toLocaleLowerCase() !== name.toLocaleUpperCase() || [...name].some((character) => character >= "0" && character <= "9"),
+            className: button.className,
+            width: r.width,
+            height: r.height
+          };
+        }).filter((button) => button.visible),
         viewport: {
           width: innerWidth,
           height: innerHeight,
@@ -414,7 +428,13 @@ function validateScenario(scenario, metrics, scenarioErrors) {
   const { viewport } = metrics;
   if (scenarioErrors.length > 0) failures.push(...scenarioErrors);
   if (viewport.scrollWidth > viewport.width + 1) failures.push(`horizontal overflow ${viewport.scrollWidth} > ${viewport.width}`);
-  if (!metrics.canvas || metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2) failures.push("canvas does not fill viewport");
+  for (const button of metrics.visibleButtonAudit) {
+    if (!button.name || !button.semanticName) failures.push(`visible button has no meaningful accessible name: ${JSON.stringify(button)}`);
+    if (button.width < 44 || button.height < 44) failures.push(`visible button is smaller than 44px: ${JSON.stringify(button)}`);
+  }
+  if ((scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
+  if (scenario.expectRealRunner && (!metrics.canvas || metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("canvas does not fill viewport");
+  if (!scenario.expectRealRunner && metrics.canvas && (metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("loaded canvas does not fill viewport");
   if (scenario.expectJourneyMap) {
     if (!metrics.journeyTop) failures.push("missing journey top bar");
     if (!metrics.journeyProgress) failures.push("missing journey progress pill");

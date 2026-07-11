@@ -26,6 +26,7 @@ export abstract class MiniGameScene extends BaseScene {
   protected resolving = false;
   private celebrateCount = 0;
   private streak = 0;
+  private spokenChoicePending = false;
   protected goldenRound = false;
   protected buddy?: Buddy;
   /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
@@ -66,6 +67,7 @@ export abstract class MiniGameScene extends BaseScene {
     for (const id of this.timers) window.clearTimeout(id);
     this.timers = [];
     this.resolving = false;
+    this.spokenChoicePending = false;
     this.game.readingAudio.cancel();
     this.game.voice.cancel();
     super.unmount();
@@ -115,6 +117,7 @@ export abstract class MiniGameScene extends BaseScene {
     }
     this.hintUsed = false;
     this.resolving = false;
+    this.spokenChoicePending = false;
     this.startedAt = performance.now();
     const play = this.renderPlay(this.current);
     this.root.replaceChildren(this.buildHeader(), this.instructionBar(), play);
@@ -189,6 +192,34 @@ export abstract class MiniGameScene extends BaseScene {
       this.showScaffold(option);
       this.onWrong();
     }
+  }
+
+  /** Voice-first choices keep the tap time, then resolve after the label ends. */
+  protected pickAfterSpeaking(option: ChallengeOption, text: string): void {
+    if (this.resolving || this.spokenChoicePending) return;
+    this.spokenChoicePending = true;
+    const answeredAt = performance.now();
+    const choices = Array.from(this.root.querySelectorAll<HTMLButtonElement>(".mini-choice"));
+    const play = this.root.querySelector<HTMLElement>(".mini-play");
+    play?.setAttribute("aria-busy", "true");
+    choices.forEach((choice) => (choice.disabled = true));
+    this.game.voice.speakThen(
+      text,
+      () => {
+        if (!this.root.isConnected) return;
+        const voiceDelay = performance.now() - answeredAt;
+        this.startedAt += voiceDelay;
+        this.spokenChoicePending = false;
+        play?.removeAttribute("aria-busy");
+        choices.forEach((choice) => (choice.disabled = false));
+        try {
+          this.pick(option);
+        } finally {
+          this.startedAt -= voiceDelay;
+        }
+      },
+      { interrupt: true }
+    );
   }
 
   /** Override to highlight the right answer on a wrong tap. Speaks + shows the hint. */
@@ -354,9 +385,9 @@ export abstract class MiniGameScene extends BaseScene {
     // Every finished activity fills the treasure meter (chest at 3).
     this.game.save.bumpTreasure();
     const stars = starsFromPerfect(this.perfectRounds, this.total);
-    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: true, pitch: 1.2 });
-    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: true, pitch: 1.18 });
-    else this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
+    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
+    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
+    else this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: false, pitch: 1.25 });
     const newStickers = this.game.save
       .syncStickers()
       .map((id) => stickerById(id))

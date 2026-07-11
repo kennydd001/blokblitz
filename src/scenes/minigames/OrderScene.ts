@@ -57,8 +57,17 @@ export class OrderScene extends MiniGameScene {
       this.expected += 1;
       this.game.audio.play("coin");
       this.game.haptics.play("coin");
-      this.game.voice.sayNumber(quantity, { interrupt: true });
-      if (this.expected >= this.order.length) this.pick(resultOption(true));
+      if (this.expected >= this.order.length) {
+        this.game.voice.sayNumberThen(
+          quantity,
+          () => {
+            if (this.root.isConnected) this.pick(resultOption(true));
+          },
+          { interrupt: this.expected === 1 }
+        );
+      } else {
+        this.game.voice.sayNumber(quantity, { interrupt: this.expected === 1 });
+      }
     } else {
       this.hintUsed = true;
       this.game.audio.play("soft-error");

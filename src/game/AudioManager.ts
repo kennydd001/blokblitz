@@ -142,6 +142,7 @@ export class AudioManager {
   private musicTimer?: ReturnType<typeof setInterval>;
   private musicStep = 0;
   private musicVariant = "";
+  private backgroundMusicVariant = "";
   private music: MusicVariant = MUSIC_VARIANTS.default;
   private duckGain = 1;
   private duckTimer?: ReturnType<typeof setTimeout>;
@@ -197,6 +198,21 @@ export class AudioManager {
       this.musicTimer = undefined;
     }
     this.musicVariant = "";
+    this.backgroundMusicVariant = "";
+  }
+
+  pauseForBackground(): void {
+    const variant = this.musicVariant;
+    this.stopMusic();
+    this.backgroundMusicVariant = variant;
+    if (this.context?.state === "running") void this.context.suspend().catch(() => undefined);
+  }
+
+  resumeFromBackground(): void {
+    const variant = this.backgroundMusicVariant;
+    this.backgroundMusicVariant = "";
+    if (this.context?.state === "suspended") void this.context.resume().catch(() => undefined);
+    if (variant) this.startMusic(variant);
   }
 
   /** Briefly lower all audio so a spoken instruction stays clear (voice ducking). */
