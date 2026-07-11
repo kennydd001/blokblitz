@@ -24,4 +24,10 @@ describe("verkeerspad cards", () => {
     const ids = TRAFFIC_CARDS.map((c) => c.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it("orders everyday safety before advanced traffic situations", () => {
+    expect(TRAFFIC_CARDS.filter((card) => card.stage === 1).length).toBeGreaterThanOrEqual(7);
+    expect(TRAFFIC_CARDS.find((card) => card.id === "vrachtwagen-dode-hoek")?.stage).toBe(3);
+    expect(TRAFFIC_CARDS.every((card) => card.stage >= 1 && card.stage <= 3)).toBe(true);
+  });
 });

@@ -24,6 +24,8 @@ const scenarios = [
   { name: "count-narrow-mobile", width: 332, height: 807, mobile: true, open: "count", expectMiniMode: ".count-play", expectCountSequence: true },
   { name: "compare-mobile", width: 390, height: 844, mobile: true, open: "compare", expectMiniMode: ".compare-play", expectCompareFeeding: true },
   { name: "onemoreless-narrow-mobile", width: 332, height: 807, mobile: true, open: "onemoreless", expectMiniMode: ".onemore-play", expectBeforeAfter: true },
+  { name: "vormenburcht-narrow-mobile", width: 332, height: 807, mobile: true, open: "vormenburcht", expectMiniMode: ".vormen-play", expectShapeBuild: true },
+  { name: "verkeerspad-mobile", width: 390, height: 844, mobile: true, open: "verkeerspad", expectMiniMode: ".verkeer-play", expectTrafficRoute: true },
   { name: "klankgrot-mobile", width: 390, height: 844, mobile: true, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
   { name: "klankgrot-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
   { name: "rijmrivier-narrow-mobile", width: 332, height: 807, mobile: true, open: "rijmspel", expectMiniMode: ".rhyme-river" },
@@ -305,6 +307,10 @@ async function collectMetrics(scenario = {}) {
         compareFeedDots: document.querySelectorAll(".compare-feed-meter > i").length,
         oneMoreStates: rects(".onemore-state"),
         oneMoreMysteryVisible: Boolean(document.querySelector(".onemore-state.after .onemore-mystery")),
+        shapeBuild: rect(".vormen-build-progress"),
+        shapeBuildSlots: document.querySelectorAll(".vormen-build-stones > span").length,
+        trafficRoute: rect(".verkeer-route"),
+        trafficSteps: document.querySelectorAll(".verkeer-road > i").length,
         miniTitleClipped: (() => {
           const title = document.querySelector(".mini-title strong");
           return title ? title.scrollWidth > title.clientWidth + 1 : false;
@@ -509,6 +515,16 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       for (const state of metrics.oneMoreStates) {
         if (state.left < -1 || state.right > viewport.width + 1) failures.push(`one-more/less state is clipped: ${JSON.stringify(state)}`);
       }
+    }
+    if (scenario.expectShapeBuild) {
+      if (!metrics.shapeBuild) failures.push("missing shape-castle build goal");
+      if (metrics.shapeBuildSlots !== 7) failures.push(`expected 7 shape stones, got ${metrics.shapeBuildSlots}`);
+      if (metrics.shapeBuild && (metrics.shapeBuild.left < -1 || metrics.shapeBuild.right > viewport.width + 1)) failures.push(`shape build goal is clipped: ${JSON.stringify(metrics.shapeBuild)}`);
+    }
+    if (scenario.expectTrafficRoute) {
+      if (!metrics.trafficRoute) failures.push("missing traffic journey route");
+      if (metrics.trafficSteps !== 7) failures.push(`expected 7 traffic steps, got ${metrics.trafficSteps}`);
+      if (metrics.trafficRoute && (metrics.trafficRoute.left < -1 || metrics.trafficRoute.right > viewport.width + 1)) failures.push(`traffic route is clipped: ${JSON.stringify(metrics.trafficRoute)}`);
     }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

@@ -8,7 +8,7 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 
 - Install: `npm.cmd install` has passed for this project and dependencies are locked.
 - Static checks: `npm.cmd run typecheck` and `npm.cmd run lint` pass.
-- Tests: `npm.cmd run test` passes with 30 test files / 255 tests.
+- Tests: `npm.cmd run test` passes with 30 test files / 257 tests.
 - Production build: `npm.cmd run build` passes without warnings.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
 - Local server smoke: `http://127.0.0.1:5273/` returned HTTP 200.
@@ -93,7 +93,7 @@ Current follow-up evidence:
 - The child-facing Summary now keeps detailed attempt/streak stats inside a closed `Voor ouders` details panel by default, reducing dashboard-like noise while keeping parent evidence accessible.
 - `npm.cmd run qa:viewport` covers menu, 360px narrow menu, number portal, real mobile runner, legacy mobile runner, 360px narrow runner, mobile wrong-choice scaffold, short desktop runner, mobile WebWoud, live WebWoud reward feedback, mobile Oefenwereld, mobile Sterrenstad overview, mobile Sterrenstad build, 360px narrow Sterrenstad build, mobile summary, and 360px narrow summary.
 - `npm.cmd run qa:mobile-touch` touches the real `run` controls, covers the longer child route with real touch events, and produces `.qa-artifacts/mobile-touch-qa/report.json` plus `summary-touch-mobile.png`.
-- Latest validation: `npm.cmd run verify` passes with 30 files / 255 tests and production build, `npm.cmd run qa:viewport` passes 27 scenarios, `npm.cmd run qa:mobile-touch` passes a 37-step real-touch journey with 12 tracked attempts, and the local ElevenLabs audit passes at 1487/1487 current lines plus 32/32 reading phonemes.
+- Latest validation: `npm.cmd run verify` passes with 30 files / 257 tests and production build, `npm.cmd run qa:viewport` passes 29 scenarios, `npm.cmd run qa:mobile-touch` passes a 39-step real-touch journey with 12 tracked attempts, and the local ElevenLabs audit passes at 1487/1487 current lines plus 32/32 reading phonemes.
 
 Remaining for the active product-readiness goal:
 

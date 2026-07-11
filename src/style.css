@@ -3821,12 +3821,43 @@ input {
 
 /* ===== Vormenburcht — shapes, corners, patterns ===== */
 .vormen-play { gap: 16px; }
+.vormen-build-progress {
+  width: min(360px, 98%);
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 3px solid var(--edge);
+  border-radius: 14px;
+  background: rgba(255, 247, 223, 0.92);
+  box-shadow: 0 4px 0 rgba(23, 32, 51, 0.18);
+}
+.vormen-build-castle { font-size: 2rem; line-height: 1; }
+.vormen-build-stones { display: grid; grid-template-columns: repeat(7, minmax(26px, 1fr)); gap: 3px; }
+.vormen-build-stones > span { min-width: 0; height: 31px; display: grid; place-items: center; border: 2px solid #7d879d; border-radius: 6px; background: #e9edf5; overflow: hidden; }
+.vormen-build-stones > span.built { border-color: #275f46; background: #d8f7df; }
+.vormen-build-stones .shape-svg { width: 28px; height: 28px; }
+.vormen-build-stones .waiting i { width: 13px; height: 8px; border: 2px dashed #a8afbd; border-radius: 2px; }
+.vormen-build-stones > span.arriving { animation: vormen-stone-in 0.65s cubic-bezier(0.25, 1.55, 0.45, 1); }
+.vormen-build-progress.building .vormen-build-castle { animation: split-snap 0.55s ease; }
+.vormen-build-progress.complete { background: #fff0a9; box-shadow: 0 0 0 4px rgba(255, 204, 59, 0.4), 0 4px 0 rgba(23, 32, 51, 0.18); }
+@keyframes vormen-stone-in { from { transform: translateY(-30px) rotate(20deg) scale(0.35); opacity: 0; } to { transform: none; opacity: 1; } }
 .vormen-prompt { display: flex; justify-content: center; }
-.vormen-stage { background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 18px; padding: 10px 16px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18); }
+.vormen-stage { display: flex; align-items: center; gap: 10px; background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 18px; padding: 10px 16px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18); }
 .vormen-pattern { display: flex; align-items: center; gap: 6px; background: var(--panel-strong); border: 4px solid var(--edge); border-radius: 18px; padding: 8px 12px; box-shadow: 0 5px 0 rgba(23, 32, 51, 0.18); }
 .vormen-next { font-size: 2rem; font-weight: 900; color: #c79a16; padding: 0 8px; }
+.vormen-next.revealed { display: grid; place-items: center; padding: 0; border-radius: 10px; animation: onemore-reveal 0.45s ease; }
+.vormen-next.teaching { background: #fff1bd; }
+.vormen-next.success { background: #d8f7df; }
+.vormen-corner-answer { min-width: 70px; display: grid; place-items: center; padding: 8px; border: 3px solid var(--edge); border-radius: 12px; font-size: 1rem; font-weight: 950; color: var(--ink); }
+.vormen-corner-answer.teaching { background: #fff1bd; }
+.vormen-corner-answer.success { background: #d8f7df; }
 .vormen-choice.shape { padding: 8px; }
 .vormen-choice .shape-svg { display: block; }
+.vormen-name { display: block; margin-top: 2px; font-size: 0.72rem; font-weight: 950; color: var(--ink); }
+.vormen-name.teaching { color: #7a5610; }
 .vormen-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
 
 /* ===== Tienbrug — add/subtract to 20 over the ten-bridge ===== */
@@ -4286,10 +4317,33 @@ input {
 
 /* ===== Verkeerspad — traffic safety picture cards ===== */
 .verkeer-play { gap: 16px; }
+.verkeer-route {
+  width: min(440px, 96%);
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+}
+.verkeer-home, .verkeer-school { font-size: 2rem; line-height: 1; filter: drop-shadow(0 3px 0 rgba(23, 32, 51, 0.17)); }
+.verkeer-road { position: relative; display: flex; gap: 3px; align-items: center; min-height: 30px; padding: 6px 5px; border: 3px solid var(--edge); border-radius: 9px; background: #545c6b; box-shadow: 0 4px 0 rgba(23, 32, 51, 0.2); }
+.verkeer-road > i { flex: 1; height: 12px; border-radius: 3px; background: #f8f5e9; box-shadow: inset 0 0 0 1px #aeb6c5; }
+.verkeer-road > i.safe { background: #64d98a; box-shadow: inset 0 0 0 2px #267248; }
+.verkeer-road > i.fresh { animation: dot-pop 0.5s cubic-bezier(0.3, 1.55, 0.5, 1); }
+.verkeer-walker { position: absolute; z-index: 2; top: -25px; font-size: 1.8rem; line-height: 1; transform: translateX(-50%); transition: left 0.7s cubic-bezier(0.25, 1.3, 0.45, 1); filter: drop-shadow(0 3px 0 rgba(23, 32, 51, 0.18)); }
+.verkeer-walker.walking { animation: verkeer-walk 0.25s ease 3; }
+.verkeer-route.caution .verkeer-road { box-shadow: 0 0 0 4px rgba(255, 92, 92, 0.3), 0 4px 0 rgba(23, 32, 51, 0.2); }
+.verkeer-route.arrived .verkeer-school { animation: split-snap 0.65s ease; }
+@keyframes verkeer-walk { 50% { transform: translateX(-50%) translateY(-7px) rotate(-5deg); } }
 .verkeer-choices { gap: 14px; flex-wrap: wrap; }
 .verkeer-choice { min-width: 104px; max-width: 150px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 10px; }
 .verkeer-pic { display: block; font-size: 3rem; line-height: 1; }
 .verkeer-text { font-size: 0.82rem; font-weight: 800; color: #44506a; line-height: 1.2; text-align: center; }
+.verkeer-rule { width: min(460px, 96%); display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 12px; border: 3px solid var(--edge); border-radius: 14px; background: #fff1bd; color: var(--ink); box-shadow: 0 4px 0 rgba(23, 32, 51, 0.18); }
+.verkeer-rule span { flex: 0 0 auto; font-size: 2rem; line-height: 1; }
+.verkeer-rule strong { font-size: 0.88rem; line-height: 1.25; }
+.verkeer-rule.understood { background: #d8f7df; }
 
 /* =====================================================================
    De Sterrenreis - one story road instead of separate activities
@@ -5498,6 +5552,12 @@ input {
   /* Reward chests: slightly smaller so they cover less of the map. */
   .reis-chest { width: 62px; height: 62px; font-size: 2rem; right: 8px; }
   .schat-chest { width: 72px; font-size: 2rem; left: 8px; }
+}
+
+@media (max-width: 350px) {
+  .mini-title > span[aria-hidden="true"] { display: none; }
+  .mini-dots { gap: 3px; }
+  .mini-dot { width: 9px; height: 9px; }
 }
 
 /* ===== Golden bonus round: the whole round glitters, correct pays double ===== */

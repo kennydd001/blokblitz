@@ -7,6 +7,7 @@ import type { Challenge, ChallengeOption, Representation } from "../types";
 
 export interface TrafficCard {
   id: string;
+  stage: 1 | 2 | 3;
   prompt: string;
   options: Array<{ emoji: string; label: string; isCorrect: boolean }>;
   /** spoken after a wrong tap: the safety rule, in child language. */
@@ -16,6 +17,7 @@ export interface TrafficCard {
 export const TRAFFIC_CARDS: TrafficCard[] = [
   {
     id: "oversteken-waar",
+    stage: 1,
     prompt: "Waar steek je veilig over?",
     options: [
       { emoji: "🦓", label: "op het zebrapad", isCorrect: true },
@@ -26,6 +28,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "licht-rood",
+    stage: 1,
     prompt: "Het licht is rood. Wat doe je?",
     options: [
       { emoji: "✋", label: "stoppen en wachten", isCorrect: true },
@@ -36,6 +39,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "licht-groen",
+    stage: 1,
     prompt: "Het licht is groen voor jou. Wat doe je?",
     options: [
       { emoji: "👀", label: "eerst kijken, dan oversteken", isCorrect: true },
@@ -46,6 +50,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "donker-zichtbaar",
+    stage: 1,
     prompt: "Het is donker. Wat trek je aan om gezien te worden?",
     options: [
       { emoji: "🦺", label: "een fluohesje", isCorrect: true },
@@ -56,6 +61,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "auto-gordel",
+    stage: 2,
     prompt: "Je zit in de auto. Wat doe je eerst?",
     options: [
       { emoji: "🔗", label: "gordel vastklikken", isCorrect: true },
@@ -66,6 +72,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "fiets-helm",
+    stage: 2,
     prompt: "Je gaat fietsen. Wat zet je op?",
     options: [
       { emoji: "🪖", label: "je fietshelm", isCorrect: true },
@@ -76,6 +83,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "vrachtwagen-dode-hoek",
+    stage: 3,
     prompt: "Een grote vrachtwagen staat aan het licht. Waar ga je staan?",
     options: [
       { emoji: "👋", label: "ver ervoor, waar de chauffeur je ziet", isCorrect: true },
@@ -86,6 +94,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "stoep-lopen",
+    stage: 1,
     prompt: "Waar loop je op straat?",
     options: [
       { emoji: "🚶", label: "op de stoep", isCorrect: true },
@@ -96,6 +105,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "bal-op-straat",
+    stage: 1,
     prompt: "Je bal rolt de straat op. Wat doe je?",
     options: [
       { emoji: "🧍", label: "stoppen en een grote mens vragen", isCorrect: true },
@@ -106,6 +116,7 @@ export const TRAFFIC_CARDS: TrafficCard[] = [
   },
   {
     id: "hand-vasthouden",
+    stage: 1,
     prompt: "Je steekt over met mama of papa. Wat doe je?",
     options: [
       { emoji: "🤝", label: "hand vasthouden", isCorrect: true },

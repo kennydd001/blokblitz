@@ -1688,6 +1688,15 @@ describe("Speeltuin hub + calm game modes", () => {
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${vb.id}"]`)!.click();
     expect(root.querySelector(".vormen-play")).toBeTruthy();
     expect(root.querySelectorAll(".vormen-choice")).toHaveLength(3);
+    expect(root.querySelectorAll(".vormen-build-stones > span")).toHaveLength(7);
+    expect(root.querySelector(".vormen-build-progress")?.getAttribute("aria-label")).toBe("0 van 7 vormstenen gebouwd");
+
+    root.querySelector<HTMLButtonElement>('.vormen-choice[data-correct="false"]')!.click();
+    expect(root.querySelector(".vormen-corner-answer, .vormen-next.revealed, .vormen-name")).toBeTruthy();
+    root.querySelector<HTMLButtonElement>('.vormen-choice[data-correct="true"]')!.click();
+    expect(root.querySelectorAll(".vormen-build-stones > .built")).toHaveLength(1);
+    expect(root.querySelector(".vormen-build-progress")?.getAttribute("aria-label")).toBe("1 van 7 vormstenen gebouwd");
+    vi.advanceTimersByTime(1100);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.vormen-choice[data-correct="true"]')?.click();
@@ -1800,6 +1809,15 @@ describe("Speeltuin hub + calm game modes", () => {
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${vp.id}"]`)!.click();
     expect(root.querySelector(".verkeer-play")).toBeTruthy();
     expect(root.querySelectorAll(".verkeer-choice")).toHaveLength(3);
+    expect(root.querySelectorAll(".verkeer-road > i")).toHaveLength(7);
+    expect(root.querySelector(".verkeer-route")?.getAttribute("aria-label")).toBe("0 van 7 veilige stappen naar school");
+
+    root.querySelector<HTMLButtonElement>('.verkeer-choice[data-correct="false"]')!.click();
+    expect(root.querySelector(".verkeer-rule strong")?.textContent?.length).toBeGreaterThan(10);
+    root.querySelector<HTMLButtonElement>('.verkeer-choice[data-correct="true"]')!.click();
+    expect(root.querySelectorAll(".verkeer-road > i.safe")).toHaveLength(1);
+    expect(root.querySelector(".verkeer-route")?.getAttribute("aria-label")).toBe("1 van 7 veilige stappen naar school");
+    vi.advanceTimersByTime(1100);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.verkeer-choice[data-correct="true"]')?.click();

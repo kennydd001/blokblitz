@@ -1372,3 +1372,47 @@ Validation:
 - Live HTTP smoke checks returned 200 for the root and production assets
   `index-Dr5H-yqG.js` and `index-C_x5RXlF.css`, with the expected JavaScript and
   CSS content types.
+
+## Discovery Mode Progression - 2026-07-11
+
+Completed work:
+
+- Turned `Vormenburcht` into a continuous seven-stone castle build. Every
+  solved shape becomes a persistent coloured stone; the goal and completed
+  count remain visible and accessible across rounds.
+- Added concept-specific visual re-teaching to Vormenburcht: pattern questions
+  fill the missing shape, corner questions reveal the counted corner total, and
+  recognition questions name the correct shape. A later correct retry switches
+  the same explanation from teaching to success state.
+- Tiered the geometry content itself. Tier 1 stays with circle, triangle,
+  square, rectangle and AB patterns; tier 2 introduces all six shapes and AABB;
+  tier 3 adds ABC patterns. Pentagon, hexagon and complex patterns therefore no
+  longer appear for a brand-new profile.
+- Turned `Verkeerspad` into a seven-step route from home to school. Every safe
+  answer moves the dino exactly one visible road segment; a mistake pauses the
+  route and shows the relevant complete safety rule alongside the correct
+  picture before a safe retry.
+- Tiered traffic cards from everyday crossing, lights, visibility, pavement,
+  ball and hand-holding situations through helmet/belt, with the truck blind
+  spot reserved for tier 3. The stage-1 deck has seven unique cards, preventing
+  repetition inside one activity.
+- Added a 332px long-title header rule after QA exposed that Vormenburcht was
+  truncated between the back button and seven progress dots.
+
+Audio:
+
+- All prompts, answer labels and safety lessons already existed in the local
+  natural ElevenLabs pack. No new spoken line, runtime request or fallback was
+  added; the audit remains 1487/1487 plus 32/32 reading phonemes.
+
+Validation:
+
+- Added pure tests for tiered shape/pattern complexity and traffic staging, and
+  journey-flow assertions for castle progress, contextual re-teaching, traffic
+  rules, safe steps, and accessible progress labels.
+- `npm.cmd run verify` passed with 30 files / 257 tests and a production build.
+- `npm.cmd run qa:viewport` passed 29 scenarios, including visually inspected
+  332px Vormenburcht and 390px Verkeerspad screens with structural progression,
+  clipping, title-fit, and touch-size checks.
+- `npm.cmd run qa:mobile-touch` passed a 39-step touch journey with 12 tracked
+  attempts and one completed Sterrenreis node.

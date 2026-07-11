@@ -70,9 +70,10 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function shapeRound(mode: ShapeMode = pickOne(MODES)): ShapeRound {
+export function shapeRound(mode: ShapeMode = pickOne(MODES), tier: 1 | 2 | 3 = 2): ShapeRound {
+  const shapePool = tier === 1 ? SHAPES.filter((shape) => ["circle", "triangle", "square", "rectangle"].includes(shape.id)) : SHAPES;
   if (mode === "count-corners") {
-    const shape = pickOne(SHAPES.filter((s) => s.corners > 0));
+    const shape = pickOne(shapePool.filter((s) => s.corners > 0));
     const pool = [shape.corners - 1, shape.corners + 1, shape.corners + 2, 0].filter((n) => n >= 0 && n <= 8 && n !== shape.corners);
     const distractors = shuffle([...new Set(pool)]).slice(0, 2);
     return {
@@ -85,22 +86,24 @@ export function shapeRound(mode: ShapeMode = pickOne(MODES)): ShapeRound {
     };
   }
   if (mode === "continue-pattern") {
-    const [a, b] = shuffle(SHAPES).slice(0, 2);
-    const seq = [a, b, a, b];
-    const next = a;
-    const others = shuffle(SHAPES.filter((s) => s.id !== next.id)).slice(0, 2);
+    const [a, b, c] = shuffle(shapePool).slice(0, 3);
+    const seq = tier === 1 ? [a, b, a, b] : tier === 2 ? [a, a, b, b, a] : [a, b, c, a, b];
+    const next = tier === 1 || tier === 2 ? a : c;
+    const patternKey = tier === 1 ? "ab" : tier === 2 ? "aabb" : "abc";
+    const shapeSize = tier === 1 ? 52 : 44;
+    const others = shuffle(shapePool.filter((s) => s.id !== next.id)).slice(0, 2);
     return {
       mode,
       prompt: "Wat komt er nu? Maak het patroon af.",
-      promptHtml: `<div class="vormen-pattern">${seq.map((s) => shapeSvg(s.id, 52)).join("")}<span class="vormen-next">?</span></div>`,
+      promptHtml: `<div class="vormen-pattern">${seq.map((s) => shapeSvg(s.id, shapeSize)).join("")}<span class="vormen-next">?</span></div>`,
       options: shuffle([{ label: next.name, value: next.id, isCorrect: true }, ...others.map((s) => ({ label: s.name, value: s.id, isCorrect: false }))]),
-      targetKey: `pattern-${a.id}-${b.id}`,
+      targetKey: `pattern-${patternKey}-${a.id}-${b.id}${tier === 3 ? `-${c.id}` : ""}`,
       skill: "patternContinue"
     };
   }
   // find-shape
-  const target = pickOne(SHAPES);
-  const others = shuffle(SHAPES.filter((s) => s.id !== target.id)).slice(0, 2);
+  const target = pickOne(shapePool);
+  const others = shuffle(shapePool.filter((s) => s.id !== target.id)).slice(0, 2);
   return {
     mode,
     prompt: `Tik de ${target.name}.`,

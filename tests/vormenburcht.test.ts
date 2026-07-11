@@ -31,4 +31,17 @@ describe("vormenburcht rounds", () => {
     expect(classifyShapeError("continue-pattern")).toBe("pattern-weak");
     expect(classifyShapeError("find-shape")).toBe("shape-confusion");
   });
+
+  it("keeps a new child on basic shapes and grows pattern complexity by tier", () => {
+    for (let i = 0; i < 40; i += 1) {
+      const find = shapeRound("find-shape", 1);
+      expect(find.options.every((option) => !["pentagon", "hexagon"].includes(option.value))).toBe(true);
+      const corners = shapeRound("count-corners", 1);
+      expect(Number(corners.options.find((option) => option.isCorrect)?.value)).toBeLessThanOrEqual(4);
+    }
+
+    expect(shapeRound("continue-pattern", 1).targetKey).toContain("pattern-ab-");
+    expect(shapeRound("continue-pattern", 2).targetKey).toContain("pattern-aabb-");
+    expect(shapeRound("continue-pattern", 3).targetKey).toContain("pattern-abc-");
+  });
 });
