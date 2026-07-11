@@ -1416,3 +1416,7 @@ Validation:
   clipping, title-fit, and touch-size checks.
 - `npm.cmd run qa:mobile-touch` passed a 39-step touch journey with 12 tracked
   attempts and one completed Sterrenreis node.
+- GitHub `main` contains commit `651e897`. WSL Wrangler deployed that exact
+  production build as Worker version `c88d32ed-e968-4d58-8663-e2d1cb8fabae`.
+- Live HTTP checks returned 200 for `https://blokblitz.sprintsite.be/`,
+  `index-C8TEZ9ne.js`, and `index-wxPHmbqC.css` with the expected content types.
