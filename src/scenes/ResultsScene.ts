@@ -3,8 +3,8 @@ import type { Game } from "../game/Game";
 import type { RunSummary } from "../runner/RunnerCore";
 import type { HeroSkin } from "../runner/skins";
 import { getWorld, nextWorldId, type WorldDef } from "../runner/worlds";
+import { buildTreasureProgress, showActivityRewards } from "./minigames/miniUi";
 import { BaseScene } from "./SceneUtils";
-import { showSkinUnlock } from "./skinRewards";
 
 interface ResultsParams {
   summary: RunSummary;
@@ -37,6 +37,8 @@ export class ResultsScene extends BaseScene {
     const result = (params as ResultsParams | undefined) ?? fallback;
     const { summary, world } = result;
     const runStars = summary.runStars + summary.bonusStars;
+    const treasureFill = this.game.data().progress.sessionChestFill ?? 0;
+    const treasureReady = treasureFill >= 3;
     // In story mode, clearing this world's gate moves Buddy's star one notch on.
     const inStory = Boolean(this.game.lastJourneyNode);
     if (inStory) this.game.save.advanceJourney(this.game.lastJourneyNode as string);
@@ -119,10 +121,8 @@ export class ResultsScene extends BaseScene {
       card.appendChild(banner);
     }
 
-    this.game.voice.speak(
-      result.newWorldUnlocked ? "Knap! Een nieuwe wereld is open!" : result.stars >= 3 ? "Perfect gelopen!" : "Goed gedaan!",
-      { interrupt: true, pitch: 1.2 }
-    );
+    card.appendChild(buildTreasureProgress({ fill: treasureFill, total: 3 }));
+    const completionLine = result.newWorldUnlocked ? "Knap! Een nieuwe wereld is open!" : result.stars >= 3 ? "Perfect gelopen!" : "Goed gedaan!";
 
     const actions = document.createElement("div");
     actions.className = "results-actions";
@@ -130,9 +130,13 @@ export class ResultsScene extends BaseScene {
     const back = inStory ? "reis" : "mainMenu";
     if (inStory) {
       // The journey decides what's next — just go back to the road (Buddy hops on).
-      const onward = this.button("Verder! ▶", () => this.game.showScene("reis"));
+      const onward = this.button(treasureReady ? "Open schat" : "Verder! ▶", () => this.game.showScene("reis"));
       onward.classList.add("play-now");
       actions.append(onward, this.button("Nog eens", () => this.playWorld(world.id), "secondary"));
+    } else if (treasureReady) {
+      const chest = this.button("Open schat", () => this.game.showScene("hub"));
+      chest.classList.add("play-now");
+      actions.append(chest, this.button("Nog eens", () => this.playWorld(world.id), "secondary"), this.button("Kaart", () => this.game.showScene(back), "ghost"));
     } else if (result.newWorldUnlocked && nextId) {
       const next = this.button("Volgende! ▶", () => this.playWorld(nextId));
       next.classList.add("play-now");
@@ -146,7 +150,11 @@ export class ResultsScene extends BaseScene {
     card.appendChild(actions);
 
     this.root.append(burst, card);
-    showSkinUnlock(this.root, this.game, result.unlocked);
+    showActivityRewards(this.root, this.game, {
+      completionLine,
+      stickers: newStickers.map((sticker) => ({ emoji: sticker.emoji, name: sticker.name })),
+      skins: result.unlocked
+    });
   }
 
   private bigStat(icon: string, value: string, label: string, highlight = false): HTMLElement {

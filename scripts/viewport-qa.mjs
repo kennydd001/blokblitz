@@ -43,6 +43,8 @@ const scenarios = [
   { name: "real-runner-short-desktop", width: 1280, height: 720, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "real-runner-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "count-narrow-mobile", width: 332, height: 807, mobile: true, open: "count", expectMiniMode: ".count-play", expectCountSequence: true },
+  { name: "calm-done-next-narrow-mobile", width: 332, height: 807, mobile: true, open: "calm-done-next", expectCalmDone: { fill: 1, next: "count", treasureReady: false } },
+  { name: "calm-done-treasure-landscape", width: 844, height: 390, mobile: true, open: "calm-done-treasure", expectCalmDone: { fill: 3, next: null, treasureReady: true } },
   { name: "memory-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "memory-tier-1", expectMemory: { tier: 1, cards: 6 } },
   { name: "memory-advanced-narrow-mobile", width: 390, height: 844, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "memory-advanced-landscape", width: 844, height: 390, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
@@ -147,6 +149,8 @@ try {
 
     const metrics = await collectMetrics(scenario);
     validateScenario(scenario, metrics, errors.slice(beforeErrorCount));
+    await evaluate(`new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))`);
+    await delay(80);
     const screenshot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false });
     const screenshotPath = path.join(artifactDir, `${scenario.name}.png`);
     const pngBuffer = Buffer.from(screenshot.data, "base64");
@@ -258,6 +262,62 @@ async function openScenario(open) {
     `);
     if (!opened) throw new Error("Could not open serialized Hub reward queue");
     await waitForSelector(".buddy-levelup", 5_000);
+    return;
+  }
+  if (open === "calm-done-next" || open === "calm-done-treasure") {
+    const startingFill = open === "calm-done-treasure" ? 2 : 0;
+    const prepared = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        const dayKey = game.dailyPlan().dayKey;
+        game.save.updateProgress((progress) => {
+          progress.sessionChestFill = ${startingFill};
+          progress.dailyPlan = {
+            dayKey,
+            modeIds: ["klankgrot", "count", "vormenburcht"],
+            completedModeIds: [],
+            rewardClaimed: false
+          };
+        });
+        game.lastJourneyNode = undefined;
+        game.showScene("klankgrot");
+        return true;
+      })()
+    `);
+    if (!prepared) throw new Error(`Could not prepare ${open}`);
+    await waitForSelector(".klankgrot-choice", 5_000);
+    for (let round = 0; round < 12; round += 1) {
+      if (await evaluate(`Boolean(document.querySelector(".mini-done"))`)) break;
+      const answered = await evaluate(`
+        (() => {
+          const answer = document.querySelector('.klankgrot-choice[data-correct="true"]');
+          if (!answer) return false;
+          answer.click();
+          return true;
+        })()
+      `);
+      if (!answered) throw new Error(`${open} could not answer round ${round + 1}`);
+      await delay(1100);
+    }
+    await waitForSelector(".mini-done", 5_000);
+    // The visual target here is the settled done screen. Collectibles have
+    // their own portrait/landscape scenarios and are dismissed in order.
+    for (let reward = 0; reward < 8; reward += 1) {
+      const dismissed = await evaluate(`
+        (() => {
+          const sticker = document.querySelector(".sticker-reveal");
+          if (sticker) { sticker.click(); return true; }
+          const skin = document.querySelector(".skin-reveal-later");
+          if (skin) { skin.click(); return true; }
+          return false;
+        })()
+      `);
+      if (!dismissed) break;
+      await delay(80);
+    }
+    await evaluate(`document.querySelector(".results-card")?.scrollTo({ top: 9999 })`);
+    await delay(120);
     return;
   }
   if (open === "memory-tier-1" || open === "memory-tier-3") {
@@ -538,6 +598,19 @@ async function collectMetrics(scenario = {}) {
           const card = document.querySelector(".skin-reveal-card");
           return card ? card.scrollHeight <= card.clientHeight + 1 && card.scrollWidth <= card.clientWidth + 1 : false;
         })(),
+        calmDone: rect(".mini-done"),
+        calmDoneCard: rect(".mini-done .results-card"),
+        calmDoneBuddyBubble: rect(".mini-done + .buddy .buddy-bubble.show"),
+        calmDoneActions: rect(".mini-done .results-actions"),
+        calmDoneFocus: rect(".mini-done .results-focus-action"),
+        calmDoneTreasure: rect(".mini-done .results-treasure"),
+        calmDoneTreasureFill: document.querySelector(".mini-done .results-treasure")?.dataset.treasureFill ?? null,
+        calmDoneTreasureReady: Boolean(document.querySelector(".mini-done .results-treasure.ready")),
+        calmDoneNext: document.querySelector(".mini-done .results-next-mission")?.dataset.nextMission ?? null,
+        calmDoneCardScroll: (() => {
+          const card = document.querySelector(".mini-done .results-card");
+          return card ? { clientHeight: card.clientHeight, scrollHeight: card.scrollHeight, scrollTop: card.scrollTop } : null;
+        })(),
         miniBoardPresent: miniBoardSelector ? Boolean(document.querySelector(miniBoardSelector)) : false,
         miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
         miniChoiceCount: document.querySelectorAll(".mini-choice").length,
@@ -705,6 +778,22 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       if (durations.length === 0 || durations.some((seconds) => seconds > 0.002)) failures.push(`opening animation did not reduce to 1ms: ${JSON.stringify(metrics.bootAnimation)}`);
       if (metrics.bootAnimation?.iterations?.includes("infinite")) failures.push(`opening animation still loops under reduced motion: ${JSON.stringify(metrics.bootAnimation)}`);
     }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectCalmDone) {
+    if (!metrics.calmDone || !metrics.calmDoneCard) failures.push("missing calm-mode done screen");
+    if (!metrics.calmDoneTreasure) failures.push("missing session treasure progress");
+    if (!metrics.calmDoneActions || !metrics.calmDoneFocus) failures.push("missing focused continuation actions");
+    if (Number(metrics.calmDoneTreasureFill) !== scenario.expectCalmDone.fill) failures.push(`expected treasure fill ${scenario.expectCalmDone.fill}, got ${metrics.calmDoneTreasureFill}`);
+    if (metrics.calmDoneTreasureReady !== scenario.expectCalmDone.treasureReady) failures.push(`unexpected treasure-ready state: ${metrics.calmDoneTreasureReady}`);
+    if (metrics.calmDoneNext !== scenario.expectCalmDone.next) failures.push(`expected next mission ${scenario.expectCalmDone.next}, got ${metrics.calmDoneNext}`);
+    if (metrics.calmDoneCard && (metrics.calmDoneCard.left < -1 || metrics.calmDoneCard.right > viewport.width + 1 || metrics.calmDoneCard.top < -1 || metrics.calmDoneCard.bottom > viewport.height + 1)) failures.push(`done card is clipped: ${JSON.stringify(metrics.calmDoneCard)}`);
+    for (const [label, item] of [["treasure progress", metrics.calmDoneTreasure], ["focused action", metrics.calmDoneFocus], ["done actions", metrics.calmDoneActions]]) {
+      if (item && (item.left < -1 || item.right > viewport.width + 1 || item.top < -1 || item.bottom > viewport.height + 1)) failures.push(`${label} is clipped: ${JSON.stringify(item)}`);
+    }
+    if (metrics.calmDoneFocus && metrics.calmDoneFocus.height < 60) failures.push(`focused continuation is too small: ${JSON.stringify(metrics.calmDoneFocus)}`);
+    if (rectsOverlap(metrics.calmDoneBuddyBubble, metrics.calmDoneCard)) failures.push("Buddy speech bubble overlaps the done card");
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }

@@ -1885,3 +1885,52 @@ Release:
   types. The served JS contains both the corrected profile line and Buddy growth
   sequence, the CSS contains the level dialog rules, and the MP3 response is the
   expected 33,062 bytes.
+
+## Continuous Personal Play and Reward Runway - 2026-07-11
+
+Completed work:
+
+- Calm-mode endings now expose the short reward loop instead of stopping at a
+  generic replay choice. Every completed game shows profile-local treasure
+  progress from 1/3 through 3/3; before the chest is full, the dominant action
+  launches the next unfinished recommendation from that child's stable daily
+  plan. It starts a fresh session and preserves the same adaptive mode entry.
+- A full 3/3 chest takes priority over the next mission. The ending sends the
+  child straight to the Hub or Sterrenreis where the earned chest is already
+  waiting. Runner results show the same meter and prioritize the same payoff,
+  closing a previously hidden runner-to-chest gap.
+- Sticker, hero, and completion narration now share one visible reward sequence:
+  sticker card and matching Lily line, then hero choice and hero name, then the
+  completion/daily-mission line on the visible result card. A fast dismissal
+  cancels the retiring card's line before the next visual reward appears.
+- Daily and three-game chests no longer use a 350 ms reveal timer. Their own
+  local narration completes first, then the chest is removed and any earned hero
+  appears. Scene changes cancel the callback, so a delayed reward cannot leak
+  into another game screen.
+- Practice sessions are now real bounded records. Finishing a calm activity or
+  runner closes its profile-local session; replay and next-mission actions start
+  a new one, and `startNewSession` safely closes any abandoned predecessor.
+  Parent practice-time evidence can no longer inherit open-ended sessions.
+- Short landscape results are viewport-bounded and internally scrollable. Their
+  actions and treasure state remain reachable at 844x390, while Buddy's speech
+  bubble is suppressed only where it would overlap the result card.
+
+Validation:
+
+- New flow tests prove 1/3 treasure progress, full-chest priority, next mission
+  routing to `Tel mee`, a new session id, session closure, chest narration before
+  Aqua, and strict sticker -> Aqua -> completion narration. Save tests prove a
+  new session closes the active predecessor.
+- `npm.cmd run verify` passes with 34 files / 294 tests, typecheck, lint, and a
+  production build. Entry assets are `index-ByvwfFXU.js` (101.55 kB gzip) and
+  `index-0gvDj0sz.css` (33.04 kB gzip).
+- `npm.cmd run qa:viewport` passes all 56 scenarios. New deterministic 332x807
+  and 844x390 endings assert the correct recommendation/chest priority, meter,
+  focused action size, viewport bounds, and no Buddy/card overlap. Both final
+  screenshots were inspected directly; the QA now waits for two paint frames
+  after freezing animation to avoid stale headless compositing captures.
+- Fixed-seed `npm.cmd run qa:mobile-touch` passes at 40 real touch steps, 12
+  tracked attempts, one journey node, and Aqua equip through the new reward
+  flow. `npm.cmd run voice:elevenlabs-audit` passes at 1558/1558 stored clips,
+  1489/1489 current lines, and 32/32 reading phonemes. No new speech was needed;
+  the two variable-routed daily lines are explicitly retained in the catalog.

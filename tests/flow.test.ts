@@ -676,6 +676,35 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector('.skin-reveal[data-skin="aqua"]')).toBeTruthy();
   });
 
+  it("waits for chest narration before showing its earned hero", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Mila", "blitz");
+    game.save.award({ stars: 7 });
+    game.save.syncStickers();
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+    game.showScene("reis");
+    const queued: Array<{ text: string; done: () => void; options?: { interrupt?: boolean } }> = [];
+    vi.spyOn(game.voice, "speakThen").mockImplementation((text, done, options) => {
+      queued.push({ text, done, options });
+    });
+
+    const chest = root.querySelector<HTMLButtonElement>(".schat-chest")!;
+    chest.click();
+
+    expect(queued).toHaveLength(1);
+    expect(queued[0]).toMatchObject({ text: "Hoera!", options: { interrupt: true } });
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+    expect(chest.isConnected).toBe(true);
+
+    queued[0].done();
+    expect(chest.isConnected).toBe(false);
+    expect(root.querySelector('.skin-reveal[data-skin="aqua"]')).toBeTruthy();
+  });
+
   it("does not leak a delayed chest reveal into the next game scene", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -712,24 +741,59 @@ describe("Speeltuin hub + calm game modes", () => {
     }
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.sessionChestFill).toBe(1);
+    expect(root.querySelector<HTMLElement>(".results-treasure")?.dataset.treasureFill).toBe("1");
+    expect(root.querySelector(".results-treasure")?.textContent).toContain("1/3 voor je schat");
+    vi.useRealTimers();
+  });
+
+  it("prioritizes opening a full treasure chest over another daily mission", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+
+    game.showScene("klankgrot");
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    expect(game.data().progress.sessionChestFill).toBe(3);
+    expect(root.querySelector(".results-treasure.ready")?.textContent).toContain("Schatkist klaar");
+    expect(root.querySelector(".results-next-mission")).toBeNull();
+    const open = root.querySelector<HTMLButtonElement>(".results-open-treasure");
+    expect(open).toBeTruthy();
+    open!.click();
+    expect(root.querySelector(".hub-scene")).toBeTruthy();
+    expect(root.querySelector(".schat-chest")).toBeTruthy();
     vi.useRealTimers();
   });
 
   it("unboxes a new sticker with a full-screen reveal", async () => {
     vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
     const { showStickerReveal } = await import("../src/scenes/minigames/miniUi");
     const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const speak = vi.spyOn(game.voice, "speak");
+    const cancel = vi.spyOn(game.voice, "cancel");
 
-    expect(showStickerReveal(root, [])).toBeNull();
-    const overlay = showStickerReveal(root, [{ emoji: "🦕", name: "Dino ster" }])!;
+    expect(showStickerReveal(root, game, [])).toBeNull();
+    const overlay = showStickerReveal(root, game, [{ emoji: "🦕", name: "Dino ster" }])!;
     expect(overlay).toBeTruthy();
+    expect(overlay.getAttribute("role")).toBe("dialog");
+    expect(document.activeElement).toBe(overlay);
     expect(overlay.querySelector(".sticker-reveal-gift")).toBeTruthy();
     expect(overlay.textContent).toContain("Dino ster");
+    expect(speak).toHaveBeenCalledWith("Je verdiende een nieuwe sticker: Dino ster!", expect.objectContaining({ interrupt: true }));
     // The gift auto-opens into the sticker...
     vi.advanceTimersByTime(700);
     expect(overlay.classList.contains("open")).toBe(true);
     // ...and a tap dismisses it.
     overlay.click();
+    expect(cancel).toHaveBeenCalled();
     expect(root.querySelector(".sticker-reveal")).toBeNull();
     vi.useRealTimers();
   });
@@ -1439,6 +1503,33 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("keeps sticker, hero and completion narration aligned with the visible reward", async () => {
+    const { Game } = await import("../src/game/Game");
+    const { skinById } = await import("../src/runner/skins");
+    const { showActivityRewards } = await import("../src/scenes/minigames/miniUi");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const speak = vi.spyOn(game.voice, "speak");
+
+    showActivityRewards(root, game, {
+      completionLine: "Goed gedaan!",
+      stickers: [{ emoji: "⭐", name: "Dino ster" }],
+      skins: [skinById("aqua")]
+    });
+
+    expect(root.querySelector(".sticker-reveal")?.textContent).toContain("Dino ster");
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+    expect(speak.mock.calls.map((call) => call[0])).toEqual(["Je verdiende een nieuwe sticker: Dino ster!"]);
+
+    root.querySelector<HTMLElement>(".sticker-reveal")!.click();
+    expect(root.querySelector('.skin-reveal[data-skin="aqua"]')).toBeTruthy();
+    expect(speak.mock.calls.map((call) => call[0])).toEqual(["Je verdiende een nieuwe sticker: Dino ster!", "Aqua"]);
+
+    root.querySelector<HTMLButtonElement>(".skin-reveal-later")!.click();
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+    expect(speak.mock.calls.map((call) => call[0])).toEqual(["Je verdiende een nieuwe sticker: Dino ster!", "Aqua", "Goed gedaan!"]);
+  });
+
   it("checks a real completed mode off on its mission result screen", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -1465,6 +1556,13 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".results-unlock.daily")?.textContent).toContain("Missie 1/3 klaar");
     expect(game.data().progress.dailyPlan.completedModeIds).toEqual(["klankgrot"]);
     expect(game.data().progress.activityHistory.at(-1)).toMatchObject({ sceneId: "klankgrot", inJourney: false });
+    const next = root.querySelector<HTMLButtonElement>('.results-next-mission[data-next-mission="count"]');
+    expect(next?.textContent).toContain("Tel mee");
+    const sessionBefore = game.data().progress.sessionId;
+    expect(game.data().progress.sessions.find((session) => session.id === sessionBefore)?.endedAt).toBeTypeOf("number");
+    next!.click();
+    expect(root.querySelector(".count-play")).toBeTruthy();
+    expect(game.data().progress.sessionId).not.toBe(sessionBefore);
     vi.useRealTimers();
   });
 

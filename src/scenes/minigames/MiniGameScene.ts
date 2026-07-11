@@ -8,9 +8,9 @@ import { praiseWord } from "../../game/VoiceManager";
 import { skinById } from "../../runner/skins";
 import { cssHex, getWorld } from "../../runner/worlds";
 import { createBuddy, type Buddy } from "../buddy";
-import { showSkinUnlock, unlockEligibleSkins } from "../skinRewards";
+import { unlockEligibleSkins } from "../skinRewards";
 import { BaseScene } from "../SceneUtils";
-import { buildDoneScreen, showStickerReveal, starsFromPerfect } from "./miniUi";
+import { buildDoneScreen, nextDailyMission, showActivityRewards, starsFromPerfect } from "./miniUi";
 
 // Shared shell for the calm, tap-based learning modes. No timer, no game over:
 // the child answers at their own pace, a wrong tap just gives a gentle nudge and
@@ -386,17 +386,20 @@ export abstract class MiniGameScene extends BaseScene {
     const best = this.game.save.recordActivityStars(this.name, stars);
     const daily = this.game.completeActivity(this.name);
     // Every finished activity fills the treasure meter (chest at 3).
-    this.game.save.bumpTreasure();
+    const treasureFill = this.game.save.bumpTreasure();
     const newSkins = unlockEligibleSkins(this.game);
-    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
-    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
-    else this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: false, pitch: 1.25 });
+    const completionLine = daily.rewardEarned
+      ? "Alle drie missies klaar! Tien bonussterren!"
+      : daily.newlyCompleted
+        ? "Dagmissie klaar!"
+        : stars >= 3
+          ? "Perfect! Heel knap gedaan!"
+          : "Goed gedaan!";
     const newStickers = this.game.save
       .syncStickers()
       .map((id) => stickerById(id))
       .filter((s): s is NonNullable<typeof s> => Boolean(s))
       .map((s) => ({ emoji: s.emoji, name: s.name }));
-    if (newStickers.length > 0) this.game.voice.speak(`Je verdiende een nieuwe sticker: ${newStickers[0].name}!`);
     this.root.replaceChildren(
       buildDoneScreen({
         emoji: this.emoji,
@@ -408,20 +411,19 @@ export abstract class MiniGameScene extends BaseScene {
         dailyMission: daily.newlyCompleted
           ? { completedCount: daily.completedCount, total: daily.total, rewardEarned: daily.rewardEarned }
           : undefined,
+        nextMission: nextDailyMission(this.game, this.name),
+        sessionTreasure: { fill: treasureFill, total: 3 },
         homeLabel: this.game.lastJourneyNode ? "Verder" : "Speeltuin",
         onReplay: () => this.mountReplay(),
         onHome: () => this.game.showScene(this.returnScene())
       })
     );
     if (this.buddy) this.root.appendChild(this.buddy.el);
-    // Queue reward reveals so two earned collectibles never overlap.
-    const revealSkins = (): void => {
-      showSkinUnlock(this.root, this.game, newSkins);
-    };
-    if (!showStickerReveal(this.root, newStickers, revealSkins)) revealSkins();
+    showActivityRewards(this.root, this.game, { completionLine, stickers: newStickers, skins: newSkins });
   }
 
   protected mountReplay(): void {
+    this.game.save.startNewSession();
     this.root.classList.remove("centered");
     this.root.classList.add("mini-scene", "centered");
     this.round = 1;

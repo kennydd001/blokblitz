@@ -92,6 +92,8 @@ function buildVoiceLineCatalog(): VoiceLineCatalogEntry[] {
     "Perfect! Heel knap gedaan!",
     "Goed gedaan!",
     "Perfect geheugen!",
+    "Dagmissie klaar!",
+    "Alle drie missies klaar! Tien bonussterren!",
     "Luister nog eens goed.",
     "Luister naar de klank.",
     "Zoem rustig: rek de klanken aan elkaar.",

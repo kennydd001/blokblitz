@@ -420,19 +420,22 @@ export class SaveManager {
     return this.getData();
   }
 
-  endSession(): SaveData {
+  endSession(endedAt = Date.now()): SaveData {
     const session = this.data.progress.sessions.find((item) => item.id === this.data.progress.sessionId);
-    if (session && !session.endedAt) session.endedAt = Date.now();
+    if (session && !session.endedAt) session.endedAt = endedAt;
     this.save();
     return this.getData();
   }
 
   startNewSession(): SaveData {
+    const startedAt = Date.now();
+    const current = this.data.progress.sessions.find((item) => item.id === this.data.progress.sessionId);
+    if (current && !current.endedAt) current.endedAt = startedAt;
     const sessionId = makeSessionId();
     this.data.progress.sessionId = sessionId;
     this.data.progress.sessions.push({
       id: sessionId,
-      startedAt: Date.now(),
+      startedAt,
       starsEarned: 0,
       rescued: 0,
       attempts: 0

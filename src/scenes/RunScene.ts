@@ -178,6 +178,7 @@ export class RunScene extends BaseScene {
     const totalStars = afterData.progress.stars;
     this.game.save.syncUnlockedSkins(unlockedSkinIds(totalStars));
     const unlocked = newlyUnlockedSkins(this.starsAtStart, totalStars);
+    this.game.save.endSession();
     this.game.audio.play("win");
     this.game.haptics.play("win");
     this.game.showScene("results", {

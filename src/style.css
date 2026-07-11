@@ -3190,6 +3190,12 @@ input {
   box-shadow: var(--shadow);
   text-align: center;
 }
+.mini-done {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
 .results-title {
   margin: 0;
   font-size: 2.4rem;
@@ -3256,10 +3262,76 @@ input {
   display: flex;
   gap: 12px;
   justify-content: center;
-}@media (max-width: 480px) {
+}
+.results-treasure {
+  margin: 12px auto 0;
+  width: min(360px, 100%);
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 3px solid var(--edge);
+  border-radius: 14px;
+  background: #eef8f3;
+  box-shadow: 0 4px 0 rgba(23, 32, 51, 0.16);
+}
+.results-treasure.ready {
+  background: #d8f7e7;
+  box-shadow: 0 4px 0 rgba(23, 32, 51, 0.16), 0 0 18px rgba(53, 201, 131, 0.45);
+}
+.results-treasure-icon { flex: 0 0 auto; font-size: 1.9rem; line-height: 1; }
+.results-treasure-copy { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.results-treasure-copy strong { color: var(--ink); font-size: 0.94rem; line-height: 1.1; }
+.results-treasure-copy > span { display: flex; gap: 3px; }
+.results-actions.has-focus {
+  width: min(420px, 100%);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.results-actions.has-focus > .btn { min-width: 0; }
+.results-focus-action {
+  grid-column: 1 / -1;
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  text-align: left;
+}
+.results-focus-action > span:not(.results-focus-icon) { min-width: 0; display: flex; flex-direction: column; }
+.results-focus-action small { font-size: 0.7rem; line-height: 1; text-transform: uppercase; color: #5a4210; }
+.results-focus-action strong { overflow-wrap: anywhere; font-size: 1.05rem; line-height: 1.1; }
+.results-focus-icon { font-size: 2rem; line-height: 1; }
+.results-focus-action > b { font-size: 1.2rem; }
+@media (max-width: 480px) {
   .menu-title h1 { font-size: 2.1rem; }
   .run-target-text { font-size: 1.2rem; }
   .results-title { font-size: 2rem; }
+  .results-card { padding: 16px; }
+  .results-actions.has-focus { gap: 8px; }
+  .results-actions.has-focus > .btn:not(.results-focus-action) { padding-inline: 10px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .mini-done .results-card,
+  .scene.results-scene .results-card {
+    width: min(640px, calc(100vw - 48px));
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 12px 16px;
+  }
+  .results-title { font-size: 1.6rem; }
+  .results-star-rating { margin-block: 2px 4px; }
+  .rating-star { font-size: 1.9rem; }
+  .results-sub { margin: 3px 0 7px; }
+  .results-unlock,
+  .results-treasure { margin-top: 8px; }
+  .results-actions { margin-top: 9px; }
+  .mini-done + .buddy .buddy-bubble { display: none !important; }
 }
 
 /* ---- World map hub ---- */
@@ -5348,12 +5420,16 @@ button:focus-visible,
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   background: radial-gradient(120% 120% at 50% 30%, rgba(60, 34, 92, 0.6), rgba(12, 8, 26, 0.85));
   cursor: pointer;
   animation: reis-story-fade 0.25s ease;
 }
 .sticker-reveal-card {
   position: relative;
+  width: min(360px, 94vw);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

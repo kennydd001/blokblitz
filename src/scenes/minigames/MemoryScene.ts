@@ -3,9 +3,9 @@ import { RepresentationFactory } from "../../education/representations/Represent
 import type { Representation } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { BaseScene } from "../SceneUtils";
-import { showSkinUnlock, unlockEligibleSkins } from "../skinRewards";
+import { unlockEligibleSkins } from "../skinRewards";
 import { memoryMatchChallenge, shuffle } from "./miniChallenges";
-import { buildDoneScreen, showStickerReveal } from "./miniUi";
+import { buildDoneScreen, nextDailyMission, showActivityRewards } from "./miniUi";
 
 interface MemoryCard {
   quantity: number;
@@ -177,11 +177,15 @@ export class MemoryScene extends BaseScene {
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
     const best = this.game.save.recordActivityStars(this.name, stars);
     const daily = this.game.completeActivity(this.name);
-    this.game.save.bumpTreasure();
+    const treasureFill = this.game.save.bumpTreasure();
     const newSkins = unlockEligibleSkins(this.game);
-    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
-    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
-    else this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: false, pitch: 1.25 });
+    const completionLine = daily.rewardEarned
+      ? "Alle drie missies klaar! Tien bonussterren!"
+      : daily.newlyCompleted
+        ? "Dagmissie klaar!"
+        : stars >= 3
+          ? "Perfect geheugen!"
+          : "Goed gedaan!";
     const newStickers = this.game.save
       .syncStickers()
       .map((id) => stickerById(id))
@@ -198,15 +202,17 @@ export class MemoryScene extends BaseScene {
         dailyMission: daily.newlyCompleted
           ? { completedCount: daily.completedCount, total: daily.total, rewardEarned: daily.rewardEarned }
           : undefined,
-        onReplay: () => this.startBoard(),
+        nextMission: nextDailyMission(this.game, this.name),
+        sessionTreasure: { fill: treasureFill, total: 3 },
+        onReplay: () => {
+          this.game.save.startNewSession();
+          this.startBoard();
+        },
         homeLabel: this.game.lastJourneyNode ? "Verder" : "Speeltuin",
         onHome: () => this.game.showScene(this.returnScene())
       })
     );
-    const revealSkins = (): void => {
-      showSkinUnlock(this.root, this.game, newSkins);
-    };
-    if (!showStickerReveal(this.root, newStickers, revealSkins)) revealSkins();
+    showActivityRewards(this.root, this.game, { completionLine, stickers: newStickers, skins: newSkins });
   }
 
   private returnScene(): string {

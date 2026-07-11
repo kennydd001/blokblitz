@@ -331,6 +331,7 @@ export class Game {
     const daily = this.save.completeDailyMode(sceneId);
     this.save.recordActivityComplete(sceneId, Boolean(this.lastJourneyNode), now);
     if (daily.rewardEarned) this.save.award({ stars: 10, blocks: 5 });
+    this.save.endSession(now);
     return daily;
   }
 

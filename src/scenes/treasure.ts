@@ -39,7 +39,6 @@ export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): H
         : best >= 2
           ? `Ik heb je gemist! Fijn dat je er weer bent. ${reward} sterren erbij!`
           : `Hoera! ${reward} sterren erbij!`;
-    game.voice.speak(line, { interrupt: true, pitch: 1.2 });
     buddy?.setMood("wow", 1600);
     buddy?.say(count >= 2 ? `${count} dagen!` : "Een cadeautje!");
     const burst = document.createElement("div");
@@ -52,10 +51,15 @@ export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): H
     window.setTimeout(() => root.querySelector(".daglint")?.remove(), 2600);
     chest.classList.add("opened");
     chest.disabled = true;
-    window.setTimeout(() => chest.remove(), 900);
-    window.setTimeout(() => {
-      if (chest.isConnected) showSkinUnlock(root, game, newSkins);
-    }, 350);
+    game.voice.speakThen(
+      line,
+      () => {
+        const stillInScene = chest.isConnected;
+        chest.remove();
+        if (stillInScene) showSkinUnlock(root, game, newSkins);
+      },
+      { interrupt: true, pitch: 1.2 }
+    );
   });
   root.appendChild(chest);
   return chest;
@@ -97,7 +101,6 @@ export function spawnTreasureChest(game: Game, root: HTMLElement, buddy?: Buddy)
     const newSkins = unlockEligibleSkins(game);
     game.audio.play("win");
     game.haptics.play("win");
-    game.voice.speak("Hoera!", { interrupt: true, pitch: 1.25 });
     game.flashMessage("Schatkist! +5 ⭐", "good");
     buddy?.setMood("wow", 1600);
     buddy?.say("Een schat!");
@@ -109,17 +112,21 @@ export function spawnTreasureChest(game: Game, root: HTMLElement, buddy?: Buddy)
     window.setTimeout(() => burst.remove(), 1400);
     chest.classList.add("opened");
     chest.disabled = true;
-    window.setTimeout(() => {
-      chest.remove();
-      // Refresh the meter pill(s) so the reset is visible immediately.
-      root.querySelectorAll<HTMLElement>(".schat-meter").forEach((pill) => {
-        pill.dataset.treasureFill = "0";
-        pill.querySelectorAll(".schat-gem").forEach((gem) => gem.classList.remove("filled"));
-      });
-    }, 900);
-    window.setTimeout(() => {
-      if (chest.isConnected) showSkinUnlock(root, game, newSkins);
-    }, 350);
+    game.voice.speakThen(
+      "Hoera!",
+      () => {
+        const stillInScene = chest.isConnected;
+        chest.remove();
+        if (!stillInScene) return;
+        // Refresh the meter pill(s) so the reset is visible immediately.
+        root.querySelectorAll<HTMLElement>(".schat-meter").forEach((pill) => {
+          pill.dataset.treasureFill = "0";
+          pill.querySelectorAll(".schat-gem").forEach((gem) => gem.classList.remove("filled"));
+        });
+        showSkinUnlock(root, game, newSkins);
+      },
+      { interrupt: true, pitch: 1.25 }
+    );
   });
   root.appendChild(chest);
   return chest;

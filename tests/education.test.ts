@@ -277,6 +277,18 @@ describe("adaptive engine", () => {
 });
 
 describe("save manager persistence", () => {
+  it("closes the active session before starting the next one", () => {
+    const save = new SaveManager();
+    const firstId = save.getData().progress.sessionId;
+
+    save.startNewSession();
+
+    const progress = save.getData().progress;
+    expect(progress.sessionId).not.toBe(firstId);
+    expect(progress.sessions.find((session) => session.id === firstId)?.endedAt).toBeTypeOf("number");
+    expect(progress.sessions.find((session) => session.id === progress.sessionId)?.endedAt).toBeUndefined();
+  });
+
   it("persists attempts, rewards, districts, sessions, and settings in localStorage", () => {
     const store = new Map<string, string>();
     vi.stubGlobal("localStorage", {
