@@ -2090,3 +2090,13 @@ Validation:
   attempts, and one completed journey node after playing the changed Count flow.
 - No spoken line or phoneme inventory changed; the validated local Lily packs
   remain the only runtime speech source.
+
+Release:
+
+- GitHub `main` contains the validated interleaving and Count-variation change
+  as commit `92f5b26`.
+- WSL Wrangler deployed Worker version
+  `d79899f8-c23b-4cc5-b83f-4165bb7bc0ba`. The cache-busted live root serves
+  `index-Bnc1LDNH.js` and unchanged `index-By3veXyl.css` with HTTP 200. Served
+  JavaScript contains the session-aware curriculum-focus path and current Count
+  flow and has the expected 386,537 bytes.
