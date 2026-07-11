@@ -4740,9 +4740,9 @@ input {
 /* ---- Memory ---- */
 .memory-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--memory-columns, 4), minmax(0, 1fr));
   gap: 10px;
-  width: min(440px, 94%);
+  width: min(var(--memory-board-width, 440px), 94%);
   perspective: 900px;
 }
 .memory-card {
@@ -4765,13 +4765,21 @@ input {
 }
 .memory-card.matched { background: #d8f7df; box-shadow: 0 0 0 4px var(--green), 0 5px 0 rgba(23, 32, 51, 0.22); animation: combo-pop 0.5s ease; }
 .memory-num { font-size: 2.4rem; font-weight: 900; color: var(--ink); }
-.memory-art .quantity-svg { width: 100%; max-width: 88px; height: auto; max-height: 70px; }@media (max-width: 480px) {
+.memory-art .quantity-svg { width: 100%; max-width: 88px; height: auto; max-height: 70px; }
+@media (max-width: 480px) {
   .onemore-base { gap: 6px; }
   .onemore-state { min-height: 126px; padding: 6px 3px; }
   .onemore-art .quantity-svg { width: 96px; max-height: 72px; }
   .onemore-sign { padding-inline: 8px; font-size: 1.35rem; }
   .order-art .quantity-svg { width: 78px; }
   .memory-num { font-size: 1.9rem; }
+  .memory-board { grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(360px, 94%); gap: 8px; }
+  .memory-board[data-tier="2"],
+  .memory-board[data-tier="3"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .memory-board[data-tier="3"] .memory-card:nth-last-child(2) { grid-column: 2; }
+}
+@media (max-height: 480px) and (min-width: 600px) {
+  .memory-board { width: min(480px, 80vw); gap: 8px; }
 }
 
 /* =====================================================================
@@ -4893,7 +4901,6 @@ button:focus-visible,
 
 /* Keep touch targets big for little hands on small phones */
 @media (max-width: 380px) {
-  .memory-board { grid-template-columns: repeat(3, 1fr); }
   .sticker-cell { width: clamp(40px, 11vw, 46px); height: clamp(40px, 11vw, 46px); }
   .run-ctrl-left, .run-ctrl-right, .run-ctrl-jump { min-height: 72px; }
 }

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { zoemRound } from "../src/education/literacy/words";
 
 describe("zoemroute rounds", () => {
@@ -13,5 +13,19 @@ describe("zoemroute rounds", () => {
       const correct = round.options.find((o) => o.isCorrect)!.word;
       expect(correct.units).toEqual(round.units);
     }
+  });
+
+  it("grows from simple three-sound words to clusters and four pictures", () => {
+    for (let i = 0; i < 40; i += 1) {
+      const starter = zoemRound(1);
+      expect(starter.units).toHaveLength(3);
+      expect(starter.units.every((unit) => unit.length === 1)).toBe(true);
+      expect(starter.options).toHaveLength(2);
+    }
+    const random = vi.spyOn(Math, "random").mockReturnValue(0.999);
+    const advanced = zoemRound(3);
+    expect(advanced.units.length).toBeGreaterThan(3);
+    expect(advanced.options).toHaveLength(4);
+    random.mockRestore();
   });
 });

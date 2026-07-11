@@ -27,6 +27,9 @@ const scenarios = [
   { name: "real-runner-short-desktop", width: 1280, height: 720, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "real-runner-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "count-narrow-mobile", width: 332, height: 807, mobile: true, open: "count", expectMiniMode: ".count-play", expectCountSequence: true },
+  { name: "memory-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "memory-tier-1", expectMemory: { tier: 1, cards: 6 } },
+  { name: "memory-advanced-narrow-mobile", width: 390, height: 844, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
+  { name: "memory-advanced-landscape", width: 844, height: 390, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "compare-mobile", width: 390, height: 844, mobile: true, open: "compare", expectMiniMode: ".compare-play", expectCompareFeeding: true },
   { name: "onemoreless-narrow-mobile", width: 332, height: 807, mobile: true, open: "onemoreless", expectMiniMode: ".onemore-play", expectBeforeAfter: true },
   { name: "vormenburcht-narrow-mobile", width: 332, height: 807, mobile: true, open: "vormenburcht", expectMiniMode: ".vormen-play", expectShapeBuild: true },
@@ -166,6 +169,24 @@ async function openScenario(open) {
     `);
     if (!opened) throw new Error("Could not open full profile picker");
     await waitForSelector(".profile-limit", 5_000);
+    return;
+  }
+  if (open === "memory-tier-1" || open === "memory-tier-3") {
+    const tier = Number(open.at(-1));
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        const journey = game.save.getMutableData().progress.journey;
+        journey.round = ${tier};
+        journey.nodeIndex = 0;
+        game.lastJourneyNode = undefined;
+        game.showScene("memory");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error(`Could not open Memory tier ${tier}`);
+    await waitForSelector(".memory-board", 5_000);
     return;
   }
   if (open === "menu") {
@@ -351,6 +372,9 @@ async function collectMetrics(scenario = {}) {
         miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
         miniChoiceCount: document.querySelectorAll(".mini-choice").length,
         miniChoices: rects(".mini-choice"),
+        memoryBoard: rect(".memory-board"),
+        memoryTier: document.querySelector(".memory-board")?.dataset.tier ?? null,
+        memoryCards: rects(".memory-card"),
         countItems: rects(".count-item"),
         countDisabledChoices: document.querySelectorAll(".count-choices .mini-choice:disabled").length,
         countRescueSlots: document.querySelectorAll(".count-rescue-trail > span").length,
@@ -519,6 +543,18 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     for (const card of metrics.profileCards) {
       if (card.left < -1 || card.right > viewport.width + 1) failures.push(`profile card is clipped: ${JSON.stringify(card)}`);
       if (card.width < 100 || card.height < 120) failures.push(`profile card is too small: ${JSON.stringify(card)}`);
+    }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectMemory) {
+    if (!metrics.memoryBoard) failures.push("missing Memory board");
+    if (metrics.memoryBoard && (metrics.memoryBoard.left < -1 || metrics.memoryBoard.right > viewport.width + 1 || metrics.memoryBoard.bottom > viewport.height + 1)) failures.push(`Memory board is clipped: ${JSON.stringify(metrics.memoryBoard)}`);
+    if (Number(metrics.memoryTier) !== scenario.expectMemory.tier) failures.push(`expected Memory tier ${scenario.expectMemory.tier}, got ${metrics.memoryTier}`);
+    if (metrics.memoryCards.length !== scenario.expectMemory.cards) failures.push(`expected ${scenario.expectMemory.cards} Memory cards, got ${metrics.memoryCards.length}`);
+    for (const card of metrics.memoryCards) {
+      if (card.left < -1 || card.right > viewport.width + 1 || card.top < -1 || card.bottom > viewport.height + 1) failures.push(`Memory card is clipped: ${JSON.stringify(card)}`);
+      if (card.width < 44 || card.height < 44) failures.push(`Memory card is too small: ${JSON.stringify(card)}`);
     }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

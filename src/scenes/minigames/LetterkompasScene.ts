@@ -17,7 +17,7 @@ export class LetterkompasScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = letterkompasRound();
+    this.currentRound = letterkompasRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return letterkompasChallenge(this.currentRound);
   }

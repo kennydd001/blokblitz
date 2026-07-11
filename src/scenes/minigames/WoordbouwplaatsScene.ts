@@ -18,7 +18,7 @@ export class WoordbouwplaatsScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = bouwRound();
+    this.currentRound = bouwRound(this.tier());
     this.instruction = this.currentRound.prompt;
     return bouwChallenge(this.currentRound);
   }
@@ -89,7 +89,7 @@ export class WoordbouwplaatsScene extends MiniGameScene {
       wasCorrect: option.isCorrect,
       reactionTimeMs: performance.now() - this.startedAt,
       hintUsed: this.hintUsed,
-      errorType: classifyBouwError(this.currentRound.blankIndex, this.currentRound.units.length)
+      errorType: classifyBouwError(this.currentRound.blankIndex, this.currentRound.units.length, this.currentRound.correct)
     });
     return this.game.recordCurriculumAttempt(attempt);
   }

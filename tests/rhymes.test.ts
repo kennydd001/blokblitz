@@ -34,4 +34,17 @@ describe("rhyme content", () => {
   it("is deterministic when deriving the available families", () => {
     expect(rhymeGroups()).toEqual(rhymeGroups());
   });
+
+  it("grows from one clear distractor to four close choices", () => {
+    for (let index = 0; index < 100; index += 1) {
+      const starter = rhymeRound(1);
+      expect(starter.options).toHaveLength(2);
+      expect(starter.targetWord.units.length).toBeLessThanOrEqual(3);
+      expect(starter.rhymeWord.units.length).toBeLessThanOrEqual(3);
+
+      const advanced = rhymeRound(3);
+      expect(advanced.options).toHaveLength(4);
+      expect(advanced.options.filter((option) => option.isCorrect)).toHaveLength(1);
+    }
+  });
 });

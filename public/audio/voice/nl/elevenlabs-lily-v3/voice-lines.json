@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T15:38:37.074Z",
+  "generatedAt": "2026-07-11T18:21:39.411Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1555,
+  "lineCount": 1556,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -4807,6 +4807,14 @@
       "spokenText": "Hippie het konijn hupt mee en wijst de weg!",
       "category": "story",
       "file": "hippie-het-konijn-hupt-mee-en-wijst-de-weg-uitroep.mp3"
+    },
+    {
+      "id": "listen-question-pinguin-ijs-1",
+      "slug": "hoe-glijdt-pim-over-het-ijs-vraag",
+      "text": "Hoe glijdt Pim over het ijs?",
+      "spokenText": "Hoe glijdt Pim over het ijs?",
+      "category": "listening",
+      "file": "hoe-glijdt-pim-over-het-ijs-vraag.mp3"
     },
     {
       "id": "klok-read",

@@ -1,7 +1,8 @@
 // Letter-sound mapping for the Letterkompas mode. Bridges sounds (Klankgrot) to
-// letters. Voice-first, emoji pictures, single starter letters only. The letter
-// ORDER is data-driven + configurable (a school/Kim/Zoem order can replace it).
+// letters. Voice-first, emoji pictures, single starter letters first and
+// two-letter graphemes later. The ORDER stays data-driven + configurable.
 
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 import { PHONICS_WORDS } from "./phonics";
 
@@ -15,6 +16,9 @@ export const LETTERS = [
   // Letterkompas teaches "aa"/"ui" as one sound-picture instead of two letters.
   "aa", "ee", "oo", "oe", "ie", "ui", "eu", "ij"
 ];
+
+const SINGLE_LETTERS = LETTERS.slice(0, 20);
+export const STARTER_LETTERS = ["m", "s", "v", "r", "n", "b", "k", "z", "h", "t", "o", "a"];
 
 // Letters that have a picture word (for letter -> word rounds).
 const LETTERS_WITH_WORDS = [...new Set(PHONICS_WORDS.map((w) => w.begin))].filter((l) => LETTERS.includes(l));
@@ -43,12 +47,16 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function letterkompasRound(mode: LetterMode = pickOne(MODES)): LetterRound {
-  if (mode === "sound-to-letter") {
-    const letter = pickOne(LETTERS);
-    const others = shuffle(LETTERS.filter((l) => l !== letter)).slice(0, 2);
+export function letterkompasRound(mode?: LetterMode, tier: DifficultyTier = 2): LetterRound {
+  const eligibleModes: LetterMode[] = tier === 1 ? ["sound-to-letter"] : MODES;
+  const roundMode = mode ?? pickOne(eligibleModes);
+  const letterPool = tier === 1 ? STARTER_LETTERS : tier === 2 ? SINGLE_LETTERS : LETTERS;
+  const optionCount = tier === 1 ? 2 : tier === 2 ? 3 : 4;
+  if (roundMode === "sound-to-letter") {
+    const letter = pickOne(letterPool);
+    const others = shuffle(letterPool.filter((l) => l !== letter)).slice(0, optionCount - 1);
     return {
-      mode,
+      mode: roundMode,
       letter,
       prompt: `Welke letter hoor je?`,
       say: letter,
@@ -61,11 +69,15 @@ export function letterkompasRound(mode: LetterMode = pickOne(MODES)): LetterRoun
     };
   }
   // letter-to-word: show a letter, pick the picture that starts with it.
-  const letter = pickOne(LETTERS_WITH_WORDS);
-  const target = pickOne(PHONICS_WORDS.filter((w) => w.begin === letter));
-  const others = shuffle(PHONICS_WORDS.filter((w) => w.begin !== letter)).slice(0, 2);
+  const wordPool = tier === 1
+    ? PHONICS_WORDS.filter((word) => STARTER_LETTERS.includes(word.begin) && word.units.length === 3)
+    : PHONICS_WORDS;
+  const eligibleLetters = LETTERS_WITH_WORDS.filter((letter) => letterPool.includes(letter) && wordPool.some((word) => word.begin === letter));
+  const letter = pickOne(eligibleLetters);
+  const target = pickOne(wordPool.filter((word) => word.begin === letter));
+  const others = shuffle(wordPool.filter((word) => word.begin !== letter)).slice(0, optionCount - 1);
   return {
-    mode,
+    mode: roundMode,
     letter,
     prompt: `Welk woord begint met de letter ${letter.toUpperCase()}?`,
     say: letter,

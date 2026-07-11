@@ -603,6 +603,7 @@ export const VOICE_LINE_SLUGS = new Set<string>([
   "hij-is-verdrietig",
   "hippie-het-konijn-heeft-honger-hij-hupt-door-de-tuin-en-graaft-met-zijn-pootjes-in-de-grond-daar",
   "hippie-het-konijn-hupt-mee-en-wijst-de-weg-uitroep",
+  "hoe-glijdt-pim-over-het-ijs-vraag",
   "hoe-laat-is-het-vraag",
   "hoed",
   "hoera-2-dagen-op-een-rij-uitroep-4-sterren-erbij-kom-morgen-weer-uitroep",

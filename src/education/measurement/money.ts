@@ -2,6 +2,7 @@
 // holds the target amount. Coins are drawn as local SVG (generic euro-like).
 // Pure data + rendering.
 
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 
 export type MoneyMode = "count-money" | "make-amount";
@@ -56,12 +57,12 @@ export function greedyCoins(amount: number): number[] {
   return out;
 }
 
-function randomCoinSet(maxTotal: number): number[] {
+function randomCoinSet(maxTotal: number, denominations: number[], minPieces: number, maxPieces: number): number[] {
   const coins: number[] = [];
   let total = 0;
-  const pieces = pickInt(2, 4);
+  const pieces = pickInt(minPieces, maxPieces);
   for (let i = 0; i < pieces; i += 1) {
-    const options = COINS.filter((c) => total + c <= maxTotal);
+    const options = denominations.filter((c) => total + c <= maxTotal);
     if (options.length === 0) break;
     const c = pickOne(options);
     coins.push(c);
@@ -70,14 +71,19 @@ function randomCoinSet(maxTotal: number): number[] {
   return coins.length ? coins : [1];
 }
 
-export function moneyRound(mode: MoneyMode = pickOne(["count-money", "make-amount"] as MoneyMode[])): MoneyRound {
-  if (mode === "count-money") {
-    const coins = randomCoinSet(10);
+export function moneyRound(mode?: MoneyMode, tier: DifficultyTier = 2): MoneyRound {
+  const eligibleModes: MoneyMode[] = tier === 1 ? ["count-money"] : ["count-money", "make-amount"];
+  const roundMode = mode ?? pickOne(eligibleModes);
+  const maxTotal = tier === 1 ? 5 : tier === 2 ? 8 : 10;
+  const optionCount = tier === 1 ? 2 : 3;
+  if (roundMode === "count-money") {
+    const denominations = tier === 1 ? [1, 2] : COINS;
+    const coins = randomCoinSet(maxTotal, denominations, 2, tier === 1 ? 3 : 4);
     const total = coins.reduce((a, b) => a + b, 0);
     const pool = [total - 1, total + 1, total - 2, total + 2].filter((n) => n >= 1 && n <= 12 && n !== total);
-    const distractors = shuffle([...new Set(pool)]).slice(0, 2);
+    const distractors = shuffle([...new Set(pool)]).slice(0, optionCount - 1);
     return {
-      mode,
+      mode: roundMode,
       total,
       coins,
       prompt: "Hoeveel euro is dit samen?",
@@ -88,16 +94,16 @@ export function moneyRound(mode: MoneyMode = pickOne(["count-money", "make-amoun
     };
   }
   // make-amount: pick the purse that holds the target amount.
-  const target = pickInt(3, 10);
-  const wrongA = target === 10 ? target - 1 : target + 1;
-  const wrongB = target <= 3 ? target + 2 : target - 2;
+  const target = pickInt(tier === 1 ? 2 : 3, maxTotal);
+  const wrongAmounts = shuffle([...new Set([target - 1, target + 1, target - 2, target + 2])]
+    .filter((amount) => amount >= 1 && amount <= 10 && amount !== target))
+    .slice(0, optionCount - 1);
   const sets = shuffle([
     { coins: greedyCoins(target), sum: target, isCorrect: true },
-    { coins: greedyCoins(wrongA), sum: wrongA, isCorrect: false },
-    { coins: greedyCoins(wrongB), sum: wrongB, isCorrect: false }
+    ...wrongAmounts.map((amount) => ({ coins: greedyCoins(amount), sum: amount, isCorrect: false }))
   ]);
   return {
-    mode,
+    mode: roundMode,
     total: target,
     coins: greedyCoins(target),
     prompt: `Welke portemonnee is ${target} euro?`,

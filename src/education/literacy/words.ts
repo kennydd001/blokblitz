@@ -3,11 +3,14 @@
 // picks the matching picture. Reuses the phonics word set; prefers short CVC-style
 // words first. Pure data + round generation (no DOM).
 
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 import { PHONICS_WORDS, type PhonicsWord } from "./phonics";
 
 // Simple words first: at most three sound units.
 const SIMPLE_WORDS = PHONICS_WORDS.filter((w) => w.units.length <= 3);
+const VOWEL_UNITS = new Set(["a", "e", "i", "o", "u", "aa", "ee", "oo", "uu", "oe", "eu", "ui", "ie", "ei", "ij", "au", "ou"]);
+const STARTER_WORDS = SIMPLE_WORDS.filter((word) => word.units.length === 3 && word.units.every((unit) => unit.length === 1));
 
 export interface ZoemRound {
   word: PhonicsWord;
@@ -26,9 +29,22 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function zoemRound(): ZoemRound {
-  const word = pickOne(SIMPLE_WORDS);
-  const others = shuffle(PHONICS_WORDS.filter((w) => w.word !== word.word)).slice(0, 2);
+function wordPoolForTier(tier: DifficultyTier): PhonicsWord[] {
+  return tier === 1 ? STARTER_WORDS : tier === 2 ? SIMPLE_WORDS : PHONICS_WORDS;
+}
+
+function wordSimilarity(first: PhonicsWord, second: PhonicsWord): number {
+  return Number(first.begin === second.begin) * 3
+    + Number(first.end === second.end) * 3
+    + Number(first.units.length === second.units.length) * 2;
+}
+
+export function zoemRound(tier: DifficultyTier = 2): ZoemRound {
+  const wordPool = wordPoolForTier(tier);
+  const word = pickOne(wordPool);
+  const candidates = shuffle(wordPool.filter((candidate) => candidate.word !== word.word));
+  if (tier === 3) candidates.sort((first, second) => wordSimilarity(second, word) - wordSimilarity(first, word));
+  const others = candidates.slice(0, tier === 1 ? 1 : tier === 2 ? 2 : 3);
   return {
     word,
     units: word.units,
@@ -55,12 +71,17 @@ export interface BouwRound {
   skill: "wordBuild";
 }
 
-export function bouwRound(): BouwRound {
-  const word = pickOne(SIMPLE_WORDS);
+export function bouwRound(tier: DifficultyTier = 2): BouwRound {
+  const word = pickOne(wordPoolForTier(tier));
   const units = word.units;
-  const blankIndex = Math.floor(Math.random() * units.length);
+  const blankChoices = tier === 1 ? [...new Set([0, units.length - 1])] : units.map((_, index) => index);
+  const blankIndex = pickOne(blankChoices);
   const correct = units[blankIndex];
-  const distractors = shuffle(ALL_UNITS.filter((u) => u !== correct)).slice(0, 2);
+  const sameSoundClass = ALL_UNITS.filter((unit) => unit !== correct && VOWEL_UNITS.has(unit) === VOWEL_UNITS.has(correct));
+  const otherSoundClass = ALL_UNITS.filter((unit) => unit !== correct && !sameSoundClass.includes(unit));
+  const candidates = [...shuffle(sameSoundClass), ...shuffle(otherSoundClass)];
+  if (tier === 3) candidates.sort((first, second) => Number(second.length === correct.length) - Number(first.length === correct.length));
+  const distractors = candidates.slice(0, tier === 1 ? 1 : tier === 2 ? 2 : 3);
   return {
     word,
     units,
@@ -73,10 +94,11 @@ export function bouwRound(): BouwRound {
   };
 }
 
-export function classifyBouwError(blankIndex: number, unitsLength: number): BouwMisconception {
+export function classifyBouwError(blankIndex: number, unitsLength: number, unit?: string): BouwMisconception {
   if (blankIndex === 0) return "first-sound-weak";
   if (blankIndex === unitsLength - 1) return "final-sound-weak";
-  return "vowel-length-weak"; // the middle box is usually the vowel
+  if (unit === undefined || VOWEL_UNITS.has(unit)) return "vowel-length-weak";
+  return "build-weak";
 }
 
 let bouwCounter = 0;

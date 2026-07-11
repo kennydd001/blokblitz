@@ -27,4 +27,22 @@ describe("luisterbos stories", () => {
     // Ids are unique per (story, question).
     expect(new Set(rounds.map((r) => r.targetKey)).size).toBe(6);
   });
+
+  it("stages one recall question per story before longer listening sets", () => {
+    const starter = storySession(3, 1);
+    expect(starter).toHaveLength(3);
+    expect(starter.every((round) => round.storyStart)).toBe(true);
+    expect(starter.every((round) => round.question.difficulty !== "reasoning")).toBe(true);
+
+    const advanced = storySession(4, 3);
+    expect(advanced).toHaveLength(8);
+    expect(advanced.filter((round) => round.storyStart)).toHaveLength(4);
+  });
+
+  it("asks two distinct questions about how and where Pim slides", () => {
+    const pim = LISTEN_STORIES.find((story) => story.id === "pinguin-ijs")!;
+    expect(new Set(pim.questions.map((question) => question.prompt)).size).toBe(2);
+    expect(pim.questions[0].options.find((option) => option.isCorrect)?.label).toBe("op het ijs");
+    expect(pim.questions[1].options.find((option) => option.isCorrect)?.label).toBe("op zijn buik");
+  });
 });

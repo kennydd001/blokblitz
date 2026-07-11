@@ -1,3 +1,4 @@
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 import { PHONICS_WORDS, type PhonicsWord } from "./phonics";
 
@@ -46,12 +47,27 @@ export function rhymeGroups(): RhymeGroup[] {
     .sort((a, b) => a.key.localeCompare(b.key));
 }
 
-export function rhymeRound(): RhymeRound {
-  const groups = rhymeGroups();
+function sharedEndingUnits(first: PhonicsWord, second: PhonicsWord): number {
+  let shared = 0;
+  while (
+    shared < first.units.length
+    && shared < second.units.length
+    && first.units[first.units.length - 1 - shared] === second.units[second.units.length - 1 - shared]
+  ) shared += 1;
+  return shared;
+}
+
+export function rhymeRound(tier: DifficultyTier = 2): RhymeRound {
+  const allGroups = rhymeGroups();
+  const easyGroups = allGroups.filter((group) => group.words.every((word) => word.units.length <= 3));
+  const groups = tier === 1 && easyGroups.length > 0 ? easyGroups : allGroups;
   const group = pickOne(groups);
   const targetWord = pickOne(group.words);
   const rhymeWord = pickOne(group.words.filter((word) => word.word !== targetWord.word));
-  const distractors = shuffle(PHONICS_WORDS.filter((word) => rhymeKey(word) !== group.key)).slice(0, 2);
+  const distractorCount = tier === 1 ? 1 : tier === 2 ? 2 : 3;
+  const candidates = shuffle(PHONICS_WORDS.filter((word) => rhymeKey(word) !== group.key));
+  if (tier === 3) candidates.sort((first, second) => sharedEndingUnits(second, targetWord) - sharedEndingUnits(first, targetWord));
+  const distractors = candidates.slice(0, distractorCount);
   return {
     targetWord,
     rhymeWord,

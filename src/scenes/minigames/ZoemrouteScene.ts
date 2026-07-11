@@ -18,7 +18,7 @@ export class ZoemrouteScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = zoemRound();
+    this.currentRound = zoemRound(this.tier());
     this.instruction = this.currentRound.prompt;
     return zoemChallenge(this.currentRound);
   }

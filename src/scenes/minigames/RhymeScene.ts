@@ -17,7 +17,7 @@ export class RhymeScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = rhymeRound();
+    this.currentRound = rhymeRound(this.tier());
     this.instruction = this.currentRound.prompt;
     return rhymeChallenge(this.currentRound);
   }

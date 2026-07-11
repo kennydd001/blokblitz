@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { classifyLetterError, LETTER_MISCONCEPTIONS, LETTERS, letterkompasRound } from "../src/education/literacy/letters";
+import { describe, expect, it, vi } from "vitest";
+import { classifyLetterError, LETTER_MISCONCEPTIONS, LETTERS, letterkompasRound, STARTER_LETTERS } from "../src/education/literacy/letters";
 
 describe("letterkompas rounds", () => {
   it("builds sound-to-letter and letter-to-word rounds with exactly one correct option", () => {
@@ -31,5 +31,23 @@ describe("letterkompas rounds", () => {
     // Target m -> never a reversal.
     expect(classifyLetterError("m", "n")).toBe("letter-sound-weak");
     expect(LETTER_MISCONCEPTIONS).toContain("letter-reversal-confusion");
+  });
+
+  it("stages starter sounds, single letters and two-letter sounds", () => {
+    for (let i = 0; i < 40; i += 1) {
+      const starter = letterkompasRound(undefined, 1);
+      expect(starter.mode).toBe("sound-to-letter");
+      expect(STARTER_LETTERS).toContain(starter.letter);
+      expect(starter.options).toHaveLength(2);
+
+      const middle = letterkompasRound("sound-to-letter", 2);
+      expect(middle.letter).toHaveLength(1);
+      expect(middle.options).toHaveLength(3);
+    }
+    const random = vi.spyOn(Math, "random").mockReturnValue(0.999);
+    const advanced = letterkompasRound("sound-to-letter", 3);
+    expect(advanced.letter).toBe("ij");
+    expect(advanced.options).toHaveLength(4);
+    random.mockRestore();
   });
 });

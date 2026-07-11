@@ -1408,7 +1408,7 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${node.id}"]`)!.click();
     expect(root.querySelector(".rhyme-river")).toBeTruthy();
-    expect(root.querySelectorAll(".rhyme-choice")).toHaveLength(3);
+    expect(root.querySelectorAll(".rhyme-choice")).toHaveLength(2);
     for (let round = 0; round < 24 && !root.querySelector(".mini-done"); round += 1) {
       root.querySelector<HTMLButtonElement>('.rhyme-choice[data-correct="true"]')?.click();
       vi.advanceTimersByTime(1100);
@@ -1435,7 +1435,7 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${lk.id}"]`)!.click();
     expect(root.querySelector(".letterkompas-play")).toBeTruthy();
-    expect(root.querySelectorAll(".letterkompas-choice")).toHaveLength(3);
+    expect(root.querySelectorAll(".letterkompas-choice")).toHaveLength(2);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.letterkompas-choice[data-correct="true"]')?.click();
@@ -1463,7 +1463,7 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${th.id}"]`)!.click();
     expect(root.querySelector(".tientalhuis-board")).toBeTruthy();
-    expect(root.querySelectorAll(".tientalhuis-choice")).toHaveLength(3);
+    expect(root.querySelectorAll(".tientalhuis-choice")).toHaveLength(2);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.tientalhuis-choice[data-correct="true"]')?.click();
@@ -1937,7 +1937,8 @@ describe("Speeltuin hub + calm game modes", () => {
       const q = card.dataset.quantity!;
       byQuantity.set(q, [...(byQuantity.get(q) ?? []), card]);
     });
-    expect(byQuantity.size).toBe(4);
+    expect(root.querySelector(".memory-board")?.getAttribute("data-tier")).toBe("1");
+    expect(byQuantity.size).toBe(3);
     for (const pair of byQuantity.values()) {
       pair[0].click();
       pair[1].click();
@@ -2122,14 +2123,32 @@ describe("Speeltuin hub + calm game modes", () => {
       const q = card.dataset.quantity!;
       byQuantity.set(q, [...(byQuantity.get(q) ?? []), card]);
     });
-    expect(byQuantity.size).toBe(4);
+    expect(root.querySelector(".memory-board")?.getAttribute("data-tier")).toBe("1");
+    expect(byQuantity.size).toBe(3);
     for (const pair of byQuantity.values()) {
       pair[0].click();
       pair[1].click();
     }
     vi.advanceTimersByTime(900);
     expect(root.querySelector(".results-star-rating")).toBeTruthy();
-    expect(game.data().progress.attempts.length).toBeGreaterThanOrEqual(before + 4);
+    expect(game.data().progress.attempts.length).toBeGreaterThanOrEqual(before + 3);
+  });
+
+  it("expands Memory to five pairs and quantities through 10 at tier 3", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.getMutableData().progress.journey.round = 3;
+    game.showScene("memory");
+
+    const board = root.querySelector<HTMLElement>(".memory-board")!;
+    const cards = Array.from(root.querySelectorAll<HTMLButtonElement>(".memory-card"));
+    const quantities = new Set(cards.map((card) => Number(card.dataset.quantity)));
+    expect(board.dataset.tier).toBe("3");
+    expect(cards).toHaveLength(10);
+    expect(quantities.size).toBe(5);
+    expect(Math.max(...quantities)).toBeLessThanOrEqual(10);
+    expect(cards.every((card) => card.getAttribute("aria-label") === "gesloten geheugenkaart")).toBe(true);
   });
 
   it("plays Vul de tien by filling the ten-frame to the target", async () => {

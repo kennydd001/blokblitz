@@ -5,8 +5,8 @@ import type { Game } from "../../game/Game";
 import { MiniGameScene } from "./MiniGameScene";
 
 // Luisterbos — listening comprehension. A tiny story is read aloud (tap the book
-// to hear it again), then two picture questions about it. No reading required;
-// tapping an option speaks it. Logs as listening-comprehension.
+// to hear it again), then one or two picture questions depending on the child's
+// tier. No reading required; tapping an option speaks it. Logs comprehension.
 export class LuisterbosScene extends MiniGameScene {
   protected readonly emoji = "🌳";
   protected readonly heading = "Luisterbos";
@@ -18,7 +18,8 @@ export class LuisterbosScene extends MiniGameScene {
   }
 
   mount(): void {
-    this.rounds = storySession(3);
+    const tier = this.tier();
+    this.rounds = storySession(tier === 3 ? 4 : 3, tier);
     this.total = this.rounds.length;
     super.mount();
   }
@@ -26,7 +27,8 @@ export class LuisterbosScene extends MiniGameScene {
   protected makeChallenge(): Challenge {
     // Rounds follow the session plan; replay rebuilds a fresh plan.
     if (this.round - 1 >= this.rounds.length) {
-      this.rounds = storySession(3);
+      const tier = this.tier();
+      this.rounds = storySession(tier === 3 ? 4 : 3, tier);
     }
     this.currentRound = this.rounds[(this.round - 1) % this.rounds.length];
     this.instruction = this.currentRound.question.prompt;

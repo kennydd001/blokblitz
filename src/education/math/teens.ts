@@ -2,6 +2,7 @@
 // content. Pure data + round generation. A teen number is one full ten room plus
 // loose ones; the child either reads the teen number or finds the loose-ones part.
 
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 
 export type TeenMode = "read-teen" | "build-teen";
@@ -34,28 +35,31 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-function numberOptions(correct: number, pool: number[]): Array<{ label: string; value: number; isCorrect: boolean }> {
+function numberOptions(correct: number, pool: number[], optionCount: number): Array<{ label: string; value: number; isCorrect: boolean }> {
   const fallbackMax = correct <= 9 ? 9 : 20;
   const fallbackMin = correct <= 9 ? 0 : 10;
   const fallback = Array.from({ length: fallbackMax - fallbackMin + 1 }, (_, index) => fallbackMin + index);
   const distractors = shuffle([...new Set([...pool, correct - 1, correct + 1, correct - 2, correct + 2, ...fallback])]
-    .filter((n) => n >= fallbackMin && n <= fallbackMax && n !== correct)).slice(0, 2);
+    .filter((n) => n >= fallbackMin && n <= fallbackMax && n !== correct)).slice(0, optionCount - 1);
   return shuffle([{ label: String(correct), value: correct, isCorrect: true }, ...distractors.map((n) => ({ label: String(n), value: n, isCorrect: false }))]);
 }
 
-export function teenRound(mode: TeenMode = pickOne(MODES)): TeenRound {
-  const total = pickInt(11, 19);
+export function teenRound(mode?: TeenMode, tier: DifficultyTier = 2): TeenRound {
+  const eligibleModes: TeenMode[] = tier === 1 ? ["read-teen"] : MODES;
+  const roundMode = mode ?? pickOne(eligibleModes);
+  const total = pickInt(11, tier === 1 ? 15 : tier === 2 ? 17 : 19);
+  const optionCount = tier === 1 ? 2 : tier === 2 ? 3 : 4;
   const ones = total - 10;
-  if (mode === "read-teen") {
+  if (roundMode === "read-teen") {
     // Distractors: the ones digit alone (tens confusion) + a neighbour.
     const pool = [ones, total + 1, total - 1, 10 + ((ones + 1) % 10)];
     return {
-      mode,
+      mode: roundMode,
       total,
       tens: 10,
       ones,
       prompt: "Welk getal is dit? Tien en nog wat.",
-      options: numberOptions(total, pool),
+      options: numberOptions(total, pool, optionCount),
       targetKey: `teen-${total}`,
       skill: "teenNumber"
     };
@@ -63,12 +67,12 @@ export function teenRound(mode: TeenMode = pickOne(MODES)): TeenRound {
   // build-teen: 13 is tien en hoeveel?
   const pool = [ones + 1, ones - 1, ones + 2, 10].filter((n) => n >= 0 && n <= 9);
   return {
-    mode,
+    mode: roundMode,
     total,
     tens: 10,
     ones,
     prompt: `${total} is tien en hoeveel?`,
-    options: numberOptions(ones, pool),
+    options: numberOptions(ones, pool, optionCount),
     targetKey: `teen-${total}`,
     skill: "teenNumber"
   };

@@ -17,7 +17,7 @@ export class MeetwerfScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = measureRound();
+    this.currentRound = measureRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return measureChallenge(this.currentRound);
   }

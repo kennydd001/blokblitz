@@ -18,7 +18,7 @@ export class TientalhuisScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = teenRound();
+    this.currentRound = teenRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return teenChallenge(this.currentRound);
   }

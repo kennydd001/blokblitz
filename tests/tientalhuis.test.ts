@@ -23,4 +23,21 @@ describe("teen-number rounds", () => {
     expect(classifyTeenError(round, 12)).toBe("teen-off-by-one");
     expect(TEEN_MISCONCEPTIONS).toContain("teen-weak");
   });
+
+  it("stages teen numbers from reading 11-15 to building through 19", () => {
+    for (let i = 0; i < 100; i += 1) {
+      const starter = teenRound(undefined, 1);
+      expect(starter.mode).toBe("read-teen");
+      expect(starter.total).toBeLessThanOrEqual(15);
+      expect(starter.options).toHaveLength(2);
+
+      const middle = teenRound("build-teen", 2);
+      expect(middle.total).toBeLessThanOrEqual(17);
+      expect(middle.options).toHaveLength(3);
+
+      const advanced = teenRound("build-teen", 3);
+      expect(advanced.total).toBeLessThanOrEqual(19);
+      expect(advanced.options).toHaveLength(4);
+    }
+  });
 });

@@ -3,10 +3,12 @@
 // questions (who/what/where + a sequence or cause question). Emoji pictures, so
 // no reading is required. Pure data.
 
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 
 export interface StoryQuestion {
   prompt: string;
+  difficulty?: "recall" | "reasoning";
   options: Array<{ emoji: string; label: string; isCorrect: boolean }>;
 }
 
@@ -99,6 +101,7 @@ export const LISTEN_STORIES: ListenStory[] = [
     questions: [
       {
         prompt: "Waarom springt de kikker?",
+        difficulty: "reasoning",
         options: [
           { emoji: "🌧️", label: "hij is blij met de regen", isCorrect: true },
           { emoji: "😢", label: "hij is verdrietig", isCorrect: false },
@@ -178,7 +181,7 @@ export const LISTEN_STORIES: ListenStory[] = [
         ]
       },
       {
-        prompt: "Waar glijdt Pim op?",
+        prompt: "Hoe glijdt Pim over het ijs?",
         options: [
           { emoji: "🫃", label: "op zijn buik", isCorrect: true },
           { emoji: "🦶", label: "op zijn voeten", isCorrect: false },
@@ -322,16 +325,19 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-/** A session plan: N stories, each followed by its questions in order. */
-export function storySession(storyCount = 3): StoryRound[] {
+/** A session plan: N stories, each followed by the tier-appropriate questions. */
+export function storySession(storyCount = 3, tier: DifficultyTier = 2): StoryRound[] {
   const picked = shuffle(LISTEN_STORIES).slice(0, storyCount);
   const rounds: StoryRound[] = [];
   for (const story of picked) {
-    story.questions.forEach((question, index) => {
+    const starterQuestion = story.questions.find((question) => question.difficulty !== "reasoning") ?? story.questions[0];
+    const questions = tier === 1 ? [starterQuestion] : story.questions;
+    questions.forEach((question) => {
+      const index = story.questions.indexOf(question);
       rounds.push({
         story,
         question,
-        storyStart: index === 0,
+        storyStart: questions.indexOf(question) === 0,
         targetKey: `story-${story.id}-${index}`,
         skill: "listeningQuestion"
       });

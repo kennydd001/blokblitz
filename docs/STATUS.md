@@ -1584,3 +1584,56 @@ Validation and release:
 - WSL Wrangler deployed Worker version
   `091d0d05-7ded-4452-86b2-47eea8280c10`. Live root, JS, and CSS returned HTTP
   200; the served bundles contain both the profile cap and profile-limit UI.
+
+## Complete Three-Tier Curriculum Adaptivity - 2026-07-11
+
+Completed work:
+
+- Audited all 25 calm curriculum modes against the child-specific difficulty
+  tier. Sixteen already changed meaningful content; the remaining nine now do
+  as well: Geldmarkt, Meetwerf, Tientalhuis, Letterkompas, Rijmrivier,
+  Zoemroute, Woordbouwplaats, Luisterbos, and Memory.
+- Tier 1 now starts with smaller ranges, simpler operation families, one clear
+  distractor, short single-grapheme words, one recall question per story, and
+  three Memory pairs. Tier 2 introduces the full core exercise forms. Tier 3
+  reaches money to 10, close length comparisons, teen numbers through 19,
+  digraphs, consonant clusters, harder distractors, longer listening sets, and
+  five Memory pairs with quantities through 10.
+- Kept the difficulty change in `src/education`; scenes only pass their scoped
+  tier into the pure generators. The same domain-specific recent-accuracy,
+  Sterrenreis position, round, weak-target, and spaced-review signals therefore
+  drive every mode without coupling learning rules to rendering.
+- Made the 6/8/10-card Memory board responsive, accessible, and score-aware.
+  Phone layouts use balanced 3, 4-4, or 4-4-2 grids, short landscape uses a
+  compact 5-by-2 board, card labels expose revealed quantities, and matched
+  pairs are marked disabled to assistive technology.
+- Fixed an ambiguous Luisterbos pair that asked `Waar glijdt Pim op?` twice for
+  two different answers. The second question is now `Hoe glijdt Pim over het
+  ijs?`; its new Lily `eleven_v3` clip was generated build-time and stored
+  locally. No runtime TTS or browser-voice fallback was added.
+
+Validation:
+
+- `npm.cmd run verify` passed with 33 files / 277 tests, typecheck, lint, and a
+  production build. Current entry assets are `index-gbFA0j8Q.js` (98.77 kB
+  gzip) and `index-4gnngdiB.css` (31.84 kB gzip).
+- Generator and flow tests prove every tier boundary, operation pool, option
+  count, word complexity, story load, Memory pair count, and quantities to 10.
+- `npm.cmd run qa:viewport` passed all 37 scenarios. New direct screenshots at
+  332x807, 390x844, and 844x390 prove tier-1 and tier-3 Memory cards remain
+  unclipped, at least 44x44px, and visually balanced.
+- `npm.cmd run qa:mobile-touch` passed 38 real touch steps with 12 tracked
+  attempts and one completed journey node.
+- `npm.cmd run voice:elevenlabs-audit` passed at 1556/1556 sentence clips,
+  1488/1488 current game lines, and 32/32 reading phonemes.
+
+Release:
+
+- WSL Wrangler deployed the validated build as Worker version
+  `322f16bd-8076-4b24-aae5-bd30ca3f2e80`.
+- Live Sprintsite returned HTTP 200 for the cache-busted root,
+  `index-gbFA0j8Q.js`, `index-4gnngdiB.css`, and the new Pim MP3. The audio
+  response is `audio/mpeg` with the expected 39,332 bytes; the served JS/CSS
+  contain the tiered Memory and responsive-grid rules.
+- A fresh in-app-browser production render showed the full Buddy/Sterrenstad
+  opening at `?release=322f16bd` with no warning or error logs.

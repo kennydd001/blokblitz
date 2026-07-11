@@ -26,4 +26,24 @@ describe("meetwerf rounds", () => {
     expect(barHtml(3)).toContain("--len:3");
     expect(blocksHtml(4).match(/meet-block"/g)?.length).toBe(4);
   });
+
+  it("moves from two obvious beams to close comparisons and unit counting", () => {
+    for (let i = 0; i < 80; i += 1) {
+      const starter = measureRound(undefined, 1);
+      const starterLengths = starter.options.map((option) => Number(option.value)).sort((a, b) => a - b);
+      expect(starter.mode).toBe("compare-length");
+      expect(starter.prompt).toContain("langst");
+      expect(starter.options).toHaveLength(2);
+      expect(starterLengths[1] - starterLengths[0]).toBeGreaterThanOrEqual(2);
+
+      const advanced = measureRound("compare-length", 3);
+      const advancedLengths = advanced.options.map((option) => Number(option.value)).sort((a, b) => a - b);
+      expect(advanced.options).toHaveLength(3);
+      expect(advancedLengths[1] - advancedLengths[0]).toBe(1);
+      expect(advancedLengths[2] - advancedLengths[1]).toBe(1);
+
+      const units = measureRound("measure-units", 3);
+      expect(Number(units.targetKey.split("-")[1])).toBeLessThanOrEqual(9);
+    }
+  });
 });

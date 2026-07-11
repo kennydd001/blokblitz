@@ -35,4 +35,22 @@ describe("geldmarkt rounds", () => {
     const round = moneyRound("count-money");
     expect(classifyMoneyError(round, String(round.total + 1))).toBe("off-by-one");
   });
+
+  it("builds a real three-step money progression", () => {
+    for (let i = 0; i < 80; i += 1) {
+      const starter = moneyRound(undefined, 1);
+      expect(starter.mode).toBe("count-money");
+      expect(starter.total).toBeLessThanOrEqual(5);
+      expect(starter.coins.every((coin) => coin === 1 || coin === 2)).toBe(true);
+      expect(starter.options).toHaveLength(2);
+
+      const middle = moneyRound("count-money", 2);
+      expect(middle.total).toBeLessThanOrEqual(8);
+      expect(middle.options).toHaveLength(3);
+
+      const advanced = moneyRound("make-amount", 3);
+      expect(advanced.total).toBeLessThanOrEqual(10);
+      expect(advanced.options).toHaveLength(3);
+    }
+  });
 });

@@ -16,7 +16,7 @@ export class GeldmarktScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = moneyRound();
+    this.currentRound = moneyRound(undefined, this.tier());
     this.instruction = this.currentRound.prompt;
     return moneyChallenge(this.currentRound);
   }

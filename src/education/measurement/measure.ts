@@ -2,6 +2,7 @@
 // local HTML bars. Compare which beam is longest/shortest, or count how many
 // unit blocks long a beam is. Pure data + rendering.
 
+import type { DifficultyTier } from "../difficulty";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 
 export type MeasureMode = "compare-length" | "measure-units";
@@ -43,13 +44,16 @@ function distinctLengths(count: number, min: number, max: number): number[] {
   return pool.slice(0, count);
 }
 
-export function measureRound(mode: MeasureMode = pickOne(["compare-length", "measure-units"] as MeasureMode[])): MeasureRound {
-  if (mode === "measure-units") {
-    const n = pickInt(2, 7);
+export function measureRound(mode?: MeasureMode, tier: DifficultyTier = 2): MeasureRound {
+  const eligibleModes: MeasureMode[] = tier === 1 ? ["compare-length"] : ["compare-length", "measure-units"];
+  const roundMode = mode ?? pickOne(eligibleModes);
+  const optionCount = tier === 1 ? 2 : 3;
+  if (roundMode === "measure-units") {
+    const n = pickInt(2, tier === 1 ? 5 : tier === 2 ? 7 : 9);
     const pool = [n - 1, n + 1, n - 2, n + 2].filter((x) => x >= 1 && x <= 9 && x !== n);
-    const distractors = shuffle([...new Set(pool)]).slice(0, 2);
+    const distractors = shuffle([...new Set(pool)]).slice(0, optionCount - 1);
     return {
-      mode,
+      mode: roundMode,
       prompt: "Hoeveel blokjes lang is de balk?",
       promptHtml: `<div class="meet-stage">${blocksHtml(n)}</div>`,
       options: shuffle([{ label: String(n), value: String(n), isCorrect: true }, ...distractors.map((x) => ({ label: String(x), value: String(x), isCorrect: false }))]),
@@ -58,11 +62,21 @@ export function measureRound(mode: MeasureMode = pickOne(["compare-length", "mea
     };
   }
   // compare-length: pick the longest or the shortest beam.
-  const lengths = distinctLengths(3, 2, 8);
-  const wantLongest = Math.random() < 0.5;
+  const lengths = tier === 1
+    ? (() => {
+        const short = pickInt(2, 5);
+        return shuffle([short, pickInt(short + 2, Math.min(9, short + 4))]);
+      })()
+    : tier === 3
+      ? (() => {
+          const first = pickInt(2, 7);
+          return shuffle([first, first + 1, first + 2]);
+        })()
+      : distinctLengths(3, 2, 8);
+  const wantLongest = tier === 1 || Math.random() < 0.5;
   const target = wantLongest ? Math.max(...lengths) : Math.min(...lengths);
   return {
-    mode,
+    mode: roundMode,
     prompt: wantLongest ? "Welke balk is het langst?" : "Welke balk is het kortst?",
     options: shuffle(lengths.map((len) => ({ label: `${len}`, value: String(len), isCorrect: len === target }))),
     targetKey: `length-${wantLongest ? "long" : "short"}-${target}`,
