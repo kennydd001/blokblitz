@@ -1934,3 +1934,15 @@ Validation:
   flow. `npm.cmd run voice:elevenlabs-audit` passes at 1558/1558 stored clips,
   1489/1489 current lines, and 32/32 reading phonemes. No new speech was needed;
   the two variable-routed daily lines are explicitly retained in the catalog.
+
+Release:
+
+- GitHub `main` contains the validated continuous-play and reward implementation
+  as commit `62de6be`.
+- WSL Wrangler deployed Worker version
+  `f5db30df-0f4c-4cce-a895-4cead5aa47d2`. Cache-busted live root,
+  `index-ByvwfFXU.js`, and `index-0gvDj0sz.css` returned HTTP 200 with correct
+  content types. Served JS contains the next-mission, chest-priority, and sticker
+  sequence code; served CSS contains the treasure and short-landscape rules.
+  The representative existing `Dagmissie klaar!` Lily clip is live as
+  `audio/mpeg` with the expected 21,359 bytes.
