@@ -1320,3 +1320,7 @@ Validation:
 - `npm.cmd run qa:mobile-touch` passed with 29 real touch steps, 14 tracked
   attempts, one completed journey node, category selection, and two visible
   checked missions on the final Hub screenshot.
+- GitHub `main` now contains commit `bf76a13`. WSL Wrangler deployed the same
+  build as Worker version `aa787aab-8e65-4ddb-8a7e-cf1773c5d378`; both live
+  roots returned HTTP 200, served `index-CX3H29Yv.js` / `index-DNuqrtDr.css`,
+  and both new mission MP3s returned HTTP 200 with `audio/mpeg`.
