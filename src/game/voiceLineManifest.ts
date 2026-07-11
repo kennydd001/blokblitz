@@ -638,6 +638,7 @@ export const VOICE_LINE_SLUGS = new Set<string>([
   "hoi-uitroep-ik-ben-pim-de-pinguin-uitroep",
   "hoi-uitroep-ik-ben-sterre-de-draak-uitroep",
   "hoi-uitroep-ik-ben-vonk-de-vos-uitroep",
+  "hoi-uitroep-kies-jouw-teken",
   "hoi-uitroep-maak-je-eigen-dino",
   "hoi-uitroep-wat-gaan-we-spelen-vraag",
   "hond",

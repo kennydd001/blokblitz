@@ -27,9 +27,9 @@ export class ProfilePickerScene extends BaseScene {
     const profiles = this.game.save.listProfiles();
     this.root.appendChild(sceneHeader(profiles.length === 0 ? "Maak je speler" : "Kies de speler", profiles.length === 0 ? "Kies je teken" : "Voor volwassenen"));
 
-    // Brand-new install: go straight to "make your dino".
+    // Brand-new install: go straight to the child's personal profile sign.
     if (profiles.length === 0) {
-      this.game.voice.speak("Hoi! Maak je eigen dino.", { interrupt: true });
+      this.game.voice.speak("Hoi! Kies jouw teken.", { interrupt: true });
       this.root.appendChild(this.createPanel());
       return;
     }

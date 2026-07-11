@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T19:50:00.269Z",
+  "generatedAt": "2026-07-11T20:07:15.405Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1557,
+  "lineCount": 1558,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -5087,6 +5087,14 @@
       "spokenText": "Hoi! Ik ben Vonk de vos!",
       "category": "runtime-dynamic",
       "file": "hoi-uitroep-ik-ben-vonk-de-vos-uitroep.mp3"
+    },
+    {
+      "id": "source-scenes/ProfilePickerScene.ts-1229-0",
+      "slug": "hoi-uitroep-kies-jouw-teken",
+      "text": "Hoi! Kies jouw teken.",
+      "spokenText": "Hoi! Kies jouw teken.",
+      "category": "source-static",
+      "file": "hoi-uitroep-kies-jouw-teken.mp3"
     },
     {
       "id": "source-scenes/ProfilePickerScene.ts-1195-0",

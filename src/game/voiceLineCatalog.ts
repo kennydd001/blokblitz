@@ -109,7 +109,7 @@ function buildVoiceLineCatalog(): VoiceLineCatalogEntry[] {
     "De Sterrenrover wordt boos!",
     "Alle bazen verslagen! Jij bent de kampioen van de Sterrenarena!"
   ]);
-  addMany("profiles", ["Hoi! Maak je eigen dino.", "Kies wie er nu speelt.", "Hoi! Daar gaan we!"]);
+  addMany("profiles", ["Hoi! Kies jouw teken.", "Kies wie er nu speelt.", "Hoi! Daar gaan we!"]);
   HERO_SKINS.forEach((skin) => add(`profile-skin-${skin.id}`, skin.name, "profiles"));
 
   addMany("minigame-instruction", [

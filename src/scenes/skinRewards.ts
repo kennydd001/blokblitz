@@ -31,6 +31,9 @@ export function showSkinUnlock(root: HTMLElement, game: Game, skins: HeroSkin[],
   let index = 0;
 
   const closeOrAdvance = (selected: boolean): void => {
+    // A quick choice must also retire the narration for the card that just
+    // disappeared, otherwise the next visible reward can lag behind its voice.
+    game.voice.cancel();
     const skin = skins[index];
     if (selected) {
       game.save.setActiveSkin(skin.id);

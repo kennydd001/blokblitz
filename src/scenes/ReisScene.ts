@@ -40,6 +40,7 @@ function lightenHex(hex: string, amount: number): string {
 // next node. No reading required: Buddy + spoken voice carry the story.
 export class ReisScene extends BaseScene {
   private buddy?: Buddy;
+  private pendingRegionWelcome?: string;
 
   constructor(game: Game) {
     super(game, "reis");
@@ -51,8 +52,10 @@ export class ReisScene extends BaseScene {
     const arrived = Boolean(this.game.lastJourneyNode);
     this.game.lastJourneyNode = undefined;
     this.render();
-    if (arrived) this.celebrateArrival();
-    else this.intro();
+    if (arrived) {
+      const line = this.celebrateArrival();
+      this.game.voice.speakThen(line, () => this.finishMapAnnouncements(), { interrupt: true, pitch: 1.2 });
+    } else this.intro(() => this.finishMapAnnouncements());
   }
 
   private journey() {
@@ -160,7 +163,6 @@ export class ReisScene extends BaseScene {
     this.root.append(top, quest, track, scroll, meadow);
     maybeDailyChest(this.game, this.root, this.buddy);
     spawnTreasureChest(this.game, this.root, this.buddy);
-    maybeBuddyLevelUp(this.game, this.root);
     this.maybeRegionBanner(here);
 
     // Centre the frontier node so only current + next need to be on screen.
@@ -491,7 +493,11 @@ export class ReisScene extends BaseScene {
     this.buddy?.setMood("wow", 1600);
     this.buddy?.say(`${node.friendName ?? "Vriendje"}!`);
     const story = (node.friendId && FRIEND_STORY[node.friendId]) || "";
-    this.game.voice.speak(`Hoera! ${node.friendName ?? "Een vriendje"} is gered en gaat mee! ${story}`, { interrupt: true });
+    this.game.voice.speakThen(
+      `Hoera! ${node.friendName ?? "Een vriendje"} is gered en gaat mee! ${story}`,
+      () => this.speakPendingRegionWelcome(),
+      { interrupt: true }
+    );
   }
 
   private finale(node: JourneyNode): void {
@@ -568,7 +574,7 @@ export class ReisScene extends BaseScene {
     });
   }
 
-  private celebrateArrival(): void {
+  private celebrateArrival(): string {
     const completed = this.journey().completed;
     if (completed.length > this.game.journeySeenCompleted) {
       const justDone = completed[completed.length - 1];
@@ -592,10 +598,9 @@ export class ReisScene extends BaseScene {
         : healed && from
           ? `Kijk! De kleuren zijn terug in ${getWorld(from.regionId).name}!`
           : "Goed zo! Verder met de reis!";
-      this.game.voice.speak(line, { interrupt: true, pitch: 1.2 });
-    } else {
-      this.game.voice.speak("Verder met de reis!", { interrupt: true });
+      return line;
     }
+    return "Verder met de reis!";
   }
 
   // Animate a just-healed region's veil from grey to clear (the render itself
@@ -643,6 +648,7 @@ export class ReisScene extends BaseScene {
   }
 
   private maybeRegionBanner(here: JourneyNode): void {
+    this.pendingRegionWelcome = undefined;
     if (here.regionId === this.game.journeyLastRegion) return;
     this.game.journeyLastRegion = here.regionId;
     const world = getWorld(here.regionId);
@@ -654,27 +660,43 @@ export class ReisScene extends BaseScene {
     this.root.appendChild(banner);
     const timer = window.setTimeout(() => banner.remove(), 3600);
     this.addCleanup(() => window.clearTimeout(timer));
-    if (this.journey().completed.length > 0) this.game.voice.speak(`Welkom in ${world.name}! ${story}`, { interrupt: false });
+    if (this.journey().completed.length > 0) this.pendingRegionWelcome = `Welkom in ${world.name}! ${story}`;
   }
 
-  private intro(): void {
+  private speakPendingRegionWelcome(onDone: () => void = () => {}): void {
+    const line = this.pendingRegionWelcome;
+    this.pendingRegionWelcome = undefined;
+    if (!line) {
+      onDone();
+      return;
+    }
+    this.game.voice.speakThen(line, onDone, { interrupt: false });
+  }
+
+  private finishMapAnnouncements(): void {
+    this.speakPendingRegionWelcome(() => {
+      maybeBuddyLevelUp(this.game, this.root);
+    });
+  }
+
+  private intro(onReady: () => void): void {
     this.game.journeySeenCompleted = this.journey().completed.length;
     this.buddy?.setMood("happy", 1500);
     // A brand-new journey opens with the story; returning players just get nudged.
     if (this.journey().completed.length === 0) {
-      this.showStoryCard();
+      this.showStoryCard(onReady);
       return;
     }
-    this.game.voice.speak("Verder met de reis! Waar gaan we heen?", { interrupt: true });
+    this.game.voice.speakThen("Verder met de reis! Waar gaan we heen?", onReady, { interrupt: true });
   }
 
   // The opening story beat. Round 1 gets a PLAYABLE micro-cinematic (three
   // visual beats, tap-to-advance, barely any reading); later rounds keep the
   // short "Sterrenronde N" card.
-  private showStoryCard(): void {
+  private showStoryCard(onReady: () => void): void {
     const round = this.game.save.journeyRound();
     if (round === 1) {
-      this.showIntroCinematic();
+      this.showIntroCinematic(onReady);
       return;
     }
     const title = `Sterrenronde ${round}`;
@@ -692,7 +714,7 @@ export class ReisScene extends BaseScene {
       overlay.remove();
       this.buddy?.setMood("wow", 1400);
       this.buddy?.say("Daar gaan we!");
-      this.game.voice.speak("Daar gaan we! Volg de weg.", { interrupt: true });
+      this.game.voice.speakThen("Daar gaan we! Volg de weg.", onReady, { interrupt: true });
     });
     card.appendChild(start);
     overlay.appendChild(card);
@@ -708,7 +730,7 @@ export class ReisScene extends BaseScene {
   // anywhere skips ahead; the voice carries the story. All beat content is in
   // the DOM from the start (CSS reveals per beat), so it stays screen-reader
   // and test friendly.
-  private showIntroCinematic(): void {
+  private showIntroCinematic(onReady: () => void): void {
     const lines = JOURNEY_INTRO.lines;
     const overlay = document.createElement("div");
     overlay.className = "reis-story-overlay reis-cine-overlay";
@@ -733,7 +755,7 @@ export class ReisScene extends BaseScene {
       overlay.remove();
       this.buddy?.setMood("wow", 1400);
       this.buddy?.say("Daar gaan we!");
-      this.game.voice.speak("Daar gaan we! Volg de weg.", { interrupt: true });
+      this.game.voice.speakThen("Daar gaan we! Volg de weg.", onReady, { interrupt: true });
     });
     stage.appendChild(start);
     overlay.appendChild(stage);

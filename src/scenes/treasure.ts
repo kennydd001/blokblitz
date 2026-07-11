@@ -131,7 +131,7 @@ export function spawnTreasureChest(game: Game, root: HTMLElement, buddy?: Buddy)
  * new accessory and title. Called from the calm screens (map + hub) so it never
  * interrupts gameplay. Returns the overlay (or null when nothing new).
  */
-export function maybeBuddyLevelUp(game: Game, root: HTMLElement): HTMLElement | null {
+export function maybeBuddyLevelUp(game: Game, root: HTMLElement, onDone?: () => void): HTMLElement | null {
   const progress = game.data().progress;
   const level = buddyLevel(progress.stars);
   if (level.level <= (progress.buddyLevelSeen ?? 1)) return null;
@@ -140,6 +140,10 @@ export function maybeBuddyLevelUp(game: Game, root: HTMLElement): HTMLElement | 
   const overlay = document.createElement("div");
   overlay.className = "buddy-levelup";
   overlay.dataset.buddyLevelup = String(level.level);
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", `Buddy groeit: ${level.title}`);
+  overlay.tabIndex = 0;
   const card = document.createElement("div");
   card.className = "buddy-levelup-card";
   card.innerHTML = `<strong>Buddy groeit!</strong><em>${level.title}</em><small>tik om verder te gaan</small>`;
@@ -152,11 +156,25 @@ export function maybeBuddyLevelUp(game: Game, root: HTMLElement): HTMLElement | 
   burst.setAttribute("aria-hidden", "true");
   burst.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>";
   overlay.append(card, burst);
-  overlay.addEventListener("click", () => overlay.remove());
+  let dismissed = false;
+  const dismiss = (): void => {
+    if (dismissed) return;
+    dismissed = true;
+    game.voice.cancel();
+    overlay.remove();
+    onDone?.();
+  };
+  overlay.addEventListener("click", dismiss);
+  overlay.addEventListener("keydown", (event) => {
+    if (!["Enter", " ", "Escape"].includes(event.key)) return;
+    event.preventDefault();
+    dismiss();
+  });
 
   game.audio.play("win");
   game.haptics.play("win");
-  game.voice.speak(`Buddy groeit! ${level.title}!`, { interrupt: true, pitch: 1.2 });
+  game.voice.speak(`Buddy groeit! ${level.title}!`, { interrupt: false, pitch: 1.2 });
   root.appendChild(overlay);
+  overlay.focus();
   return overlay;
 }

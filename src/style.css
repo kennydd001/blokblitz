@@ -5389,11 +5389,15 @@ button:focus-visible,
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   background: radial-gradient(120% 120% at 50% 30%, rgba(24, 62, 46, 0.6), rgba(8, 20, 14, 0.85));
   cursor: pointer;
   animation: reis-story-fade 0.25s ease;
 }
 .buddy-levelup-card {
+  max-width: 94vw;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

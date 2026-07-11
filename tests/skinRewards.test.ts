@@ -10,22 +10,24 @@ function makeGame(): {
   playAudio: ReturnType<typeof vi.fn>;
   playHaptics: ReturnType<typeof vi.fn>;
   speak: ReturnType<typeof vi.fn>;
+  cancelVoice: ReturnType<typeof vi.fn>;
   flashMessage: ReturnType<typeof vi.fn>;
 } {
   const save = new SaveManager();
   const playAudio = vi.fn();
   const playHaptics = vi.fn();
   const speak = vi.fn();
+  const cancelVoice = vi.fn();
   const flashMessage = vi.fn();
   const game = {
     save,
     data: () => save.getData(),
     audio: { play: playAudio },
     haptics: { play: playHaptics },
-    voice: { speak },
+    voice: { speak, cancel: cancelVoice },
     flashMessage
   } as unknown as Game;
-  return { game, save, playAudio, playHaptics, speak, flashMessage };
+  return { game, save, playAudio, playHaptics, speak, cancelVoice, flashMessage };
 }
 
 describe("profile-local hero rewards", () => {
@@ -59,7 +61,7 @@ describe("profile-local hero rewards", () => {
   });
 
   it("lets the child equip the earned hero immediately", () => {
-    const { game, save, playAudio, playHaptics, speak, flashMessage } = makeGame();
+    const { game, save, playAudio, playHaptics, speak, cancelVoice, flashMessage } = makeGame();
     save.createProfile("Mila", "blitz");
     save.award({ stars: 12 });
     const skins = unlockEligibleSkins(game);
@@ -81,6 +83,7 @@ describe("profile-local hero rewards", () => {
     expect(playAudio).toHaveBeenCalledWith("success");
     expect(playHaptics).toHaveBeenCalledWith("success");
     expect(speak).toHaveBeenCalledWith("Aqua", { interrupt: false });
+    expect(cancelVoice).toHaveBeenCalledOnce();
     expect(flashMessage).toHaveBeenCalledWith("Aqua speelt mee!", "good");
   });
 

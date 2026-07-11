@@ -767,6 +767,8 @@ describe("Speeltuin hub + calm game modes", () => {
     const game = new Game(root);
     game.save.award({ stars: 30 });
     game.showScene("reis");
+    expect(root.querySelector(".buddy-levelup")).toBeNull();
+    root.querySelector<HTMLButtonElement>(".reis-story-start")!.click();
     const overlay = root.querySelector<HTMLElement>(".buddy-levelup");
     expect(overlay).toBeTruthy();
     expect(overlay!.textContent).toContain("Coole dino");
@@ -778,6 +780,70 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".buddy-levelup")).toBeNull();
     // The map buddy now wears its scarf.
     expect(root.querySelector(".reis-buddy .buddy-acc-scarf")).toBeTruthy();
+  });
+
+  it("serializes Hub level-up and hero unlock instead of stacking reward modals", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const speak = vi.spyOn(game.voice, "speak");
+    game.save.award({ stars: 30 });
+
+    game.showScene("hub");
+
+    const level = root.querySelector<HTMLElement>(".buddy-levelup");
+    expect(level).toBeTruthy();
+    expect(level?.getAttribute("role")).toBe("dialog");
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+    expect(speak.mock.calls.map((call) => call[0])).toEqual(["Buddy groeit! Coole dino!"]);
+    expect(speak.mock.calls[0]?.[1]).toMatchObject({ interrupt: false });
+
+    level!.click();
+    expect(root.querySelector(".buddy-levelup")).toBeNull();
+    expect(root.querySelector('.skin-reveal[data-skin="aqua"]')).toBeTruthy();
+    expect(speak.mock.calls.at(-1)?.[0]).toBe("Aqua");
+
+    root.querySelector<HTMLButtonElement>(".skin-reveal-later")!.click();
+    expect(root.querySelector('.skin-reveal[data-skin="web"]')).toBeTruthy();
+    expect(speak.mock.calls.map((call) => call[0])).toEqual(["Buddy groeit! Coole dino!", "Aqua", "Web"]);
+
+    root.querySelector<HTMLButtonElement>(".skin-reveal-later")!.click();
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+    expect(speak.mock.calls.map((call) => call[0])).toEqual(["Buddy groeit! Coole dino!", "Aqua", "Web", "Hoi! Wat gaan we spelen?"]);
+  });
+
+  it("plays map return, region welcome and Buddy growth in a strict sequence", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const grasland = JOURNEY.filter((node) => node.regionId === "grasland").map((node) => node.id);
+    game.save.updateProgress((progress) => {
+      progress.stars = 30;
+      progress.journey.completed = grasland;
+      progress.journey.nodeIndex = frontierIndex(grasland);
+    });
+    const queued: Array<{ text: string; done: () => void; options?: { interrupt?: boolean } }> = [];
+    vi.spyOn(game.voice, "speakThen").mockImplementation((text, done, options) => {
+      queued.push({ text, done, options });
+    });
+    const speak = vi.spyOn(game.voice, "speak");
+
+    game.showScene("reis");
+
+    expect(queued).toHaveLength(1);
+    expect(queued[0].text).toBe("Verder met de reis! Waar gaan we heen?");
+    expect(queued[0].options).toMatchObject({ interrupt: true });
+    expect(root.querySelector(".buddy-levelup")).toBeNull();
+
+    queued[0].done();
+    expect(queued).toHaveLength(2);
+    expect(queued[1].text).toContain("Welkom in Muntgrot!");
+    expect(queued[1].options).toMatchObject({ interrupt: false });
+    expect(root.querySelector(".buddy-levelup")).toBeNull();
+
+    queued[1].done();
+    expect(root.querySelector(".buddy-levelup")).toBeTruthy();
+    expect(speak).toHaveBeenCalledWith("Buddy groeit! Coole dino!", expect.objectContaining({ interrupt: false }));
   });
 
   it("golden bonus rounds glitter and pay double stars", async () => {

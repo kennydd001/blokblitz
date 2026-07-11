@@ -11,7 +11,7 @@
         "public/audio/voice/nl/elevenlabs-lily-v3/voice-lines.json",
         "src/game/voiceLineManifest.ts"
       ],
-      "notes": "1557 MP3 clips are stored locally and loaded from same-origin runtime paths. The current game catalog requires 1489 unique lines and is checked by the audio audit. The game does not call ElevenLabs, Web Speech, or any external TTS API during play."
+      "notes": "1558 MP3 clips are stored locally and loaded from same-origin runtime paths. The current game catalog requires 1489 unique lines and is checked by the audio audit. The game does not call ElevenLabs, Web Speech, or any external TTS API during play."
     },
     {
       "name": "ElevenLabs Dutch reading phoneme pack",

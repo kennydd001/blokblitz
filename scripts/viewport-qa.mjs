@@ -34,6 +34,8 @@ const scenarios = [
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
   { name: "hub-narrow-mobile", width: 360, height: 740, mobile: true, open: "hub", expectHub: true },
   { name: "hub-mode-stars-narrow-mobile", width: 332, height: 807, mobile: true, open: "hub-mode-stars", expectHub: true, expectModeStars: { count: 3, match: 2, compare: 1, memory: 3 } },
+  { name: "hub-reward-queue-narrow-mobile", width: 332, height: 807, mobile: true, open: "hub-reward-queue", expectHub: true, expectBuddyRewardQueue: true },
+  { name: "hub-reward-queue-landscape-mobile", width: 844, height: 390, mobile: true, open: "hub-reward-queue", expectHub: true, expectBuddyRewardQueue: true },
   { name: "menu-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "menu", expectJourneyMap: true },
   { name: "hub-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "hub", expectHub: true },
   { name: "real-runner-mobile", width: 390, height: 844, mobile: true, open: "real-runner", expectRealRunner: true },
@@ -238,6 +240,24 @@ async function openScenario(open) {
     await waitForSelector(".hub-mode-stars", 5_000);
     await evaluate(`document.querySelector(".hub-grid")?.scrollIntoView({ block: "center" })`);
     await delay(180);
+    return;
+  }
+  if (open === "hub-reward-queue") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        const progress = game.save.getMutableData().progress;
+        progress.stars = 30;
+        progress.buddyLevelSeen = 1;
+        progress.cosmetics.activeSkin = "blitz";
+        progress.cosmetics.unlockedSkins = ["blitz"];
+        game.showScene("hub");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open serialized Hub reward queue");
+    await waitForSelector(".buddy-levelup", 5_000);
     return;
   }
   if (open === "memory-tier-1" || open === "memory-tier-3") {
@@ -483,6 +503,19 @@ async function collectMetrics(scenario = {}) {
             rect: r ? { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height } : null
           };
         }),
+        buddyLevelup: rect(".buddy-levelup"),
+        buddyLevelupCard: rect(".buddy-levelup-card"),
+        buddyLevelupHero: rect(".buddy-levelup-hero"),
+        buddyLevelupLabelled: (() => {
+          const dialog = document.querySelector(".buddy-levelup");
+          return Boolean(dialog?.getAttribute("role") === "dialog" && dialog?.getAttribute("aria-modal") === "true" && dialog?.getAttribute("aria-label"));
+        })(),
+        buddyLevelupFocused: document.activeElement?.classList.contains("buddy-levelup") ?? false,
+        buddyLevelupContentFits: (() => {
+          const card = document.querySelector(".buddy-levelup-card");
+          return card ? card.scrollHeight <= card.clientHeight + 1 && card.scrollWidth <= card.clientWidth + 1 : false;
+        })(),
+        skinRevealPresent: Boolean(document.querySelector(".skin-reveal")),
         menuGarage: rect(".menu-garage"),
         skinReveal: rect(".skin-reveal"),
         skinRevealCard: rect(".skin-reveal-card"),
@@ -826,6 +859,14 @@ function validateScenario(scenario, metrics, scenarioErrors) {
         const actual = metrics.hubModeRatings.find((rating) => rating.mode === mode)?.earned;
         if (actual !== expected) failures.push(`expected ${mode} to show ${expected} stars, got ${actual}`);
       }
+    }
+    if (scenario.expectBuddyRewardQueue) {
+      if (!metrics.buddyLevelup || !metrics.buddyLevelupCard) failures.push("missing Buddy level-up dialog");
+      if (!metrics.buddyLevelupLabelled || !metrics.buddyLevelupFocused) failures.push("Buddy level-up dialog is not labelled and focused");
+      if (!metrics.buddyLevelupContentFits) failures.push("Buddy level-up card requires internal scrolling");
+      if (metrics.skinRevealPresent) failures.push("hero unlock is stacked over Buddy level-up");
+      if (!metrics.buddyLevelupHero || metrics.buddyLevelupHero.width < 90 || metrics.buddyLevelupHero.height < 90) failures.push(`Buddy level-up hero is missing or too small: ${JSON.stringify(metrics.buddyLevelupHero)}`);
+      if (metrics.buddyLevelupCard && (metrics.buddyLevelupCard.left < -1 || metrics.buddyLevelupCard.right > viewport.width + 1 || metrics.buddyLevelupCard.top < -1 || metrics.buddyLevelupCard.bottom > viewport.height + 1)) failures.push(`Buddy level-up card is clipped: ${JSON.stringify(metrics.buddyLevelupCard)}`);
     }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

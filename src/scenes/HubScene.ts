@@ -25,7 +25,15 @@ export class HubScene extends BaseScene {
     this.game.save.syncStickers();
     this.game.audio.startMusic("hub");
     this.render();
-    showSkinUnlock(this.root, this.game, newSkins, { onSelect: (skin) => this.refreshSelectedSkin(skin) });
+    const greet = (): void => this.greet();
+    const revealSkins = (): void => {
+      const reveal = showSkinUnlock(this.root, this.game, newSkins, {
+        onSelect: (skin) => this.refreshSelectedSkin(skin),
+        onDone: greet
+      });
+      if (!reveal) greet();
+    };
+    if (!maybeBuddyLevelUp(this.game, this.root, revealSkins)) revealSkins();
   }
 
   private render(): void {
@@ -96,7 +104,9 @@ export class HubScene extends BaseScene {
       badges.appendChild(dailyGift);
     }
     spawnTreasureChest(this.game, this.root, buddy);
-    maybeBuddyLevelUp(this.game, this.root);
+  }
+
+  private greet(): void {
     if (!this.greeted) {
       this.greeted = true;
       this.game.voice.speak("Hoi! Wat gaan we spelen?", { interrupt: true });

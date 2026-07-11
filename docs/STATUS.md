@@ -1827,3 +1827,49 @@ Release:
   returned HTTP 200 with correct content types. The MP3 response is the expected
   48,527 bytes; served JS/CSS contain the collection, sticker, and star-strip
   code.
+
+## Serialized Scene and Reward Voice - 2026-07-11
+
+Completed work:
+
+- Audited runtime ordering rather than just clip coverage and found two real
+  automatic cuts: Hub's `Hoi` immediately interrupted `Buddy groeit`, while a
+  return/arrival line interrupted the newly queued region welcome and marked it
+  as already heard. Both were valid Lily clips, but their scene timing made them
+  effectively inaudible.
+- Reis now runs an explicit completion chain: return/arrival narration finishes,
+  then a new-region welcome finishes, then the Buddy level-up appears and speaks.
+  Fresh round cinematics defer level-up until the child starts the road, so a
+  reward can no longer cover or talk across the opening story.
+- Region banners now prepare their welcome instead of speaking during render.
+  Friend rescues also finish their rescue story before a pending next-region
+  welcome, so every automatic line has exactly one owner and one place in the
+  shared queue.
+- Hub now serializes two simultaneous progression rewards. Buddy growth is shown
+  first; only dismissing that focused dialog opens the earned hero choices, and
+  only finishing all hero cards plays the ordinary Hub greeting. Dismissing any
+  reward also retires that card's narration immediately, so a fast child cannot
+  leave a hidden card talking behind the next visible one.
+- Buddy's level dialog is labelled, keyboard dismissible, safe-area padded, and
+  focused on open. Its voice uses `interrupt: false`, preserving the scene line
+  already ahead of it.
+- Corrected the first-profile voice/UI mismatch from `Maak je eigen dino` to
+  `Hoi! Kies jouw teken.` A single Lily `eleven_v3` MP3 was generated build-time
+  and stored locally (33,062 bytes); no runtime TTS path was added.
+
+Validation:
+
+- Flow tests prove no level/skin stacking, Buddy growth→Aqua→Web→Hub greeting
+  order, and return→Muntgrot welcome→Buddy growth callbacks with interrupt flags. The
+  existing level test now proves the reward waits behind the first cinematic.
+- `npm.cmd run verify` passed with 34 files / 290 tests, typecheck, lint, and a
+  production build. Entry assets are `index-DWEEaG7y.js` (100.81 kB gzip) and
+  `index-D1BbbXxX.css` (32.61 kB gzip).
+- `npm.cmd run qa:viewport` passed all 54 scenarios. New 332x807 and 844x390
+  screenshots show one focused, unclipped Buddy dialog and assert that no skin
+  dialog exists beneath or above it; both were inspected directly.
+- Fixed-seed `npm.cmd run qa:mobile-touch` still passes at 40 touches, 12 tracked
+  attempts, one journey node, and Aqua equip, proving the new callbacks do not
+  stall story start or return navigation.
+- `npm.cmd run voice:elevenlabs-audit` passes at 1558/1558 sentence clips,
+  1489/1489 current lines, and 32/32 reading phonemes.
