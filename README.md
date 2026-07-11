@@ -9,9 +9,11 @@ Local-first TypeScript/Vite **number-sense game for children aged 4-7**, built a
 - **➕ Eentje erbij** — pick one more / one less than a number (oneMoreLess).
 - **🔢 Op volgorde** — tap numbers from small to big (ordering).
 - **🧠 Memory** — flip cards to match each number to a group with the same amount (cross-representation + memory).
+- **🌊 Rijmrivier** — hear which picture-word has the same ending (rhyme awareness).
+- **🦘 Sprongpad** — cross a number path in jumps of 2, 5, or 10 (skip-counting).
 - **🗺️ Avontuur** — a 3D voxel runner across six themed worlds, steering through **number gates** whose quantities appear as canonical cube/dice/bead/… patterns.
 
-The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. The primary voice is a local ElevenLabs `eleven_v3` pack generated build-time with Lily - Velvety Actress; isolated reading phoneme taps use a separate local ElevenLabs pack. Word splitting and "zoemend lezen" still use the browser speech fallback because generated stretched blend clips were rejected in listening QA. Browser speech is also the fallback for dynamic lines. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back. A simple sum-based parent gate sits in front of the dashboard and settings.
+The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. Collect **stars** to unlock new voxel heroes and earn **stickers** for a collection book that keeps them coming back.
 
 ## Run Locally
 
@@ -100,7 +102,7 @@ The full representation/mastery/adaptive education engine drives every gate unde
 
 ## Architecture
 
-- `src/game`: app shell, Three.js world, input, audio, ElevenLabs voice-pack playback, dedicated reading phoneme clips, browser fallback for word splitting/zoemend lezen, haptics, persistence, scene manager
+- `src/game`: app shell, Three.js world, input, queued local ElevenLabs playback, dedicated reading phoneme clips, haptics, persistence, scene manager
 - `src/runner`: the revamped real-time runner — pure `RunnerCore` simulation, `RunnerView` voxel rendering, the adaptive gate provider, and unlockable hero skins
 - `src/scenes`: Boot, `HubScene` (Speeltuin), `MainMenuScene` (world map), `RunScene`, `ResultsScene`, plus the retained guided scenes (number of day, legacy runner, WebWoud, city, minigames, summary, dashboard, settings)
 - `src/scenes/minigames`: the calm tap modes — `MiniGameScene` base + `miniUi` (shared done screen) + `CountScene`, `MatchScene`, `CompareScene`, `FillScene`, `OneMoreLessScene`, `OrderScene`, `MemoryScene`, and `miniChallenges` (their Challenge builders)
@@ -168,7 +170,7 @@ Numbers are arranged as 1 single, 2 pair, 3 triangle, 4 square or 2+2, 5 complet
 
 ## Asset Policy
 
-Runtime assets are local. Current visuals are generated from SVG, CSS, Three.js primitives, Web Audio, and optional browser vibration patterns. The spoken Dutch voice uses local MP3 clips in `public/audio/voice/nl/elevenlabs-lily-v3/`, generated build-time with ElevenLabs `eleven_v3` and documented in `assets/ASSET_MANIFEST.json`. Isolated reading letters and digraphs use local clips in `public/audio/reading/nl/elevenlabs-lily-v3/phonemes/`; word splitting and "zoemend lezen" still use the browser speech fallback because generated stretched blend clips did not pass listening QA.
+Runtime assets are local. Current visuals are generated from SVG, CSS, Three.js primitives, Web Audio, and optional browser vibration patterns. The spoken Dutch voice uses local MP3 clips in `public/audio/voice/nl/elevenlabs-lily-v3/`, generated build-time with ElevenLabs `eleven_v3` and documented in `assets/ASSET_MANIFEST.json`. Isolated reading letters and digraphs use local clips in `public/audio/reading/nl/elevenlabs-lily-v3/phonemes/`; whole-word reading uses local Lily clips at a slower playback rate. Runtime code never calls a TTS service or browser speech synthesis.
 
 The production build also registers a local same-origin service worker from `public/sw.js` to cache the app shell for installed/offline play. It does not cache or request any remote assets.
 

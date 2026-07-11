@@ -5,7 +5,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { PHONICS_WORDS } from "../src/education/literacy/phonics";
 import { READING_PHONEMES, READING_WORD_CLIPS, readingInventoryIssues } from "../src/education/literacy/phonemeInventory";
 import { READING_PHONEME_BASE_PATH, READING_PHONEME_FILES, READING_PHONEME_KEYS } from "../src/game/readingAudioManifest";
-import { VOICE_LINE_BASE_PATH, VOICE_LINE_SLUGS, voiceLineSlug } from "../src/game/voiceLineManifest";
+import { VOICE_LINE_BASE_PATH, VOICE_LINE_SLUGS, voiceLineFile, voiceLineSlug } from "../src/game/voiceLineManifest";
+import { CURRENT_VOICE_LINE_CATALOG } from "../src/game/voiceLineCatalog";
 
 describe("procedural audio cues", () => {
   const cues: SoundCue[] = ["success", "snap", "rescue", "soft-error", "build"];
@@ -83,7 +84,67 @@ describe("local ElevenLabs voice-pack", () => {
       expect(VOICE_LINE_SLUGS.has(slug), text).toBe(true);
       expect(existsSync(`public/audio/voice/nl/elevenlabs-lily-v3/${slug}.mp3`), text).toBe(true);
     }
-    expect(VOICE_LINE_SLUGS.size).toBe(940);
+    const requiredSlugs = new Set(CURRENT_VOICE_LINE_CATALOG.map((line) => voiceLineSlug(line.text)));
+    expect(VOICE_LINE_SLUGS.size).toBeGreaterThanOrEqual(requiredSlugs.size);
+    for (const slug of requiredSlugs) {
+      expect(VOICE_LINE_SLUGS.has(slug), slug).toBe(true);
+      expect(existsSync(`public/audio/voice/nl/elevenlabs-lily-v3/${voiceLineFile(slug)}`), slug).toBe(true);
+    }
+  });
+
+  it("queues local clips and only starts the next line after the active one ends", async () => {
+    const originalAudio = globalThis.Audio;
+    const originalUserAgent = navigator.userAgent;
+
+    class FakeAudio {
+      static instances: FakeAudio[] = [];
+      preload = "";
+      playbackRate = 1;
+      currentTime = 0;
+      paused = false;
+      private readonly listeners = new Map<string, () => void>();
+
+      constructor(readonly src: string) {
+        FakeAudio.instances.push(this);
+      }
+
+      addEventListener(type: string, listener: () => void): void {
+        this.listeners.set(type, listener);
+      }
+
+      play(): Promise<void> {
+        return Promise.resolve();
+      }
+
+      pause(): void {
+        this.paused = true;
+      }
+
+      end(): void {
+        this.listeners.get("ended")?.();
+      }
+    }
+
+    Object.defineProperty(navigator, "userAgent", { configurable: true, value: "Chrome" });
+    Object.defineProperty(globalThis, "Audio", { configurable: true, value: FakeAudio });
+
+    try {
+      const { VoiceManager } = await import("../src/game/VoiceManager");
+      const voice = new VoiceManager();
+      voice.speak("Goed zo!", { interrupt: true });
+      voice.speak("Knap!", { interrupt: false });
+      expect(FakeAudio.instances).toHaveLength(1);
+
+      FakeAudio.instances[0].end();
+      expect(FakeAudio.instances).toHaveLength(2);
+
+      voice.speak("Super!", { interrupt: true });
+      expect(FakeAudio.instances[1].paused).toBe(true);
+      expect(FakeAudio.instances).toHaveLength(3);
+    } finally {
+      Object.defineProperty(navigator, "userAgent", { configurable: true, value: originalUserAgent });
+      Object.defineProperty(globalThis, "Audio", { configurable: true, value: originalAudio });
+    }
   });
 });
 
@@ -100,7 +161,7 @@ describe("reading audio path", () => {
     }
   });
 
-  it("routes isolated letters through the dedicated phoneme path and keeps zoemend lezen browser-only", () => {
+  it("routes isolated letters and whole words through local audio without browser speech", () => {
     const sources = [
       "src/scenes/minigames/KlankgrotScene.ts",
       "src/scenes/minigames/LetterkompasScene.ts",
@@ -116,15 +177,17 @@ describe("reading audio path", () => {
     expect(sources).not.toContain("voice.speak(unit");
     expect(sources).not.toContain('units.join("... ")');
 
-    // Isolated phonemes may use a dedicated local reading pack once generated.
-    // Zoemend lezen and word splitting keep using browser-only fallback because
-    // generated stretched blend clips were rejected in listening QA.
+    // Isolated phonemes use the dedicated pack. Whole words use the same local
+    // Lily queue as sentence voice, at a slower playback rate.
     const managerSource = readFileSync("src/game/ReadingAudioManager.ts", "utf8");
     expect(managerSource).toContain("READING_PHONEME_FILES");
-    expect(managerSource).toContain("new Audio(");
-    expect(managerSource).toContain("speakBrowserOnly");
-    expect(managerSource).toContain("word-splitting");
-    expect(managerSource).not.toContain("VOICE_LINE_SLUGS");
-    expect(managerSource).not.toContain("voiceLineFile");
+    expect(managerSource).toContain("playLocalFile");
+    expect(managerSource).toContain("this.voice.speak(word, options)");
+    expect(managerSource).not.toContain("speakBrowserOnly");
+    expect(managerSource).not.toContain("speechSynthesis");
+
+    const voiceSource = readFileSync("src/game/VoiceManager.ts", "utf8");
+    expect(voiceSource).not.toContain("speechSynthesis");
+    expect(voiceSource).not.toContain("SpeechSynthesisUtterance");
   });
 });

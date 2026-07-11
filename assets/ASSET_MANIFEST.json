@@ -5,13 +5,13 @@
       "source": "ElevenLabs text-to-speech, model eleven_v3, voice Lily - Velvety Actress, generated build-time through /v1/text-to-speech",
       "license": "Generated via ElevenLabs API; usage governed by ElevenLabs terms for this project",
       "author": "ElevenLabs Lily - Velvety Actress",
-      "downloadedAt": "2026-07-07",
+      "downloadedAt": "2026-07-11",
       "usedFiles": [
         "public/audio/voice/nl/elevenlabs-lily-v3/",
         "public/audio/voice/nl/elevenlabs-lily-v3/voice-lines.json",
         "src/game/voiceLineManifest.ts"
       ],
-      "notes": "940 MP3 clips are stored locally and loaded from same-origin runtime paths. The game does not call ElevenLabs or any external TTS API during play; Web Speech remains only a fallback for unexpected dynamic lines without a pre-generated clip."
+      "notes": "1553 MP3 clips are stored locally and loaded from same-origin runtime paths. The current game catalog requires 1485 unique lines and is checked by the audio audit. The game does not call ElevenLabs, Web Speech, or any external TTS API during play."
     },
     {
       "name": "ElevenLabs Dutch reading phoneme pack",
@@ -25,7 +25,7 @@
         "src/game/readingAudioManifest.ts",
         "src/game/ReadingAudioManager.ts"
       ],
-      "notes": "32 isolated reading phoneme MP3 clips are stored locally for tap-to-hear letters and digraphs. Word splitting and zoemend lezen deliberately stay on the separate browser fallback path because stretched generated blend clips did not pass listening QA."
+      "notes": "32 isolated reading phoneme MP3 clips are stored locally for tap-to-hear letters and digraphs. Whole-word and zoem actions use natural local Lily word clips at a slower playback rate; rejected stretched TTS blends and browser speech are not used at runtime."
     }
   ],
   "generatedAssets": [
@@ -79,5 +79,5 @@
       "notes": "Installable mobile shell metadata, the local SVG icon, and a same-origin offline cache service worker are generated for this project; no remote icons, app-store assets, or CDN caches are used."
     }
   ],
-  "notes": "Runtime assets are loaded locally. External-source voice clips are generated build-time, stored under public/audio, and documented above; no runtime external asset requests are used. Isolated reading phonemes use the local ElevenLabs phoneme pack, while word splitting and zoemend lezen use the browser speech fallback."
+  "notes": "Runtime assets are loaded locally. External-source voice clips are generated build-time, stored under public/audio, and documented above; no runtime external asset requests or browser speech synthesis are used. Isolated reading phonemes use the local ElevenLabs phoneme pack, while whole words use the local Lily sentence pack."
 }

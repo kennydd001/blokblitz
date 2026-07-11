@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T12:57:19.015Z",
+  "generatedAt": "2026-07-11T14:37:54.757Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 940,
+  "lineCount": 1553,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -97,6 +97,14 @@
       "file": "0-en-9-maken-samen-hoeveel-vraag.mp3"
     },
     {
+      "id": "bond-find-0",
+      "slug": "0-en-hoeveel-maken-10-vraag",
+      "text": "0 en hoeveel maken 10?",
+      "spokenText": "0 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "0-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
       "id": "split-parts-1-0",
       "slug": "1-en-0-maken-samen-hoeveel-vraag",
       "text": "1 en 0 maken samen hoeveel?",
@@ -177,6 +185,22 @@
       "file": "1-en-9-maken-samen-hoeveel-vraag.mp3"
     },
     {
+      "id": "bond-find-1",
+      "slug": "1-en-hoeveel-maken-10-vraag",
+      "text": "1 en hoeveel maken 10?",
+      "spokenText": "1 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "1-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-1",
+      "slug": "1-en-nog-1-is-2-plus-1-is-3",
+      "text": "1 en nog 1 is 2, plus 1 is 3.",
+      "spokenText": "1 en nog 1 is 2, plus 1 is 3.",
+      "category": "doubles",
+      "file": "1-en-nog-1-is-2-plus-1-is-3.mp3"
+    },
+    {
       "id": "split-fact-1-0-1",
       "slug": "1-is-0-en-1",
       "text": "1 is 0 en 1.",
@@ -209,6 +233,14 @@
       "file": "1-is-1-en-hoeveel-vraag.mp3"
     },
     {
+      "id": "near-double-prompt-1",
+      "slug": "1-plus-2-vraag",
+      "text": "1 + 2 = ?",
+      "spokenText": "1 plus 2 is hoeveel?",
+      "category": "doubles",
+      "file": "1-plus-2-vraag.mp3"
+    },
+    {
       "id": "klok-time-1-0",
       "slug": "1-uur",
       "text": "1 uur",
@@ -223,6 +255,14 @@
       "spokenText": "10 en 0 maken samen hoeveel?",
       "category": "splitbord",
       "file": "10-en-0-maken-samen-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "bond-find-10",
+      "slug": "10-en-hoeveel-maken-10-vraag",
+      "text": "10 en hoeveel maken 10?",
+      "spokenText": "10 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "10-en-hoeveel-maken-10-vraag.mp3"
     },
     {
       "id": "split-fact-10-0-10",
@@ -1145,6 +1185,22 @@
       "file": "2-en-8-maken-samen-hoeveel-vraag.mp3"
     },
     {
+      "id": "bond-find-2",
+      "slug": "2-en-hoeveel-maken-10-vraag",
+      "text": "2 en hoeveel maken 10?",
+      "spokenText": "2 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "2-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-2",
+      "slug": "2-en-nog-2-is-4-plus-1-is-5",
+      "text": "2 en nog 2 is 4, plus 1 is 5.",
+      "spokenText": "2 en nog 2 is 4, plus 1 is 5.",
+      "category": "doubles",
+      "file": "2-en-nog-2-is-4-plus-1-is-5.mp3"
+    },
+    {
       "id": "split-fact-2-0-2",
       "slug": "2-is-0-en-2",
       "text": "2 is 0 en 2.",
@@ -1191,6 +1247,14 @@
       "spokenText": "2 is 2 en hoeveel?",
       "category": "splitbord",
       "file": "2-is-2-en-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "near-double-prompt-2",
+      "slug": "2-plus-3-vraag",
+      "text": "2 + 3 = ?",
+      "spokenText": "2 plus 3 is hoeveel?",
+      "category": "doubles",
+      "file": "2-plus-3-vraag.mp3"
     },
     {
       "id": "klok-time-2-0",
@@ -1265,6 +1329,22 @@
       "file": "3-en-7-maken-samen-hoeveel-vraag.mp3"
     },
     {
+      "id": "bond-find-3",
+      "slug": "3-en-hoeveel-maken-10-vraag",
+      "text": "3 en hoeveel maken 10?",
+      "spokenText": "3 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "3-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-3",
+      "slug": "3-en-nog-3-is-6-plus-1-is-7",
+      "text": "3 en nog 3 is 6, plus 1 is 7.",
+      "spokenText": "3 en nog 3 is 6, plus 1 is 7.",
+      "category": "doubles",
+      "file": "3-en-nog-3-is-6-plus-1-is-7.mp3"
+    },
+    {
       "id": "split-fact-3-0-3",
       "slug": "3-is-0-en-3",
       "text": "3 is 0 en 3.",
@@ -1329,6 +1409,14 @@
       "file": "3-is-3-en-hoeveel-vraag.mp3"
     },
     {
+      "id": "near-double-prompt-3",
+      "slug": "3-plus-4-vraag",
+      "text": "3 + 4 = ?",
+      "spokenText": "3 plus 4 is hoeveel?",
+      "category": "doubles",
+      "file": "3-plus-4-vraag.mp3"
+    },
+    {
       "id": "klok-time-3-0",
       "slug": "3-uur",
       "text": "3 uur",
@@ -1391,6 +1479,22 @@
       "spokenText": "4 en 6 maken samen hoeveel?",
       "category": "splitbord",
       "file": "4-en-6-maken-samen-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "bond-find-4",
+      "slug": "4-en-hoeveel-maken-10-vraag",
+      "text": "4 en hoeveel maken 10?",
+      "spokenText": "4 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "4-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-4",
+      "slug": "4-en-nog-4-is-8-plus-1-is-9",
+      "text": "4 en nog 4 is 8, plus 1 is 9.",
+      "spokenText": "4 en nog 4 is 8, plus 1 is 9.",
+      "category": "doubles",
+      "file": "4-en-nog-4-is-8-plus-1-is-9.mp3"
     },
     {
       "id": "split-fact-4-0-4",
@@ -1471,6 +1575,14 @@
       "spokenText": "4 is 4 en hoeveel?",
       "category": "splitbord",
       "file": "4-is-4-en-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "near-double-prompt-4",
+      "slug": "4-plus-5-vraag",
+      "text": "4 + 5 = ?",
+      "spokenText": "4 plus 5 is hoeveel?",
+      "category": "doubles",
+      "file": "4-plus-5-vraag.mp3"
     },
     {
       "id": "klok-time-4-0",
@@ -1559,6 +1671,22 @@
       "spokenText": "5 en 5 maken samen hoeveel?",
       "category": "splitbord",
       "file": "5-en-5-maken-samen-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "bond-find-5",
+      "slug": "5-en-hoeveel-maken-10-vraag",
+      "text": "5 en hoeveel maken 10?",
+      "spokenText": "5 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "5-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-5",
+      "slug": "5-en-nog-5-is-10-plus-1-is-11",
+      "text": "5 en nog 5 is 10, plus 1 is 11.",
+      "spokenText": "5 en nog 5 is 10, plus 1 is 11.",
+      "category": "doubles",
+      "file": "5-en-nog-5-is-10-plus-1-is-11.mp3"
     },
     {
       "id": "split-fact-5-0-5",
@@ -1783,6 +1911,22 @@
       "spokenText": "6 en 4 maken samen hoeveel?",
       "category": "splitbord",
       "file": "6-en-4-maken-samen-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "bond-find-6",
+      "slug": "6-en-hoeveel-maken-10-vraag",
+      "text": "6 en hoeveel maken 10?",
+      "spokenText": "6 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "6-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-6",
+      "slug": "6-en-nog-6-is-12-plus-1-is-13",
+      "text": "6 en nog 6 is 12, plus 1 is 13.",
+      "spokenText": "6 en nog 6 is 12, plus 1 is 13.",
+      "category": "doubles",
+      "file": "6-en-nog-6-is-12-plus-1-is-13.mp3"
     },
     {
       "id": "split-fact-6-0-6",
@@ -2039,6 +2183,22 @@
       "spokenText": "7 en 3 maken samen hoeveel?",
       "category": "splitbord",
       "file": "7-en-3-maken-samen-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "bond-find-7",
+      "slug": "7-en-hoeveel-maken-10-vraag",
+      "text": "7 en hoeveel maken 10?",
+      "spokenText": "7 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "7-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-7",
+      "slug": "7-en-nog-7-is-14-plus-1-is-15",
+      "text": "7 en nog 7 is 14, plus 1 is 15.",
+      "spokenText": "7 en nog 7 is 14, plus 1 is 15.",
+      "category": "doubles",
+      "file": "7-en-nog-7-is-14-plus-1-is-15.mp3"
     },
     {
       "id": "split-fact-7-0-7",
@@ -2319,6 +2479,22 @@
       "spokenText": "8 en 2 maken samen hoeveel?",
       "category": "splitbord",
       "file": "8-en-2-maken-samen-hoeveel-vraag.mp3"
+    },
+    {
+      "id": "bond-find-8",
+      "slug": "8-en-hoeveel-maken-10-vraag",
+      "text": "8 en hoeveel maken 10?",
+      "spokenText": "8 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "8-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-8",
+      "slug": "8-en-nog-8-is-16-plus-1-is-17",
+      "text": "8 en nog 8 is 16, plus 1 is 17.",
+      "spokenText": "8 en nog 8 is 16, plus 1 is 17.",
+      "category": "doubles",
+      "file": "8-en-nog-8-is-16-plus-1-is-17.mp3"
     },
     {
       "id": "split-fact-8-0-8",
@@ -2625,6 +2801,22 @@
       "file": "9-en-1-maken-samen-hoeveel-vraag.mp3"
     },
     {
+      "id": "bond-find-9",
+      "slug": "9-en-hoeveel-maken-10-vraag",
+      "text": "9 en hoeveel maken 10?",
+      "spokenText": "9 en hoeveel maken 10?",
+      "category": "bonds",
+      "file": "9-en-hoeveel-maken-10-vraag.mp3"
+    },
+    {
+      "id": "near-double-hint-9",
+      "slug": "9-en-nog-9-is-18-plus-1-is-19",
+      "text": "9 en nog 9 is 18, plus 1 is 19.",
+      "spokenText": "9 en nog 9 is 18, plus 1 is 19.",
+      "category": "doubles",
+      "file": "9-en-nog-9-is-18-plus-1-is-19.mp3"
+    },
+    {
       "id": "split-fact-9-0-9",
       "slug": "9-is-0-en-9",
       "text": "9 is 0 en 9.",
@@ -2785,6 +2977,14 @@
       "file": "9-is-9-en-hoeveel-vraag.mp3"
     },
     {
+      "id": "near-double-prompt-9",
+      "slug": "9-plus-10-vraag",
+      "text": "9 + 10 = ?",
+      "spokenText": "9 plus 10 is hoeveel?",
+      "category": "doubles",
+      "file": "9-plus-10-vraag.mp3"
+    },
+    {
       "id": "bridge-add-9-2",
       "slug": "9-plus-2-vraag",
       "text": "9 + 2 = ?",
@@ -2905,12 +3105,36 @@
       "file": "achttien.mp3"
     },
     {
+      "id": "common-27",
+      "slug": "alle-bazen-verslagen-uitroep-jij-bent-de-kampioen-van-de-sterrenarena-uitroep",
+      "text": "Alle bazen verslagen! Jij bent de kampioen van de Sterrenarena!",
+      "spokenText": "Alle bazen verslagen! Jij bent de kampioen van de Sterrenarena!",
+      "category": "common",
+      "file": "alle-bazen-verslagen-uitroep-jij-bent-de-kampioen-van-de-sterrenarena-uitroep.mp3"
+    },
+    {
       "id": "runtime-extra-3",
       "slug": "alle-kleuren-verdwenen-maar-samen-brengen-we-ze-terug-uitroep",
       "text": "Alle kleuren verdwenen... maar samen brengen we ze terug!",
       "spokenText": "Alle kleuren verdwenen... maar samen brengen we ze terug!",
       "category": "runtime-dynamic",
       "file": "alle-kleuren-verdwenen-maar-samen-brengen-we-ze-terug-uitroep.mp3"
+    },
+    {
+      "id": "listen-story-uil-nacht",
+      "slug": "als-alle-dieren-gaan-slapen-wordt-oeki-de-uil-pas-wakker-in-het-donker-ziet-zij-heel-goed-ze-vli",
+      "text": "Als alle dieren gaan slapen, wordt Oeki de uil pas wakker. In het donker ziet zij heel goed. Ze vliegt door de nacht en telt de sterren aan de hemel.",
+      "spokenText": "Als alle dieren gaan slapen, wordt Oeki de uil pas wakker. In het donker ziet zij heel goed. Ze vliegt door de nacht en telt de sterren aan de hemel.",
+      "category": "listening",
+      "file": "als-alle-dieren-gaan-slapen-wordt-oeki-de-uil-pas-wakker-in-het-donker-ziet-zij-heel-goed-ze-vli.mp3"
+    },
+    {
+      "id": "profile-skin-aqua",
+      "slug": "aqua",
+      "text": "Aqua",
+      "spokenText": "Aqua",
+      "category": "profiles",
+      "file": "aqua.mp3"
     },
     {
       "id": "sound-b",
@@ -2953,6 +3177,46 @@
       "file": "bal.mp3"
     },
     {
+      "id": "listen-option-vos-verjaardag-1-1",
+      "slug": "ballonnen",
+      "text": "ballonnen",
+      "spokenText": "ballonnen",
+      "category": "listening",
+      "file": "ballonnen.mp3"
+    },
+    {
+      "id": "word-banaan",
+      "slug": "banaan",
+      "text": "banaan",
+      "spokenText": "banaan",
+      "category": "reading-word",
+      "file": "banaan.mp3"
+    },
+    {
+      "id": "word-beer",
+      "slug": "beer",
+      "text": "beer",
+      "spokenText": "beer",
+      "category": "reading-word",
+      "file": "beer.mp3"
+    },
+    {
+      "id": "minigame-reteach-6",
+      "slug": "begin-bij-het-kleinste-getal",
+      "text": "Begin bij het kleinste getal.",
+      "spokenText": "Begin bij het kleinste getal.",
+      "category": "minigame-reteach",
+      "file": "begin-bij-het-kleinste-getal.mp3"
+    },
+    {
+      "id": "word-bel",
+      "slug": "bel",
+      "text": "bel",
+      "spokenText": "bel",
+      "category": "reading-word",
+      "file": "bel.mp3"
+    },
+    {
       "id": "region-story-6",
       "slug": "bijna-thuis-uitroep-de-sterrenhemel-wacht-op-zijn-verloren-sterretje",
       "text": "Bijna thuis! De sterrenhemel wacht op zijn verloren sterretje.",
@@ -2977,12 +3241,36 @@
       "file": "bijna-uitroep-probeer-nog-eens.mp3"
     },
     {
+      "id": "listen-option-trein-berg-1-0",
+      "slug": "blij-toeteren",
+      "text": "blij toeteren",
+      "spokenText": "blij toeteren",
+      "category": "listening",
+      "file": "blij-toeteren.mp3"
+    },
+    {
       "id": "verkeer-option-3-2",
       "slug": "blijven-staan-slapen",
       "text": "blijven staan slapen",
       "spokenText": "blijven staan slapen",
       "category": "verkeer",
       "file": "blijven-staan-slapen.mp3"
+    },
+    {
+      "id": "profile-skin-blitz",
+      "slug": "blitz",
+      "text": "Blitz",
+      "spokenText": "Blitz",
+      "category": "profiles",
+      "file": "blitz.mp3"
+    },
+    {
+      "id": "word-boek",
+      "slug": "boek",
+      "text": "boek",
+      "spokenText": "boek",
+      "category": "reading-word",
+      "file": "boek.mp3"
     },
     {
       "id": "word-boom",
@@ -3089,6 +3377,22 @@
       "file": "bram-de-kikker-springt-van-blok-naar-blok-uitroep.mp3"
     },
     {
+      "id": "listen-story-kikker-vlieg",
+      "slug": "bram-de-kikker-zit-stil-op-een-blad-in-de-vijver-zoem-uitroep-daar-komt-een-vlieg-bram-steekt-zi",
+      "text": "Bram de kikker zit stil op een blad in de vijver. Zoem! Daar komt een vlieg. Bram steekt zijn lange tong uit en hap — de vlieg is weg!",
+      "spokenText": "Bram de kikker zit stil op een blad in de vijver. Zoem! Daar komt een vlieg. Bram steekt zijn lange tong uit en hap — de vlieg is weg!",
+      "category": "listening",
+      "file": "bram-de-kikker-zit-stil-op-een-blad-in-de-vijver-zoem-uitroep-daar-komt-een-vlieg-bram-steekt-zi.mp3"
+    },
+    {
+      "id": "word-brood",
+      "slug": "brood",
+      "text": "brood",
+      "spokenText": "brood",
+      "category": "reading-word",
+      "file": "brood.mp3"
+    },
+    {
       "id": "runtime-buddy-level-2",
       "slug": "buddy-groeit-uitroep-coole-dino-uitroep",
       "text": "Buddy groeit! Coole dino!",
@@ -3145,12 +3449,140 @@
       "file": "daar-gaan-we-uitroep-volg-de-weg.mp3"
     },
     {
+      "id": "listen-option-vos-verjaardag-0-2",
+      "slug": "de-beer",
+      "text": "de beer",
+      "spokenText": "de beer",
+      "category": "listening",
+      "file": "de-beer.mp3"
+    },
+    {
+      "id": "listen-story-beer-honing",
+      "slug": "de-beer-heeft-honger-hij-zoekt-honing-bij-de-bijen-de-bijen-zoemen-boos-dus-de-beer-rent-snel-na",
+      "text": "De beer heeft honger. Hij zoekt honing bij de bijen. De bijen zoemen boos, dus de beer rent snel naar de rivier!",
+      "spokenText": "De beer heeft honger. Hij zoekt honing bij de bijen. De bijen zoemen boos, dus de beer rent snel naar de rivier!",
+      "category": "listening",
+      "file": "de-beer-heeft-honger-hij-zoekt-honing-bij-de-bijen-de-bijen-zoemen-boos-dus-de-beer-rent-snel-na.mp3"
+    },
+    {
+      "id": "listen-option-trein-berg-0-0",
+      "slug": "de-berg-op",
+      "text": "de berg op",
+      "spokenText": "de berg op",
+      "category": "listening",
+      "file": "de-berg-op.mp3"
+    },
+    {
+      "id": "listen-option-uil-nacht-1-2",
+      "slug": "de-bomen",
+      "text": "de bomen",
+      "spokenText": "de bomen",
+      "category": "listening",
+      "file": "de-bomen.mp3"
+    },
+    {
       "id": "compare-scene",
       "slug": "de-dino-heeft-honger-uitroep-tik-de-groep-met-de-meeste",
       "text": "De dino heeft honger! Tik de groep met de MEESTE.",
       "spokenText": "De dino heeft honger! Tik de groep met de MEESTE.",
       "category": "number-prompts",
       "file": "de-dino-heeft-honger-uitroep-tik-de-groep-met-de-meeste.mp3"
+    },
+    {
+      "id": "minigame-reteach-4",
+      "slug": "de-grootste-groep-heeft-meer-stippen",
+      "text": "De grootste groep heeft meer stippen.",
+      "spokenText": "De grootste groep heeft meer stippen.",
+      "category": "minigame-reteach",
+      "file": "de-grootste-groep-heeft-meer-stippen.mp3"
+    },
+    {
+      "id": "listen-option-poes-boom-0-1",
+      "slug": "de-hond",
+      "text": "de hond",
+      "spokenText": "de hond",
+      "category": "listening",
+      "file": "de-hond.mp3"
+    },
+    {
+      "id": "listen-option-muis-kaas-0-0",
+      "slug": "de-kaas",
+      "text": "de kaas",
+      "spokenText": "de kaas",
+      "category": "listening",
+      "file": "de-kaas.mp3"
+    },
+    {
+      "id": "listen-story-muis-maan",
+      "slug": "de-kleine-muis-kijkt-naar-de-volle-maan-hij-denkt-dat-de-maan-van-kaas-is-uitroep-papa-muis-lach",
+      "text": "De kleine muis kijkt naar de volle maan. Hij denkt dat de maan van kaas is! Papa muis lacht en geeft hem een echt stukje kaas.",
+      "spokenText": "De kleine muis kijkt naar de volle maan. Hij denkt dat de maan van kaas is! Papa muis lacht en geeft hem een echt stukje kaas.",
+      "category": "listening",
+      "file": "de-kleine-muis-kijkt-naar-de-volle-maan-hij-denkt-dat-de-maan-van-kaas-is-uitroep-papa-muis-lach.mp3"
+    },
+    {
+      "id": "listen-story-trein-berg",
+      "slug": "de-kleine-trein-rijdt-de-hoge-berg-op-eerst-gaat-het-langzaam-tsjoeke-tsjoeke-boven-op-de-berg-t",
+      "text": "De kleine trein rijdt de hoge berg op. Eerst gaat het langzaam, tsjoeke tsjoeke. Boven op de berg toetert de trein heel blij!",
+      "spokenText": "De kleine trein rijdt de hoge berg op. Eerst gaat het langzaam, tsjoeke tsjoeke. Boven op de berg toetert de trein heel blij!",
+      "category": "listening",
+      "file": "de-kleine-trein-rijdt-de-hoge-berg-op-eerst-gaat-het-langzaam-tsjoeke-tsjoeke-boven-op-de-berg-t.mp3"
+    },
+    {
+      "id": "listen-option-draak-ster-1-0",
+      "slug": "de-kleuren",
+      "text": "de kleuren",
+      "spokenText": "de kleuren",
+      "category": "listening",
+      "file": "de-kleuren.mp3"
+    },
+    {
+      "id": "listen-option-muis-maan-0-0",
+      "slug": "de-maan",
+      "text": "de maan",
+      "spokenText": "de maan",
+      "category": "listening",
+      "file": "de-maan.mp3"
+    },
+    {
+      "id": "listen-option-poes-boom-0-0",
+      "slug": "de-poes",
+      "text": "de poes",
+      "spokenText": "de poes",
+      "category": "listening",
+      "file": "de-poes.mp3"
+    },
+    {
+      "id": "listen-story-poes-boom",
+      "slug": "de-poes-klimt-in-de-hoge-boom-ze-ziet-een-vogeltje-en-wil-spelen-maar-de-poes-durft-niet-meer-na",
+      "text": "De poes klimt in de hoge boom. Ze ziet een vogeltje en wil spelen. Maar de poes durft niet meer naar beneden!",
+      "spokenText": "De poes klimt in de hoge boom. Ze ziet een vogeltje en wil spelen. Maar de poes durft niet meer naar beneden!",
+      "category": "listening",
+      "file": "de-poes-klimt-in-de-hoge-boom-ze-ziet-een-vogeltje-en-wil-spelen-maar-de-poes-durft-niet-meer-na.mp3"
+    },
+    {
+      "id": "listen-option-draak-ster-1-1",
+      "slug": "de-regen",
+      "text": "de regen",
+      "spokenText": "de regen",
+      "category": "listening",
+      "file": "de-regen.mp3"
+    },
+    {
+      "id": "listen-option-draak-ster-1-2",
+      "slug": "de-sneeuw",
+      "text": "de sneeuw",
+      "spokenText": "de sneeuw",
+      "category": "listening",
+      "file": "de-sneeuw.mp3"
+    },
+    {
+      "id": "listen-option-uil-nacht-1-0",
+      "slug": "de-sterren",
+      "text": "de sterren",
+      "spokenText": "de sterren",
+      "category": "listening",
+      "file": "de-sterren.mp3"
     },
     {
       "id": "runtime-extra-7",
@@ -3209,12 +3641,76 @@
       "file": "de-straat-op-duiken.mp3"
     },
     {
+      "id": "listen-option-muis-kaas-0-1",
+      "slug": "de-taart",
+      "text": "de taart",
+      "spokenText": "de taart",
+      "category": "listening",
+      "file": "de-taart.mp3"
+    },
+    {
+      "id": "listen-option-muis-maan-0-2",
+      "slug": "de-televisie",
+      "text": "de televisie",
+      "spokenText": "de televisie",
+      "category": "listening",
+      "file": "de-televisie.mp3"
+    },
+    {
+      "id": "listen-option-vos-verjaardag-0-1",
+      "slug": "de-uil",
+      "text": "de uil",
+      "spokenText": "de uil",
+      "category": "listening",
+      "file": "de-uil.mp3"
+    },
+    {
+      "id": "listen-option-uil-nacht-1-1",
+      "slug": "de-visjes",
+      "text": "de visjes",
+      "spokenText": "de visjes",
+      "category": "listening",
+      "file": "de-visjes.mp3"
+    },
+    {
+      "id": "listen-option-vos-verjaardag-0-0",
+      "slug": "de-vos",
+      "text": "de vos",
+      "spokenText": "de vos",
+      "category": "listening",
+      "file": "de-vos.mp3"
+    },
+    {
+      "id": "listen-story-vos-verjaardag",
+      "slug": "de-vos-is-jarig-vandaag-alle-dieren-komen-naar-zijn-feest-in-het-bos-de-uil-brengt-een-grote-taa",
+      "text": "De vos is jarig vandaag. Alle dieren komen naar zijn feest in het bos. De uil brengt een grote taart met kaarsjes mee!",
+      "spokenText": "De vos is jarig vandaag. Alle dieren komen naar zijn feest in het bos. De uil brengt een grote taart met kaarsjes mee!",
+      "category": "listening",
+      "file": "de-vos-is-jarig-vandaag-alle-dieren-komen-naar-zijn-feest-in-het-bos-de-uil-brengt-een-grote-taa.mp3"
+    },
+    {
+      "id": "listen-option-muis-maan-0-1",
+      "slug": "de-zon",
+      "text": "de zon",
+      "spokenText": "de zon",
+      "category": "listening",
+      "file": "de-zon.mp3"
+    },
+    {
       "id": "number-13",
       "slug": "dertien",
       "text": "dertien",
       "spokenText": "dertien",
       "category": "numbers",
       "file": "dertien.mp3"
+    },
+    {
+      "id": "word-deur",
+      "slug": "deur",
+      "text": "deur",
+      "spokenText": "deur",
+      "category": "reading-word",
+      "file": "deur.mp3"
     },
     {
       "id": "verkeer-option-4-2",
@@ -3225,12 +3721,196 @@
       "file": "donkere-kleren.mp3"
     },
     {
+      "id": "word-doos",
+      "slug": "doos",
+      "text": "doos",
+      "spokenText": "doos",
+      "category": "reading-word",
+      "file": "doos.mp3"
+    },
+    {
       "id": "number-3",
       "slug": "drie",
       "text": "drie",
       "spokenText": "drie",
       "category": "numbers",
       "file": "drie.mp3"
+    },
+    {
+      "id": "word-druif",
+      "slug": "druif",
+      "text": "druif",
+      "spokenText": "druif",
+      "category": "reading-word",
+      "file": "druif.mp3"
+    },
+    {
+      "id": "double-prompt-1",
+      "slug": "dubbel-1-vraag",
+      "text": "Dubbel 1?",
+      "spokenText": "Wat is dubbel 1?",
+      "category": "doubles",
+      "file": "dubbel-1-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-10",
+      "slug": "dubbel-10-vraag",
+      "text": "Dubbel 10?",
+      "spokenText": "Wat is dubbel 10?",
+      "category": "doubles",
+      "file": "dubbel-10-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-2",
+      "slug": "dubbel-2-vraag",
+      "text": "Dubbel 2?",
+      "spokenText": "Wat is dubbel 2?",
+      "category": "doubles",
+      "file": "dubbel-2-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-3",
+      "slug": "dubbel-3-vraag",
+      "text": "Dubbel 3?",
+      "spokenText": "Wat is dubbel 3?",
+      "category": "doubles",
+      "file": "dubbel-3-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-4",
+      "slug": "dubbel-4-vraag",
+      "text": "Dubbel 4?",
+      "spokenText": "Wat is dubbel 4?",
+      "category": "doubles",
+      "file": "dubbel-4-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-5",
+      "slug": "dubbel-5-vraag",
+      "text": "Dubbel 5?",
+      "spokenText": "Wat is dubbel 5?",
+      "category": "doubles",
+      "file": "dubbel-5-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-6",
+      "slug": "dubbel-6-vraag",
+      "text": "Dubbel 6?",
+      "spokenText": "Wat is dubbel 6?",
+      "category": "doubles",
+      "file": "dubbel-6-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-7",
+      "slug": "dubbel-7-vraag",
+      "text": "Dubbel 7?",
+      "spokenText": "Wat is dubbel 7?",
+      "category": "doubles",
+      "file": "dubbel-7-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-8",
+      "slug": "dubbel-8-vraag",
+      "text": "Dubbel 8?",
+      "spokenText": "Wat is dubbel 8?",
+      "category": "doubles",
+      "file": "dubbel-8-vraag.mp3"
+    },
+    {
+      "id": "double-prompt-9",
+      "slug": "dubbel-9-vraag",
+      "text": "Dubbel 9?",
+      "spokenText": "Wat is dubbel 9?",
+      "category": "doubles",
+      "file": "dubbel-9-vraag.mp3"
+    },
+    {
+      "id": "double-hint-1",
+      "slug": "dubbel-is-twee-keer-evenveel-1-en-nog-1",
+      "text": "Dubbel is twee keer evenveel: 1 en nog 1.",
+      "spokenText": "Dubbel is twee keer evenveel: 1 en nog 1.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-1-en-nog-1.mp3"
+    },
+    {
+      "id": "double-hint-10",
+      "slug": "dubbel-is-twee-keer-evenveel-10-en-nog-10",
+      "text": "Dubbel is twee keer evenveel: 10 en nog 10.",
+      "spokenText": "Dubbel is twee keer evenveel: 10 en nog 10.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-10-en-nog-10.mp3"
+    },
+    {
+      "id": "double-hint-2",
+      "slug": "dubbel-is-twee-keer-evenveel-2-en-nog-2",
+      "text": "Dubbel is twee keer evenveel: 2 en nog 2.",
+      "spokenText": "Dubbel is twee keer evenveel: 2 en nog 2.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-2-en-nog-2.mp3"
+    },
+    {
+      "id": "double-hint-3",
+      "slug": "dubbel-is-twee-keer-evenveel-3-en-nog-3",
+      "text": "Dubbel is twee keer evenveel: 3 en nog 3.",
+      "spokenText": "Dubbel is twee keer evenveel: 3 en nog 3.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-3-en-nog-3.mp3"
+    },
+    {
+      "id": "double-hint-4",
+      "slug": "dubbel-is-twee-keer-evenveel-4-en-nog-4",
+      "text": "Dubbel is twee keer evenveel: 4 en nog 4.",
+      "spokenText": "Dubbel is twee keer evenveel: 4 en nog 4.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-4-en-nog-4.mp3"
+    },
+    {
+      "id": "double-hint-5",
+      "slug": "dubbel-is-twee-keer-evenveel-5-en-nog-5",
+      "text": "Dubbel is twee keer evenveel: 5 en nog 5.",
+      "spokenText": "Dubbel is twee keer evenveel: 5 en nog 5.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-5-en-nog-5.mp3"
+    },
+    {
+      "id": "double-hint-6",
+      "slug": "dubbel-is-twee-keer-evenveel-6-en-nog-6",
+      "text": "Dubbel is twee keer evenveel: 6 en nog 6.",
+      "spokenText": "Dubbel is twee keer evenveel: 6 en nog 6.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-6-en-nog-6.mp3"
+    },
+    {
+      "id": "double-hint-7",
+      "slug": "dubbel-is-twee-keer-evenveel-7-en-nog-7",
+      "text": "Dubbel is twee keer evenveel: 7 en nog 7.",
+      "spokenText": "Dubbel is twee keer evenveel: 7 en nog 7.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-7-en-nog-7.mp3"
+    },
+    {
+      "id": "double-hint-8",
+      "slug": "dubbel-is-twee-keer-evenveel-8-en-nog-8",
+      "text": "Dubbel is twee keer evenveel: 8 en nog 8.",
+      "spokenText": "Dubbel is twee keer evenveel: 8 en nog 8.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-8-en-nog-8.mp3"
+    },
+    {
+      "id": "double-hint-9",
+      "slug": "dubbel-is-twee-keer-evenveel-9-en-nog-9",
+      "text": "Dubbel is twee keer evenveel: 9 en nog 9.",
+      "spokenText": "Dubbel is twee keer evenveel: 9 en nog 9.",
+      "category": "doubles",
+      "file": "dubbel-is-twee-keer-evenveel-9-en-nog-9.mp3"
+    },
+    {
+      "id": "word-duim",
+      "slug": "duim",
+      "text": "duim",
+      "spokenText": "duim",
+      "category": "reading-word",
+      "file": "duim.mp3"
     },
     {
       "id": "sound-e",
@@ -3247,6 +3927,54 @@
       "spokenText": "één",
       "category": "numbers",
       "file": "een.mp3"
+    },
+    {
+      "id": "listen-option-poes-boom-1-2",
+      "slug": "een-appel",
+      "text": "een appel",
+      "spokenText": "een appel",
+      "category": "listening",
+      "file": "een-appel.mp3"
+    },
+    {
+      "id": "listen-option-muis-maan-1-2",
+      "slug": "een-bal",
+      "text": "een bal",
+      "spokenText": "een bal",
+      "category": "listening",
+      "file": "een-bal.mp3"
+    },
+    {
+      "id": "listen-option-kikker-regen-1-2",
+      "slug": "een-ballon",
+      "text": "een ballon",
+      "spokenText": "een ballon",
+      "category": "listening",
+      "file": "een-ballon.mp3"
+    },
+    {
+      "id": "listen-option-draak-ster-0-1",
+      "slug": "een-bloem",
+      "text": "een bloem",
+      "spokenText": "een bloem",
+      "category": "listening",
+      "file": "een-bloem.mp3"
+    },
+    {
+      "id": "listen-option-vos-verjaardag-1-2",
+      "slug": "een-boek",
+      "text": "een boek",
+      "spokenText": "een boek",
+      "category": "listening",
+      "file": "een-boek.mp3"
+    },
+    {
+      "id": "listen-option-draak-ster-0-2",
+      "slug": "een-cadeau",
+      "text": "een cadeau",
+      "spokenText": "een cadeau",
+      "category": "listening",
+      "file": "een-cadeau.mp3"
     },
     {
       "id": "verkeer-option-4-1",
@@ -3281,12 +4009,132 @@
       "file": "een-hoge-hoed.mp3"
     },
     {
+      "id": "listen-option-trein-berg-1-2",
+      "slug": "een-ijsje-eten",
+      "text": "een ijsje eten",
+      "spokenText": "een ijsje eten",
+      "category": "listening",
+      "file": "een-ijsje-eten.mp3"
+    },
+    {
+      "id": "listen-option-konijn-wortel-0-2",
+      "slug": "een-kaas",
+      "text": "een kaas",
+      "spokenText": "een kaas",
+      "category": "listening",
+      "file": "een-kaas.mp3"
+    },
+    {
+      "id": "listen-story-muis-kaas",
+      "slug": "een-kleine-muis-ruikt-iets-lekkers-in-de-keuken-op-de-tafel-ligt-een-groot-stuk-gele-kaas-stille",
+      "text": "Een kleine muis ruikt iets lekkers in de keuken. Op de tafel ligt een groot stuk gele kaas. Stilletjes klimt de muis omhoog en neemt een klein hapje.",
+      "spokenText": "Een kleine muis ruikt iets lekkers in de keuken. Op de tafel ligt een groot stuk gele kaas. Stilletjes klimt de muis omhoog en neemt een klein hapje.",
+      "category": "listening",
+      "file": "een-kleine-muis-ruikt-iets-lekkers-in-de-keuken-op-de-tafel-ligt-een-groot-stuk-gele-kaas-stille.mp3"
+    },
+    {
+      "id": "listen-option-muis-maan-1-1",
+      "slug": "een-koekje",
+      "text": "een koekje",
+      "spokenText": "een koekje",
+      "category": "listening",
+      "file": "een-koekje.mp3"
+    },
+    {
       "id": "verkeer-option-6-3",
       "slug": "een-kroontje",
       "text": "een kroontje",
       "spokenText": "een kroontje",
       "category": "verkeer",
       "file": "een-kroontje.mp3"
+    },
+    {
+      "id": "listen-option-kikker-regen-1-0",
+      "slug": "een-regenboog",
+      "text": "een regenboog",
+      "spokenText": "een regenboog",
+      "category": "listening",
+      "file": "een-regenboog.mp3"
+    },
+    {
+      "id": "listen-option-kikker-regen-1-1",
+      "slug": "een-sneeuwpop",
+      "text": "een sneeuwpop",
+      "spokenText": "een sneeuwpop",
+      "category": "listening",
+      "file": "een-sneeuwpop.mp3"
+    },
+    {
+      "id": "listen-option-draak-ster-0-0",
+      "slug": "een-sterretje",
+      "text": "een sterretje",
+      "spokenText": "een sterretje",
+      "category": "listening",
+      "file": "een-sterretje.mp3"
+    },
+    {
+      "id": "listen-option-muis-maan-1-0",
+      "slug": "een-stukje-kaas",
+      "text": "een stukje kaas",
+      "spokenText": "een stukje kaas",
+      "category": "listening",
+      "file": "een-stukje-kaas.mp3"
+    },
+    {
+      "id": "listen-option-vos-verjaardag-1-0",
+      "slug": "een-taart",
+      "text": "een taart",
+      "spokenText": "een taart",
+      "category": "listening",
+      "file": "een-taart.mp3"
+    },
+    {
+      "id": "listen-option-kikker-vlieg-0-1",
+      "slug": "een-vis",
+      "text": "een vis",
+      "spokenText": "een vis",
+      "category": "listening",
+      "file": "een-vis.mp3"
+    },
+    {
+      "id": "listen-option-poes-boom-1-1",
+      "slug": "een-visje",
+      "text": "een visje",
+      "spokenText": "een visje",
+      "category": "listening",
+      "file": "een-visje.mp3"
+    },
+    {
+      "id": "listen-option-kikker-vlieg-0-0",
+      "slug": "een-vlieg",
+      "text": "een vlieg",
+      "spokenText": "een vlieg",
+      "category": "listening",
+      "file": "een-vlieg.mp3"
+    },
+    {
+      "id": "listen-option-kikker-vlieg-0-2",
+      "slug": "een-vlinder",
+      "text": "een vlinder",
+      "spokenText": "een vlinder",
+      "category": "listening",
+      "file": "een-vlinder.mp3"
+    },
+    {
+      "id": "listen-option-poes-boom-1-0",
+      "slug": "een-vogeltje",
+      "text": "een vogeltje",
+      "spokenText": "een vogeltje",
+      "category": "listening",
+      "file": "een-vogeltje.mp3"
+    },
+    {
+      "id": "listen-option-beer-honing-0-1",
+      "slug": "een-wortel",
+      "text": "een wortel",
+      "spokenText": "een wortel",
+      "category": "listening",
+      "file": "een-wortel.mp3"
     },
     {
       "id": "verkeer-option-4-3",
@@ -3297,12 +4145,148 @@
       "file": "een-zonnebril.mp3"
     },
     {
+      "id": "one-more-hint-2",
+      "slug": "eentje-meer-dan-2-is-3",
+      "text": "Eentje meer dan 2 is 3.",
+      "spokenText": "Eentje meer dan 2 is 3.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-2-is-3.mp3"
+    },
+    {
+      "id": "one-more-hint-3",
+      "slug": "eentje-meer-dan-3-is-4",
+      "text": "Eentje meer dan 3 is 4.",
+      "spokenText": "Eentje meer dan 3 is 4.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-3-is-4.mp3"
+    },
+    {
+      "id": "one-more-hint-4",
+      "slug": "eentje-meer-dan-4-is-5",
+      "text": "Eentje meer dan 4 is 5.",
+      "spokenText": "Eentje meer dan 4 is 5.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-4-is-5.mp3"
+    },
+    {
+      "id": "one-more-hint-5",
+      "slug": "eentje-meer-dan-5-is-6",
+      "text": "Eentje meer dan 5 is 6.",
+      "spokenText": "Eentje meer dan 5 is 6.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-5-is-6.mp3"
+    },
+    {
+      "id": "one-more-hint-6",
+      "slug": "eentje-meer-dan-6-is-7",
+      "text": "Eentje meer dan 6 is 7.",
+      "spokenText": "Eentje meer dan 6 is 7.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-6-is-7.mp3"
+    },
+    {
+      "id": "one-more-hint-7",
+      "slug": "eentje-meer-dan-7-is-8",
+      "text": "Eentje meer dan 7 is 8.",
+      "spokenText": "Eentje meer dan 7 is 8.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-7-is-8.mp3"
+    },
+    {
+      "id": "one-more-hint-8",
+      "slug": "eentje-meer-dan-8-is-9",
+      "text": "Eentje meer dan 8 is 9.",
+      "spokenText": "Eentje meer dan 8 is 9.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-8-is-9.mp3"
+    },
+    {
+      "id": "one-more-hint-9",
+      "slug": "eentje-meer-dan-9-is-10",
+      "text": "Eentje meer dan 9 is 10.",
+      "spokenText": "Eentje meer dan 9 is 10.",
+      "category": "number-prompts",
+      "file": "eentje-meer-dan-9-is-10.mp3"
+    },
+    {
+      "id": "one-less-hint-2",
+      "slug": "eentje-minder-dan-2-is-1",
+      "text": "Eentje minder dan 2 is 1.",
+      "spokenText": "Eentje minder dan 2 is 1.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-2-is-1.mp3"
+    },
+    {
+      "id": "one-less-hint-3",
+      "slug": "eentje-minder-dan-3-is-2",
+      "text": "Eentje minder dan 3 is 2.",
+      "spokenText": "Eentje minder dan 3 is 2.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-3-is-2.mp3"
+    },
+    {
+      "id": "one-less-hint-4",
+      "slug": "eentje-minder-dan-4-is-3",
+      "text": "Eentje minder dan 4 is 3.",
+      "spokenText": "Eentje minder dan 4 is 3.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-4-is-3.mp3"
+    },
+    {
+      "id": "one-less-hint-5",
+      "slug": "eentje-minder-dan-5-is-4",
+      "text": "Eentje minder dan 5 is 4.",
+      "spokenText": "Eentje minder dan 5 is 4.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-5-is-4.mp3"
+    },
+    {
+      "id": "one-less-hint-6",
+      "slug": "eentje-minder-dan-6-is-5",
+      "text": "Eentje minder dan 6 is 5.",
+      "spokenText": "Eentje minder dan 6 is 5.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-6-is-5.mp3"
+    },
+    {
+      "id": "one-less-hint-7",
+      "slug": "eentje-minder-dan-7-is-6",
+      "text": "Eentje minder dan 7 is 6.",
+      "spokenText": "Eentje minder dan 7 is 6.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-7-is-6.mp3"
+    },
+    {
+      "id": "one-less-hint-8",
+      "slug": "eentje-minder-dan-8-is-7",
+      "text": "Eentje minder dan 8 is 7.",
+      "spokenText": "Eentje minder dan 8 is 7.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-8-is-7.mp3"
+    },
+    {
+      "id": "one-less-hint-9",
+      "slug": "eentje-minder-dan-9-is-8",
+      "text": "Eentje minder dan 9 is 8.",
+      "spokenText": "Eentje minder dan 9 is 8.",
+      "category": "number-prompts",
+      "file": "eentje-minder-dan-9-is-8.mp3"
+    },
+    {
       "id": "common-21",
       "slug": "eerst-de-tien-vol-dan-de-rest",
       "text": "Eerst de tien vol, dan de rest.",
       "spokenText": "Eerst de tien vol, dan de rest.",
       "category": "common",
       "file": "eerst-de-tien-vol-dan-de-rest.mp3"
+    },
+    {
+      "id": "minigame-reteach-13",
+      "slug": "eerst-de-volle-tien-dan-de-losse",
+      "text": "Eerst de volle tien, dan de losse.",
+      "spokenText": "Eerst de volle tien, dan de losse.",
+      "category": "minigame-reteach",
+      "file": "eerst-de-volle-tien-dan-de-losse.mp3"
     },
     {
       "id": "common-3",
@@ -3327,6 +4311,14 @@
       "spokenText": "elf",
       "category": "numbers",
       "file": "elf.mp3"
+    },
+    {
+      "id": "profile-skin-ember",
+      "slug": "ember",
+      "text": "Ember",
+      "spokenText": "Ember",
+      "category": "profiles",
+      "file": "ember.mp3"
     },
     {
       "id": "verkeer-option-9-2",
@@ -3359,6 +4351,22 @@
       "spokenText": "eu",
       "category": "phonics",
       "file": "eu.mp3"
+    },
+    {
+      "id": "word-fiets",
+      "slug": "fiets",
+      "text": "fiets",
+      "spokenText": "fiets",
+      "category": "reading-word",
+      "file": "fiets.mp3"
+    },
+    {
+      "id": "word-foto",
+      "slug": "foto",
+      "text": "foto",
+      "spokenText": "foto",
+      "category": "reading-word",
+      "file": "foto.mp3"
     },
     {
       "id": "common-2",
@@ -3399,6 +4407,14 @@
       "spokenText": "gordel vastklikken",
       "category": "verkeer",
       "file": "gordel-vastklikken.mp3"
+    },
+    {
+      "id": "profile-skin-gold",
+      "slug": "goud",
+      "text": "Goud",
+      "spokenText": "Goud",
+      "category": "profiles",
+      "file": "goud.mp3"
     },
     {
       "id": "runtime-boss-defeat-grasland",
@@ -3545,6 +4561,14 @@
       "file": "half-9.mp3"
     },
     {
+      "id": "word-hand",
+      "slug": "hand",
+      "text": "hand",
+      "spokenText": "hand",
+      "category": "reading-word",
+      "file": "hand.mp3"
+    },
+    {
       "id": "verkeer-lesson-10",
       "slug": "hand-in-hand-oversteken-is-het-veiligst",
       "text": "Hand in hand oversteken is het veiligst.",
@@ -3601,6 +4625,14 @@
       "file": "het-bouwdorp-viel-om-samen-bouwen-we-het-stukje-voor-stukje-weer-op-uitroep.mp3"
     },
     {
+      "id": "listen-option-muis-kaas-0-2",
+      "slug": "het-brood",
+      "text": "het brood",
+      "spokenText": "het brood",
+      "category": "listening",
+      "file": "het-brood.mp3"
+    },
+    {
       "id": "region-story-1",
       "slug": "het-grasland-werd-grijs-toen-de-ster-viel-breng-de-kleuren-terug-uitroep",
       "text": "Het grasland werd grijs toen de ster viel. Breng de kleuren terug!",
@@ -3617,6 +4649,14 @@
       "file": "het-is-donker-wat-trek-je-aan-om-gezien-te-worden-vraag.mp3"
     },
     {
+      "id": "listen-option-poes-boom-0-2",
+      "slug": "het-konijn",
+      "text": "het konijn",
+      "spokenText": "het konijn",
+      "category": "listening",
+      "file": "het-konijn.mp3"
+    },
+    {
       "id": "verkeer-prompt-3",
       "slug": "het-licht-is-groen-voor-jou-wat-doe-je-vraag",
       "text": "Het licht is groen voor jou. Wat doe je?",
@@ -3631,6 +4671,14 @@
       "spokenText": "Het licht is rood. Wat doe je?",
       "category": "verkeer",
       "file": "het-licht-is-rood-wat-doe-je-vraag.mp3"
+    },
+    {
+      "id": "listen-story-kikker-regen",
+      "slug": "het-regent-hard-op-de-vijver-de-kikker-springt-van-blij-op-zijn-blad-na-de-regen-komt-een-mooie-",
+      "text": "Het regent hard op de vijver. De kikker springt van blij op zijn blad. Na de regen komt een mooie regenboog!",
+      "spokenText": "Het regent hard op de vijver. De kikker springt van blij op zijn blad. Na de regen komt een mooie regenboog!",
+      "category": "listening",
+      "file": "het-regent-hard-op-de-vijver-de-kikker-springt-van-blij-op-zijn-blad-na-de-regen-komt-een-mooie-.mp3"
     },
     {
       "id": "make-ten-shield-1",
@@ -3705,6 +4753,38 @@
       "file": "het-schild-heeft-9-wat-maakt-10-vraag.mp3"
     },
     {
+      "id": "listen-option-kikker-regen-0-0",
+      "slug": "hij-is-blij-met-de-regen",
+      "text": "hij is blij met de regen",
+      "spokenText": "hij is blij met de regen",
+      "category": "listening",
+      "file": "hij-is-blij-met-de-regen.mp3"
+    },
+    {
+      "id": "listen-option-kikker-regen-0-2",
+      "slug": "hij-is-boos",
+      "text": "hij is boos",
+      "spokenText": "hij is boos",
+      "category": "listening",
+      "file": "hij-is-boos.mp3"
+    },
+    {
+      "id": "listen-option-kikker-regen-0-1",
+      "slug": "hij-is-verdrietig",
+      "text": "hij is verdrietig",
+      "spokenText": "hij is verdrietig",
+      "category": "listening",
+      "file": "hij-is-verdrietig.mp3"
+    },
+    {
+      "id": "listen-story-konijn-wortel",
+      "slug": "hippie-het-konijn-heeft-honger-hij-hupt-door-de-tuin-en-graaft-met-zijn-pootjes-in-de-grond-daar",
+      "text": "Hippie het konijn heeft honger. Hij hupt door de tuin en graaft met zijn pootjes in de grond. Daar! Een grote oranje wortel om lekker aan te knagen.",
+      "spokenText": "Hippie het konijn heeft honger. Hij hupt door de tuin en graaft met zijn pootjes in de grond. Daar! Een grote oranje wortel om lekker aan te knagen.",
+      "category": "listening",
+      "file": "hippie-het-konijn-heeft-honger-hij-hupt-door-de-tuin-en-graaft-met-zijn-pootjes-in-de-grond-daar.mp3"
+    },
+    {
       "id": "story-1",
       "slug": "hippie-het-konijn-hupt-mee-en-wijst-de-weg-uitroep",
       "text": "Hippie het konijn hupt mee en wijst de weg!",
@@ -3721,12 +4801,52 @@
       "file": "hoe-laat-is-het-vraag.mp3"
     },
     {
+      "id": "word-hoed",
+      "slug": "hoed",
+      "text": "hoed",
+      "spokenText": "hoed",
+      "category": "reading-word",
+      "file": "hoed.mp3"
+    },
+    {
+      "id": "daily-reward-3",
+      "slug": "hoera-2-dagen-op-een-rij-uitroep-4-sterren-erbij-kom-morgen-weer-uitroep",
+      "text": "Hoera, 2 dagen op een rij! 4 sterren erbij. Kom morgen weer!",
+      "spokenText": "Hoera, 2 dagen op een rij! 4 sterren erbij. Kom morgen weer!",
+      "category": "daily-reward",
+      "file": "hoera-2-dagen-op-een-rij-uitroep-4-sterren-erbij-kom-morgen-weer-uitroep.mp3"
+    },
+    {
+      "id": "daily-reward-4",
+      "slug": "hoera-3-dagen-op-een-rij-uitroep-5-sterren-erbij-kom-morgen-weer-uitroep",
+      "text": "Hoera, 3 dagen op een rij! 5 sterren erbij. Kom morgen weer!",
+      "spokenText": "Hoera, 3 dagen op een rij! 5 sterren erbij. Kom morgen weer!",
+      "category": "daily-reward",
+      "file": "hoera-3-dagen-op-een-rij-uitroep-5-sterren-erbij-kom-morgen-weer-uitroep.mp3"
+    },
+    {
+      "id": "daily-reward-5",
+      "slug": "hoera-al-vier-dagen-op-een-rij-uitroep-6-sterren-erbij-kom-morgen-weer-uitroep",
+      "text": "Hoera, al vier dagen op een rij! 6 sterren erbij. Kom morgen weer!",
+      "spokenText": "Hoera, al vier dagen op een rij! 6 sterren erbij. Kom morgen weer!",
+      "category": "daily-reward",
+      "file": "hoera-al-vier-dagen-op-een-rij-uitroep-6-sterren-erbij-kom-morgen-weer-uitroep.mp3"
+    },
+    {
       "id": "praise-7",
       "slug": "hoera-uitroep",
       "text": "Hoera!",
       "spokenText": "Hoera!",
       "category": "praise",
       "file": "hoera-uitroep.mp3"
+    },
+    {
+      "id": "daily-reward-1",
+      "slug": "hoera-uitroep-3-sterren-erbij-uitroep",
+      "text": "Hoera! 3 sterren erbij!",
+      "spokenText": "Hoera! 3 sterren erbij!",
+      "category": "daily-reward",
+      "file": "hoera-uitroep-3-sterren-erbij-uitroep.mp3"
     },
     {
       "id": "runtime-friend-rescue-f-frog",
@@ -3873,12 +4993,28 @@
       "file": "hoeveel-hoeken-heeft-deze-vorm-vraag.mp3"
     },
     {
+      "id": "minigame-reteach-19",
+      "slug": "hoeveel-moet-erbij-om-samen-het-getal-te-maken-vraag-kijk-naar-het-lege-vak",
+      "text": "Hoeveel moet erbij om samen het getal te maken? Kijk naar het lege vak.",
+      "spokenText": "Hoeveel moet erbij om samen het getal te maken? Kijk naar het lege vak.",
+      "category": "minigame-reteach",
+      "file": "hoeveel-moet-erbij-om-samen-het-getal-te-maken-vraag-kijk-naar-het-lege-vak.mp3"
+    },
+    {
       "id": "boss-scene",
       "slug": "hoeveel-zie-je-vraag-tik-het-getal-en-raak-de-baas-uitroep",
       "text": "Hoeveel zie je? Tik het getal en raak de baas!",
       "spokenText": "Hoeveel zie je? Tik het getal en raak de baas!",
       "category": "number-prompts",
       "file": "hoeveel-zie-je-vraag-tik-het-getal-en-raak-de-baas-uitroep.mp3"
+    },
+    {
+      "id": "source-scenes/ProfilePickerScene.ts-5581-0",
+      "slug": "hoi-uitroep-daar-gaan-we-uitroep",
+      "text": "Hoi! Daar gaan we!",
+      "spokenText": "Hoi! Daar gaan we!",
+      "category": "source-static",
+      "file": "hoi-uitroep-daar-gaan-we-uitroep.mp3"
     },
     {
       "id": "runtime-friend-hi-f-frog",
@@ -3929,6 +5065,14 @@
       "file": "hoi-uitroep-ik-ben-vonk-de-vos-uitroep.mp3"
     },
     {
+      "id": "source-scenes/ProfilePickerScene.ts-1195-0",
+      "slug": "hoi-uitroep-maak-je-eigen-dino",
+      "text": "Hoi! Maak je eigen dino.",
+      "spokenText": "Hoi! Maak je eigen dino.",
+      "category": "source-static",
+      "file": "hoi-uitroep-maak-je-eigen-dino.mp3"
+    },
+    {
       "id": "common-1",
       "slug": "hoi-uitroep-wat-gaan-we-spelen-vraag",
       "text": "Hoi! Wat gaan we spelen?",
@@ -3943,6 +5087,14 @@
       "spokenText": "hond",
       "category": "phonics",
       "file": "hond.mp3"
+    },
+    {
+      "id": "listen-option-beer-honing-0-0",
+      "slug": "honing",
+      "text": "honing",
+      "spokenText": "honing",
+      "category": "listening",
+      "file": "honing.mp3"
     },
     {
       "id": "word-huis",
@@ -3961,6 +5113,30 @@
       "file": "i.mp3"
     },
     {
+      "id": "daily-reward-2",
+      "slug": "ik-heb-je-gemist-uitroep-fijn-dat-je-er-weer-bent-3-sterren-erbij-uitroep",
+      "text": "Ik heb je gemist! Fijn dat je er weer bent. 3 sterren erbij!",
+      "spokenText": "Ik heb je gemist! Fijn dat je er weer bent. 3 sterren erbij!",
+      "category": "daily-reward",
+      "file": "ik-heb-je-gemist-uitroep-fijn-dat-je-er-weer-bent-3-sterren-erbij-uitroep.mp3"
+    },
+    {
+      "id": "listen-option-muis-kaas-1-2",
+      "slug": "in-de-boom",
+      "text": "in de boom",
+      "spokenText": "in de boom",
+      "category": "listening",
+      "file": "in-de-boom.mp3"
+    },
+    {
+      "id": "listen-option-uil-nacht-0-1",
+      "slug": "in-de-dag",
+      "text": "in de dag",
+      "spokenText": "in de dag",
+      "category": "listening",
+      "file": "in-de-dag.mp3"
+    },
+    {
       "id": "region-story-2",
       "slug": "in-de-muntgrot-is-het-donker-tel-goed-dan-glinstert-het-weer-uitroep",
       "text": "In de Muntgrot is het donker. Tel goed, dan glinstert het weer!",
@@ -3969,12 +5145,188 @@
       "file": "in-de-muntgrot-is-het-donker-tel-goed-dan-glinstert-het-weer-uitroep.mp3"
     },
     {
+      "id": "listen-option-uil-nacht-0-0",
+      "slug": "in-de-nacht",
+      "text": "in de nacht",
+      "spokenText": "in de nacht",
+      "category": "listening",
+      "file": "in-de-nacht.mp3"
+    },
+    {
+      "id": "listen-option-uil-nacht-0-2",
+      "slug": "in-de-regen",
+      "text": "in de regen",
+      "spokenText": "in de regen",
+      "category": "listening",
+      "file": "in-de-regen.mp3"
+    },
+    {
       "id": "region-story-4",
       "slug": "in-het-webwoud-raakte-een-vriendje-verstrikt-help-het-los-uitroep",
       "text": "In het Webwoud raakte een vriendje verstrikt. Help het los!",
       "spokenText": "In het Webwoud raakte een vriendje verstrikt. Help het los!",
       "category": "story",
       "file": "in-het-webwoud-raakte-een-vriendje-verstrikt-help-het-los-uitroep.mp3"
+    },
+    {
+      "id": "even-odd-1",
+      "slug": "is-1-even-of-oneven-vraag",
+      "text": "Is 1 even of oneven?",
+      "spokenText": "Is 1 even of oneven?",
+      "category": "doubles",
+      "file": "is-1-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-10",
+      "slug": "is-10-even-of-oneven-vraag",
+      "text": "Is 10 even of oneven?",
+      "spokenText": "Is 10 even of oneven?",
+      "category": "doubles",
+      "file": "is-10-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-11",
+      "slug": "is-11-even-of-oneven-vraag",
+      "text": "Is 11 even of oneven?",
+      "spokenText": "Is 11 even of oneven?",
+      "category": "doubles",
+      "file": "is-11-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-12",
+      "slug": "is-12-even-of-oneven-vraag",
+      "text": "Is 12 even of oneven?",
+      "spokenText": "Is 12 even of oneven?",
+      "category": "doubles",
+      "file": "is-12-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-13",
+      "slug": "is-13-even-of-oneven-vraag",
+      "text": "Is 13 even of oneven?",
+      "spokenText": "Is 13 even of oneven?",
+      "category": "doubles",
+      "file": "is-13-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-14",
+      "slug": "is-14-even-of-oneven-vraag",
+      "text": "Is 14 even of oneven?",
+      "spokenText": "Is 14 even of oneven?",
+      "category": "doubles",
+      "file": "is-14-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-15",
+      "slug": "is-15-even-of-oneven-vraag",
+      "text": "Is 15 even of oneven?",
+      "spokenText": "Is 15 even of oneven?",
+      "category": "doubles",
+      "file": "is-15-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-16",
+      "slug": "is-16-even-of-oneven-vraag",
+      "text": "Is 16 even of oneven?",
+      "spokenText": "Is 16 even of oneven?",
+      "category": "doubles",
+      "file": "is-16-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-17",
+      "slug": "is-17-even-of-oneven-vraag",
+      "text": "Is 17 even of oneven?",
+      "spokenText": "Is 17 even of oneven?",
+      "category": "doubles",
+      "file": "is-17-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-18",
+      "slug": "is-18-even-of-oneven-vraag",
+      "text": "Is 18 even of oneven?",
+      "spokenText": "Is 18 even of oneven?",
+      "category": "doubles",
+      "file": "is-18-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-19",
+      "slug": "is-19-even-of-oneven-vraag",
+      "text": "Is 19 even of oneven?",
+      "spokenText": "Is 19 even of oneven?",
+      "category": "doubles",
+      "file": "is-19-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-2",
+      "slug": "is-2-even-of-oneven-vraag",
+      "text": "Is 2 even of oneven?",
+      "spokenText": "Is 2 even of oneven?",
+      "category": "doubles",
+      "file": "is-2-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-20",
+      "slug": "is-20-even-of-oneven-vraag",
+      "text": "Is 20 even of oneven?",
+      "spokenText": "Is 20 even of oneven?",
+      "category": "doubles",
+      "file": "is-20-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-3",
+      "slug": "is-3-even-of-oneven-vraag",
+      "text": "Is 3 even of oneven?",
+      "spokenText": "Is 3 even of oneven?",
+      "category": "doubles",
+      "file": "is-3-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-4",
+      "slug": "is-4-even-of-oneven-vraag",
+      "text": "Is 4 even of oneven?",
+      "spokenText": "Is 4 even of oneven?",
+      "category": "doubles",
+      "file": "is-4-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-5",
+      "slug": "is-5-even-of-oneven-vraag",
+      "text": "Is 5 even of oneven?",
+      "spokenText": "Is 5 even of oneven?",
+      "category": "doubles",
+      "file": "is-5-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-6",
+      "slug": "is-6-even-of-oneven-vraag",
+      "text": "Is 6 even of oneven?",
+      "spokenText": "Is 6 even of oneven?",
+      "category": "doubles",
+      "file": "is-6-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-7",
+      "slug": "is-7-even-of-oneven-vraag",
+      "text": "Is 7 even of oneven?",
+      "spokenText": "Is 7 even of oneven?",
+      "category": "doubles",
+      "file": "is-7-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-8",
+      "slug": "is-8-even-of-oneven-vraag",
+      "text": "Is 8 even of oneven?",
+      "spokenText": "Is 8 even of oneven?",
+      "category": "doubles",
+      "file": "is-8-even-of-oneven-vraag.mp3"
+    },
+    {
+      "id": "even-odd-9",
+      "slug": "is-9-even-of-oneven-vraag",
+      "text": "Is 9 even of oneven?",
+      "spokenText": "Is 9 even of oneven?",
+      "category": "doubles",
+      "file": "is-9-even-of-oneven-vraag.mp3"
     },
     {
       "id": "verkeer-prompt-9",
@@ -4145,6 +5497,14 @@
       "file": "k-a-t-kat.mp3"
     },
     {
+      "id": "word-kaas",
+      "slug": "kaas",
+      "text": "kaas",
+      "spokenText": "kaas",
+      "category": "reading-word",
+      "file": "kaas.mp3"
+    },
+    {
       "id": "word-kat",
       "slug": "kat",
       "text": "kat",
@@ -4249,12 +5609,28 @@
       "file": "kies-het-veilige-pad-in-het-verkeer.mp3"
     },
     {
+      "id": "source-scenes/ProfilePickerScene.ts-1346-0",
+      "slug": "kies-wie-er-nu-speelt",
+      "text": "Kies wie er nu speelt.",
+      "spokenText": "Kies wie er nu speelt.",
+      "category": "source-static",
+      "file": "kies-wie-er-nu-speelt.mp3"
+    },
+    {
       "id": "common-20",
       "slug": "kijk-eerst-vijf-dan-de-extra-blokjes",
       "text": "Kijk: eerst vijf, dan de extra blokjes.",
       "spokenText": "Kijk: eerst vijf, dan de extra blokjes.",
       "category": "common",
       "file": "kijk-eerst-vijf-dan-de-extra-blokjes.mp3"
+    },
+    {
+      "id": "minigame-reteach-17",
+      "slug": "kijk-goed-naar-de-vorm",
+      "text": "Kijk goed naar de vorm.",
+      "spokenText": "Kijk goed naar de vorm.",
+      "category": "minigame-reteach",
+      "file": "kijk-goed-naar-de-vorm.mp3"
     },
     {
       "id": "klok-wrong",
@@ -4321,6 +5697,14 @@
       "file": "kijk-uitroep-de-kleuren-zijn-terug-in-webwoud-uitroep.mp3"
     },
     {
+      "id": "word-kip",
+      "slug": "kip",
+      "text": "kip",
+      "spokenText": "kip",
+      "category": "reading-word",
+      "file": "kip.mp3"
+    },
+    {
       "id": "verkeer-lesson-5",
       "slug": "klik-vast-uitroep-altijd-eerst-je-gordel",
       "text": "Klik, vast! Altijd eerst je gordel.",
@@ -4351,6 +5735,22 @@
       "spokenText": "Knap! Een nieuwe wereld is open!",
       "category": "runtime-dynamic",
       "file": "knap-uitroep-een-nieuwe-wereld-is-open-uitroep.mp3"
+    },
+    {
+      "id": "word-koe",
+      "slug": "koe",
+      "text": "koe",
+      "spokenText": "koe",
+      "category": "reading-word",
+      "file": "koe.mp3"
+    },
+    {
+      "id": "word-kroon",
+      "slug": "kroon",
+      "text": "kroon",
+      "spokenText": "kroon",
+      "category": "reading-word",
+      "file": "kroon.mp3"
     },
     {
       "id": "sound-l",
@@ -4449,6 +5849,22 @@
       "file": "laatste-klap-uitroep.mp3"
     },
     {
+      "id": "word-lamp",
+      "slug": "lamp",
+      "text": "lamp",
+      "spokenText": "lamp",
+      "category": "reading-word",
+      "file": "lamp.mp3"
+    },
+    {
+      "id": "even-odd-hint",
+      "slug": "leg-de-getallen-in-tweetallen-bij-even-blijft-er-niets-over-bij-oneven-blijft-er-eentje-over",
+      "text": "Leg de getallen in tweetallen. Bij even blijft er niets over; bij oneven blijft er eentje over.",
+      "spokenText": "Leg de getallen in tweetallen. Bij even blijft er niets over; bij oneven blijft er eentje over.",
+      "category": "doubles",
+      "file": "leg-de-getallen-in-tweetallen-bij-even-blijft-er-niets-over-bij-oneven-blijft-er-eentje-over.mp3"
+    },
+    {
       "id": "meet-4",
       "slug": "leg-ze-naast-elkaar-en-vergelijk",
       "text": "Leg ze naast elkaar en vergelijk.",
@@ -4457,12 +5873,260 @@
       "file": "leg-ze-naast-elkaar-en-vergelijk.mp3"
     },
     {
+      "id": "rhyme-hint",
+      "slug": "luister-goed-naar-het-einde-van-de-woorden",
+      "text": "Luister goed naar het einde van de woorden.",
+      "spokenText": "Luister goed naar het einde van de woorden.",
+      "category": "rhyme",
+      "file": "luister-goed-naar-het-einde-van-de-woorden.mp3"
+    },
+    {
+      "id": "minimal-pairs-2",
+      "slug": "luister-goed-naar-het-stukje-dat-anders-klinkt",
+      "text": "Luister goed naar het stukje dat anders klinkt.",
+      "spokenText": "Luister goed naar het stukje dat anders klinkt.",
+      "category": "minimal-pairs",
+      "file": "luister-goed-naar-het-stukje-dat-anders-klinkt.mp3"
+    },
+    {
+      "id": "reading-5",
+      "slug": "luister-ik-rek-de-klanken",
+      "text": "Luister: ik rek de klanken.",
+      "spokenText": "Luister: ik rek de klanken.",
+      "category": "reading",
+      "file": "luister-ik-rek-de-klanken.mp3"
+    },
+    {
+      "id": "sound-hint-a",
+      "slug": "luister-naar-de-a-min-klank",
+      "text": "Luister naar de a-klank.",
+      "spokenText": "Luister naar de aaa klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-a-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-aa",
+      "slug": "luister-naar-de-aa-min-klank",
+      "text": "Luister naar de aa-klank.",
+      "spokenText": "Luister naar de aa klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-aa-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-b",
+      "slug": "luister-naar-de-b-min-klank",
+      "text": "Luister naar de b-klank.",
+      "spokenText": "Luister naar de buh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-b-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-d",
+      "slug": "luister-naar-de-d-min-klank",
+      "text": "Luister naar de d-klank.",
+      "spokenText": "Luister naar de duh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-d-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-e",
+      "slug": "luister-naar-de-e-min-klank",
+      "text": "Luister naar de e-klank.",
+      "spokenText": "Luister naar de eh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-e-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-ee",
+      "slug": "luister-naar-de-ee-min-klank",
+      "text": "Luister naar de ee-klank.",
+      "spokenText": "Luister naar de ee klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-ee-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-ei",
+      "slug": "luister-naar-de-ei-min-klank",
+      "text": "Luister naar de ei-klank.",
+      "spokenText": "Luister naar de ei klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-ei-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-eu",
+      "slug": "luister-naar-de-eu-min-klank",
+      "text": "Luister naar de eu-klank.",
+      "spokenText": "Luister naar de eu klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-eu-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-f",
+      "slug": "luister-naar-de-f-min-klank",
+      "text": "Luister naar de f-klank.",
+      "spokenText": "Luister naar de fff klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-f-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-h",
+      "slug": "luister-naar-de-h-min-klank",
+      "text": "Luister naar de h-klank.",
+      "spokenText": "Luister naar de hhh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-h-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-i",
+      "slug": "luister-naar-de-i-min-klank",
+      "text": "Luister naar de i-klank.",
+      "spokenText": "Luister naar de ih klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-i-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-ie",
+      "slug": "luister-naar-de-ie-min-klank",
+      "text": "Luister naar de ie-klank.",
+      "spokenText": "Luister naar de ie klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-ie-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-k",
+      "slug": "luister-naar-de-k-min-klank",
+      "text": "Luister naar de k-klank.",
+      "spokenText": "Luister naar de kuh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-k-min-klank.mp3"
+    },
+    {
       "id": "common-13",
       "slug": "luister-naar-de-klank",
       "text": "Luister naar de klank.",
       "spokenText": "Luister naar de klank.",
       "category": "common",
       "file": "luister-naar-de-klank.mp3"
+    },
+    {
+      "id": "sound-hint-l",
+      "slug": "luister-naar-de-l-min-klank",
+      "text": "Luister naar de l-klank.",
+      "spokenText": "Luister naar de lll klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-l-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-m",
+      "slug": "luister-naar-de-m-min-klank",
+      "text": "Luister naar de m-klank.",
+      "spokenText": "Luister naar de mmm klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-m-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-n",
+      "slug": "luister-naar-de-n-min-klank",
+      "text": "Luister naar de n-klank.",
+      "spokenText": "Luister naar de nnn klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-n-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-o",
+      "slug": "luister-naar-de-o-min-klank",
+      "text": "Luister naar de o-klank.",
+      "spokenText": "Luister naar de oh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-o-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-oe",
+      "slug": "luister-naar-de-oe-min-klank",
+      "text": "Luister naar de oe-klank.",
+      "spokenText": "Luister naar de oe klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-oe-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-oo",
+      "slug": "luister-naar-de-oo-min-klank",
+      "text": "Luister naar de oo-klank.",
+      "spokenText": "Luister naar de oo klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-oo-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-p",
+      "slug": "luister-naar-de-p-min-klank",
+      "text": "Luister naar de p-klank.",
+      "spokenText": "Luister naar de puh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-p-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-r",
+      "slug": "luister-naar-de-r-min-klank",
+      "text": "Luister naar de r-klank.",
+      "spokenText": "Luister naar de rrr klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-r-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-s",
+      "slug": "luister-naar-de-s-min-klank",
+      "text": "Luister naar de s-klank.",
+      "spokenText": "Luister naar de sss klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-s-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-t",
+      "slug": "luister-naar-de-t-min-klank",
+      "text": "Luister naar de t-klank.",
+      "spokenText": "Luister naar de tuh klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-t-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-ui",
+      "slug": "luister-naar-de-ui-min-klank",
+      "text": "Luister naar de ui-klank.",
+      "spokenText": "Luister naar de ui klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-ui-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-uu",
+      "slug": "luister-naar-de-uu-min-klank",
+      "text": "Luister naar de uu-klank.",
+      "spokenText": "Luister naar de uu klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-uu-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-v",
+      "slug": "luister-naar-de-v-min-klank",
+      "text": "Luister naar de v-klank.",
+      "spokenText": "Luister naar de vvv klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-v-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-w",
+      "slug": "luister-naar-de-w-min-klank",
+      "text": "Luister naar de w-klank.",
+      "spokenText": "Luister naar de www klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-w-min-klank.mp3"
+    },
+    {
+      "id": "sound-hint-z",
+      "slug": "luister-naar-de-z-min-klank",
+      "text": "Luister naar de z-klank.",
+      "spokenText": "Luister naar de zzz klank.",
+      "category": "phonics",
+      "file": "luister-naar-de-z-min-klank.mp3"
     },
     {
       "id": "common-12",
@@ -4505,12 +6169,1036 @@
       "file": "maan.mp3"
     },
     {
+      "id": "bond-is-ten-0-0",
+      "slug": "maken-0-en-0-samen-10-vraag",
+      "text": "Maken 0 en 0 samen 10?",
+      "spokenText": "Maken 0 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-1",
+      "slug": "maken-0-en-1-samen-10-vraag",
+      "text": "Maken 0 en 1 samen 10?",
+      "spokenText": "Maken 0 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-10",
+      "slug": "maken-0-en-10-samen-10-vraag",
+      "text": "Maken 0 en 10 samen 10?",
+      "spokenText": "Maken 0 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-2",
+      "slug": "maken-0-en-2-samen-10-vraag",
+      "text": "Maken 0 en 2 samen 10?",
+      "spokenText": "Maken 0 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-3",
+      "slug": "maken-0-en-3-samen-10-vraag",
+      "text": "Maken 0 en 3 samen 10?",
+      "spokenText": "Maken 0 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-4",
+      "slug": "maken-0-en-4-samen-10-vraag",
+      "text": "Maken 0 en 4 samen 10?",
+      "spokenText": "Maken 0 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-5",
+      "slug": "maken-0-en-5-samen-10-vraag",
+      "text": "Maken 0 en 5 samen 10?",
+      "spokenText": "Maken 0 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-6",
+      "slug": "maken-0-en-6-samen-10-vraag",
+      "text": "Maken 0 en 6 samen 10?",
+      "spokenText": "Maken 0 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-7",
+      "slug": "maken-0-en-7-samen-10-vraag",
+      "text": "Maken 0 en 7 samen 10?",
+      "spokenText": "Maken 0 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-8",
+      "slug": "maken-0-en-8-samen-10-vraag",
+      "text": "Maken 0 en 8 samen 10?",
+      "spokenText": "Maken 0 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-0-9",
+      "slug": "maken-0-en-9-samen-10-vraag",
+      "text": "Maken 0 en 9 samen 10?",
+      "spokenText": "Maken 0 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-0-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-0",
+      "slug": "maken-1-en-0-samen-10-vraag",
+      "text": "Maken 1 en 0 samen 10?",
+      "spokenText": "Maken 1 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-1",
+      "slug": "maken-1-en-1-samen-10-vraag",
+      "text": "Maken 1 en 1 samen 10?",
+      "spokenText": "Maken 1 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-10",
+      "slug": "maken-1-en-10-samen-10-vraag",
+      "text": "Maken 1 en 10 samen 10?",
+      "spokenText": "Maken 1 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-2",
+      "slug": "maken-1-en-2-samen-10-vraag",
+      "text": "Maken 1 en 2 samen 10?",
+      "spokenText": "Maken 1 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-3",
+      "slug": "maken-1-en-3-samen-10-vraag",
+      "text": "Maken 1 en 3 samen 10?",
+      "spokenText": "Maken 1 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-4",
+      "slug": "maken-1-en-4-samen-10-vraag",
+      "text": "Maken 1 en 4 samen 10?",
+      "spokenText": "Maken 1 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-5",
+      "slug": "maken-1-en-5-samen-10-vraag",
+      "text": "Maken 1 en 5 samen 10?",
+      "spokenText": "Maken 1 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-6",
+      "slug": "maken-1-en-6-samen-10-vraag",
+      "text": "Maken 1 en 6 samen 10?",
+      "spokenText": "Maken 1 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-7",
+      "slug": "maken-1-en-7-samen-10-vraag",
+      "text": "Maken 1 en 7 samen 10?",
+      "spokenText": "Maken 1 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-8",
+      "slug": "maken-1-en-8-samen-10-vraag",
+      "text": "Maken 1 en 8 samen 10?",
+      "spokenText": "Maken 1 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-1-9",
+      "slug": "maken-1-en-9-samen-10-vraag",
+      "text": "Maken 1 en 9 samen 10?",
+      "spokenText": "Maken 1 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-1-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-0",
+      "slug": "maken-10-en-0-samen-10-vraag",
+      "text": "Maken 10 en 0 samen 10?",
+      "spokenText": "Maken 10 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-1",
+      "slug": "maken-10-en-1-samen-10-vraag",
+      "text": "Maken 10 en 1 samen 10?",
+      "spokenText": "Maken 10 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-10",
+      "slug": "maken-10-en-10-samen-10-vraag",
+      "text": "Maken 10 en 10 samen 10?",
+      "spokenText": "Maken 10 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-2",
+      "slug": "maken-10-en-2-samen-10-vraag",
+      "text": "Maken 10 en 2 samen 10?",
+      "spokenText": "Maken 10 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-3",
+      "slug": "maken-10-en-3-samen-10-vraag",
+      "text": "Maken 10 en 3 samen 10?",
+      "spokenText": "Maken 10 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-4",
+      "slug": "maken-10-en-4-samen-10-vraag",
+      "text": "Maken 10 en 4 samen 10?",
+      "spokenText": "Maken 10 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-5",
+      "slug": "maken-10-en-5-samen-10-vraag",
+      "text": "Maken 10 en 5 samen 10?",
+      "spokenText": "Maken 10 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-6",
+      "slug": "maken-10-en-6-samen-10-vraag",
+      "text": "Maken 10 en 6 samen 10?",
+      "spokenText": "Maken 10 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-7",
+      "slug": "maken-10-en-7-samen-10-vraag",
+      "text": "Maken 10 en 7 samen 10?",
+      "spokenText": "Maken 10 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-8",
+      "slug": "maken-10-en-8-samen-10-vraag",
+      "text": "Maken 10 en 8 samen 10?",
+      "spokenText": "Maken 10 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-10-9",
+      "slug": "maken-10-en-9-samen-10-vraag",
+      "text": "Maken 10 en 9 samen 10?",
+      "spokenText": "Maken 10 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-10-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-0",
+      "slug": "maken-2-en-0-samen-10-vraag",
+      "text": "Maken 2 en 0 samen 10?",
+      "spokenText": "Maken 2 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-1",
+      "slug": "maken-2-en-1-samen-10-vraag",
+      "text": "Maken 2 en 1 samen 10?",
+      "spokenText": "Maken 2 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-10",
+      "slug": "maken-2-en-10-samen-10-vraag",
+      "text": "Maken 2 en 10 samen 10?",
+      "spokenText": "Maken 2 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-2",
+      "slug": "maken-2-en-2-samen-10-vraag",
+      "text": "Maken 2 en 2 samen 10?",
+      "spokenText": "Maken 2 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-3",
+      "slug": "maken-2-en-3-samen-10-vraag",
+      "text": "Maken 2 en 3 samen 10?",
+      "spokenText": "Maken 2 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-4",
+      "slug": "maken-2-en-4-samen-10-vraag",
+      "text": "Maken 2 en 4 samen 10?",
+      "spokenText": "Maken 2 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-5",
+      "slug": "maken-2-en-5-samen-10-vraag",
+      "text": "Maken 2 en 5 samen 10?",
+      "spokenText": "Maken 2 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-6",
+      "slug": "maken-2-en-6-samen-10-vraag",
+      "text": "Maken 2 en 6 samen 10?",
+      "spokenText": "Maken 2 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-7",
+      "slug": "maken-2-en-7-samen-10-vraag",
+      "text": "Maken 2 en 7 samen 10?",
+      "spokenText": "Maken 2 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-8",
+      "slug": "maken-2-en-8-samen-10-vraag",
+      "text": "Maken 2 en 8 samen 10?",
+      "spokenText": "Maken 2 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-2-9",
+      "slug": "maken-2-en-9-samen-10-vraag",
+      "text": "Maken 2 en 9 samen 10?",
+      "spokenText": "Maken 2 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-2-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-0",
+      "slug": "maken-3-en-0-samen-10-vraag",
+      "text": "Maken 3 en 0 samen 10?",
+      "spokenText": "Maken 3 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-1",
+      "slug": "maken-3-en-1-samen-10-vraag",
+      "text": "Maken 3 en 1 samen 10?",
+      "spokenText": "Maken 3 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-10",
+      "slug": "maken-3-en-10-samen-10-vraag",
+      "text": "Maken 3 en 10 samen 10?",
+      "spokenText": "Maken 3 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-2",
+      "slug": "maken-3-en-2-samen-10-vraag",
+      "text": "Maken 3 en 2 samen 10?",
+      "spokenText": "Maken 3 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-3",
+      "slug": "maken-3-en-3-samen-10-vraag",
+      "text": "Maken 3 en 3 samen 10?",
+      "spokenText": "Maken 3 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-4",
+      "slug": "maken-3-en-4-samen-10-vraag",
+      "text": "Maken 3 en 4 samen 10?",
+      "spokenText": "Maken 3 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-5",
+      "slug": "maken-3-en-5-samen-10-vraag",
+      "text": "Maken 3 en 5 samen 10?",
+      "spokenText": "Maken 3 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-6",
+      "slug": "maken-3-en-6-samen-10-vraag",
+      "text": "Maken 3 en 6 samen 10?",
+      "spokenText": "Maken 3 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-7",
+      "slug": "maken-3-en-7-samen-10-vraag",
+      "text": "Maken 3 en 7 samen 10?",
+      "spokenText": "Maken 3 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-8",
+      "slug": "maken-3-en-8-samen-10-vraag",
+      "text": "Maken 3 en 8 samen 10?",
+      "spokenText": "Maken 3 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-3-9",
+      "slug": "maken-3-en-9-samen-10-vraag",
+      "text": "Maken 3 en 9 samen 10?",
+      "spokenText": "Maken 3 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-3-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-0",
+      "slug": "maken-4-en-0-samen-10-vraag",
+      "text": "Maken 4 en 0 samen 10?",
+      "spokenText": "Maken 4 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-1",
+      "slug": "maken-4-en-1-samen-10-vraag",
+      "text": "Maken 4 en 1 samen 10?",
+      "spokenText": "Maken 4 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-10",
+      "slug": "maken-4-en-10-samen-10-vraag",
+      "text": "Maken 4 en 10 samen 10?",
+      "spokenText": "Maken 4 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-2",
+      "slug": "maken-4-en-2-samen-10-vraag",
+      "text": "Maken 4 en 2 samen 10?",
+      "spokenText": "Maken 4 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-3",
+      "slug": "maken-4-en-3-samen-10-vraag",
+      "text": "Maken 4 en 3 samen 10?",
+      "spokenText": "Maken 4 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-4",
+      "slug": "maken-4-en-4-samen-10-vraag",
+      "text": "Maken 4 en 4 samen 10?",
+      "spokenText": "Maken 4 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-5",
+      "slug": "maken-4-en-5-samen-10-vraag",
+      "text": "Maken 4 en 5 samen 10?",
+      "spokenText": "Maken 4 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-6",
+      "slug": "maken-4-en-6-samen-10-vraag",
+      "text": "Maken 4 en 6 samen 10?",
+      "spokenText": "Maken 4 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-7",
+      "slug": "maken-4-en-7-samen-10-vraag",
+      "text": "Maken 4 en 7 samen 10?",
+      "spokenText": "Maken 4 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-8",
+      "slug": "maken-4-en-8-samen-10-vraag",
+      "text": "Maken 4 en 8 samen 10?",
+      "spokenText": "Maken 4 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-4-9",
+      "slug": "maken-4-en-9-samen-10-vraag",
+      "text": "Maken 4 en 9 samen 10?",
+      "spokenText": "Maken 4 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-4-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-0",
+      "slug": "maken-5-en-0-samen-10-vraag",
+      "text": "Maken 5 en 0 samen 10?",
+      "spokenText": "Maken 5 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-1",
+      "slug": "maken-5-en-1-samen-10-vraag",
+      "text": "Maken 5 en 1 samen 10?",
+      "spokenText": "Maken 5 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-10",
+      "slug": "maken-5-en-10-samen-10-vraag",
+      "text": "Maken 5 en 10 samen 10?",
+      "spokenText": "Maken 5 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-2",
+      "slug": "maken-5-en-2-samen-10-vraag",
+      "text": "Maken 5 en 2 samen 10?",
+      "spokenText": "Maken 5 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-3",
+      "slug": "maken-5-en-3-samen-10-vraag",
+      "text": "Maken 5 en 3 samen 10?",
+      "spokenText": "Maken 5 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-4",
+      "slug": "maken-5-en-4-samen-10-vraag",
+      "text": "Maken 5 en 4 samen 10?",
+      "spokenText": "Maken 5 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-5",
+      "slug": "maken-5-en-5-samen-10-vraag",
+      "text": "Maken 5 en 5 samen 10?",
+      "spokenText": "Maken 5 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-6",
+      "slug": "maken-5-en-6-samen-10-vraag",
+      "text": "Maken 5 en 6 samen 10?",
+      "spokenText": "Maken 5 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-7",
+      "slug": "maken-5-en-7-samen-10-vraag",
+      "text": "Maken 5 en 7 samen 10?",
+      "spokenText": "Maken 5 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-8",
+      "slug": "maken-5-en-8-samen-10-vraag",
+      "text": "Maken 5 en 8 samen 10?",
+      "spokenText": "Maken 5 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-5-9",
+      "slug": "maken-5-en-9-samen-10-vraag",
+      "text": "Maken 5 en 9 samen 10?",
+      "spokenText": "Maken 5 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-5-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-0",
+      "slug": "maken-6-en-0-samen-10-vraag",
+      "text": "Maken 6 en 0 samen 10?",
+      "spokenText": "Maken 6 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-1",
+      "slug": "maken-6-en-1-samen-10-vraag",
+      "text": "Maken 6 en 1 samen 10?",
+      "spokenText": "Maken 6 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-10",
+      "slug": "maken-6-en-10-samen-10-vraag",
+      "text": "Maken 6 en 10 samen 10?",
+      "spokenText": "Maken 6 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-2",
+      "slug": "maken-6-en-2-samen-10-vraag",
+      "text": "Maken 6 en 2 samen 10?",
+      "spokenText": "Maken 6 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-3",
+      "slug": "maken-6-en-3-samen-10-vraag",
+      "text": "Maken 6 en 3 samen 10?",
+      "spokenText": "Maken 6 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-4",
+      "slug": "maken-6-en-4-samen-10-vraag",
+      "text": "Maken 6 en 4 samen 10?",
+      "spokenText": "Maken 6 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-5",
+      "slug": "maken-6-en-5-samen-10-vraag",
+      "text": "Maken 6 en 5 samen 10?",
+      "spokenText": "Maken 6 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-6",
+      "slug": "maken-6-en-6-samen-10-vraag",
+      "text": "Maken 6 en 6 samen 10?",
+      "spokenText": "Maken 6 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-7",
+      "slug": "maken-6-en-7-samen-10-vraag",
+      "text": "Maken 6 en 7 samen 10?",
+      "spokenText": "Maken 6 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-8",
+      "slug": "maken-6-en-8-samen-10-vraag",
+      "text": "Maken 6 en 8 samen 10?",
+      "spokenText": "Maken 6 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-6-9",
+      "slug": "maken-6-en-9-samen-10-vraag",
+      "text": "Maken 6 en 9 samen 10?",
+      "spokenText": "Maken 6 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-6-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-0",
+      "slug": "maken-7-en-0-samen-10-vraag",
+      "text": "Maken 7 en 0 samen 10?",
+      "spokenText": "Maken 7 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-1",
+      "slug": "maken-7-en-1-samen-10-vraag",
+      "text": "Maken 7 en 1 samen 10?",
+      "spokenText": "Maken 7 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-10",
+      "slug": "maken-7-en-10-samen-10-vraag",
+      "text": "Maken 7 en 10 samen 10?",
+      "spokenText": "Maken 7 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-2",
+      "slug": "maken-7-en-2-samen-10-vraag",
+      "text": "Maken 7 en 2 samen 10?",
+      "spokenText": "Maken 7 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-3",
+      "slug": "maken-7-en-3-samen-10-vraag",
+      "text": "Maken 7 en 3 samen 10?",
+      "spokenText": "Maken 7 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-4",
+      "slug": "maken-7-en-4-samen-10-vraag",
+      "text": "Maken 7 en 4 samen 10?",
+      "spokenText": "Maken 7 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-5",
+      "slug": "maken-7-en-5-samen-10-vraag",
+      "text": "Maken 7 en 5 samen 10?",
+      "spokenText": "Maken 7 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-6",
+      "slug": "maken-7-en-6-samen-10-vraag",
+      "text": "Maken 7 en 6 samen 10?",
+      "spokenText": "Maken 7 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-7",
+      "slug": "maken-7-en-7-samen-10-vraag",
+      "text": "Maken 7 en 7 samen 10?",
+      "spokenText": "Maken 7 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-8",
+      "slug": "maken-7-en-8-samen-10-vraag",
+      "text": "Maken 7 en 8 samen 10?",
+      "spokenText": "Maken 7 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-7-9",
+      "slug": "maken-7-en-9-samen-10-vraag",
+      "text": "Maken 7 en 9 samen 10?",
+      "spokenText": "Maken 7 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-7-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-0",
+      "slug": "maken-8-en-0-samen-10-vraag",
+      "text": "Maken 8 en 0 samen 10?",
+      "spokenText": "Maken 8 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-1",
+      "slug": "maken-8-en-1-samen-10-vraag",
+      "text": "Maken 8 en 1 samen 10?",
+      "spokenText": "Maken 8 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-10",
+      "slug": "maken-8-en-10-samen-10-vraag",
+      "text": "Maken 8 en 10 samen 10?",
+      "spokenText": "Maken 8 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-2",
+      "slug": "maken-8-en-2-samen-10-vraag",
+      "text": "Maken 8 en 2 samen 10?",
+      "spokenText": "Maken 8 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-3",
+      "slug": "maken-8-en-3-samen-10-vraag",
+      "text": "Maken 8 en 3 samen 10?",
+      "spokenText": "Maken 8 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-4",
+      "slug": "maken-8-en-4-samen-10-vraag",
+      "text": "Maken 8 en 4 samen 10?",
+      "spokenText": "Maken 8 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-5",
+      "slug": "maken-8-en-5-samen-10-vraag",
+      "text": "Maken 8 en 5 samen 10?",
+      "spokenText": "Maken 8 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-6",
+      "slug": "maken-8-en-6-samen-10-vraag",
+      "text": "Maken 8 en 6 samen 10?",
+      "spokenText": "Maken 8 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-7",
+      "slug": "maken-8-en-7-samen-10-vraag",
+      "text": "Maken 8 en 7 samen 10?",
+      "spokenText": "Maken 8 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-8",
+      "slug": "maken-8-en-8-samen-10-vraag",
+      "text": "Maken 8 en 8 samen 10?",
+      "spokenText": "Maken 8 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-8-9",
+      "slug": "maken-8-en-9-samen-10-vraag",
+      "text": "Maken 8 en 9 samen 10?",
+      "spokenText": "Maken 8 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-8-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-0",
+      "slug": "maken-9-en-0-samen-10-vraag",
+      "text": "Maken 9 en 0 samen 10?",
+      "spokenText": "Maken 9 en 0 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-0-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-1",
+      "slug": "maken-9-en-1-samen-10-vraag",
+      "text": "Maken 9 en 1 samen 10?",
+      "spokenText": "Maken 9 en 1 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-1-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-10",
+      "slug": "maken-9-en-10-samen-10-vraag",
+      "text": "Maken 9 en 10 samen 10?",
+      "spokenText": "Maken 9 en 10 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-10-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-2",
+      "slug": "maken-9-en-2-samen-10-vraag",
+      "text": "Maken 9 en 2 samen 10?",
+      "spokenText": "Maken 9 en 2 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-2-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-3",
+      "slug": "maken-9-en-3-samen-10-vraag",
+      "text": "Maken 9 en 3 samen 10?",
+      "spokenText": "Maken 9 en 3 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-3-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-4",
+      "slug": "maken-9-en-4-samen-10-vraag",
+      "text": "Maken 9 en 4 samen 10?",
+      "spokenText": "Maken 9 en 4 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-4-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-5",
+      "slug": "maken-9-en-5-samen-10-vraag",
+      "text": "Maken 9 en 5 samen 10?",
+      "spokenText": "Maken 9 en 5 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-5-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-6",
+      "slug": "maken-9-en-6-samen-10-vraag",
+      "text": "Maken 9 en 6 samen 10?",
+      "spokenText": "Maken 9 en 6 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-6-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-7",
+      "slug": "maken-9-en-7-samen-10-vraag",
+      "text": "Maken 9 en 7 samen 10?",
+      "spokenText": "Maken 9 en 7 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-7-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-8",
+      "slug": "maken-9-en-8-samen-10-vraag",
+      "text": "Maken 9 en 8 samen 10?",
+      "spokenText": "Maken 9 en 8 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-8-samen-10-vraag.mp3"
+    },
+    {
+      "id": "bond-is-ten-9-9",
+      "slug": "maken-9-en-9-samen-10-vraag",
+      "text": "Maken 9 en 9 samen 10?",
+      "spokenText": "Maken 9 en 9 samen 10?",
+      "category": "bonds",
+      "file": "maken-9-en-9-samen-10-vraag.mp3"
+    },
+    {
+      "id": "word-mes",
+      "slug": "mes",
+      "text": "mes",
+      "spokenText": "mes",
+      "category": "reading-word",
+      "file": "mes.mp3"
+    },
+    {
       "id": "verkeer-lesson-4",
       "slug": "met-een-fluohesje-en-lichtjes-zien-de-auto-s-jou",
       "text": "Met een fluohesje en lichtjes zien de auto's jou.",
       "spokenText": "Met een fluohesje en lichtjes zien de auto's jou.",
       "category": "verkeer",
       "file": "met-een-fluohesje-en-lichtjes-zien-de-auto-s-jou.mp3"
+    },
+    {
+      "id": "listen-option-konijn-wortel-1-1",
+      "slug": "met-een-lepel",
+      "text": "met een lepel",
+      "spokenText": "met een lepel",
+      "category": "listening",
+      "file": "met-een-lepel.mp3"
+    },
+    {
+      "id": "listen-option-kikker-vlieg-1-2",
+      "slug": "met-een-web",
+      "text": "met een web",
+      "spokenText": "met een web",
+      "category": "listening",
+      "file": "met-een-web.mp3"
+    },
+    {
+      "id": "listen-option-kikker-vlieg-1-1",
+      "slug": "met-zijn-hand",
+      "text": "met zijn hand",
+      "spokenText": "met zijn hand",
+      "category": "listening",
+      "file": "met-zijn-hand.mp3"
+    },
+    {
+      "id": "listen-option-konijn-wortel-1-2",
+      "slug": "met-zijn-oren",
+      "text": "met zijn oren",
+      "spokenText": "met zijn oren",
+      "category": "listening",
+      "file": "met-zijn-oren.mp3"
+    },
+    {
+      "id": "listen-option-konijn-wortel-1-0",
+      "slug": "met-zijn-pootjes",
+      "text": "met zijn pootjes",
+      "spokenText": "met zijn pootjes",
+      "category": "listening",
+      "file": "met-zijn-pootjes.mp3"
+    },
+    {
+      "id": "listen-option-kikker-vlieg-1-0",
+      "slug": "met-zijn-tong",
+      "text": "met zijn tong",
+      "spokenText": "met zijn tong",
+      "category": "listening",
+      "file": "met-zijn-tong.mp3"
     },
     {
       "id": "verkeer-option-8-2",
@@ -4529,6 +7217,14 @@
       "file": "muis.mp3"
     },
     {
+      "id": "word-muur",
+      "slug": "muur",
+      "text": "muur",
+      "spokenText": "muur",
+      "category": "reading-word",
+      "file": "muur.mp3"
+    },
+    {
       "id": "sound-n",
       "slug": "n",
       "text": "n",
@@ -4543,6 +7239,46 @@
       "spokenText": "nnn... eu... sss... neus",
       "category": "phonics",
       "file": "n-eu-s-neus.mp3"
+    },
+    {
+      "id": "listen-option-trein-berg-0-2",
+      "slug": "naar-de-maan",
+      "text": "naar de maan",
+      "spokenText": "naar de maan",
+      "category": "listening",
+      "file": "naar-de-maan.mp3"
+    },
+    {
+      "id": "listen-option-beer-honing-1-0",
+      "slug": "naar-de-rivier",
+      "text": "naar de rivier",
+      "spokenText": "naar de rivier",
+      "category": "listening",
+      "file": "naar-de-rivier.mp3"
+    },
+    {
+      "id": "listen-option-trein-berg-0-1",
+      "slug": "naar-de-zee",
+      "text": "naar de zee",
+      "spokenText": "naar de zee",
+      "category": "listening",
+      "file": "naar-de-zee.mp3"
+    },
+    {
+      "id": "listen-option-beer-honing-1-1",
+      "slug": "naar-huis",
+      "text": "naar huis",
+      "spokenText": "naar huis",
+      "category": "listening",
+      "file": "naar-huis.mp3"
+    },
+    {
+      "id": "listen-option-beer-honing-1-2",
+      "slug": "naar-school",
+      "text": "naar school",
+      "spokenText": "naar school",
+      "category": "listening",
+      "file": "naar-school.mp3"
     },
     {
       "id": "number-9",
@@ -4649,6 +7385,22 @@
       "file": "op-de-stoep.mp3"
     },
     {
+      "id": "listen-option-muis-kaas-1-0",
+      "slug": "op-de-tafel",
+      "text": "op de tafel",
+      "spokenText": "op de tafel",
+      "category": "listening",
+      "file": "op-de-tafel.mp3"
+    },
+    {
+      "id": "listen-option-pinguin-ijs-0-1",
+      "slug": "op-de-zee",
+      "text": "op de zee",
+      "spokenText": "op de zee",
+      "category": "listening",
+      "file": "op-de-zee.mp3"
+    },
+    {
       "id": "runtime-extra-2",
       "slug": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel",
       "text": "Op een nacht viel er een sterretje uit de hemel.",
@@ -4665,6 +7417,30 @@
       "file": "op-een-nacht-viel-er-een-sterretje-uit-de-hemel-alle-kleuren-verdwenen-maar-samen-brengen-we-ze-.mp3"
     },
     {
+      "id": "listen-option-muis-kaas-1-1",
+      "slug": "op-het-bed",
+      "text": "op het bed",
+      "spokenText": "op het bed",
+      "category": "listening",
+      "file": "op-het-bed.mp3"
+    },
+    {
+      "id": "listen-option-pinguin-ijs-0-0",
+      "slug": "op-het-ijs",
+      "text": "op het ijs",
+      "spokenText": "op het ijs",
+      "category": "listening",
+      "file": "op-het-ijs.mp3"
+    },
+    {
+      "id": "listen-option-pinguin-ijs-0-2",
+      "slug": "op-het-zand",
+      "text": "op het zand",
+      "spokenText": "op het zand",
+      "category": "listening",
+      "file": "op-het-zand.mp3"
+    },
+    {
       "id": "verkeer-option-1-1",
       "slug": "op-het-zebrapad",
       "text": "op het zebrapad",
@@ -4679,6 +7455,30 @@
       "spokenText": "op je spelletje kijken",
       "category": "verkeer",
       "file": "op-je-spelletje-kijken.mp3"
+    },
+    {
+      "id": "listen-option-pinguin-ijs-1-0",
+      "slug": "op-zijn-buik",
+      "text": "op zijn buik",
+      "spokenText": "op zijn buik",
+      "category": "listening",
+      "file": "op-zijn-buik.mp3"
+    },
+    {
+      "id": "listen-option-pinguin-ijs-1-2",
+      "slug": "op-zijn-handen",
+      "text": "op zijn handen",
+      "spokenText": "op zijn handen",
+      "category": "listening",
+      "file": "op-zijn-handen.mp3"
+    },
+    {
+      "id": "listen-option-pinguin-ijs-1-1",
+      "slug": "op-zijn-voeten",
+      "text": "op zijn voeten",
+      "spokenText": "op zijn voeten",
+      "category": "listening",
+      "file": "op-zijn-voeten.mp3"
     },
     {
       "id": "split-chest-1",
@@ -4769,6 +7569,22 @@
       "file": "p.mp3"
     },
     {
+      "id": "word-peer",
+      "slug": "peer",
+      "text": "peer",
+      "spokenText": "peer",
+      "category": "reading-word",
+      "file": "peer.mp3"
+    },
+    {
+      "id": "word-pen",
+      "slug": "pen",
+      "text": "pen",
+      "spokenText": "pen",
+      "category": "reading-word",
+      "file": "pen.mp3"
+    },
+    {
       "id": "common-11",
       "slug": "perfect-geheugen-uitroep",
       "text": "Perfect geheugen!",
@@ -4793,12 +7609,28 @@
       "file": "perfect-uitroep-heel-knap-gedaan-uitroep.mp3"
     },
     {
+      "id": "listen-story-pinguin-ijs",
+      "slug": "pim-de-pinguin-glijdt-de-hele-dag-op-zijn-buik-over-het-gladde-ijs-hij-glijdt-zo-hard-dat-hij-bi",
+      "text": "Pim de pinguïn glijdt de hele dag op zijn buik over het gladde ijs. Hij glijdt zo hard dat hij bijna in het koude water valt! Net op tijd stopt hij.",
+      "spokenText": "Pim de pinguïn glijdt de hele dag op zijn buik over het gladde ijs. Hij glijdt zo hard dat hij bijna in het koude water valt! Net op tijd stopt hij.",
+      "category": "listening",
+      "file": "pim-de-pinguin-glijdt-de-hele-dag-op-zijn-buik-over-het-gladde-ijs-hij-glijdt-zo-hard-dat-hij-bi.mp3"
+    },
+    {
       "id": "story-3",
       "slug": "pim-de-pinguin-glijdt-vrolijk-met-je-mee-uitroep",
       "text": "Pim de pinguin glijdt vrolijk met je mee!",
       "spokenText": "Pim de pinguin glijdt vrolijk met je mee!",
       "category": "story",
       "file": "pim-de-pinguin-glijdt-vrolijk-met-je-mee-uitroep.mp3"
+    },
+    {
+      "id": "word-poes",
+      "slug": "poes",
+      "text": "poes",
+      "spokenText": "poes",
+      "category": "reading-word",
+      "file": "poes.mp3"
     },
     {
       "id": "common-17",
@@ -4823,6 +7655,22 @@
       "spokenText": "rrr... oo... sss... roos",
       "category": "phonics",
       "file": "r-oo-s-roos.mp3"
+    },
+    {
+      "id": "word-raam",
+      "slug": "raam",
+      "text": "raam",
+      "spokenText": "raam",
+      "category": "reading-word",
+      "file": "raam.mp3"
+    },
+    {
+      "id": "reading-6",
+      "slug": "rek-de-klanken-aan-elkaar-tot-een-woord",
+      "text": "Rek de klanken aan elkaar tot een woord.",
+      "spokenText": "Rek de klanken aan elkaar tot een woord.",
+      "category": "reading",
+      "file": "rek-de-klanken-aan-elkaar-tot-een-woord.mp3"
     },
     {
       "id": "verkeer-option-5-2",
@@ -4873,6 +7721,22 @@
       "file": "s-t-e-r-ster.mp3"
     },
     {
+      "id": "minigame-reteach-21",
+      "slug": "samen-is-het-nog-niet-zoveel-kijk-naar-het-lege-vak",
+      "text": "Samen is het nog niet zoveel. Kijk naar het lege vak.",
+      "spokenText": "Samen is het nog niet zoveel. Kijk naar het lege vak.",
+      "category": "minigame-reteach",
+      "file": "samen-is-het-nog-niet-zoveel-kijk-naar-het-lege-vak.mp3"
+    },
+    {
+      "id": "profile-skin-shadow",
+      "slug": "schaduw",
+      "text": "Schaduw",
+      "spokenText": "Schaduw",
+      "category": "profiles",
+      "file": "schaduw.mp3"
+    },
+    {
       "id": "runtime-boss-defeat-muntgrot",
       "slug": "schaduwvleer-is-verslagen-uitroep-de-grot-glinstert-weer-goud-uitroep",
       "text": "Schaduwvleer is verslagen! De grot glinstert weer goud!",
@@ -4887,6 +7751,14 @@
       "spokenText": "Schaduwvleer! Lekker donker hier!",
       "category": "runtime-dynamic",
       "file": "schaduwvleer-uitroep-lekker-donker-hier-uitroep.mp3"
+    },
+    {
+      "id": "listen-option-trein-berg-1-1",
+      "slug": "slapen",
+      "text": "slapen",
+      "spokenText": "slapen",
+      "category": "listening",
+      "file": "slapen.mp3"
     },
     {
       "id": "runtime-boss-defeat-bouwdorp",
@@ -4993,6 +7865,30 @@
       "file": "spring-naar-eentje-meer-dan-9.mp3"
     },
     {
+      "id": "skip-hint-10",
+      "slug": "spring-telkens-10-verder",
+      "text": "Spring telkens 10 verder.",
+      "spokenText": "Spring telkens tien verder.",
+      "category": "skip-counting",
+      "file": "spring-telkens-10-verder.mp3"
+    },
+    {
+      "id": "skip-hint-2",
+      "slug": "spring-telkens-2-verder",
+      "text": "Spring telkens 2 verder.",
+      "spokenText": "Spring telkens twee verder.",
+      "category": "skip-counting",
+      "file": "spring-telkens-2-verder.mp3"
+    },
+    {
+      "id": "skip-hint-5",
+      "slug": "spring-telkens-5-verder",
+      "text": "Spring telkens 5 verder.",
+      "spokenText": "Spring telkens vijf verder.",
+      "category": "skip-counting",
+      "file": "spring-telkens-5-verder.mp3"
+    },
+    {
       "id": "runtime-extra-5",
       "slug": "start-het-avontuur-uitroep",
       "text": "Start het avontuur!",
@@ -5023,6 +7919,14 @@
       "spokenText": "Sterre de draak draagt de ster het laatste stukje!",
       "category": "story",
       "file": "sterre-de-draak-draagt-de-ster-het-laatste-stukje-uitroep.mp3"
+    },
+    {
+      "id": "listen-story-draak-ster",
+      "slug": "sterre-de-kleine-draak-vliegt-hoog-boven-het-bos-in-haar-pootjes-draagt-ze-een-klein-sterretje-n",
+      "text": "Sterre de kleine draak vliegt hoog boven het bos. In haar pootjes draagt ze een klein sterretje naar huis. Overal waar ze vliegt, komen de kleuren terug.",
+      "spokenText": "Sterre de kleine draak vliegt hoog boven het bos. In haar pootjes draagt ze een klein sterretje naar huis. Overal waar ze vliegt, komen de kleuren terug.",
+      "category": "listening",
+      "file": "sterre-de-kleine-draak-vliegt-hoog-boven-het-bos-in-haar-pootjes-draagt-ze-een-klein-sterretje-n.mp3"
     },
     {
       "id": "runtime-boss-defeat-sterrenrace",
@@ -5073,12 +7977,100 @@
       "file": "t.mp3"
     },
     {
+      "id": "word-tand",
+      "slug": "tand",
+      "text": "tand",
+      "spokenText": "tand",
+      "category": "reading-word",
+      "file": "tand.mp3"
+    },
+    {
+      "id": "minigame-reteach-3",
+      "slug": "tel-allebei-de-groepjes-en-kijk-welke-even-veel-heeft",
+      "text": "Tel allebei de groepjes en kijk welke even veel heeft.",
+      "spokenText": "Tel allebei de groepjes en kijk welke even veel heeft.",
+      "category": "minigame-reteach",
+      "file": "tel-allebei-de-groepjes-en-kijk-welke-even-veel-heeft.mp3"
+    },
+    {
+      "id": "minigame-reteach-8",
+      "slug": "tel-beide-groepjes-en-kijk-goed",
+      "text": "Tel beide groepjes en kijk goed.",
+      "spokenText": "Tel beide groepjes en kijk goed.",
+      "category": "minigame-reteach",
+      "file": "tel-beide-groepjes-en-kijk-goed.mp3"
+    },
+    {
       "id": "geld-wrong",
       "slug": "tel-de-muntjes-samen-5-dan-2-dan-1",
       "text": "Tel de muntjes samen: 5, dan 2, dan 1.",
       "spokenText": "Tel de muntjes samen: 5, dan 2, dan 1.",
       "category": "geld",
       "file": "tel-de-muntjes-samen-5-dan-2-dan-1.mp3"
+    },
+    {
+      "id": "minigame-reteach-7",
+      "slug": "tel-de-stippen-welke-heeft-er-meer-vraag",
+      "text": "Tel de stippen: welke heeft er meer?",
+      "spokenText": "Tel de stippen: welke heeft er meer?",
+      "category": "minigame-reteach",
+      "file": "tel-de-stippen-welke-heeft-er-meer-vraag.mp3"
+    },
+    {
+      "id": "minigame-reteach-20",
+      "slug": "tel-de-twee-delen-samen",
+      "text": "Tel de twee delen samen.",
+      "spokenText": "Tel de twee delen samen.",
+      "category": "minigame-reteach",
+      "file": "tel-de-twee-delen-samen.mp3"
+    },
+    {
+      "id": "minigame-reteach-18",
+      "slug": "tel-de-twee-vakjes-samen-eerst-vijf-dan-de-rest",
+      "text": "Tel de twee vakjes samen. Eerst vijf, dan de rest.",
+      "spokenText": "Tel de twee vakjes samen. Eerst vijf, dan de rest.",
+      "category": "minigame-reteach",
+      "file": "tel-de-twee-vakjes-samen-eerst-vijf-dan-de-rest.mp3"
+    },
+    {
+      "id": "minigame-reteach-10",
+      "slug": "tel-eentje-terug",
+      "text": "Tel eentje terug.",
+      "spokenText": "Tel eentje terug.",
+      "category": "minigame-reteach",
+      "file": "tel-eentje-terug.mp3"
+    },
+    {
+      "id": "minigame-reteach-9",
+      "slug": "tel-eentje-verder",
+      "text": "Tel eentje verder.",
+      "spokenText": "Tel eentje verder.",
+      "category": "minigame-reteach",
+      "file": "tel-eentje-verder.mp3"
+    },
+    {
+      "id": "source-scenes/minigames/CountScene.ts-2783-0",
+      "slug": "tel-nog-eens-rustig-mee",
+      "text": "Tel nog eens rustig mee.",
+      "spokenText": "Tel nog eens rustig mee.",
+      "category": "source-static",
+      "file": "tel-nog-eens-rustig-mee.mp3"
+    },
+    {
+      "id": "minigame-reteach-2",
+      "slug": "tel-rustig-eerst-vijf-dan-de-rest",
+      "text": "Tel rustig: eerst vijf, dan de rest.",
+      "spokenText": "Tel rustig: eerst vijf, dan de rest.",
+      "category": "minigame-reteach",
+      "file": "tel-rustig-eerst-vijf-dan-de-rest.mp3"
+    },
+    {
+      "id": "minigame-reteach-12",
+      "slug": "tel-rustig-langs-de-lijn",
+      "text": "Tel rustig langs de lijn.",
+      "spokenText": "Tel rustig langs de lijn.",
+      "category": "minigame-reteach",
+      "file": "tel-rustig-langs-de-lijn.mp3"
     },
     {
       "id": "encourage-2",
@@ -5089,12 +8081,1004 @@
       "file": "tel-rustig-mee.mp3"
     },
     {
+      "id": "skip-next-10",
+      "slug": "tel-verder-per-10-welk-getal-komt-daarna-vraag",
+      "text": "Tel verder per 10. Welk getal komt daarna?",
+      "spokenText": "Tel verder per tien. Welk getal komt daarna?",
+      "category": "skip-counting",
+      "file": "tel-verder-per-10-welk-getal-komt-daarna-vraag.mp3"
+    },
+    {
+      "id": "skip-next-2",
+      "slug": "tel-verder-per-2-welk-getal-komt-daarna-vraag",
+      "text": "Tel verder per 2. Welk getal komt daarna?",
+      "spokenText": "Tel verder per twee. Welk getal komt daarna?",
+      "category": "skip-counting",
+      "file": "tel-verder-per-2-welk-getal-komt-daarna-vraag.mp3"
+    },
+    {
+      "id": "skip-next-5",
+      "slug": "tel-verder-per-5-welk-getal-komt-daarna-vraag",
+      "text": "Tel verder per 5. Welk getal komt daarna?",
+      "spokenText": "Tel verder per vijf. Welk getal komt daarna?",
+      "category": "skip-counting",
+      "file": "tel-verder-per-5-welk-getal-komt-daarna-vraag.mp3"
+    },
+    {
       "id": "number-10",
       "slug": "tien",
       "text": "tien",
       "spokenText": "tien",
       "category": "numbers",
       "file": "tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-8",
+      "slug": "tienframe-acht-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: acht en acht maken geen tien vol.",
+      "spokenText": "Tienframe: acht en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-3",
+      "slug": "tienframe-acht-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: acht en drie maken geen tien vol.",
+      "spokenText": "Tienframe: acht en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-1",
+      "slug": "tienframe-acht-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: acht en een maken geen tien vol.",
+      "spokenText": "Tienframe: acht en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-9",
+      "slug": "tienframe-acht-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: acht en negen maken geen tien vol.",
+      "spokenText": "Tienframe: acht en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-0",
+      "slug": "tienframe-acht-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: acht en nul maken geen tien vol.",
+      "spokenText": "Tienframe: acht en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-10",
+      "slug": "tienframe-acht-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: acht en tien maken geen tien vol.",
+      "spokenText": "Tienframe: acht en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-4",
+      "slug": "tienframe-acht-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: acht en vier maken geen tien vol.",
+      "spokenText": "Tienframe: acht en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-5",
+      "slug": "tienframe-acht-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: acht en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: acht en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-6",
+      "slug": "tienframe-acht-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: acht en zes maken geen tien vol.",
+      "spokenText": "Tienframe: acht en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-8-7",
+      "slug": "tienframe-acht-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: acht en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: acht en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-acht-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-8",
+      "slug": "tienframe-acht-vol-dan-nog-twee-tot-tien",
+      "text": "Tienframe: acht vol, dan nog twee tot tien.",
+      "spokenText": "Tienframe: acht vol, dan nog twee tot tien.",
+      "category": "bonds",
+      "file": "tienframe-acht-vol-dan-nog-twee-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-8",
+      "slug": "tienframe-drie-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: drie en acht maken geen tien vol.",
+      "spokenText": "Tienframe: drie en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-3",
+      "slug": "tienframe-drie-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: drie en drie maken geen tien vol.",
+      "spokenText": "Tienframe: drie en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-1",
+      "slug": "tienframe-drie-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: drie en een maken geen tien vol.",
+      "spokenText": "Tienframe: drie en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-9",
+      "slug": "tienframe-drie-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: drie en negen maken geen tien vol.",
+      "spokenText": "Tienframe: drie en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-0",
+      "slug": "tienframe-drie-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: drie en nul maken geen tien vol.",
+      "spokenText": "Tienframe: drie en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-10",
+      "slug": "tienframe-drie-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: drie en tien maken geen tien vol.",
+      "spokenText": "Tienframe: drie en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-2",
+      "slug": "tienframe-drie-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: drie en twee maken geen tien vol.",
+      "spokenText": "Tienframe: drie en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-4",
+      "slug": "tienframe-drie-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: drie en vier maken geen tien vol.",
+      "spokenText": "Tienframe: drie en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-5",
+      "slug": "tienframe-drie-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: drie en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: drie en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-3-6",
+      "slug": "tienframe-drie-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: drie en zes maken geen tien vol.",
+      "spokenText": "Tienframe: drie en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-drie-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-3",
+      "slug": "tienframe-drie-vol-dan-nog-zeven-tot-tien",
+      "text": "Tienframe: drie vol, dan nog zeven tot tien.",
+      "spokenText": "Tienframe: drie vol, dan nog zeven tot tien.",
+      "category": "bonds",
+      "file": "tienframe-drie-vol-dan-nog-zeven-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-8",
+      "slug": "tienframe-een-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: een en acht maken geen tien vol.",
+      "spokenText": "Tienframe: een en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-3",
+      "slug": "tienframe-een-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: een en drie maken geen tien vol.",
+      "spokenText": "Tienframe: een en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-1",
+      "slug": "tienframe-een-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: een en een maken geen tien vol.",
+      "spokenText": "Tienframe: een en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-0",
+      "slug": "tienframe-een-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: een en nul maken geen tien vol.",
+      "spokenText": "Tienframe: een en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-10",
+      "slug": "tienframe-een-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: een en tien maken geen tien vol.",
+      "spokenText": "Tienframe: een en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-2",
+      "slug": "tienframe-een-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: een en twee maken geen tien vol.",
+      "spokenText": "Tienframe: een en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-4",
+      "slug": "tienframe-een-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: een en vier maken geen tien vol.",
+      "spokenText": "Tienframe: een en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-5",
+      "slug": "tienframe-een-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: een en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: een en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-6",
+      "slug": "tienframe-een-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: een en zes maken geen tien vol.",
+      "spokenText": "Tienframe: een en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-1-7",
+      "slug": "tienframe-een-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: een en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: een en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-een-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-1",
+      "slug": "tienframe-een-vol-dan-nog-negen-tot-tien",
+      "text": "Tienframe: een vol, dan nog negen tot tien.",
+      "spokenText": "Tienframe: een vol, dan nog negen tot tien.",
+      "category": "bonds",
+      "file": "tienframe-een-vol-dan-nog-negen-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-8",
+      "slug": "tienframe-negen-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: negen en acht maken geen tien vol.",
+      "spokenText": "Tienframe: negen en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-3",
+      "slug": "tienframe-negen-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: negen en drie maken geen tien vol.",
+      "spokenText": "Tienframe: negen en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-9",
+      "slug": "tienframe-negen-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: negen en negen maken geen tien vol.",
+      "spokenText": "Tienframe: negen en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-0",
+      "slug": "tienframe-negen-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: negen en nul maken geen tien vol.",
+      "spokenText": "Tienframe: negen en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-10",
+      "slug": "tienframe-negen-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: negen en tien maken geen tien vol.",
+      "spokenText": "Tienframe: negen en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-2",
+      "slug": "tienframe-negen-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: negen en twee maken geen tien vol.",
+      "spokenText": "Tienframe: negen en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-4",
+      "slug": "tienframe-negen-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: negen en vier maken geen tien vol.",
+      "spokenText": "Tienframe: negen en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-5",
+      "slug": "tienframe-negen-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: negen en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: negen en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-6",
+      "slug": "tienframe-negen-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: negen en zes maken geen tien vol.",
+      "spokenText": "Tienframe: negen en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-9-7",
+      "slug": "tienframe-negen-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: negen en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: negen en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-negen-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-9",
+      "slug": "tienframe-negen-vol-dan-nog-een-tot-tien",
+      "text": "Tienframe: negen vol, dan nog een tot tien.",
+      "spokenText": "Tienframe: negen vol, dan nog een tot tien.",
+      "category": "bonds",
+      "file": "tienframe-negen-vol-dan-nog-een-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-8",
+      "slug": "tienframe-nul-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: nul en acht maken geen tien vol.",
+      "spokenText": "Tienframe: nul en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-3",
+      "slug": "tienframe-nul-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: nul en drie maken geen tien vol.",
+      "spokenText": "Tienframe: nul en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-1",
+      "slug": "tienframe-nul-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: nul en een maken geen tien vol.",
+      "spokenText": "Tienframe: nul en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-9",
+      "slug": "tienframe-nul-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: nul en negen maken geen tien vol.",
+      "spokenText": "Tienframe: nul en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-0",
+      "slug": "tienframe-nul-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: nul en nul maken geen tien vol.",
+      "spokenText": "Tienframe: nul en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-2",
+      "slug": "tienframe-nul-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: nul en twee maken geen tien vol.",
+      "spokenText": "Tienframe: nul en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-4",
+      "slug": "tienframe-nul-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: nul en vier maken geen tien vol.",
+      "spokenText": "Tienframe: nul en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-5",
+      "slug": "tienframe-nul-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: nul en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: nul en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-6",
+      "slug": "tienframe-nul-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: nul en zes maken geen tien vol.",
+      "spokenText": "Tienframe: nul en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-0-7",
+      "slug": "tienframe-nul-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: nul en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: nul en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-nul-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-0",
+      "slug": "tienframe-nul-vol-dan-nog-tien-tot-tien",
+      "text": "Tienframe: nul vol, dan nog tien tot tien.",
+      "spokenText": "Tienframe: nul vol, dan nog tien tot tien.",
+      "category": "bonds",
+      "file": "tienframe-nul-vol-dan-nog-tien-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-8",
+      "slug": "tienframe-tien-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: tien en acht maken geen tien vol.",
+      "spokenText": "Tienframe: tien en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-3",
+      "slug": "tienframe-tien-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: tien en drie maken geen tien vol.",
+      "spokenText": "Tienframe: tien en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-1",
+      "slug": "tienframe-tien-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: tien en een maken geen tien vol.",
+      "spokenText": "Tienframe: tien en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-9",
+      "slug": "tienframe-tien-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: tien en negen maken geen tien vol.",
+      "spokenText": "Tienframe: tien en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-10",
+      "slug": "tienframe-tien-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: tien en tien maken geen tien vol.",
+      "spokenText": "Tienframe: tien en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-2",
+      "slug": "tienframe-tien-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: tien en twee maken geen tien vol.",
+      "spokenText": "Tienframe: tien en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-4",
+      "slug": "tienframe-tien-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: tien en vier maken geen tien vol.",
+      "spokenText": "Tienframe: tien en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-5",
+      "slug": "tienframe-tien-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: tien en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: tien en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-6",
+      "slug": "tienframe-tien-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: tien en zes maken geen tien vol.",
+      "spokenText": "Tienframe: tien en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-10-7",
+      "slug": "tienframe-tien-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: tien en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: tien en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-tien-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-10",
+      "slug": "tienframe-tien-vol-dan-nog-nul-tot-tien",
+      "text": "Tienframe: tien vol, dan nog nul tot tien.",
+      "spokenText": "Tienframe: tien vol, dan nog nul tot tien.",
+      "category": "bonds",
+      "file": "tienframe-tien-vol-dan-nog-nul-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-3",
+      "slug": "tienframe-twee-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: twee en drie maken geen tien vol.",
+      "spokenText": "Tienframe: twee en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-1",
+      "slug": "tienframe-twee-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: twee en een maken geen tien vol.",
+      "spokenText": "Tienframe: twee en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-9",
+      "slug": "tienframe-twee-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: twee en negen maken geen tien vol.",
+      "spokenText": "Tienframe: twee en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-0",
+      "slug": "tienframe-twee-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: twee en nul maken geen tien vol.",
+      "spokenText": "Tienframe: twee en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-10",
+      "slug": "tienframe-twee-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: twee en tien maken geen tien vol.",
+      "spokenText": "Tienframe: twee en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-2",
+      "slug": "tienframe-twee-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: twee en twee maken geen tien vol.",
+      "spokenText": "Tienframe: twee en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-4",
+      "slug": "tienframe-twee-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: twee en vier maken geen tien vol.",
+      "spokenText": "Tienframe: twee en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-5",
+      "slug": "tienframe-twee-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: twee en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: twee en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-6",
+      "slug": "tienframe-twee-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: twee en zes maken geen tien vol.",
+      "spokenText": "Tienframe: twee en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-2-7",
+      "slug": "tienframe-twee-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: twee en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: twee en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-twee-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-2",
+      "slug": "tienframe-twee-vol-dan-nog-acht-tot-tien",
+      "text": "Tienframe: twee vol, dan nog acht tot tien.",
+      "spokenText": "Tienframe: twee vol, dan nog acht tot tien.",
+      "category": "bonds",
+      "file": "tienframe-twee-vol-dan-nog-acht-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-8",
+      "slug": "tienframe-vier-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: vier en acht maken geen tien vol.",
+      "spokenText": "Tienframe: vier en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-3",
+      "slug": "tienframe-vier-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: vier en drie maken geen tien vol.",
+      "spokenText": "Tienframe: vier en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-1",
+      "slug": "tienframe-vier-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: vier en een maken geen tien vol.",
+      "spokenText": "Tienframe: vier en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-9",
+      "slug": "tienframe-vier-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: vier en negen maken geen tien vol.",
+      "spokenText": "Tienframe: vier en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-0",
+      "slug": "tienframe-vier-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: vier en nul maken geen tien vol.",
+      "spokenText": "Tienframe: vier en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-10",
+      "slug": "tienframe-vier-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: vier en tien maken geen tien vol.",
+      "spokenText": "Tienframe: vier en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-2",
+      "slug": "tienframe-vier-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: vier en twee maken geen tien vol.",
+      "spokenText": "Tienframe: vier en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-4",
+      "slug": "tienframe-vier-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: vier en vier maken geen tien vol.",
+      "spokenText": "Tienframe: vier en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-5",
+      "slug": "tienframe-vier-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: vier en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: vier en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-4-7",
+      "slug": "tienframe-vier-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: vier en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: vier en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vier-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-4",
+      "slug": "tienframe-vier-vol-dan-nog-zes-tot-tien",
+      "text": "Tienframe: vier vol, dan nog zes tot tien.",
+      "spokenText": "Tienframe: vier vol, dan nog zes tot tien.",
+      "category": "bonds",
+      "file": "tienframe-vier-vol-dan-nog-zes-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-8",
+      "slug": "tienframe-vijf-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en acht maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-3",
+      "slug": "tienframe-vijf-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en drie maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-1",
+      "slug": "tienframe-vijf-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en een maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-9",
+      "slug": "tienframe-vijf-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en negen maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-0",
+      "slug": "tienframe-vijf-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en nul maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-10",
+      "slug": "tienframe-vijf-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en tien maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-2",
+      "slug": "tienframe-vijf-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en twee maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-4",
+      "slug": "tienframe-vijf-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en vier maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-6",
+      "slug": "tienframe-vijf-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en zes maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-5-7",
+      "slug": "tienframe-vijf-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: vijf en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: vijf en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-vijf-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-5",
+      "slug": "tienframe-vijf-vol-dan-nog-vijf-tot-tien",
+      "text": "Tienframe: vijf vol, dan nog vijf tot tien.",
+      "spokenText": "Tienframe: vijf vol, dan nog vijf tot tien.",
+      "category": "bonds",
+      "file": "tienframe-vijf-vol-dan-nog-vijf-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-8",
+      "slug": "tienframe-zes-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: zes en acht maken geen tien vol.",
+      "spokenText": "Tienframe: zes en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-3",
+      "slug": "tienframe-zes-en-drie-maken-geen-tien-vol",
+      "text": "Tienframe: zes en drie maken geen tien vol.",
+      "spokenText": "Tienframe: zes en drie maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-drie-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-1",
+      "slug": "tienframe-zes-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: zes en een maken geen tien vol.",
+      "spokenText": "Tienframe: zes en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-9",
+      "slug": "tienframe-zes-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: zes en negen maken geen tien vol.",
+      "spokenText": "Tienframe: zes en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-0",
+      "slug": "tienframe-zes-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: zes en nul maken geen tien vol.",
+      "spokenText": "Tienframe: zes en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-10",
+      "slug": "tienframe-zes-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: zes en tien maken geen tien vol.",
+      "spokenText": "Tienframe: zes en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-2",
+      "slug": "tienframe-zes-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: zes en twee maken geen tien vol.",
+      "spokenText": "Tienframe: zes en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-5",
+      "slug": "tienframe-zes-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: zes en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: zes en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-6",
+      "slug": "tienframe-zes-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: zes en zes maken geen tien vol.",
+      "spokenText": "Tienframe: zes en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-6-7",
+      "slug": "tienframe-zes-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: zes en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: zes en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zes-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-6",
+      "slug": "tienframe-zes-vol-dan-nog-vier-tot-tien",
+      "text": "Tienframe: zes vol, dan nog vier tot tien.",
+      "spokenText": "Tienframe: zes vol, dan nog vier tot tien.",
+      "category": "bonds",
+      "file": "tienframe-zes-vol-dan-nog-vier-tot-tien.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-8",
+      "slug": "tienframe-zeven-en-acht-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en acht maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en acht maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-acht-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-1",
+      "slug": "tienframe-zeven-en-een-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en een maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en een maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-een-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-9",
+      "slug": "tienframe-zeven-en-negen-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en negen maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en negen maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-negen-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-0",
+      "slug": "tienframe-zeven-en-nul-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en nul maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en nul maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-nul-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-10",
+      "slug": "tienframe-zeven-en-tien-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en tien maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en tien maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-tien-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-2",
+      "slug": "tienframe-zeven-en-twee-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en twee maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en twee maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-twee-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-4",
+      "slug": "tienframe-zeven-en-vier-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en vier maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en vier maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-vier-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-5",
+      "slug": "tienframe-zeven-en-vijf-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en vijf maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en vijf maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-vijf-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-6",
+      "slug": "tienframe-zeven-en-zes-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en zes maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en zes maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-zes-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-not-ten-hint-7-7",
+      "slug": "tienframe-zeven-en-zeven-maken-geen-tien-vol",
+      "text": "Tienframe: zeven en zeven maken geen tien vol.",
+      "spokenText": "Tienframe: zeven en zeven maken geen tien vol.",
+      "category": "bonds",
+      "file": "tienframe-zeven-en-zeven-maken-geen-tien-vol.mp3"
+    },
+    {
+      "id": "bond-full-hint-7",
+      "slug": "tienframe-zeven-vol-dan-nog-drie-tot-tien",
+      "text": "Tienframe: zeven vol, dan nog drie tot tien.",
+      "spokenText": "Tienframe: zeven vol, dan nog drie tot tien.",
+      "category": "bonds",
+      "file": "tienframe-zeven-vol-dan-nog-drie-tot-tien.mp3"
     },
     {
       "id": "shape-find-cirkel",
@@ -5153,6 +9137,14 @@
       "file": "tik-de-zeshoek.mp3"
     },
     {
+      "id": "minigame-reteach-1",
+      "slug": "tik-elk-dier-aan-en-tel-mee",
+      "text": "Tik elk dier aan en tel mee.",
+      "spokenText": "Tik elk dier aan en tel mee.",
+      "category": "minigame-reteach",
+      "file": "tik-elk-dier-aan-en-tel-mee.mp3"
+    },
+    {
       "id": "count-scene",
       "slug": "tik-elk-diertje-aan-en-tel-hardop-kies-dan-het-juiste-getal",
       "text": "Tik elk diertje aan en tel hardop. Kies dan het juiste getal.",
@@ -5167,6 +9159,14 @@
       "spokenText": "Top!",
       "category": "praise",
       "file": "top-uitroep.mp3"
+    },
+    {
+      "id": "word-trein",
+      "slug": "trein",
+      "text": "trein",
+      "spokenText": "trein",
+      "category": "reading-word",
+      "file": "trein.mp3"
     },
     {
       "id": "verkeer-option-1-2",
@@ -5513,12 +9513,60 @@
       "file": "vorstwolf-uitroep-alles-bevriest-uitroep.mp3"
     },
     {
+      "id": "word-vos",
+      "slug": "vos",
+      "text": "vos",
+      "spokenText": "vos",
+      "category": "reading-word",
+      "file": "vos.mp3"
+    },
+    {
+      "id": "minigame-reteach-5",
+      "slug": "vul-net-zoveel-vakjes-als-het-getal-eerst-de-bovenste-rij-van-vijf",
+      "text": "Vul net zoveel vakjes als het getal. Eerst de bovenste rij van vijf.",
+      "spokenText": "Vul net zoveel vakjes als het getal. Eerst de bovenste rij van vijf.",
+      "category": "minigame-reteach",
+      "file": "vul-net-zoveel-vakjes-als-het-getal-eerst-de-bovenste-rij-van-vijf.mp3"
+    },
+    {
       "id": "fill-scene",
       "slug": "vul-precies-zoveel-vakjes-als-het-getal-eerst-de-bovenste-rij",
       "text": "Vul precies zoveel vakjes als het getal. Eerst de bovenste rij.",
       "spokenText": "Vul precies zoveel vakjes als het getal. Eerst de bovenste rij.",
       "category": "number-prompts",
       "file": "vul-precies-zoveel-vakjes-als-het-getal-eerst-de-bovenste-rij.mp3"
+    },
+    {
+      "id": "word-vuur",
+      "slug": "vuur",
+      "text": "vuur",
+      "spokenText": "vuur",
+      "category": "reading-word",
+      "file": "vuur.mp3"
+    },
+    {
+      "id": "listen-question-pinguin-ijs-0",
+      "slug": "waar-glijdt-pim-op-vraag",
+      "text": "Waar glijdt Pim op?",
+      "spokenText": "Waar glijdt Pim op?",
+      "category": "listening",
+      "file": "waar-glijdt-pim-op-vraag.mp3"
+    },
+    {
+      "id": "listen-question-muis-maan-0",
+      "slug": "waar-kijkt-de-muis-naar-vraag",
+      "text": "Waar kijkt de muis naar?",
+      "spokenText": "Waar kijkt de muis naar?",
+      "category": "listening",
+      "file": "waar-kijkt-de-muis-naar-vraag.mp3"
+    },
+    {
+      "id": "listen-question-muis-kaas-1",
+      "slug": "waar-ligt-de-kaas-vraag",
+      "text": "Waar ligt de kaas?",
+      "spokenText": "Waar ligt de kaas?",
+      "category": "listening",
+      "file": "waar-ligt-de-kaas-vraag.mp3"
     },
     {
       "id": "verkeer-prompt-8",
@@ -5529,12 +9577,52 @@
       "file": "waar-loop-je-op-straat-vraag.mp3"
     },
     {
+      "id": "listen-question-beer-honing-1",
+      "slug": "waar-rent-de-beer-naartoe-vraag",
+      "text": "Waar rent de beer naartoe?",
+      "spokenText": "Waar rent de beer naartoe?",
+      "category": "listening",
+      "file": "waar-rent-de-beer-naartoe-vraag.mp3"
+    },
+    {
+      "id": "listen-question-trein-berg-0",
+      "slug": "waar-rijdt-de-trein-naartoe-vraag",
+      "text": "Waar rijdt de trein naartoe?",
+      "spokenText": "Waar rijdt de trein naartoe?",
+      "category": "listening",
+      "file": "waar-rijdt-de-trein-naartoe-vraag.mp3"
+    },
+    {
       "id": "verkeer-prompt-1",
       "slug": "waar-steek-je-veilig-over-vraag",
       "text": "Waar steek je veilig over?",
       "spokenText": "Waar steek je veilig over?",
       "category": "verkeer",
       "file": "waar-steek-je-veilig-over-vraag.mp3"
+    },
+    {
+      "id": "listen-question-konijn-wortel-1",
+      "slug": "waarmee-graaft-hippie-vraag",
+      "text": "Waarmee graaft Hippie?",
+      "spokenText": "Waarmee graaft Hippie?",
+      "category": "listening",
+      "file": "waarmee-graaft-hippie-vraag.mp3"
+    },
+    {
+      "id": "listen-question-kikker-vlieg-1",
+      "slug": "waarmee-vangt-bram-de-vlieg-vraag",
+      "text": "Waarmee vangt Bram de vlieg?",
+      "spokenText": "Waarmee vangt Bram de vlieg?",
+      "category": "listening",
+      "file": "waarmee-vangt-bram-de-vlieg-vraag.mp3"
+    },
+    {
+      "id": "listen-question-kikker-regen-0",
+      "slug": "waarom-springt-de-kikker-vraag",
+      "text": "Waarom springt de kikker?",
+      "spokenText": "Waarom springt de kikker?",
+      "category": "listening",
+      "file": "waarom-springt-de-kikker-vraag.mp3"
     },
     {
       "id": "train-ten-1",
@@ -5607,6 +9695,38 @@
       "spokenText": "Wagon heeft 9. Welke erbij voor 10?",
       "category": "number-prompts",
       "file": "wagon-heeft-9-welke-erbij-voor-10-vraag.mp3"
+    },
+    {
+      "id": "listen-question-uil-nacht-0",
+      "slug": "wanneer-is-oeki-wakker-vraag",
+      "text": "Wanneer is Oeki wakker?",
+      "spokenText": "Wanneer is Oeki wakker?",
+      "category": "listening",
+      "file": "wanneer-is-oeki-wakker-vraag.mp3"
+    },
+    {
+      "id": "listen-question-vos-verjaardag-1",
+      "slug": "wat-brengt-de-uil-mee-vraag",
+      "text": "Wat brengt de uil mee?",
+      "spokenText": "Wat brengt de uil mee?",
+      "category": "listening",
+      "file": "wat-brengt-de-uil-mee-vraag.mp3"
+    },
+    {
+      "id": "listen-question-trein-berg-1",
+      "slug": "wat-doet-de-trein-boven-op-de-berg-vraag",
+      "text": "Wat doet de trein boven op de berg?",
+      "spokenText": "Wat doet de trein boven op de berg?",
+      "category": "listening",
+      "file": "wat-doet-de-trein-boven-op-de-berg-vraag.mp3"
+    },
+    {
+      "id": "listen-question-draak-ster-0",
+      "slug": "wat-draagt-sterre-vraag",
+      "text": "Wat draagt Sterre?",
+      "spokenText": "Wat draagt Sterre?",
+      "category": "listening",
+      "file": "wat-draagt-sterre-vraag.mp3"
     },
     {
       "id": "what-more-1",
@@ -5753,6 +9873,14 @@
       "file": "wat-is-eentje-minder-dan-9-vraag.mp3"
     },
     {
+      "id": "listen-question-kikker-regen-1",
+      "slug": "wat-komt-er-na-de-regen-vraag",
+      "text": "Wat komt er na de regen?",
+      "spokenText": "Wat komt er na de regen?",
+      "category": "listening",
+      "file": "wat-komt-er-na-de-regen-vraag.mp3"
+    },
+    {
       "id": "shape-pattern",
       "slug": "wat-komt-er-nu-vraag-maak-het-patroon-af",
       "text": "Wat komt er nu? Maak het patroon af.",
@@ -5761,12 +9889,204 @@
       "file": "wat-komt-er-nu-vraag-maak-het-patroon-af.mp3"
     },
     {
+      "id": "listen-question-draak-ster-1",
+      "slug": "wat-komt-er-terug-waar-sterre-vliegt-vraag",
+      "text": "Wat komt er terug waar Sterre vliegt?",
+      "spokenText": "Wat komt er terug waar Sterre vliegt?",
+      "category": "listening",
+      "file": "wat-komt-er-terug-waar-sterre-vliegt-vraag.mp3"
+    },
+    {
+      "id": "listen-question-muis-maan-1",
+      "slug": "wat-krijgt-de-muis-van-papa-vraag",
+      "text": "Wat krijgt de muis van papa?",
+      "spokenText": "Wat krijgt de muis van papa?",
+      "category": "listening",
+      "file": "wat-krijgt-de-muis-van-papa-vraag.mp3"
+    },
+    {
+      "id": "rhyme-aa-n-banaan",
+      "slug": "wat-rijmt-op-banaan-vraag",
+      "text": "Wat rijmt op banaan?",
+      "spokenText": "Wat rijmt op banaan?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-banaan-vraag.mp3"
+    },
+    {
+      "id": "rhyme-ee-r-beer",
+      "slug": "wat-rijmt-op-beer-vraag",
+      "text": "Wat rijmt op beer?",
+      "spokenText": "Wat rijmt op beer?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-beer-vraag.mp3"
+    },
+    {
+      "id": "rhyme-oo-s-doos",
+      "slug": "wat-rijmt-op-doos-vraag",
+      "text": "Wat rijmt op doos?",
+      "spokenText": "Wat rijmt op doos?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-doos-vraag.mp3"
+    },
+    {
+      "id": "rhyme-a-n-d-hand",
+      "slug": "wat-rijmt-op-hand-vraag",
+      "text": "Wat rijmt op hand?",
+      "spokenText": "Wat rijmt op hand?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-hand-vraag.mp3"
+    },
+    {
+      "id": "rhyme-ui-s-huis",
+      "slug": "wat-rijmt-op-huis-vraag",
+      "text": "Wat rijmt op huis?",
+      "spokenText": "Wat rijmt op huis?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-huis-vraag.mp3"
+    },
+    {
+      "id": "rhyme-aa-n-maan",
+      "slug": "wat-rijmt-op-maan-vraag",
+      "text": "Wat rijmt op maan?",
+      "spokenText": "Wat rijmt op maan?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-maan-vraag.mp3"
+    },
+    {
+      "id": "rhyme-ui-s-muis",
+      "slug": "wat-rijmt-op-muis-vraag",
+      "text": "Wat rijmt op muis?",
+      "spokenText": "Wat rijmt op muis?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-muis-vraag.mp3"
+    },
+    {
+      "id": "rhyme-uu-r-muur",
+      "slug": "wat-rijmt-op-muur-vraag",
+      "text": "Wat rijmt op muur?",
+      "spokenText": "Wat rijmt op muur?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-muur-vraag.mp3"
+    },
+    {
+      "id": "rhyme-ee-r-peer",
+      "slug": "wat-rijmt-op-peer-vraag",
+      "text": "Wat rijmt op peer?",
+      "spokenText": "Wat rijmt op peer?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-peer-vraag.mp3"
+    },
+    {
+      "id": "rhyme-oo-s-roos",
+      "slug": "wat-rijmt-op-roos-vraag",
+      "text": "Wat rijmt op roos?",
+      "spokenText": "Wat rijmt op roos?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-roos-vraag.mp3"
+    },
+    {
+      "id": "rhyme-a-n-d-tand",
+      "slug": "wat-rijmt-op-tand-vraag",
+      "text": "Wat rijmt op tand?",
+      "spokenText": "Wat rijmt op tand?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-tand-vraag.mp3"
+    },
+    {
+      "id": "rhyme-uu-r-vuur",
+      "slug": "wat-rijmt-op-vuur-vraag",
+      "text": "Wat rijmt op vuur?",
+      "spokenText": "Wat rijmt op vuur?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-vuur-vraag.mp3"
+    },
+    {
+      "id": "listen-question-muis-kaas-0",
+      "slug": "wat-ruikt-de-muis-vraag",
+      "text": "Wat ruikt de muis?",
+      "spokenText": "Wat ruikt de muis?",
+      "category": "listening",
+      "file": "wat-ruikt-de-muis-vraag.mp3"
+    },
+    {
+      "id": "listen-question-uil-nacht-1",
+      "slug": "wat-telt-oeki-vraag",
+      "text": "Wat telt Oeki?",
+      "spokenText": "Wat telt Oeki?",
+      "category": "listening",
+      "file": "wat-telt-oeki-vraag.mp3"
+    },
+    {
+      "id": "listen-question-kikker-vlieg-0",
+      "slug": "wat-vangt-bram-vraag",
+      "text": "Wat vangt Bram?",
+      "spokenText": "Wat vangt Bram?",
+      "category": "listening",
+      "file": "wat-vangt-bram-vraag.mp3"
+    },
+    {
+      "id": "listen-question-poes-boom-1",
+      "slug": "wat-ziet-de-poes-in-de-boom-vraag",
+      "text": "Wat ziet de poes in de boom?",
+      "spokenText": "Wat ziet de poes in de boom?",
+      "category": "listening",
+      "file": "wat-ziet-de-poes-in-de-boom-vraag.mp3"
+    },
+    {
+      "id": "listen-question-beer-honing-0",
+      "slug": "wat-zoekt-de-beer-vraag",
+      "text": "Wat zoekt de beer?",
+      "spokenText": "Wat zoekt de beer?",
+      "category": "listening",
+      "file": "wat-zoekt-de-beer-vraag.mp3"
+    },
+    {
+      "id": "listen-question-konijn-wortel-0",
+      "slug": "wat-zoekt-hippie-vraag",
+      "text": "Wat zoekt Hippie?",
+      "spokenText": "Wat zoekt Hippie?",
+      "category": "listening",
+      "file": "wat-zoekt-hippie-vraag.mp3"
+    },
+    {
       "id": "praise-4",
       "slug": "wauw-uitroep",
       "text": "Wauw!",
       "spokenText": "Wauw!",
       "category": "praise",
       "file": "wauw-uitroep.mp3"
+    },
+    {
+      "id": "skip-missing-10",
+      "slug": "we-tellen-per-10-welk-getal-is-weg-vraag",
+      "text": "We tellen per 10. Welk getal is weg?",
+      "spokenText": "We tellen per tien. Welk getal is weg?",
+      "category": "skip-counting",
+      "file": "we-tellen-per-10-welk-getal-is-weg-vraag.mp3"
+    },
+    {
+      "id": "skip-missing-2",
+      "slug": "we-tellen-per-2-welk-getal-is-weg-vraag",
+      "text": "We tellen per 2. Welk getal is weg?",
+      "spokenText": "We tellen per twee. Welk getal is weg?",
+      "category": "skip-counting",
+      "file": "we-tellen-per-2-welk-getal-is-weg-vraag.mp3"
+    },
+    {
+      "id": "skip-missing-5",
+      "slug": "we-tellen-per-5-welk-getal-is-weg-vraag",
+      "text": "We tellen per 5. Welk getal is weg?",
+      "spokenText": "We tellen per vijf. Welk getal is weg?",
+      "category": "skip-counting",
+      "file": "we-tellen-per-5-welk-getal-is-weg-vraag.mp3"
+    },
+    {
+      "id": "profile-skin-web",
+      "slug": "web",
+      "text": "Web",
+      "spokenText": "Web",
+      "category": "profiles",
+      "file": "web.mp3"
     },
     {
       "id": "runtime-boss-defeat-webwoud",
@@ -6113,6 +10433,38 @@
       "file": "welk-plaatje-is-b-min-a-min-l-vraag.mp3"
     },
     {
+      "id": "blend-picture-banaan",
+      "slug": "welk-plaatje-is-b-min-a-min-n-min-aa-min-n-vraag",
+      "text": "Welk plaatje is b-a-n-aa-n?",
+      "spokenText": "Welk plaatje is buh aaa nnn aa nnn?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-b-min-a-min-n-min-aa-min-n-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-bel",
+      "slug": "welk-plaatje-is-b-min-e-min-l-vraag",
+      "text": "Welk plaatje is b-e-l?",
+      "spokenText": "Welk plaatje is buh eh lll?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-b-min-e-min-l-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-beer",
+      "slug": "welk-plaatje-is-b-min-ee-min-r-vraag",
+      "text": "Welk plaatje is b-ee-r?",
+      "spokenText": "Welk plaatje is buh ee rrr?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-b-min-ee-min-r-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-boek",
+      "slug": "welk-plaatje-is-b-min-oe-min-k-vraag",
+      "text": "Welk plaatje is b-oe-k?",
+      "spokenText": "Welk plaatje is buh oe kuh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-b-min-oe-min-k-vraag.mp3"
+    },
+    {
       "id": "blend-picture-boom",
       "slug": "welk-plaatje-is-b-min-oo-min-m-vraag",
       "text": "Welk plaatje is b-oo-m?",
@@ -6129,12 +10481,84 @@
       "file": "welk-plaatje-is-b-min-oo-min-t-vraag.mp3"
     },
     {
+      "id": "blend-picture-brood",
+      "slug": "welk-plaatje-is-b-min-r-min-oo-min-d-vraag",
+      "text": "Welk plaatje is b-r-oo-d?",
+      "spokenText": "Welk plaatje is buh rrr oo duh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-b-min-r-min-oo-min-d-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-deur",
+      "slug": "welk-plaatje-is-d-min-eu-min-r-vraag",
+      "text": "Welk plaatje is d-eu-r?",
+      "spokenText": "Welk plaatje is duh eu rrr?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-d-min-eu-min-r-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-doos",
+      "slug": "welk-plaatje-is-d-min-oo-min-s-vraag",
+      "text": "Welk plaatje is d-oo-s?",
+      "spokenText": "Welk plaatje is duh oo sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-d-min-oo-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-druif",
+      "slug": "welk-plaatje-is-d-min-r-min-ui-min-f-vraag",
+      "text": "Welk plaatje is d-r-ui-f?",
+      "spokenText": "Welk plaatje is duh rrr ui fff?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-d-min-r-min-ui-min-f-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-duim",
+      "slug": "welk-plaatje-is-d-min-ui-min-m-vraag",
+      "text": "Welk plaatje is d-ui-m?",
+      "spokenText": "Welk plaatje is duh ui mmm?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-d-min-ui-min-m-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-fiets",
+      "slug": "welk-plaatje-is-f-min-ie-min-t-min-s-vraag",
+      "text": "Welk plaatje is f-ie-t-s?",
+      "spokenText": "Welk plaatje is fff ie tuh sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-f-min-ie-min-t-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-foto",
+      "slug": "welk-plaatje-is-f-min-o-min-t-min-o-vraag",
+      "text": "Welk plaatje is f-o-t-o?",
+      "spokenText": "Welk plaatje is fff oh tuh oh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-f-min-o-min-t-min-o-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-hand",
+      "slug": "welk-plaatje-is-h-min-a-min-n-min-d-vraag",
+      "text": "Welk plaatje is h-a-n-d?",
+      "spokenText": "Welk plaatje is hhh aaa nnn duh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-h-min-a-min-n-min-d-vraag.mp3"
+    },
+    {
       "id": "blend-picture-hond",
       "slug": "welk-plaatje-is-h-min-o-min-n-min-d-vraag",
       "text": "Welk plaatje is h-o-n-d?",
       "spokenText": "Welk plaatje is hhh oh nnn duh?",
       "category": "phonics",
       "file": "welk-plaatje-is-h-min-o-min-n-min-d-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-hoed",
+      "slug": "welk-plaatje-is-h-min-oe-min-d-vraag",
+      "text": "Welk plaatje is h-oe-d?",
+      "spokenText": "Welk plaatje is hhh oe duh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-h-min-oe-min-d-vraag.mp3"
     },
     {
       "id": "blend-picture-huis",
@@ -6153,12 +10577,60 @@
       "file": "welk-plaatje-is-k-min-a-min-t-vraag.mp3"
     },
     {
+      "id": "blend-picture-kaas",
+      "slug": "welk-plaatje-is-k-min-aa-min-s-vraag",
+      "text": "Welk plaatje is k-aa-s?",
+      "spokenText": "Welk plaatje is kuh aa sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-k-min-aa-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-kip",
+      "slug": "welk-plaatje-is-k-min-i-min-p-vraag",
+      "text": "Welk plaatje is k-i-p?",
+      "spokenText": "Welk plaatje is kuh ih puh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-k-min-i-min-p-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-koe",
+      "slug": "welk-plaatje-is-k-min-oe-vraag",
+      "text": "Welk plaatje is k-oe?",
+      "spokenText": "Welk plaatje is kuh oe?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-k-min-oe-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-kroon",
+      "slug": "welk-plaatje-is-k-min-r-min-oo-min-n-vraag",
+      "text": "Welk plaatje is k-r-oo-n?",
+      "spokenText": "Welk plaatje is kuh rrr oo nnn?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-k-min-r-min-oo-min-n-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-lamp",
+      "slug": "welk-plaatje-is-l-min-a-min-m-min-p-vraag",
+      "text": "Welk plaatje is l-a-m-p?",
+      "spokenText": "Welk plaatje is lll aaa mmm puh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-l-min-a-min-m-min-p-vraag.mp3"
+    },
+    {
       "id": "blend-picture-maan",
       "slug": "welk-plaatje-is-m-min-aa-min-n-vraag",
       "text": "Welk plaatje is m-aa-n?",
       "spokenText": "Welk plaatje is mmm aa nnn?",
       "category": "phonics",
       "file": "welk-plaatje-is-m-min-aa-min-n-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-mes",
+      "slug": "welk-plaatje-is-m-min-e-min-s-vraag",
+      "text": "Welk plaatje is m-e-s?",
+      "spokenText": "Welk plaatje is mmm eh sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-m-min-e-min-s-vraag.mp3"
     },
     {
       "id": "blend-picture-muis",
@@ -6169,12 +10641,52 @@
       "file": "welk-plaatje-is-m-min-ui-min-s-vraag.mp3"
     },
     {
+      "id": "blend-picture-muur",
+      "slug": "welk-plaatje-is-m-min-uu-min-r-vraag",
+      "text": "Welk plaatje is m-uu-r?",
+      "spokenText": "Welk plaatje is mmm uu rrr?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-m-min-uu-min-r-vraag.mp3"
+    },
+    {
       "id": "blend-picture-neus",
       "slug": "welk-plaatje-is-n-min-eu-min-s-vraag",
       "text": "Welk plaatje is n-eu-s?",
       "spokenText": "Welk plaatje is nnn eu sss?",
       "category": "phonics",
       "file": "welk-plaatje-is-n-min-eu-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-pen",
+      "slug": "welk-plaatje-is-p-min-e-min-n-vraag",
+      "text": "Welk plaatje is p-e-n?",
+      "spokenText": "Welk plaatje is puh eh nnn?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-p-min-e-min-n-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-peer",
+      "slug": "welk-plaatje-is-p-min-ee-min-r-vraag",
+      "text": "Welk plaatje is p-ee-r?",
+      "spokenText": "Welk plaatje is puh ee rrr?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-p-min-ee-min-r-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-poes",
+      "slug": "welk-plaatje-is-p-min-oe-min-s-vraag",
+      "text": "Welk plaatje is p-oe-s?",
+      "spokenText": "Welk plaatje is puh oe sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-p-min-oe-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-raam",
+      "slug": "welk-plaatje-is-r-min-aa-min-m-vraag",
+      "text": "Welk plaatje is r-aa-m?",
+      "spokenText": "Welk plaatje is rrr aa mmm?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-r-min-aa-min-m-vraag.mp3"
     },
     {
       "id": "blend-picture-roos",
@@ -6201,12 +10713,60 @@
       "file": "welk-plaatje-is-s-min-t-min-e-min-r-vraag.mp3"
     },
     {
+      "id": "blend-picture-tand",
+      "slug": "welk-plaatje-is-t-min-a-min-n-min-d-vraag",
+      "text": "Welk plaatje is t-a-n-d?",
+      "spokenText": "Welk plaatje is tuh aaa nnn duh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-t-min-a-min-n-min-d-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-trein",
+      "slug": "welk-plaatje-is-t-min-r-min-ei-min-n-vraag",
+      "text": "Welk plaatje is t-r-ei-n?",
+      "spokenText": "Welk plaatje is tuh rrr ei nnn?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-t-min-r-min-ei-min-n-vraag.mp3"
+    },
+    {
       "id": "blend-picture-vis",
       "slug": "welk-plaatje-is-v-min-i-min-s-vraag",
       "text": "Welk plaatje is v-i-s?",
       "spokenText": "Welk plaatje is vvv ih sss?",
       "category": "phonics",
       "file": "welk-plaatje-is-v-min-i-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-vos",
+      "slug": "welk-plaatje-is-v-min-o-min-s-vraag",
+      "text": "Welk plaatje is v-o-s?",
+      "spokenText": "Welk plaatje is vvv oh sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-v-min-o-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-vuur",
+      "slug": "welk-plaatje-is-v-min-uu-min-r-vraag",
+      "text": "Welk plaatje is v-uu-r?",
+      "spokenText": "Welk plaatje is vvv uu rrr?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-v-min-uu-min-r-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-wiel",
+      "slug": "welk-plaatje-is-w-min-ie-min-l-vraag",
+      "text": "Welk plaatje is w-ie-l?",
+      "spokenText": "Welk plaatje is www ie lll?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-w-min-ie-min-l-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-zeep",
+      "slug": "welk-plaatje-is-z-min-ee-min-p-vraag",
+      "text": "Welk plaatje is z-ee-p?",
+      "spokenText": "Welk plaatje is zzz ee puh?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-z-min-ee-min-p-vraag.mp3"
     },
     {
       "id": "blend-picture-zon",
@@ -6257,12 +10817,36 @@
       "file": "welk-woord-begint-met-de-e-min-klank-vraag.mp3"
     },
     {
+      "id": "begin-sound-ee",
+      "slug": "welk-woord-begint-met-de-ee-min-klank-vraag",
+      "text": "Welk woord begint met de ee-klank?",
+      "spokenText": "Welk woord begint met de ee klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-ee-min-klank-vraag.mp3"
+    },
+    {
+      "id": "begin-sound-ei",
+      "slug": "welk-woord-begint-met-de-ei-min-klank-vraag",
+      "text": "Welk woord begint met de ei-klank?",
+      "spokenText": "Welk woord begint met de ei klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-ei-min-klank-vraag.mp3"
+    },
+    {
       "id": "begin-sound-eu",
       "slug": "welk-woord-begint-met-de-eu-min-klank-vraag",
       "text": "Welk woord begint met de eu-klank?",
       "spokenText": "Welk woord begint met de eu klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-eu-min-klank-vraag.mp3"
+    },
+    {
+      "id": "begin-sound-f",
+      "slug": "welk-woord-begint-met-de-f-min-klank-vraag",
+      "text": "Welk woord begint met de f-klank?",
+      "spokenText": "Welk woord begint met de fff klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-f-min-klank-vraag.mp3"
     },
     {
       "id": "begin-sound-h",
@@ -6279,6 +10863,14 @@
       "spokenText": "Welk woord begint met de ih klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-i-min-klank-vraag.mp3"
+    },
+    {
+      "id": "begin-sound-ie",
+      "slug": "welk-woord-begint-met-de-ie-min-klank-vraag",
+      "text": "Welk woord begint met de ie-klank?",
+      "spokenText": "Welk woord begint met de ie klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-ie-min-klank-vraag.mp3"
     },
     {
       "id": "begin-sound-k",
@@ -6305,6 +10897,14 @@
       "file": "welk-woord-begint-met-de-letter-a-vraag.mp3"
     },
     {
+      "id": "letter-word-aa",
+      "slug": "welk-woord-begint-met-de-letter-aa-vraag",
+      "text": "Welk woord begint met de letter AA?",
+      "spokenText": "Welk woord begint met de letter aa?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-aa-vraag.mp3"
+    },
+    {
       "id": "letter-word-b",
       "slug": "welk-woord-begint-met-de-letter-b-vraag",
       "text": "Welk woord begint met de letter B?",
@@ -6329,6 +10929,30 @@
       "file": "welk-woord-begint-met-de-letter-e-vraag.mp3"
     },
     {
+      "id": "letter-word-ee",
+      "slug": "welk-woord-begint-met-de-letter-ee-vraag",
+      "text": "Welk woord begint met de letter EE?",
+      "spokenText": "Welk woord begint met de letter ee?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-ee-vraag.mp3"
+    },
+    {
+      "id": "letter-word-eu",
+      "slug": "welk-woord-begint-met-de-letter-eu-vraag",
+      "text": "Welk woord begint met de letter EU?",
+      "spokenText": "Welk woord begint met de letter eu?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-eu-vraag.mp3"
+    },
+    {
+      "id": "letter-word-f",
+      "slug": "welk-woord-begint-met-de-letter-f-vraag",
+      "text": "Welk woord begint met de letter F?",
+      "spokenText": "Welk woord begint met de letter fff?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-f-vraag.mp3"
+    },
+    {
       "id": "letter-word-h",
       "slug": "welk-woord-begint-met-de-letter-h-vraag",
       "text": "Welk woord begint met de letter H?",
@@ -6343,6 +10967,22 @@
       "spokenText": "Welk woord begint met de letter ih?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-i-vraag.mp3"
+    },
+    {
+      "id": "letter-word-ie",
+      "slug": "welk-woord-begint-met-de-letter-ie-vraag",
+      "text": "Welk woord begint met de letter IE?",
+      "spokenText": "Welk woord begint met de letter ie?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-ie-vraag.mp3"
+    },
+    {
+      "id": "letter-word-ij",
+      "slug": "welk-woord-begint-met-de-letter-ij-vraag",
+      "text": "Welk woord begint met de letter IJ?",
+      "spokenText": "Welk woord begint met de letter ij?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-ij-vraag.mp3"
     },
     {
       "id": "letter-word-k",
@@ -6385,6 +11025,22 @@
       "file": "welk-woord-begint-met-de-letter-o-vraag.mp3"
     },
     {
+      "id": "letter-word-oe",
+      "slug": "welk-woord-begint-met-de-letter-oe-vraag",
+      "text": "Welk woord begint met de letter OE?",
+      "spokenText": "Welk woord begint met de letter oe?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-oe-vraag.mp3"
+    },
+    {
+      "id": "letter-word-oo",
+      "slug": "welk-woord-begint-met-de-letter-oo-vraag",
+      "text": "Welk woord begint met de letter OO?",
+      "spokenText": "Welk woord begint met de letter oo?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-oo-vraag.mp3"
+    },
+    {
       "id": "letter-word-p",
       "slug": "welk-woord-begint-met-de-letter-p-vraag",
       "text": "Welk woord begint met de letter P?",
@@ -6425,12 +11081,28 @@
       "file": "welk-woord-begint-met-de-letter-u-vraag.mp3"
     },
     {
+      "id": "letter-word-ui",
+      "slug": "welk-woord-begint-met-de-letter-ui-vraag",
+      "text": "Welk woord begint met de letter UI?",
+      "spokenText": "Welk woord begint met de letter ui?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-ui-vraag.mp3"
+    },
+    {
       "id": "letter-word-v",
       "slug": "welk-woord-begint-met-de-letter-v-vraag",
       "text": "Welk woord begint met de letter V?",
       "spokenText": "Welk woord begint met de letter vvv?",
       "category": "letters",
       "file": "welk-woord-begint-met-de-letter-v-vraag.mp3"
+    },
+    {
+      "id": "letter-word-w",
+      "slug": "welk-woord-begint-met-de-letter-w-vraag",
+      "text": "Welk woord begint met de letter W?",
+      "spokenText": "Welk woord begint met de letter www?",
+      "category": "letters",
+      "file": "welk-woord-begint-met-de-letter-w-vraag.mp3"
     },
     {
       "id": "letter-word-z",
@@ -6465,12 +11137,28 @@
       "file": "welk-woord-begint-met-de-o-min-klank-vraag.mp3"
     },
     {
+      "id": "begin-sound-oe",
+      "slug": "welk-woord-begint-met-de-oe-min-klank-vraag",
+      "text": "Welk woord begint met de oe-klank?",
+      "spokenText": "Welk woord begint met de oe klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-oe-min-klank-vraag.mp3"
+    },
+    {
       "id": "begin-sound-oo",
       "slug": "welk-woord-begint-met-de-oo-min-klank-vraag",
       "text": "Welk woord begint met de oo-klank?",
       "spokenText": "Welk woord begint met de oo klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-oo-min-klank-vraag.mp3"
+    },
+    {
+      "id": "begin-sound-p",
+      "slug": "welk-woord-begint-met-de-p-min-klank-vraag",
+      "text": "Welk woord begint met de p-klank?",
+      "spokenText": "Welk woord begint met de puh klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-p-min-klank-vraag.mp3"
     },
     {
       "id": "begin-sound-r",
@@ -6505,12 +11193,28 @@
       "file": "welk-woord-begint-met-de-ui-min-klank-vraag.mp3"
     },
     {
+      "id": "begin-sound-uu",
+      "slug": "welk-woord-begint-met-de-uu-min-klank-vraag",
+      "text": "Welk woord begint met de uu-klank?",
+      "spokenText": "Welk woord begint met de uu klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-uu-min-klank-vraag.mp3"
+    },
+    {
       "id": "begin-sound-v",
       "slug": "welk-woord-begint-met-de-v-min-klank-vraag",
       "text": "Welk woord begint met de v-klank?",
       "spokenText": "Welk woord begint met de vvv klank?",
       "category": "phonics",
       "file": "welk-woord-begint-met-de-v-min-klank-vraag.mp3"
+    },
+    {
+      "id": "begin-sound-w",
+      "slug": "welk-woord-begint-met-de-w-min-klank-vraag",
+      "text": "Welk woord begint met de w-klank?",
+      "spokenText": "Welk woord begint met de www klank?",
+      "category": "phonics",
+      "file": "welk-woord-begint-met-de-w-min-klank-vraag.mp3"
     },
     {
       "id": "begin-sound-z",
@@ -6561,12 +11265,36 @@
       "file": "welk-woord-eindigt-met-de-e-min-klank-vraag.mp3"
     },
     {
+      "id": "end-sound-ee",
+      "slug": "welk-woord-eindigt-met-de-ee-min-klank-vraag",
+      "text": "Welk woord eindigt met de ee-klank?",
+      "spokenText": "Welk woord eindigt met de ee klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-ee-min-klank-vraag.mp3"
+    },
+    {
+      "id": "end-sound-ei",
+      "slug": "welk-woord-eindigt-met-de-ei-min-klank-vraag",
+      "text": "Welk woord eindigt met de ei-klank?",
+      "spokenText": "Welk woord eindigt met de ei klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-ei-min-klank-vraag.mp3"
+    },
+    {
       "id": "end-sound-eu",
       "slug": "welk-woord-eindigt-met-de-eu-min-klank-vraag",
       "text": "Welk woord eindigt met de eu-klank?",
       "spokenText": "Welk woord eindigt met de eu klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-eu-min-klank-vraag.mp3"
+    },
+    {
+      "id": "end-sound-f",
+      "slug": "welk-woord-eindigt-met-de-f-min-klank-vraag",
+      "text": "Welk woord eindigt met de f-klank?",
+      "spokenText": "Welk woord eindigt met de fff klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-f-min-klank-vraag.mp3"
     },
     {
       "id": "end-sound-h",
@@ -6583,6 +11311,14 @@
       "spokenText": "Welk woord eindigt met de ih klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-i-min-klank-vraag.mp3"
+    },
+    {
+      "id": "end-sound-ie",
+      "slug": "welk-woord-eindigt-met-de-ie-min-klank-vraag",
+      "text": "Welk woord eindigt met de ie-klank?",
+      "spokenText": "Welk woord eindigt met de ie klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-ie-min-klank-vraag.mp3"
     },
     {
       "id": "end-sound-k",
@@ -6625,12 +11361,28 @@
       "file": "welk-woord-eindigt-met-de-o-min-klank-vraag.mp3"
     },
     {
+      "id": "end-sound-oe",
+      "slug": "welk-woord-eindigt-met-de-oe-min-klank-vraag",
+      "text": "Welk woord eindigt met de oe-klank?",
+      "spokenText": "Welk woord eindigt met de oe klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-oe-min-klank-vraag.mp3"
+    },
+    {
       "id": "end-sound-oo",
       "slug": "welk-woord-eindigt-met-de-oo-min-klank-vraag",
       "text": "Welk woord eindigt met de oo-klank?",
       "spokenText": "Welk woord eindigt met de oo klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-oo-min-klank-vraag.mp3"
+    },
+    {
+      "id": "end-sound-p",
+      "slug": "welk-woord-eindigt-met-de-p-min-klank-vraag",
+      "text": "Welk woord eindigt met de p-klank?",
+      "spokenText": "Welk woord eindigt met de puh klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-p-min-klank-vraag.mp3"
     },
     {
       "id": "end-sound-r",
@@ -6665,6 +11417,14 @@
       "file": "welk-woord-eindigt-met-de-ui-min-klank-vraag.mp3"
     },
     {
+      "id": "end-sound-uu",
+      "slug": "welk-woord-eindigt-met-de-uu-min-klank-vraag",
+      "text": "Welk woord eindigt met de uu-klank?",
+      "spokenText": "Welk woord eindigt met de uu klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-uu-min-klank-vraag.mp3"
+    },
+    {
       "id": "end-sound-v",
       "slug": "welk-woord-eindigt-met-de-v-min-klank-vraag",
       "text": "Welk woord eindigt met de v-klank?",
@@ -6673,12 +11433,28 @@
       "file": "welk-woord-eindigt-met-de-v-min-klank-vraag.mp3"
     },
     {
+      "id": "end-sound-w",
+      "slug": "welk-woord-eindigt-met-de-w-min-klank-vraag",
+      "text": "Welk woord eindigt met de w-klank?",
+      "spokenText": "Welk woord eindigt met de www klank?",
+      "category": "phonics",
+      "file": "welk-woord-eindigt-met-de-w-min-klank-vraag.mp3"
+    },
+    {
       "id": "end-sound-z",
       "slug": "welk-woord-eindigt-met-de-z-min-klank-vraag",
       "text": "Welk woord eindigt met de z-klank?",
       "spokenText": "Welk woord eindigt met de zzz klank?",
       "category": "phonics",
       "file": "welk-woord-eindigt-met-de-z-min-klank-vraag.mp3"
+    },
+    {
+      "id": "minimal-pairs-1",
+      "slug": "welk-woord-hoor-je-vraag-tik-op-het-plaatje",
+      "text": "Welk woord hoor je? Tik op het plaatje.",
+      "spokenText": "Welk woord hoor je? Tik op het plaatje.",
+      "category": "minimal-pairs",
+      "file": "welk-woord-hoor-je-vraag-tik-op-het-plaatje.mp3"
     },
     {
       "id": "meet-3",
@@ -7137,6 +11913,94 @@
       "file": "welke-twee-samen-maken-9-vraag.mp3"
     },
     {
+      "id": "bond-pick-0",
+      "slug": "welke-vriend-maakt-0-tot-10-vraag",
+      "text": "Welke vriend maakt 0 tot 10?",
+      "spokenText": "Welke vriend maakt 0 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-0-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-1",
+      "slug": "welke-vriend-maakt-1-tot-10-vraag",
+      "text": "Welke vriend maakt 1 tot 10?",
+      "spokenText": "Welke vriend maakt 1 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-1-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-10",
+      "slug": "welke-vriend-maakt-10-tot-10-vraag",
+      "text": "Welke vriend maakt 10 tot 10?",
+      "spokenText": "Welke vriend maakt 10 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-10-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-2",
+      "slug": "welke-vriend-maakt-2-tot-10-vraag",
+      "text": "Welke vriend maakt 2 tot 10?",
+      "spokenText": "Welke vriend maakt 2 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-2-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-3",
+      "slug": "welke-vriend-maakt-3-tot-10-vraag",
+      "text": "Welke vriend maakt 3 tot 10?",
+      "spokenText": "Welke vriend maakt 3 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-3-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-4",
+      "slug": "welke-vriend-maakt-4-tot-10-vraag",
+      "text": "Welke vriend maakt 4 tot 10?",
+      "spokenText": "Welke vriend maakt 4 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-4-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-5",
+      "slug": "welke-vriend-maakt-5-tot-10-vraag",
+      "text": "Welke vriend maakt 5 tot 10?",
+      "spokenText": "Welke vriend maakt 5 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-5-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-6",
+      "slug": "welke-vriend-maakt-6-tot-10-vraag",
+      "text": "Welke vriend maakt 6 tot 10?",
+      "spokenText": "Welke vriend maakt 6 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-6-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-7",
+      "slug": "welke-vriend-maakt-7-tot-10-vraag",
+      "text": "Welke vriend maakt 7 tot 10?",
+      "spokenText": "Welke vriend maakt 7 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-7-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-8",
+      "slug": "welke-vriend-maakt-8-tot-10-vraag",
+      "text": "Welke vriend maakt 8 tot 10?",
+      "spokenText": "Welke vriend maakt 8 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-8-tot-10-vraag.mp3"
+    },
+    {
+      "id": "bond-pick-9",
+      "slug": "welke-vriend-maakt-9-tot-10-vraag",
+      "text": "Welke vriend maakt 9 tot 10?",
+      "spokenText": "Welke vriend maakt 9 tot 10?",
+      "category": "bonds",
+      "file": "welke-vriend-maakt-9-tot-10-vraag.mp3"
+    },
+    {
       "id": "runtime-region-welcome-bouwdorp",
       "slug": "welkom-in-bouwdorp-uitroep-het-bouwdorp-viel-om-samen-bouwen-we-het-stukje-voor-stukje-weer-op-u",
       "text": "Welkom in Bouwdorp! Het Bouwdorp viel om. Samen bouwen we het stukje voor stukje weer op!",
@@ -7185,6 +12049,30 @@
       "file": "welkom-in-webwoud-uitroep-in-het-webwoud-raakte-een-vriendje-verstrikt-help-het-los-uitroep.mp3"
     },
     {
+      "id": "listen-question-vos-verjaardag-0",
+      "slug": "wie-is-er-jarig-vraag",
+      "text": "Wie is er jarig?",
+      "spokenText": "Wie is er jarig?",
+      "category": "listening",
+      "file": "wie-is-er-jarig-vraag.mp3"
+    },
+    {
+      "id": "listen-question-poes-boom-0",
+      "slug": "wie-klimt-er-in-de-boom-vraag",
+      "text": "Wie klimt er in de boom?",
+      "spokenText": "Wie klimt er in de boom?",
+      "category": "listening",
+      "file": "wie-klimt-er-in-de-boom-vraag.mp3"
+    },
+    {
+      "id": "word-wiel",
+      "slug": "wiel",
+      "text": "wiel",
+      "spokenText": "wiel",
+      "category": "reading-word",
+      "file": "wiel.mp3"
+    },
+    {
       "id": "wordbuild-success",
       "slug": "woord-gemaakt-uitroep",
       "text": "Woord gemaakt!",
@@ -7215,6 +12103,14 @@
       "spokenText": "zzz... oh... nnn... zon",
       "category": "phonics",
       "file": "z-o-n-zon.mp3"
+    },
+    {
+      "id": "word-zeep",
+      "slug": "zeep",
+      "text": "zeep",
+      "spokenText": "zeep",
+      "category": "reading-word",
+      "file": "zeep.mp3"
     },
     {
       "id": "zeg-8",
@@ -7431,6 +12327,14 @@
       "spokenText": "Zoek de paren: het getal en het groepje met even veel.",
       "category": "number-prompts",
       "file": "zoek-de-paren-het-getal-en-het-groepje-met-even-veel.mp3"
+    },
+    {
+      "id": "minigame-reteach-11",
+      "slug": "zoek-het-kleinste-getal-dat-nog-over-is",
+      "text": "Zoek het kleinste getal dat nog over is.",
+      "spokenText": "Zoek het kleinste getal dat nog over is.",
+      "category": "minigame-reteach",
+      "file": "zoek-het-kleinste-getal-dat-nog-over-is.mp3"
     },
     {
       "id": "zoem-prompt",

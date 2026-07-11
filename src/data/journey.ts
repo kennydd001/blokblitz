@@ -33,6 +33,7 @@ const MODE_EMOJI: Record<string, string> = {
   fill: "🔟",
   splitbord: "⚖️",
   klankgrot: "🔊",
+  rijmspel: "🌊",
   letterkompas: "🧭",
   tientalhuis: "🏠",
   zoemroute: "🐝",
@@ -40,6 +41,7 @@ const MODE_EMOJI: Record<string, string> = {
   woordbouwplaats: "🔤",
   tienbrug: "🌉",
   dubbelspel: "✌️",
+  sprongpad: "🦘",
   vriendjes: "🤝",
   vormenburcht: "🔷",
   kloktoren: "🕐",
@@ -59,6 +61,7 @@ const MODE_TITLE: Record<string, string> = {
   fill: "Vul de tien",
   splitbord: "Splitsbord",
   klankgrot: "Klankgrot",
+  rijmspel: "Rijmrivier",
   letterkompas: "Letterkompas",
   tientalhuis: "Tientalhuis",
   zoemroute: "Zoemroute",
@@ -66,6 +69,7 @@ const MODE_TITLE: Record<string, string> = {
   woordbouwplaats: "Woordbouwplaats",
   tienbrug: "Tienbrug",
   dubbelspel: "Dubbelspel",
+  sprongpad: "Sprongpad",
   vriendjes: "Vriendjes van 10",
   vormenburcht: "Vormenburcht",
   kloktoren: "Kloktoren",
@@ -85,6 +89,7 @@ const MODE_ACTION: Record<string, string> = {
   fill: "Maak het doelgetal vol.",
   splitbord: "Vul de twee vakjes samen tot het getal.",
   klankgrot: "Luister en kies het juiste plaatje.",
+  rijmspel: "Luister naar het einde en vind wat rijmt.",
   letterkompas: "Hoor de klank en kies de letter.",
   tientalhuis: "Maak een tiener: tien en nog wat.",
   zoemroute: "Zoem de klanken samen tot een woord.",
@@ -92,6 +97,7 @@ const MODE_ACTION: Record<string, string> = {
   woordbouwplaats: "Vind de klank die in het lege vakje hoort.",
   tienbrug: "Steek over: eerst de tien, dan de rest.",
   dubbelspel: "Dubbel zoveel, of even en oneven.",
+  sprongpad: "Spring verder per 2, 5 of 10.",
   vriendjes: "Zoek de vriend die samen 10 maakt.",
   vormenburcht: "Herken de vorm, tel de hoeken, maak het patroon af.",
   kloktoren: "Lees de klok: hele en halve uren.",
@@ -112,10 +118,10 @@ interface RegionPlan {
 
 const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
-  { region: "muntgrot", stops: ["klankgrot", "luisterbos", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
+  { region: "muntgrot", stops: ["klankgrot", "rijmspel", "luisterbos", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
   { region: "ijsbaan", stops: ["compare", "letterkompas", "vriendjes", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
   { region: "webwoud", stops: ["splitbord", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
-  { region: "bouwdorp", stops: ["fill", "getallenlijn", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
+  { region: "bouwdorp", stops: ["fill", "getallenlijn", "sprongpad", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
   { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "kloktoren", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];
 

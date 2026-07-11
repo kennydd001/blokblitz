@@ -54,6 +54,7 @@ export function recentAccuracy(attempts: AttemptLog[], window = 20, domain?: str
  */
 export const SCENE_DOMAINS: Record<string, string> = {
   klankgrot: "literacy-phonemic",
+  rijmspel: "literacy-phonemic",
   letterkompas: "literacy-reading",
   zoemroute: "literacy-reading",
   woordbouwplaats: "literacy-reading",
@@ -62,6 +63,7 @@ export const SCENE_DOMAINS: Record<string, string> = {
   getallenlijn: "math-number",
   tienbrug: "math-operations",
   dubbelspel: "math-operations",
+  sprongpad: "math-number",
   vriendjes: "math-number",
   vormenburcht: "math-geometry",
   kloktoren: "math-measurement",

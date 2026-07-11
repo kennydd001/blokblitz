@@ -20,6 +20,9 @@ export class SceneManager {
   }
 
   goTo(name: string, params?: unknown): void {
+    // A scene change is a hard audio boundary. No delayed line from the old
+    // scene may continue over the next activity.
+    this.game.voice.cancel();
     this.current?.unmount();
     const factory = this.factories.get(name);
     if (!factory) throw new Error(`Unknown scene: ${name}`);
@@ -36,4 +39,3 @@ export class SceneManager {
     return this.current?.name;
   }
 }
-

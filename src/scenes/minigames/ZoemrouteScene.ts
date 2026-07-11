@@ -70,7 +70,7 @@ export class ZoemrouteScene extends MiniGameScene {
     return wrap;
   }
 
-  // Speak the stretched, connected blend, then the whole word.
+  // Replay the natural whole-word clip slowly while the sound stones stay visible.
   protected replayPrompt(): void {
     this.zoem(0.7);
   }

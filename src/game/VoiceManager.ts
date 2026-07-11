@@ -1,14 +1,12 @@
 import type { GameSettings } from "../education/types";
 import { VOICE_LINE_BASE_PATH, VOICE_LINE_SLUGS, voiceLineFile, voiceLineSlug } from "./voiceLineManifest";
 
-// Spoken Dutch helper. For a 4-7 year old who can't read yet, hearing the task
-// ("Tik de grootste!"), the count ("een... twee... drie...") and warm praise is
-// the single biggest clarity win. Prefer local ElevenLabs clips; fall back to Web
-// Speech only for dynamic lines that were not pre-generated.
+// All spoken gameplay audio is local. One shared queue prevents ordinary voice,
+// rewards, stories and reading clips from ever talking over one another.
 
 const NUMBER_WORDS = [
   "nul",
-  "\u00e9\u00e9n",
+  "één",
   "twee",
   "drie",
   "vier",
@@ -32,34 +30,26 @@ const NUMBER_WORDS = [
 const PRAISE = ["Goed zo!", "Knap!", "Super!", "Wauw!", "Yes!", "Top!", "Hoera!", "Heel goed!"];
 const ENCOURAGE = ["Bijna! Probeer nog eens.", "Tel rustig mee.", "Kijk nog eens goed.", "Je kan het!"];
 
-type SpeechSynth = typeof window.speechSynthesis;
+export interface VoicePlaybackOptions {
+  interrupt?: boolean;
+  rate?: number;
+  pitch?: number;
+}
+
+interface QueuedClip {
+  src: string;
+  label: string;
+  rate: number;
+}
 
 export class VoiceManager {
   private enabled = true;
   private praiseIndex = 0;
   private countTimers: number[] = [];
-  private activeAudio = new Set<HTMLAudioElement>();
+  private queue: QueuedClip[] = [];
+  private activeAudio?: HTMLAudioElement;
   private duckHook?: (durationMs: number) => void;
-  private cachedVoice?: SpeechSynthesisVoice;
-
-  constructor() {
-    // Warm up the voice list. Chrome (esp. on a tablet) returns an empty
-    // getVoices() on the very first synchronous call, so without this the very
-    // first spoken line ("Op een nacht viel er een sterretje...") gets read by
-    // the English default voice. Caching on `voiceschanged` guarantees Dutch.
-    const synth = this.synth;
-    if (!synth) return;
-    const refresh = (): void => {
-      const voice = this.pickVoice(synth);
-      if (voice) this.cachedVoice = voice;
-    };
-    refresh();
-    try {
-      synth.addEventListener?.("voiceschanged", refresh);
-    } catch {
-      // Older engines: getVoices was already populated by refresh() above.
-    }
-  }
+  private readonly missingWarnings = new Set<string>();
 
   setSettings(settings: GameSettings): void {
     this.enabled = settings.voice;
@@ -71,112 +61,41 @@ export class VoiceManager {
     if (!enabled) this.cancel();
   }
 
-  /** Hook so the audio engine can duck music/SFX while the voice speaks. */
   setDuckHook(fn: (durationMs: number) => void): void {
     this.duckHook = fn;
   }
 
-  private get synth(): SpeechSynth | undefined {
-    if (typeof window === "undefined") return undefined;
-    return window.speechSynthesis;
-  }
-
-  private pickVoice(synth: SpeechSynth): SpeechSynthesisVoice | undefined {
-    if (this.cachedVoice) return this.cachedVoice;
-    const voices = synth.getVoices?.() ?? [];
-    return voices.find((v) => /^nl/i.test(v.lang)) ?? voices.find((v) => /dutch|nederlands/i.test(v.name));
-  }
-
-  private stopCurrentSpeech(): void {
-    for (const audio of this.activeAudio) {
-      try {
-        audio.pause();
-        audio.currentTime = 0;
-      } catch {
-        // ignore
-      }
-    }
-    this.activeAudio.clear();
-    try {
-      this.synth?.cancel();
-    } catch {
-      // ignore
-    }
-  }
-
-  private speakBrowser(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
-    const synth = this.synth;
-    if (!this.enabled || !synth || typeof SpeechSynthesisUtterance === "undefined") return;
-    try {
-      this.duckHook?.(text.length * 65 + 450);
-      if (options.interrupt) this.stopCurrentSpeech();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "nl-NL";
-      utterance.rate = options.rate ?? 0.95;
-      utterance.pitch = options.pitch ?? 1.12;
-      utterance.volume = 1;
-      const voice = this.pickVoice(synth);
-      if (voice) utterance.voice = voice;
-      synth.speak(utterance);
-    } catch {
-      // Speech is a best-effort enhancement; never let it break gameplay.
-    }
-  }
-
-  private playLocalClip(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): boolean {
-    if (typeof Audio === "undefined") return false;
+  /** Queue any approved local clip on the same channel as sentence voice. */
+  playLocalFile(src: string, label: string, options: VoicePlaybackOptions = {}): boolean {
+    if (!this.enabled || typeof Audio === "undefined") return false;
     if (typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent)) return false;
+    if (options.interrupt) this.interruptPlayback();
+    this.queue.push({
+      src,
+      label,
+      rate: Math.max(0.55, Math.min(1.35, options.rate ?? 1))
+    });
+    this.playNext();
+    return true;
+  }
+
+  speak(text: string, options: VoicePlaybackOptions = {}): void {
+    if (!this.enabled) return;
     const slug = voiceLineSlug(text);
-    if (!VOICE_LINE_SLUGS.has(slug)) return false;
-
-    try {
-      if (options.interrupt) this.stopCurrentSpeech();
-      this.duckHook?.(text.length * 70 + 550);
-      const audio = new Audio(`${VOICE_LINE_BASE_PATH}${voiceLineFile(slug)}`);
-      audio.preload = "auto";
-      audio.playbackRate = Math.max(0.55, Math.min(1.35, options.rate ?? 1));
-      this.activeAudio.add(audio);
-      const cleanup = () => this.activeAudio.delete(audio);
-      audio.addEventListener("ended", cleanup, { once: true });
-      audio.addEventListener(
-        "error",
-        () => {
-          cleanup();
-          this.speakBrowser(text, options);
-        },
-        { once: true }
-      );
-      void audio.play().catch(() => {
-        cleanup();
-        // A real user gesture is required on some browsers before MP3 playback
-        // is allowed. If a local clip exists, do not replace it with robotic
-        // browser speech; the next tapped line can play naturally.
-      });
-      return true;
-    } catch {
-      return false;
+    if (!VOICE_LINE_SLUGS.has(slug)) {
+      if (options.interrupt) this.interruptPlayback();
+      this.reportMissingClip(text);
+      return;
     }
+    this.playLocalFile(`${VOICE_LINE_BASE_PATH}${voiceLineFile(slug)}`, text, options);
   }
 
-  speak(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
-    if (!this.enabled) return;
-    if (this.playLocalClip(text, options)) return;
-    this.speakBrowser(text, options);
-  }
-
-  /** Speak dynamic/didactic text with the browser voice, bypassing pre-generated local clips. */
-  speakBrowserOnly(text: string, options: { interrupt?: boolean; rate?: number; pitch?: number } = {}): void {
-    if (!this.enabled) return;
-    this.speakBrowser(text, options);
-  }
-
-  /** Speak a number 0-20 as a Dutch word. */
   sayNumber(n: number, options: { interrupt?: boolean } = {}): void {
     const word = NUMBER_WORDS[Math.max(0, Math.min(20, Math.round(n)))];
     this.speak(word, { rate: 1, ...options });
   }
 
-  /** Count out loud from 1 to n with a clear, spaced rhythm so each number is distinct. */
+  /** Count 1..n; each number waits for the previous local clip to finish. */
   countTo(n: number): void {
     if (!this.enabled) return;
     const count = Math.max(1, Math.min(10, Math.round(n)));
@@ -196,9 +115,65 @@ export class VoiceManager {
   }
 
   cancel(): void {
+    this.clearCountTimers();
+    this.stopAudio();
+  }
+
+  private playNext(): void {
+    if (!this.enabled || this.activeAudio || this.queue.length === 0) return;
+    const request = this.queue.shift();
+    if (!request) return;
+
+    try {
+      const audio = new Audio(request.src);
+      this.activeAudio = audio;
+      audio.preload = "auto";
+      audio.playbackRate = request.rate;
+      this.duckHook?.(request.label.length * 70 + 550);
+
+      const finish = (): void => {
+        if (this.activeAudio !== audio) return;
+        this.activeAudio = undefined;
+        this.playNext();
+      };
+      audio.addEventListener("ended", finish, { once: true });
+      audio.addEventListener("error", finish, { once: true });
+      void audio.play().catch(finish);
+    } catch {
+      this.activeAudio = undefined;
+      this.playNext();
+    }
+  }
+
+  private interruptPlayback(): void {
+    this.clearCountTimers();
+    this.stopAudio();
+  }
+
+  private clearCountTimers(): void {
     for (const id of this.countTimers) window.clearTimeout(id);
     this.countTimers = [];
-    this.stopCurrentSpeech();
+  }
+
+  private stopAudio(): void {
+    this.queue = [];
+    const audio = this.activeAudio;
+    this.activeAudio = undefined;
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+    } catch {
+      // Audio teardown is best-effort during a fast scene switch.
+    }
+  }
+
+  private reportMissingClip(text: string): void {
+    if (typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent)) return;
+    const slug = voiceLineSlug(text);
+    if (this.missingWarnings.has(slug)) return;
+    this.missingWarnings.add(slug);
+    console.warn(`[VoiceManager] Missing local voice clip: ${text}`);
   }
 }
 

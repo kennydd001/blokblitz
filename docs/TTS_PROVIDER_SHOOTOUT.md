@@ -1,6 +1,6 @@
 # TTS Provider Shootout
 
-Date: 2026-06-30, updated 2026-07-06
+Date: 2026-06-30, updated 2026-07-11
 
 Goal: compare natural female Dutch TTS for a local-first BlokBlitz voice-pack.
 QA samples remain under `.qa-artifacts`.
@@ -9,7 +9,7 @@ QA samples remain under `.qa-artifacts`.
 
 - Active sentence/instruction voice-pack:
   `C:\Users\de_do\Documents\miel\public\audio\voice\nl\elevenlabs-lily-v3\`
-- 940 local ElevenLabs MP3 clips, generated build-time with `eleven_v3` and
+- 1553 local ElevenLabs MP3 clips, generated build-time with `eleven_v3` and
   voice `Lily - Velvety Actress`.
 - Active isolated reading phoneme pack:
   `C:\Users\de_do\Documents\miel\public\audio\reading\nl\elevenlabs-lily-v3\phonemes\`
@@ -17,8 +17,10 @@ QA samples remain under `.qa-artifacts`.
 - Runtime manifests:
   `C:\Users\de_do\Documents\miel\src\game\voiceLineManifest.ts` and
   `C:\Users\de_do\Documents\miel\src\game\readingAudioManifest.ts`.
-- Word splitting and zoemend lezen still use the browser fallback because
-  generated stretched blend clips did not pass listening QA.
+- A source-driven catalog currently proves 1485/1485 game lines are present.
+- Runtime speech is fully local. There is no Web Speech fallback. Isolated
+  phonemes use the reading pack; whole-word/zoem actions use slowed local Lily
+  word clips because generated stretched blend clips did not pass listening QA.
 
 Verify with:
 

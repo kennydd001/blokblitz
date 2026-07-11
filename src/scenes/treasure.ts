@@ -29,7 +29,9 @@ export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): H
     game.audio.play("win");
     game.haptics.play("win");
     const line =
-      count >= 2
+      count >= 4
+        ? "Hoera, al vier dagen op een rij! 6 sterren erbij. Kom morgen weer!"
+        : count >= 2
         ? `Hoera, ${count} dagen op een rij! ${reward} sterren erbij. Kom morgen weer!`
         : best >= 2
           ? `Ik heb je gemist! Fijn dat je er weer bent. ${reward} sterren erbij!`

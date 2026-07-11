@@ -1141,3 +1141,136 @@ Implemented the six audit-recommended quick wins, each its own commit:
 Validation: 169 tests (+ new streak, Boss Rush, content), tsc, build,
 qa:viewport 18/18 green; live-verified the replay button, spoken hint, hub
 chest + daglint, expanded reading content, and the Sterrenarena unlock.
+
+## Fully local natural voice and overlap fix - 2026-07-10
+
+Completed work:
+
+- Reproduced the robot voice in Luisterbos after the literacy expansion. The old
+  audit checked its own 940-line manifest rather than the current game data, so
+  all new stories, questions, answer labels, words, hints, and the Sterrenarena
+  line could silently fall back to browser speech.
+- Added `src/game/voiceLineCatalog.ts`. It derives required lines from the live
+  story, phonics, letter, traffic, journey, sticker, world, boss, and Buddy data,
+  plus the finite generated math prompts and spoken re-teach lines.
+- Added `scripts/load-voice-line-catalog.mjs` and wired both ElevenLabs generation
+  and auditing to the same catalog. Slug collisions now fail generation/audit.
+- The loader also scans static `voice.speak(...)`, `reteach(...)`, and fixed
+  `instruction` strings in `src/`; it immediately found and added the previously
+  missed "Tel nog eens rustig mee." line.
+- Generated 261 missing Lily / `eleven_v3` clips. The sentence pack now contains
+  1201 local MP3s; the current game is covered 1133/1133 and the reading phoneme
+  pack remains covered 32/32.
+- Rebuilt `VoiceManager` as one serial local-audio queue. `interrupt: true`
+  cancels the active clip and pending queue; `interrupt: false` queues behind the
+  current clip. Scene changes and `Game.stop()` clear all pending voice.
+- Removed Web Speech from runtime. A missing or failed local clip is never
+  replaced by a robotic OS/browser voice.
+- Routed isolated phonemes and normal sentences through the same queue. Whole
+  words and zoem actions now play natural local Lily word clips more slowly;
+  rejected generated stretched blends are not used.
+- Luisterbos no longer estimates story duration with a text-length timer. It
+  queues the question immediately after the story, so it starts on the real
+  `ended` event and cannot overlap.
+- A new Luisterbos story no longer starts by speaking 250 ms of the question
+  before interrupting it; the mode suppresses that base announcement and starts
+  cleanly with story -> question.
+- Made the unbounded daily-streak sentence finite after day four, so every
+  possible spoken reward line can be generated and audited.
+
+Claude handoff rules:
+
+- Add/change spoken content in the source data as usual, then run
+  `npm.cmd run voice:elevenlabs` with `ELEVENLABS_API_KEY` set and finish with
+  `npm.cmd run voice:elevenlabs-audit`.
+- Do not reintroduce `speechSynthesis`, `SpeechSynthesisUtterance`, runtime TTS,
+  or a second independent voice player.
+- Use `interrupt: true` for a newly selected prompt and `interrupt: false` only
+  when the new line should follow the current line.
+- Keep isolated letter/phoneme playback in `ReadingAudioManager`; use cataloged
+  whole-word Lily clips for word playback.
+
+Validation:
+
+- `npm.cmd install` passed (one existing low-severity npm audit item).
+- `npm.cmd run voice:elevenlabs-audit` passed: 1201/1201 sentence clips,
+  1133/1133 current game lines, and 32/32 reading phonemes.
+- `npm.cmd run verify` passed: typecheck, lint, 20 test files / 172 tests, and
+  production build.
+- In-app browser verification loaded the current Luisterbos question and full
+  story from local Lily MP3 URLs with no warning/error logs.
+- No API keys are stored in the repository.
+
+## Sprintsite deploy - 2026-07-10
+
+- Rebuilt the current worktree after the fully local voice/queue pass.
+- Deployed Worker Static Assets app `blokblitz` through the existing WSL
+  OpenClaw Cloudflare authentication.
+- Wrangler read 1253 assets and uploaded 266 new or modified files, including
+  the 261 new Lily clips and the fresh application bundles.
+- Active Worker version: `d03c272c-8902-4c0c-bb9e-fda2105d33b4`.
+- Live URLs: `https://blokblitz.sprintsite.be/` and
+  `https://blokblitz.kennydd001.workers.dev/`.
+- Smoke checks passed for both HTML roots, bundle `index-Dvd2vTZU.js`, the
+  voice manifest, an existing clip, and the new
+  `tel-nog-eens-rustig-mee.mp3` clip (HTTP 200, `audio/mpeg`).
+- In-app browser verification loaded the custom domain, rendered the `Start`
+  screen using `index-Dvd2vTZU.js`, and reported no warning/error logs.
+
+## Curriculum Deepening and Batch 3 - 2026-07-11
+
+Completed work:
+
+- Added in-game minimal-pair listening rounds to Klankgrot. The education layer
+  derives every duel from real local picture words and detects repeated
+  confusions from each child's own attempt log (for example `b/p` or `i/o`).
+- The remediation flow starts only after two matching errors, alternates with
+  normal phonemic work, and backs off again after a successful pair round.
+- Added Rijmrivier, a full rhyme-awareness mode derived from the existing
+  phonics pool. Children hear a target word, choose its rhyme, and build a
+  bridge across the river. Attempts log as `literacy-phonemic` / `rhyme`.
+- Added Sprongpad, a full skip-counting mode. Number stones form the actual
+  route and use jumps of 2 to 20, 5 to 50, and 10 to 100, tiered per child.
+  Attempts log as `math-number` / `skipCount` with misconception labels.
+- Added both modes to free play, the scene registry, domain-scoped adaptive
+  difficulty, and curriculum-ordered Sterrenreis stops (rhyme after phonemic
+  awareness; skip-counting after the number line).
+- Deepened Dubbelspel: mirrored groups now have distinct visual roles,
+  near-doubles expose the extra `+1`, even/odd builds real two-dot pairs, and a
+  strategy strip explains the structure after success or a mistake.
+- Deepened Vriendjes 10: one live ten-frame now shows the known part, empty
+  partner cells, the second colour filling on success, and visible gaps or
+  overflow for pairs that do not make ten.
+- Locked profile switching behind an adult-controlled flow. Normal boot keeps
+  the last selected child active; the hub profile chip now requires the parent
+  sum and then a 1.2-second press-and-hold before the roster opens. Profile save
+  namespaces and mastery trajectories remain fully isolated.
+- This local gate prevents accidental/casual sibling switching; it is not a
+  cryptographic identity system. A school-wide self-login would require a
+  separate child PIN or managed account design.
+
+Audio:
+
+- Expanded the source-driven voice catalog to include every reachable dynamic
+  Dubbelspel and Vriendjes prompt/hint, all batch-3 prompts, profile setup lines,
+  and avatar names.
+- Generated 352 new local ElevenLabs Lily `eleven_v3` clips. The sentence pack
+  now contains 1553 MP3s and covers 1485/1485 current game lines; the dedicated
+  reading pack remains 32/32 phonemes.
+- No runtime TTS, Web Speech fallback, API call, or API key was added.
+
+Validation:
+
+- Pure education tests cover minimal-pair derivation and resolution, rhyme
+  groups, skip-counting ranges/options, misconception labels, and challenge
+  contracts.
+- Flow tests cover both new journey modes, auto-served remediation, per-child
+  profile gating, journey completion, and adaptive attempt logging.
+- `npm.cmd run voice:elevenlabs-audit` passed: 1553/1553 sentence clips,
+  1485/1485 current game lines, and 32/32 reading phonemes.
+- `npm.cmd run verify` passed after the final profile hold refinement: 29 test
+  files / 242 tests, typecheck, lint, and production build.
+- Viewport QA was expanded from 18 to 24 scenarios and passed on narrow mobile
+  and desktop for Rijmrivier, Sprongpad, Vriendjes, and Dubbelspel. Interactive
+  in-app browser checks confirmed rhyme bridge payoff, skip-path fit at 332 px,
+  ten-frame filling, doubles strategy reveal, and the parent-gated profile flow.

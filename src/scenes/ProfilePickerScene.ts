@@ -4,11 +4,10 @@ import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
 import { BaseScene, sceneHeader } from "./SceneUtils";
 
-// "Wie speelt er?" — the kid-friendly, reading-free profile picker. Each child
-// is a dino face you tap to play; a parent adds a new child (pick a dino, type a
-// name) and can remove one behind the parent gate. No passwords: for a 5-year-old
-// "login" is tapping your own dino. Each profile has its own fully independent
-// save + adaptive trajectory (SaveManager owns the storage).
+// The parent-controlled profile picker. Normal boot keeps the last child active;
+// this screen is reached through the hub's parent gate so a stray child tap
+// cannot move progress into a sibling's trajectory. SaveManager owns the actual
+// per-profile data isolation.
 export class ProfilePickerScene extends BaseScene {
   private manage = false;
 
@@ -26,7 +25,7 @@ export class ProfilePickerScene extends BaseScene {
   private render(): void {
     this.root.replaceChildren();
     const profiles = this.game.save.listProfiles();
-    this.root.appendChild(sceneHeader("Wie speelt er?", "Tik op je eigen dino!"));
+    this.root.appendChild(sceneHeader(profiles.length === 0 ? "Maak je dino" : "Kies de speler", profiles.length === 0 ? "Kies er een!" : "Voor volwassenen"));
 
     // Brand-new install: go straight to "make your dino".
     if (profiles.length === 0) {
@@ -35,7 +34,7 @@ export class ProfilePickerScene extends BaseScene {
       return;
     }
 
-    this.game.voice.speak("Wie speelt er? Tik op je dino!", { interrupt: true });
+    this.game.voice.speak("Kies wie er nu speelt.", { interrupt: true });
     const grid = document.createElement("div");
     grid.className = "profiles-grid";
     profiles.forEach((profile) => {
@@ -58,7 +57,7 @@ export class ProfilePickerScene extends BaseScene {
         card.appendChild(del);
         card.addEventListener("click", () => this.confirmDelete(profile.id, profile.name));
       } else {
-        card.addEventListener("click", () => this.play(profile.id, profile.name));
+        card.addEventListener("click", () => this.play(profile.id));
       }
       grid.appendChild(card);
     });
@@ -134,7 +133,7 @@ export class ProfilePickerScene extends BaseScene {
       const name = nameInput.value.trim() || `Speler ${count + 1}`;
       const profile = this.game.save.createProfile(name, chosen);
       this.game.audio.play("win");
-      this.play(profile.id, profile.name);
+      this.play(profile.id);
     });
     start.classList.add("profile-create-start");
 
@@ -142,9 +141,9 @@ export class ProfilePickerScene extends BaseScene {
     return panel;
   }
 
-  private play(id: string, name: string): void {
+  private play(id: string): void {
     this.game.useProfile(id);
-    this.game.voice.speak(`Hoi ${name || "speler"}! Daar gaan we!`, { interrupt: true, pitch: 1.2 });
+    this.game.voice.speak("Hoi! Daar gaan we!", { interrupt: true, pitch: 1.2 });
     this.game.showScene("reis");
   }
 

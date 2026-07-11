@@ -23,6 +23,12 @@ const scenarios = [
   { name: "real-runner-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "klankgrot-mobile", width: 390, height: 844, mobile: true, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
   { name: "klankgrot-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
+  { name: "rijmrivier-narrow-mobile", width: 332, height: 807, mobile: true, open: "rijmspel", expectMiniMode: ".rhyme-river" },
+  { name: "rijmrivier-desktop", width: 1280, height: 720, mobile: false, open: "rijmspel", expectMiniMode: ".rhyme-river" },
+  { name: "sprongpad-narrow-mobile", width: 332, height: 807, mobile: true, open: "sprongpad", expectMiniMode: ".skip-track" },
+  { name: "sprongpad-desktop", width: 1280, height: 720, mobile: false, open: "sprongpad", expectMiniMode: ".skip-track" },
+  { name: "vriendjes-narrow-mobile", width: 332, height: 807, mobile: true, open: "vriendjes", expectMiniMode: ".bond-frame" },
+  { name: "dubbelspel-mobile", width: 390, height: 844, mobile: true, open: "dubbelspel", expectMiniMode: ".dubbel-stage" },
   { name: "splitbord-mobile", width: 390, height: 844, mobile: true, open: "splitbord", expectMiniMode: ".splitbord-board" },
   { name: "tienbrug-narrow-mobile", width: 360, height: 740, mobile: true, open: "tienbrug", expectMiniMode: ".tienbrug-sum" },
   { name: "kloktoren-mobile", width: 390, height: 844, mobile: true, open: "kloktoren", expectMiniMode: ".klok-play" },
@@ -142,7 +148,7 @@ async function openScenario(open) {
     await waitForSelector(".hub-grid", 5_000);
     return;
   }
-  if (["klankgrot", "splitbord", "tienbrug", "kloktoren", "boss"].includes(open)) {
+  if (open !== "real-runner") {
     await openGameScene(open);
     await waitForSelector(".mini-scene", 5_000);
     await evaluate("document.querySelector('.boss-intro')?.remove()");
@@ -282,7 +288,13 @@ async function collectMetrics(scenario = {}) {
         hubCardCount: document.querySelectorAll(".hub-card").length,
         menuGarage: rect(".menu-garage"),
         miniBoardPresent: miniBoardSelector ? Boolean(document.querySelector(miniBoardSelector)) : false,
+        miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
         miniChoiceCount: document.querySelectorAll(".mini-choice").length,
+        miniChoices: rects(".mini-choice"),
+        miniTitleClipped: (() => {
+          const title = document.querySelector(".mini-title strong");
+          return title ? title.scrollWidth > title.clientWidth + 1 : false;
+        })(),
         viewport: {
           width: innerWidth,
           height: innerHeight,
@@ -449,6 +461,12 @@ function validateScenario(scenario, metrics, scenarioErrors) {
   if (scenario.expectMiniMode) {
     if (!metrics.miniBoardPresent) failures.push(`missing mini board ${scenario.expectMiniMode}`);
     if (metrics.miniChoiceCount < 1) failures.push("mini mode has no tappable choices");
+    if (metrics.miniBoard && (metrics.miniBoard.left < -1 || metrics.miniBoard.right > viewport.width + 1)) failures.push(`mini board is clipped: ${JSON.stringify(metrics.miniBoard)}`);
+    if (metrics.miniTitleClipped) failures.push("mini mode title is clipped");
+    for (const choice of metrics.miniChoices) {
+      if (choice.left < -1 || choice.right > viewport.width + 1) failures.push(`mini choice is horizontally clipped: ${JSON.stringify(choice)}`);
+      if (choice.width < 44 || choice.height < 44) failures.push(`mini choice is too small: ${JSON.stringify(choice)}`);
+    }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }

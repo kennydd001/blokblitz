@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AdaptiveEngine } from "../src/education/adaptiveEngine";
 import { ChallengeFactory } from "../src/education/challengeFactory";
 import { MasteryTracker } from "../src/education/masteryTracker";
+import { buildCurriculumAttempt } from "../src/education/challengeLogger";
 import { AdaptiveGateProvider } from "../src/runner/gateProvider";
 import { RunnerCore, type GateProvider, type GateSpec, type RunnerSnapshot } from "../src/runner/RunnerCore";
 import { STICKERS } from "../src/data/stickers";
@@ -563,11 +564,13 @@ describe("Speeltuin hub + calm game modes", () => {
       "vriendjes",
       "splitbord",
       "klankgrot",
+      "rijmspel",
       "letterkompas",
       "zoemroute",
       "woordbouwplaats",
       "tientalhuis",
       "getallenlijn",
+      "sprongpad",
       "tienbrug",
       "dubbelspel",
       "vormenburcht",
@@ -1314,6 +1317,64 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("auto-serves a real minimal-pair duel after the same sound confusion repeats", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    for (const responseKey of ["peer", "pen"]) {
+      game.recordCurriculumAttempt(
+        buildCurriculumAttempt({
+          sessionId: game.save.getMutableData().progress.sessionId,
+          domain: "literacy-phonemic",
+          skill: "soundDiscriminate",
+          targetKey: "begin-b",
+          rangeKey: "phonics",
+          stimulusKey: "b",
+          responseKey,
+          wasCorrect: false,
+          reactionTimeMs: 500,
+          hintUsed: false,
+          errorType: "first-sound-weak"
+        })
+      );
+    }
+
+    const speak = vi.spyOn(game.voice, "speak");
+    game.showScene("klankgrot");
+    expect(root.querySelectorAll(".klankgrot-choice.minimal-pair")).toHaveLength(2);
+    expect(root.querySelector(".mini-instruction")?.textContent).toContain("Welk woord hoor je");
+    expect(speak.mock.calls[0]?.[0]).toBe("Welk woord hoor je? Tik op het plaatje.");
+    expect(["beer", "peer"]).toContain(speak.mock.calls[1]?.[0]);
+    expect(speak.mock.calls[1]?.[1]).toMatchObject({ interrupt: false });
+    expect(game.mastery.getAttempts()).toHaveLength(2);
+  });
+
+  it("plays Rijmrivier from the journey and logs rhyme mastery", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const index = JOURNEY.findIndex((node) => node.scene === "rijmspel");
+    const node = JOURNEY[index];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, index).map((item) => item.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${node.id}"]`)!.click();
+    expect(root.querySelector(".rhyme-river")).toBeTruthy();
+    expect(root.querySelectorAll(".rhyme-choice")).toHaveLength(3);
+    for (let round = 0; round < 24 && !root.querySelector(".mini-done"); round += 1) {
+      root.querySelector<HTMLButtonElement>('.rhyme-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(node.id);
+    expect(game.mastery.getAttempts().some((attempt) => attempt.skill === "rhyme")).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("plays Letterkompas from the journey: finishing advances + logs letter-sound work", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -1515,6 +1576,32 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays Sprongpad from the journey and logs jumps of 2, 5 or 10", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const index = JOURNEY.findIndex((node) => node.scene === "sprongpad");
+    const node = JOURNEY[index];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, index).map((item) => item.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${node.id}"]`)!.click();
+    expect(root.querySelector(".skip-track")).toBeTruthy();
+    expect(root.querySelectorAll(".skip-choice")).toHaveLength(3);
+    for (let round = 0; round < 24 && !root.querySelector(".mini-done"); round += 1) {
+      root.querySelector<HTMLButtonElement>('.skip-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(node.id);
+    expect(game.mastery.getAttempts().some((attempt) => attempt.skill === "skipCount")).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("plays Vriendjes van 10 from the journey: a ten-frame + partner choices, finishing advances + logs make10", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -1532,6 +1619,7 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${v.id}"]`)!.click();
     expect(root.querySelector(".bond-play")).toBeTruthy();
+    expect(root.querySelectorAll(".bond-cell")).toHaveLength(10);
     expect(root.querySelectorAll(".bond-choice").length).toBeGreaterThanOrEqual(2);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
@@ -2185,6 +2273,27 @@ describe("per-child profiles", () => {
     expect(root.querySelectorAll(".profile-card:not(.profile-add)")).toHaveLength(2);
     game.showScene("hub");
     expect(root.querySelector(".hub-profile")?.textContent).toContain("Kind B");
+  });
+
+  it("keeps profile switching behind the parent gate", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Noor", "aqua");
+    game.showScene("hub");
+
+    root.querySelector<HTMLButtonElement>(".hub-profile")!.click();
+    expect(document.querySelector(".parent-gate-overlay")).toBeTruthy();
+    expect(root.querySelector(".profiles-scene")).toBeFalsy();
+    document.querySelector<HTMLButtonElement>('.parent-gate-option[data-correct="true"]')!.click();
+    expect(document.querySelector(".parent-gate-overlay")).toBeTruthy();
+    expect(root.querySelector(".profiles-scene")).toBeFalsy();
+    const hold = document.querySelector<HTMLButtonElement>(".parent-gate-hold")!;
+    hold.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    vi.advanceTimersByTime(1250);
+    expect(document.querySelector(".parent-gate-overlay")).toBeFalsy();
+    expect(root.querySelector(".profiles-scene")).toBeTruthy();
   });
 
   it("routes boot Start to the picker only when no child is chosen", async () => {

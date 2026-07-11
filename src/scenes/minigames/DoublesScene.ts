@@ -34,9 +34,9 @@ export class DoublesScene extends MiniGameScene {
     } else {
       const right = this.currentRound.mode === "double" ? this.currentRound.a : this.currentRound.a + 1;
       stage.append(
-        this.dotGroup(this.currentRound.a),
+        this.dotGroup(this.currentRound.a, "left"),
         this.opGlyph("+"),
-        this.dotGroup(right),
+        this.dotGroup(right, "right", this.currentRound.mode === "near-double"),
         this.opGlyph("="),
         this.mysteryTile()
       );
@@ -61,13 +61,17 @@ export class DoublesScene extends MiniGameScene {
   }
 
   // A little group of dots — the visual anchor for "twee keer evenveel".
-  private dotGroup(count: number): HTMLElement {
+  private dotGroup(count: number, side: "left" | "right", markBonus = false): HTMLElement {
     const group = document.createElement("div");
-    group.className = "dubbel-group";
+    group.className = `dubbel-group ${side}`;
     group.setAttribute("aria-hidden", "true");
     for (let i = 0; i < count; i += 1) {
       const dot = document.createElement("span");
       dot.className = "dubbel-dot";
+      if (markBonus && i === count - 1) {
+        dot.classList.add("bonus");
+        dot.dataset.bonus = "+1";
+      }
       group.appendChild(dot);
     }
     return group;
@@ -92,17 +96,23 @@ export class DoublesScene extends MiniGameScene {
   // Even/odd made concrete: dots laid out two-per-row so a leftover dot at the
   // bottom is impossible to miss. The odd one out gets its own marker.
   private pairGrid(n: number): HTMLElement {
-    const grid = document.createElement("div");
-    grid.className = "dubbel-pairs";
-    grid.setAttribute("aria-hidden", "true");
-    const leftover = n % 2 === 1;
-    for (let i = 0; i < n; i += 1) {
-      const dot = document.createElement("span");
-      dot.className = "dubbel-dot";
-      if (leftover && i === n - 1) dot.classList.add("leftover");
-      grid.appendChild(dot);
+    const wrap = document.createElement("div");
+    wrap.className = "dubbel-pairs";
+    wrap.setAttribute("aria-label", `${n} in tweetallen`);
+    const pairs = Math.floor(n / 2);
+    for (let pair = 0; pair < pairs; pair += 1) {
+      const cell = document.createElement("span");
+      cell.className = "dubbel-pair";
+      cell.innerHTML = `<i class="dubbel-dot"></i><i class="dubbel-dot"></i>`;
+      wrap.appendChild(cell);
     }
-    return grid;
+    if (n % 2 === 1) {
+      const leftover = document.createElement("span");
+      leftover.className = "dubbel-leftover";
+      leftover.innerHTML = `<i class="dubbel-dot leftover"></i><small>alleen</small>`;
+      wrap.appendChild(leftover);
+    }
+    return wrap;
   }
 
   protected currentTargetKey(): string | undefined {
@@ -131,6 +141,7 @@ export class DoublesScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.dubbel-choice[data-correct="true"]')?.classList.add("reveal");
+    this.showStrategy();
     this.reteach(this.currentRound.hintText);
   }
 
@@ -146,5 +157,22 @@ export class DoublesScene extends MiniGameScene {
       const mystery = stage.querySelector<HTMLElement>(".dubbel-mystery");
       if (mystery) mystery.textContent = String(this.currentRound.answer);
     }
+    this.showStrategy();
+  }
+
+  private showStrategy(): void {
+    this.root.querySelector(".dubbel-strategy")?.remove();
+    const strategy = document.createElement("div");
+    strategy.className = "dubbel-strategy";
+    if (this.currentRound.mode === "double") {
+      strategy.innerHTML = `<span>${this.currentRound.a}</span><b>+</b><span>${this.currentRound.a}</span><b>=</b><strong>${this.currentRound.answer}</strong>`;
+    } else if (this.currentRound.mode === "near-double") {
+      const doubled = this.currentRound.a * 2;
+      strategy.innerHTML = `<span>${this.currentRound.a} + ${this.currentRound.a} = ${doubled}</span><b>dan +1</b><strong>${this.currentRound.answer}</strong>`;
+    } else {
+      const pairs = Math.floor(this.currentRound.n / 2);
+      strategy.innerHTML = `<span>${pairs} tweetal${pairs === 1 ? "" : "len"}</span><b>${this.currentRound.n % 2 === 0 ? "niets over" : "1 over"}</b><strong>${this.currentRound.answer}</strong>`;
+    }
+    this.root.querySelector(".dubbel-stage")?.insertAdjacentElement("afterend", strategy);
   }
 }

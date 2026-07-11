@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { loadVoiceLineCatalog } from "./load-voice-line-catalog.mjs";
 
 const apiKey = process.env.ELEVENLABS_API_KEY?.trim() ?? process.env.XI_API_KEY?.trim();
 if (!apiKey) {
@@ -52,7 +53,11 @@ function voiceLineFile(slug) {
   return RESERVED_FILE_NAMES.test(slug) ? `${slug}-clip.mp3` : `${slug}.mp3`;
 }
 
-function loadLines() {
+function comparableText(text) {
+  return String(text).normalize("NFKD").replace(/\p{Diacritic}/gu, "");
+}
+
+function loadLines(currentCatalog) {
   if (!existsSync(sourceManifestPath)) {
     if (existsSync(manifestPath)) {
       sourceManifestPath = manifestPath;
@@ -77,6 +82,9 @@ function loadLines() {
     });
   }
   addSupplementalRuntimeLines(bySlug);
+  for (const line of currentCatalog) {
+    addRuntimeLine(bySlug, line.id, line.text, line.category, line.spokenText);
+  }
   return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
@@ -84,9 +92,15 @@ function addRuntimeLine(bySlug, id, text, category = "runtime-dynamic", spokenTe
   const cleanText = String(text ?? "").trim();
   if (!cleanText) return;
   const slug = voiceLineSlug(cleanText);
-  if (!bySlug.has(slug)) {
-    bySlug.set(slug, { id, slug, text: cleanText, spokenText: String(spokenText ?? cleanText), category });
+  const cleanSpokenText = String(spokenText ?? cleanText);
+  const existing = bySlug.get(slug);
+  if (existing) {
+    if (existing.text !== cleanText && comparableText(existing.spokenText) !== comparableText(cleanSpokenText)) {
+      throw new Error(`Voice slug collision: "${existing.text}" and "${cleanText}" -> ${slug}`);
+    }
+    return;
   }
+  bySlug.set(slug, { id, slug, text: cleanText, spokenText: cleanSpokenText, category });
 }
 
 function addSupplementalRuntimeLines(bySlug) {
@@ -262,7 +276,8 @@ export function voiceLineFile(slug: string): string {
   await writeFile(tsManifestPath, content);
 }
 
-const lines = loadLines();
+const currentCatalog = await loadVoiceLineCatalog();
+const lines = loadLines(currentCatalog);
 await mkdir(baseDir, { recursive: true });
 
 let generated = 0;

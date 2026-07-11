@@ -1,6 +1,5 @@
 import { bondChallenge, bondRound, classifyBondError, type BondRound } from "../../education/math/bonds";
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
-import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { MiniGameScene } from "./MiniGameScene";
@@ -11,7 +10,7 @@ import { MiniGameScene } from "./MiniGameScene";
 // with the ten-frame. Logs as math-number / make10 so it joins the adaptive loop.
 export class BondsScene extends MiniGameScene {
   protected readonly emoji = "🤝";
-  protected readonly heading = "Vriendjes van 10";
+  protected readonly heading = "Vriendjes 10";
   private currentRound!: BondRound;
 
   constructor(game: Game) {
@@ -31,7 +30,11 @@ export class BondsScene extends MiniGameScene {
     const stage = document.createElement("div");
     stage.className = "bond-stage";
     if (this.currentRound.mode === "is-ten") {
-      stage.append(this.frame(this.currentRound.a), this.opGlyph("+"), this.frame(this.currentRound.b), this.opGlyph("= 10?"));
+      stage.append(this.frame(this.currentRound.a, this.currentRound.b));
+      const sum = document.createElement("div");
+      sum.className = "bond-sum";
+      sum.innerHTML = `<strong>${this.currentRound.a}</strong><span>+</span><strong>${this.currentRound.b}</strong><span>= 10?</span>`;
+      stage.appendChild(sum);
     } else {
       const frame = this.frame(this.currentRound.a);
       frame.classList.add("bond-frame-ask");
@@ -60,20 +63,29 @@ export class BondsScene extends MiniGameScene {
     return wrap;
   }
 
-  private frame(n: number): HTMLElement {
+  private frame(first: number, second?: number): HTMLElement {
     const box = document.createElement("div");
     box.className = "bond-frame";
-    box.setAttribute("aria-hidden", "true");
-    box.innerHTML = RepresentationFactory.renderSvg("tenframe", n, { label: String(n) });
+    const total = first + (second ?? 0);
+    if (second !== undefined) box.classList.add(total === 10 ? "exact" : total < 10 ? "short" : "over");
+    box.setAttribute("aria-label", second === undefined ? `${first} gevuld, ${10 - first} leeg` : `${first} en ${second}, samen ${total}`);
+    for (let index = 0; index < 10; index += 1) {
+      const cell = document.createElement("span");
+      cell.className = "bond-cell";
+      if (index < first) cell.classList.add("first");
+      else if (second !== undefined && index < total) cell.classList.add("second");
+      else cell.classList.add(second === undefined ? "missing" : "empty");
+      cell.style.setProperty("--cell-index", String(index));
+      box.appendChild(cell);
+    }
+    if (second !== undefined && total > 10) {
+      const overflow = document.createElement("span");
+      overflow.className = "bond-overflow";
+      overflow.setAttribute("aria-label", `${total - 10} te veel`);
+      for (let index = 0; index < total - 10; index += 1) overflow.appendChild(document.createElement("i"));
+      box.appendChild(overflow);
+    }
     return box;
-  }
-
-  private opGlyph(sign: string): HTMLElement {
-    const op = document.createElement("span");
-    op.className = "bond-op";
-    op.setAttribute("aria-hidden", "true");
-    op.textContent = sign;
-    return op;
   }
 
   protected currentTargetKey(): string | undefined {
@@ -100,12 +112,27 @@ export class BondsScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.bond-choice[data-correct="true"]')?.classList.add("reveal");
+    if (this.currentRound.mode === "is-ten") {
+      this.root.querySelector<HTMLElement>(".bond-stage")?.classList.add(this.currentRound.makesTen ? "bond-vol" : "bond-not-ten");
+    } else {
+      this.root.querySelectorAll<HTMLElement>(".bond-cell.missing").forEach((cell) => cell.classList.add("preview"));
+    }
     this.reteach(this.currentRound.hintText);
   }
 
   // Signature moment: the ten-frame fills up and glows — the child sees the ten
   // become whole.
   protected onCorrect(): void {
-    this.root.querySelector<HTMLElement>(".bond-stage")?.classList.add("bond-vol");
+    const stage = this.root.querySelector<HTMLElement>(".bond-stage");
+    if (!stage) return;
+    if (this.currentRound.mode === "is-ten") {
+      stage.classList.add(this.currentRound.makesTen ? "bond-vol" : "bond-not-ten");
+      return;
+    }
+    this.root.querySelectorAll<HTMLElement>(".bond-cell.missing").forEach((cell) => {
+      cell.classList.remove("missing");
+      cell.classList.add("second", "filled-now");
+    });
+    stage.classList.add("bond-vol");
   }
 }

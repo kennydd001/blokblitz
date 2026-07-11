@@ -76,11 +76,17 @@ export class LuisterbosScene extends MiniGameScene {
     this.tellStory(false);
   }
 
+  protected announceRound(): void {
+    // A new story schedules story -> question below. Do not start the question
+    // first only to cut it off 250 ms later.
+    if (!this.currentRound.storyStart) super.announceRound();
+  }
+
   private tellStory(thenQuestion = false): void {
     this.game.voice.speak(this.currentRound.story.text, { interrupt: true, rate: 0.92 });
     if (thenQuestion) {
-      // Rough duration estimate; the question repeats after the story lands.
-      this.later(() => this.game.voice.speak(this.currentRound.question.prompt, { interrupt: false }), this.currentRound.story.text.length * 68 + 800);
+      // The shared queue starts this exactly when the story clip ends.
+      this.game.voice.speak(this.currentRound.question.prompt, { interrupt: false });
     }
   }
 

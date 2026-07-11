@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-07T12:57:19.104Z",
+  "generatedAt": "2026-07-11T14:37:54.841Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
   "voiceId": "pFZP5JQG7iQjIQuC4Bku",
   "route": "direct /v1/text-to-speech",
-  "scope": "isolated reading phonemes only; word splitting and zoemend lezen are excluded",
+  "scope": "isolated reading phonemes only; whole-word reading uses the local Lily sentence pack",
   "voiceSettings": {
     "stability": 0.62,
     "similarity_boost": 0.78,

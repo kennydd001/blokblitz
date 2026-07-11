@@ -31,12 +31,14 @@ const MODES: ModeCard[] = [
   { scene: "splitbord", emoji: "⚖️", name: "Splitsbord", desc: "Maak het getal samen", tone: "splitbord" },
   // Lezen
   { scene: "klankgrot", emoji: "🔊", name: "Klankgrot", desc: "Luister naar klanken", tone: "klankgrot" },
+  { scene: "rijmspel", emoji: "🌊", name: "Rijmrivier", desc: "Vind wat rijmt", tone: "rijmspel" },
   { scene: "letterkompas", emoji: "🧭", name: "Letterkompas", desc: "Letter en klank", tone: "letterkompas" },
   { scene: "zoemroute", emoji: "🐝", name: "Zoemroute", desc: "Zoem tot een woord", tone: "zoemroute" },
   { scene: "woordbouwplaats", emoji: "🔤", name: "Woordbouw", desc: "Bouw het woord", tone: "woordbouw" },
   // Rekenen tot 20
   { scene: "tientalhuis", emoji: "🏠", name: "Tientalhuis", desc: "Tien en nog wat", tone: "tientalhuis" },
   { scene: "getallenlijn", emoji: "📏", name: "Getallenlijn", desc: "De lijn tot 20", tone: "getallenlijn" },
+  { scene: "sprongpad", emoji: "🦘", name: "Sprongpad", desc: "Tel per 2, 5 en 10", tone: "sprongpad" },
   { scene: "tienbrug", emoji: "🌉", name: "Tienbrug", desc: "Plus en min tot 20", tone: "tienbrug" },
   { scene: "dubbelspel", emoji: "✌️", name: "Dubbelspel", desc: "Dubbel en even", tone: "dubbelspel" },
   // Vormen & meten
@@ -74,20 +76,26 @@ export class HubScene extends BaseScene {
     title.className = "hub-title";
     title.innerHTML = `<span class="menu-logo" aria-hidden="true">🦖</span><h1>Speeltuin</h1><p>Kies een spelletje en leer de getallen!</p>`;
 
-    // Who's playing? A tappable chip with the child's own dino; tap to switch.
+    // The active child stays locked for the play session. A grown-up passes the
+    // parent gate before another profile can be selected.
     const active = this.game.save.activeProfile();
     if (active) {
       const chip = document.createElement("button");
       chip.type = "button";
       chip.className = "hub-profile";
-      chip.setAttribute("aria-label", `${active.name || "Speler"} — wissel van speler`);
+      chip.setAttribute("aria-label", `${active.name || "Speler"}. Profiel vergrendeld. Ouder kan wisselen.`);
       const face = createBuddy(skinById(active.avatar), data.progress.stars);
       face.el.classList.add("hub-profile-avatar");
       chip.appendChild(face.el);
       const nm = document.createElement("strong");
       nm.textContent = active.name || "Speler";
       chip.append(nm);
-      chip.addEventListener("click", () => this.game.showScene("profiles"));
+      const lock = document.createElement("span");
+      lock.className = "hub-profile-lock";
+      lock.setAttribute("aria-hidden", "true");
+      lock.textContent = "🔒";
+      chip.appendChild(lock);
+      chip.addEventListener("click", () => this.parentArea("profiles"));
       title.appendChild(chip);
     }
 
@@ -187,7 +195,7 @@ export class HubScene extends BaseScene {
   }
 
   private parentArea(scene: string): void {
-    openParentGate(() => this.game.showScene(scene));
+    openParentGate(() => this.game.showScene(scene), { holdToConfirm: scene === "profiles" });
   }
 
   private badge(icon: string, value: string | number, label: string): HTMLElement {

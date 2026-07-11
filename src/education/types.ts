@@ -42,6 +42,7 @@ export type SceneId =
   | "memory"
   | "splitbord"
   | "klankgrot"
+  | "rijmspel"
   | "letterkompas"
   | "tientalhuis"
   | "zoemroute"
@@ -49,6 +50,7 @@ export type SceneId =
   | "woordbouwplaats"
   | "tienbrug"
   | "dubbelspel"
+  | "sprongpad"
   | "vriendjes"
   | "vormenburcht"
   | "kloktoren"
@@ -346,6 +348,7 @@ export type CurriculumSkill =
   | "wordRead"
   | "wordBuild"
   | "rhyme"
+  | "skipCount"
   | "vocabulary"
   | "listeningQuestion"
   | "trafficSafety";

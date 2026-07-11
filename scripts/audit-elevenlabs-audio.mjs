@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { loadVoiceLineCatalog } from "./load-voice-line-catalog.mjs";
 
 const voiceSlug = process.env.ELEVENLABS_PACK_SLUG ?? "elevenlabs-lily-v3";
 const voiceDir = path.resolve("public", "audio", "voice", "nl", voiceSlug);
@@ -10,6 +11,7 @@ const sourceManifestPath = existsSync(path.join(voiceDir, "voice-lines.json"))
 const voiceManifestTsPath = path.resolve("src", "game", "voiceLineManifest.ts");
 const readingManifestTsPath = path.resolve("src", "game", "readingAudioManifest.ts");
 const legacyHestiaDir = path.resolve("public", "audio", "voice", "nl", "hestia");
+const currentVoiceCatalog = await loadVoiceLineCatalog();
 
 const requiredReadingKeys = [
   "m",
@@ -77,6 +79,14 @@ function fail(message) {
   process.exitCode = 1;
 }
 
+const catalogSlugs = new Map();
+for (const line of currentVoiceCatalog) {
+  const slug = voiceLineSlug(line.text);
+  const existing = catalogSlugs.get(slug);
+  if (existing && existing !== line.text) fail(`Current game voice slug collision: "${existing}" and "${line.text}" -> ${slug}`);
+  catalogSlugs.set(slug, line.text);
+}
+
 if (!existsSync(sourceManifestPath)) {
   fail(`Missing source voice manifest: ${sourceManifestPath}`);
 } else {
@@ -94,33 +104,16 @@ if (!existsSync(sourceManifestPath)) {
     fail("ElevenLabs sentence voice-pack is incomplete.");
   }
 
-  const requiredRuntimeTexts = [
-    "De Sterrenreis",
-    "Op een nacht viel er een sterretje uit de hemel.",
-    "Alle kleuren verdwenen... maar samen brengen we ze terug!",
-    "Help Buddy de ster naar huis te dragen en onderweg vriendjes te redden.",
-    "Start het avontuur!",
-    "Buddy groeit! Sterrendino!",
-    "Hoi! Ik ben Bram de kikker!",
-    "Hoera! Bram de kikker is gered en gaat mee! Bram de kikker springt van blok naar blok!",
-    "Welkom in Webwoud! In het Webwoud raakte een vriendje verstrikt. Help het los!",
-    "Kijk! De kleuren zijn terug in Bouwdorp!",
-    "Grauwgrijs! Geen kleur voor jou!",
-    "Grauwgrijs is verslagen! Het grasland is weer groen!",
-    "De Sterrenrover laat de ster los! De sterrenhemel schittert weer!",
-    "Je verdiende een nieuwe sticker: Alle werelden!",
-    "De sterren willen nog een reis. Het wordt ietsje moeilijker. Ga je mee?",
-    "De sterren willen nog een reis! Dezelfde weg, maar alles is een beetje moeilijker. Laat zien hoe sterk je geworden bent!",
-    "Hoera! De ster is thuis en schijnt weer! Alle kleuren zijn terug en 6 vriendjes vieren mee. Knap gedaan!"
-  ];
-  const missingRuntimeTexts = requiredRuntimeTexts.filter((text) => {
-    const slug = voiceLineSlug(text);
+  const missingRuntimeLines = currentVoiceCatalog.filter((line) => {
+    const slug = voiceLineSlug(line.text);
     return !slugs.has(slug) || !existsSync(path.join(voiceDir, voiceLineFile(slug)));
   });
-  console.log(`Runtime dynamic voice checks: ${requiredRuntimeTexts.length - missingRuntimeTexts.length}/${requiredRuntimeTexts.length}`);
-  if (missingRuntimeTexts.length) {
-    console.log(`Missing runtime voice texts: ${missingRuntimeTexts.join(" | ")}`);
-    fail("ElevenLabs runtime dynamic voice coverage is incomplete.");
+  console.log(`Current game voice coverage: ${currentVoiceCatalog.length - missingRuntimeLines.length}/${currentVoiceCatalog.length}`);
+  if (missingRuntimeLines.length) {
+    console.log(`Missing current game voice texts (${missingRuntimeLines.length}):`);
+    for (const line of missingRuntimeLines.slice(0, 40)) console.log(`- ${line.text}`);
+    if (missingRuntimeLines.length > 40) console.log(`- ... and ${missingRuntimeLines.length - 40} more`);
+    fail("ElevenLabs voice-pack does not cover the current game content.");
   }
 }
 
