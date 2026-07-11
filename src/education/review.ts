@@ -114,3 +114,21 @@ export function sessionWarmup(attempts: AttemptLog[], now: number, count = 3): R
   }
   return warmup;
 }
+
+/**
+ * Pick the strongest candidate that was not the immediately previous target in
+ * this domain/session. Returning undefined deliberately lets the scene roll a
+ * different discovery target before revisiting the weak one next round.
+ */
+export function nextInterleavedTarget(
+  candidates: Array<string | undefined>,
+  attempts: AttemptLog[],
+  sessionId: string,
+  domain: string
+): string | undefined {
+  const previous = [...attempts]
+    .reverse()
+    .find((attempt) => attempt.sessionId === sessionId && attempt.domain === domain && Boolean(attempt.targetKey))?.targetKey;
+  const unique = [...new Set(candidates.filter((candidate): candidate is string => Boolean(candidate)))];
+  return unique.find((candidate) => candidate !== previous);
+}

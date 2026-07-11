@@ -11,7 +11,7 @@ export class CountScene extends MiniGameScene {
   protected readonly heading = "Tel mee";
   protected readonly instruction = "Tik elk diertje aan en tel hardop. Kies dan het juiste getal.";
   private counted = 0;
-  private currentAnimal = ANIMALS[0];
+  private currentAnimal = "";
   private rescuedAnimals: string[] = [];
 
   constructor(game: Game) {
@@ -33,7 +33,8 @@ export class CountScene extends MiniGameScene {
     const wrap = document.createElement("div");
     wrap.className = "mini-play count-play";
 
-    const animal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
+    const animalPool = ANIMALS.filter((animal) => animal !== this.currentAnimal);
+    const animal = animalPool[Math.floor(Math.random() * animalPool.length)] ?? ANIMALS[0];
     this.currentAnimal = animal;
     const rescueTrail = document.createElement("div");
     rescueTrail.className = "count-rescue-trail";

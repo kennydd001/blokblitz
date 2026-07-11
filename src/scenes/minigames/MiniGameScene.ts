@@ -28,6 +28,7 @@ export abstract class MiniGameScene extends BaseScene {
   private celebrateCount = 0;
   private streak = 0;
   private spokenChoicePending = false;
+  private previousTargetKey?: string;
   protected goldenRound = false;
   protected buddy?: Buddy;
   /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
@@ -107,15 +108,21 @@ export abstract class MiniGameScene extends BaseScene {
   }
 
   protected startRound(): void {
-    this.current = this.makeChallenge();
     // Adaptive resurfacing: steer toward a weak or a memory-decayed target in
     // this mode's learning domain (spaced repetition), re-rolling a few times so
     // that shaky /s/, word or split comes back around instead of a uniform-random
-    // pick. Bounded so a rare target never starves the round.
+    // pick. Without an explicit focus, avoid the immediately previous target so
+    // practice stays interleaved rather than becoming a same-card drill.
     const focus = this.game.curriculumFocus(SCENE_DOMAINS[this.name]);
-    if (focus) {
-      for (let i = 0; i < 10 && this.currentTargetKey() !== focus; i += 1) this.current = this.makeChallenge();
+    const avoid = focus ? undefined : this.previousTargetKey;
+    for (let attempt = 0; attempt < 11; attempt += 1) {
+      this.current = this.makeChallenge();
+      const target = this.currentTargetKey();
+      if (focus && target !== focus) continue;
+      if (avoid && target === avoid) continue;
+      break;
     }
+    this.previousTargetKey = this.currentTargetKey();
     this.hintUsed = false;
     this.resolving = false;
     this.spokenChoicePending = false;

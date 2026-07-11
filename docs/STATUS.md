@@ -2059,3 +2059,34 @@ Release:
 - A final in-app-browser check on the canonical Sprintsite confirmed the live
   returning sign opens the fresh journey with `intro=true`, `journey=true`, and
   `regionBanners=0`; the resulting clean cinematic screenshot was inspected.
+
+## Interleaved Practice and Round Variety - 2026-07-11
+
+Completed work:
+
+- Added a pure curriculum interleaving selector. It keeps shaky and due targets
+  ordered by priority but skips the target just attempted in the same learning
+  domain and session. If no other priority target exists, the scene gets one
+  discovery round before the weak target can return.
+- Calm curriculum scenes now remember their previous target and boundedly
+  re-roll an accidental immediate duplicate. An explicit adaptive focus remains
+  stronger than the cooldown, so necessary remediation is never discarded.
+- `Tel mee` now excludes the just-rescued animal from the next round's visual
+  pool. Even a deterministic/random-zero session changes species while keeping
+  the quantity chosen by the adaptive number engine.
+
+Validation:
+
+- Review tests prove `letter-s` yields to `letter-m` inside one session, returns
+  first in a fresh session, and yields no forced focus when it is the only
+  immediate candidate. New behavioral scene tests prove free generation
+  `a -> a -> b` renders `a -> b`, explicit focus still renders `a -> a`, and
+  consecutive Count rounds change animal under fixed randomness.
+- `npm.cmd run verify` passes typecheck, lint, 35 test files / 303 tests, and a
+  production build. Entry assets are `index-Bnc1LDNH.js` (102.53 kB gzip) and
+  `index-By3veXyl.css` (33.42 kB gzip).
+- `npm.cmd run qa:viewport` passes all 59 scenarios and the fixed-seed
+  `npm.cmd run qa:mobile-touch` route passes 41 real touches, 12 tracked
+  attempts, and one completed journey node after playing the changed Count flow.
+- No spoken line or phoneme inventory changed; the validated local Lily packs
+  remain the only runtime speech source.

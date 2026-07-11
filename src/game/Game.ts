@@ -1,6 +1,6 @@
 import { AdaptiveEngine } from "../education/adaptiveEngine";
 import { journeyTier, recentAccuracy, type DifficultyTier } from "../education/difficulty";
-import { dueForReview } from "../education/review";
+import { dueForReview, nextInterleavedTarget } from "../education/review";
 import { buildDailyPlayPlan, localDayKey } from "../education/dailyPlan";
 import { JOURNEY, nodeIndexById } from "../data/journey";
 import { buildAttemptLog } from "../education/challengeLogger";
@@ -305,10 +305,17 @@ export class Game {
    */
   curriculumFocus(domain?: string): string | undefined {
     if (!domain) return undefined;
+    const attempts = this.mastery.getAttempts();
     const shaky = this.adaptive.recommendCurriculumFocus(domain);
-    if (shaky) return shaky;
-    const due = dueForReview(this.mastery.getAttempts(), Date.now()).find((item) => item.domain === domain);
-    return due?.targetKey;
+    const due = dueForReview(attempts, Date.now())
+      .filter((item) => item.domain === domain)
+      .map((item) => item.targetKey);
+    return nextInterleavedTarget(
+      [shaky, ...due],
+      attempts,
+      this.save.getMutableData().progress.sessionId,
+      domain
+    );
   }
 
   /** Three balanced, stable recommendations generated from this child's own history. */

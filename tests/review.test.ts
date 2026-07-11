@@ -1,5 +1,5 @@
 ﻿import { describe, expect, it } from "vitest";
-import { dueForReview, reviewQueue, sessionWarmup } from "../src/education/review";
+import { dueForReview, nextInterleavedTarget, reviewQueue, sessionWarmup } from "../src/education/review";
 import type { AttemptLog } from "../src/education/types";
 
 const DAY = 86_400_000;
@@ -126,5 +126,16 @@ describe("review scheduler", () => {
     expect(reviewQueue([], DAY)).toEqual([]);
     expect(dueForReview([], DAY)).toEqual([]);
     expect(sessionWarmup([], DAY)).toEqual([]);
+  });
+
+  it("interleaves a different target inside one session without weakening priority", () => {
+    const attempts = [
+      attempt({ sessionId: "now", domain: "literacy-reading", targetKey: "letter-s" }),
+      attempt({ sessionId: "other", domain: "literacy-reading", targetKey: "letter-m" })
+    ];
+
+    expect(nextInterleavedTarget(["letter-s", "letter-m"], attempts, "now", "literacy-reading")).toBe("letter-m");
+    expect(nextInterleavedTarget(["letter-s"], attempts, "now", "literacy-reading")).toBeUndefined();
+    expect(nextInterleavedTarget(["letter-s", "letter-m"], attempts, "fresh", "literacy-reading")).toBe("letter-s");
   });
 });

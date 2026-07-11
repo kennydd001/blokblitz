@@ -8,7 +8,7 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 
 - Install: `npm.cmd install` has passed for this project and dependencies are locked.
 - Static checks: `npm.cmd run typecheck` and `npm.cmd run lint` pass.
-- Tests: `npm.cmd run test` passes with 34 test files / 299 tests.
+- Tests: `npm.cmd run test` passes with 35 test files / 303 tests.
 - Production build: `npm.cmd run build` passes without warnings.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
 - Local server smoke: `http://127.0.0.1:5287/?qa=final-audit` returned HTTP 200.
@@ -77,7 +77,7 @@ No required proof remains open for the original completion checklist as of the l
   pipeline, while 25 calm curriculum modes cover number sense, splitting,
   reading/phonemic awareness, operations to 20, geometry, measurement, money,
   time, listening, and traffic. Mistakes remain retryable and scaffolded.
-- Milestone 7 is current, not inherited: 34 files / 299 tests, typecheck, lint,
+- Milestone 7 is current, not inherited: 35 files / 303 tests, typecheck, lint,
   production build, 59 viewport scenarios, deterministic 41-step touch journey, 1489/1489
   reachable sentence clips, 32/32 reading phonemes, live Sprintsite shell/code/
   audio/service-worker smokes, and a clean Git worktree all pass on 2026-07-11.
@@ -86,7 +86,9 @@ No required proof remains open for the original completion checklist as of the l
   child progress, followed by one Sterrenreis/frontier; each profile gets three balanced daily missions;
   weak/due targets and tier gates shape practice; all 25 calm modes now change
   real content range, operation type, sound complexity, question load, choice
-  count, or board size across the same three child-specific tiers; early math/discovery modes
+  count, or board size across the same three child-specific tiers; curriculum
+  targets use a within-session interleaving cooldown unless the adaptive engine
+  explicitly asks for immediate repetition; early math/discovery modes
   have persistent thematic goals; calm endings expose the child's next unfinished
   mission and visible 1/3-3/3 treasure progress; audio is natural,
   callback-serialized across scene narration and reward dialogs, cancels
@@ -137,7 +139,7 @@ Current follow-up evidence:
 - The child-facing Summary now keeps detailed attempt/streak stats inside a closed `Voor ouders` details panel by default, reducing dashboard-like noise while keeping parent evidence accessible.
 - `npm.cmd run qa:viewport` covers menu, 360px narrow menu, number portal, real mobile runner, legacy mobile runner, 360px narrow runner, mobile wrong-choice scaffold, short desktop runner, mobile WebWoud, live WebWoud reward feedback, mobile Oefenwereld, mobile Sterrenstad overview, mobile Sterrenstad build, 360px narrow Sterrenstad build, mobile summary, and 360px narrow summary.
 - `npm.cmd run qa:mobile-touch` touches the real `run` controls, covers the longer child route with real touch events, and produces `.qa-artifacts/mobile-touch-qa/report.json` plus `summary-touch-mobile.png`.
-- Latest validation: `npm.cmd run verify` passes with 34 files / 299 tests and production build, `npm.cmd run qa:viewport` passes 59 scenarios with explicit fresh/returning opening checks, a 332x807 beat-3 journey cinematic with no competing region banner, reduced-motion, first/capped-profile, unique returning sign confirmation, 75-star collection, serialized portrait/landscape reward dialogs, 332px next-mission ending, 844x390 full-treasure ending, tiered-Memory, and deterministic advanced-content checks plus all visible buttons named and at least 44x44px, `npm.cmd run qa:mobile-touch` passes a fixed-seed 41-step journey that verifies wrong/correct profile signs and equips Aqua with 12 tracked attempts, the first-install offline cache test covers entry plus lazy chunks, and the local ElevenLabs audit passes at 1558/1558 stored clips, 1489/1489 current lines, and 32/32 reading phonemes.
+- Latest validation: `npm.cmd run verify` passes with 35 files / 303 tests and production build, `npm.cmd run qa:viewport` passes 59 scenarios with explicit fresh/returning opening checks, a 332x807 beat-3 journey cinematic with no competing region banner, reduced-motion, first/capped-profile, unique returning sign confirmation, 75-star collection, serialized portrait/landscape reward dialogs, 332px next-mission ending, 844x390 full-treasure ending, tiered-Memory, and deterministic advanced-content checks plus all visible buttons named and at least 44x44px, `npm.cmd run qa:mobile-touch` passes a fixed-seed 41-step journey that verifies wrong/correct profile signs and equips Aqua with 12 tracked attempts, the first-install offline cache test covers entry plus lazy chunks, and the local ElevenLabs audit passes at 1558/1558 stored clips, 1489/1489 current lines, and 32/32 reading phonemes.
 
 Remaining for the active product-readiness goal:
 
