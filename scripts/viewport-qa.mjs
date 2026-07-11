@@ -10,6 +10,17 @@ const root = process.cwd();
 const artifactDir = path.join(root, ".qa-artifacts", "viewport-qa");
 mkdirSync(artifactDir, { recursive: true });
 
+const advancedModeSeeds = {
+  geldmarkt: [0.999, 0.999],
+  meetwerf: [0.999, 0.999],
+  tientalhuis: [0.999, 0.999],
+  letterkompas: [0, 0.999],
+  rijmspel: [0.999, 0.999, 0.999],
+  zoemroute: [0.999],
+  woordbouwplaats: [0.97, 0.5],
+  luisterbos: [0.75]
+};
+
 const scenarios = [
   { name: "boot-narrow-mobile", width: 332, height: 807, mobile: true, open: "boot", expectBoot: true },
   { name: "boot-reduced-motion-mobile", width: 390, height: 844, mobile: true, open: "boot", expectBoot: true, reducedMotion: true },
@@ -30,6 +41,16 @@ const scenarios = [
   { name: "memory-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "memory-tier-1", expectMemory: { tier: 1, cards: 6 } },
   { name: "memory-advanced-narrow-mobile", width: 390, height: 844, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "memory-advanced-landscape", width: 844, height: 390, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
+  { name: "geldmarkt-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:geldmarkt", expectMiniMode: ".geld-play", expectChoiceCount: 3 },
+  { name: "meetwerf-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:meetwerf", expectMiniMode: ".meet-play", expectChoiceCount: 3 },
+  { name: "tientalhuis-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:tientalhuis", expectMiniMode: ".tientalhuis-play", expectChoiceCount: 4 },
+  { name: "letterkompas-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:letterkompas", expectMiniMode: ".letterkompas-play", expectChoiceCount: 4, expectAdvancedLetter: "IJ" },
+  { name: "rijmrivier-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:rijmspel", expectMiniMode: ".rhyme-river", expectChoiceCount: 4 },
+  { name: "zoemroute-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:zoemroute", expectMiniMode: ".zoemroute-play", expectChoiceCount: 4, expectSoundStones: 4 },
+  { name: "woordbouw-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:woordbouwplaats", expectMiniMode: ".woordbouw-play", expectChoiceCount: 4, expectWordBoxes: 5 },
+  { name: "luisterbos-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:luisterbos", expectMiniMode: ".luister-play", expectChoiceCount: 3, expectRoundDots: 8 },
+  { name: "zoemroute-advanced-landscape", width: 844, height: 390, mobile: true, open: "tier-3:zoemroute", expectMiniMode: ".zoemroute-play", expectChoiceCount: 4, expectSoundStones: 4 },
+  { name: "woordbouw-advanced-landscape", width: 844, height: 390, mobile: true, open: "tier-3:woordbouwplaats", expectMiniMode: ".woordbouw-play", expectChoiceCount: 4, expectWordBoxes: 5 },
   { name: "compare-mobile", width: 390, height: 844, mobile: true, open: "compare", expectMiniMode: ".compare-play", expectCompareFeeding: true },
   { name: "onemoreless-narrow-mobile", width: 332, height: 807, mobile: true, open: "onemoreless", expectMiniMode: ".onemore-play", expectBeforeAfter: true },
   { name: "vormenburcht-narrow-mobile", width: 332, height: 807, mobile: true, open: "vormenburcht", expectMiniMode: ".vormen-play", expectShapeBuild: true },
@@ -187,6 +208,32 @@ async function openScenario(open) {
     `);
     if (!opened) throw new Error(`Could not open Memory tier ${tier}`);
     await waitForSelector(".memory-board", 5_000);
+    return;
+  }
+  if (open.startsWith("tier-3:")) {
+    const scene = open.slice("tier-3:".length);
+    const randomValues = advancedModeSeeds[scene] ?? [0.75];
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        const journey = game.save.getMutableData().progress.journey;
+        journey.round = 3;
+        journey.nodeIndex = 0;
+        game.lastJourneyNode = undefined;
+        const randomValues = ${JSON.stringify(randomValues)};
+        const originalRandom = Math.random;
+        Math.random = () => randomValues.shift() ?? 0.75;
+        try {
+          game.showScene(${JSON.stringify(scene)});
+        } finally {
+          Math.random = originalRandom;
+        }
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error(`Could not open advanced mode ${scene}`);
+    await waitForSelector(".mini-scene", 5_000);
     return;
   }
   if (open === "menu") {
@@ -375,6 +422,10 @@ async function collectMetrics(scenario = {}) {
         memoryBoard: rect(".memory-board"),
         memoryTier: document.querySelector(".memory-board")?.dataset.tier ?? null,
         memoryCards: rects(".memory-card"),
+        advancedLetterChoices: [...document.querySelectorAll(".letterkompas-choice")].map((choice) => choice.textContent?.trim() ?? ""),
+        soundStones: rects(".zoemroute-stone"),
+        wordBoxes: rects(".woordbouw-box"),
+        roundDotCount: document.querySelectorAll(".mini-dot").length,
         countItems: rects(".count-item"),
         countDisabledChoices: document.querySelectorAll(".count-choices .mini-choice:disabled").length,
         countRescueSlots: document.querySelectorAll(".count-rescue-trail > span").length,
@@ -638,11 +689,19 @@ function validateScenario(scenario, metrics, scenarioErrors) {
   if (scenario.expectMiniMode) {
     if (!metrics.miniBoardPresent) failures.push(`missing mini board ${scenario.expectMiniMode}`);
     if (metrics.miniChoiceCount < 1) failures.push("mini mode has no tappable choices");
-    if (metrics.miniBoard && (metrics.miniBoard.left < -1 || metrics.miniBoard.right > viewport.width + 1)) failures.push(`mini board is clipped: ${JSON.stringify(metrics.miniBoard)}`);
+    if (scenario.expectChoiceCount !== undefined && metrics.miniChoiceCount !== scenario.expectChoiceCount) failures.push(`expected ${scenario.expectChoiceCount} choices, got ${metrics.miniChoiceCount}`);
+    if (metrics.miniBoard && (metrics.miniBoard.left < -1 || metrics.miniBoard.right > viewport.width + 1 || metrics.miniBoard.top < -1 || metrics.miniBoard.bottom > viewport.height + 1)) failures.push(`mini board is clipped: ${JSON.stringify(metrics.miniBoard)}`);
     if (metrics.miniTitleClipped) failures.push("mini mode title is clipped");
     for (const choice of metrics.miniChoices) {
-      if (choice.left < -1 || choice.right > viewport.width + 1) failures.push(`mini choice is horizontally clipped: ${JSON.stringify(choice)}`);
+      if (choice.left < -1 || choice.right > viewport.width + 1 || choice.top < -1 || choice.bottom > viewport.height + 1) failures.push(`mini choice is clipped: ${JSON.stringify(choice)}`);
       if (choice.width < 44 || choice.height < 44) failures.push(`mini choice is too small: ${JSON.stringify(choice)}`);
+    }
+    if (scenario.expectAdvancedLetter && !metrics.advancedLetterChoices.includes(scenario.expectAdvancedLetter)) failures.push(`missing advanced letter ${scenario.expectAdvancedLetter}: ${metrics.advancedLetterChoices.join(", ")}`);
+    if (scenario.expectSoundStones !== undefined && metrics.soundStones.length !== scenario.expectSoundStones) failures.push(`expected ${scenario.expectSoundStones} sound stones, got ${metrics.soundStones.length}`);
+    if (scenario.expectWordBoxes !== undefined && metrics.wordBoxes.length !== scenario.expectWordBoxes) failures.push(`expected ${scenario.expectWordBoxes} word boxes, got ${metrics.wordBoxes.length}`);
+    if (scenario.expectRoundDots !== undefined && metrics.roundDotCount !== scenario.expectRoundDots) failures.push(`expected ${scenario.expectRoundDots} round dots, got ${metrics.roundDotCount}`);
+    for (const item of [...metrics.soundStones, ...metrics.wordBoxes]) {
+      if (item.left < -1 || item.right > viewport.width + 1 || item.top < -1 || item.bottom > viewport.height + 1) failures.push(`advanced content is clipped: ${JSON.stringify(item)}`);
     }
     if (scenario.expectCountSequence) {
       if (metrics.countRescueSlots !== 5) failures.push(`expected 5 rescue slots, got ${metrics.countRescueSlots}`);

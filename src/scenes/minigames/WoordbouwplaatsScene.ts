@@ -10,7 +10,7 @@ import { MiniGameScene } from "./MiniGameScene";
 // literacy-reading / wordBuild.
 export class WoordbouwplaatsScene extends MiniGameScene {
   protected readonly emoji = "🔤";
-  protected readonly heading = "Woordbouwplaats";
+  protected readonly heading = "Woordbouw";
   private currentRound!: BouwRound;
 
   constructor(game: Game) {

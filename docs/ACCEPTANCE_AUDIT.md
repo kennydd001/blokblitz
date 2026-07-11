@@ -13,7 +13,7 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
 - Local server smoke: `http://127.0.0.1:5287/?qa=final-audit` returned HTTP 200.
 - Sprintsite smoke: `https://blokblitz.sprintsite.be/?audit=final` returned HTTP 200 with the current production JS/CSS hashes.
-- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 37 Chrome scenarios covering the return-aware opening, reduced-motion emulation, the four-child profile cap, Sterrenreis, the personal-mission Speeltuin, the real runner, core reading/math/discovery modes, Memory at tiers 1 and 3, bosses, 332px phones, desktop fullscreen, and mobile landscape.
+- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 47 Chrome scenarios covering the return-aware opening, reduced-motion emulation, the four-child profile cap, Sterrenreis, the personal-mission Speeltuin, the real runner, core reading/math/discovery modes, forced tier-3 curriculum content, bosses, 332px phones, desktop fullscreen, and mobile landscape.
 - Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. The latest 38-step run exercised the opening action, runner controls and swipes, completed audio-gated Count, selected the reading category, finished Klankgrot, logged 12 attempts, advanced one node, and returned to a Hub showing two checked daily missions.
 - Browser layout checks: no console errors or horizontal overflow; every visible button has a meaningful accessible name and is at least 44x44px; screenshots are non-flat; pure DOM first paint has no eager canvas; runner canvases fill the viewport.
 - Story-mode browser QA: in-app browser at `390x844` opened the 48-node Sterrenreis with one active frontier, Buddy, the friend meadow, a child-facing quest card, and progress pill; completing a story activity moves the frontier without page-level map overflow.
@@ -78,7 +78,7 @@ No required proof remains open for the original completion checklist as of the l
   reading/phonemic awareness, operations to 20, geometry, measurement, money,
   time, listening, and traffic. Mistakes remain retryable and scaffolded.
 - Milestone 7 is current, not inherited: 33 files / 277 tests, typecheck, lint,
-  production build, 37 viewport scenarios, 38-step touch journey, 1488/1488
+  production build, 47 viewport scenarios, 38-step touch journey, 1488/1488
   reachable sentence clips, 32/32 reading phonemes, live Sprintsite shell/code/
   audio/service-worker smokes, and a clean Git worktree all pass on 2026-07-11.
 - Product-readiness dimensions were re-audited directly: first impression is
@@ -130,7 +130,7 @@ Current follow-up evidence:
 - The child-facing Summary now keeps detailed attempt/streak stats inside a closed `Voor ouders` details panel by default, reducing dashboard-like noise while keeping parent evidence accessible.
 - `npm.cmd run qa:viewport` covers menu, 360px narrow menu, number portal, real mobile runner, legacy mobile runner, 360px narrow runner, mobile wrong-choice scaffold, short desktop runner, mobile WebWoud, live WebWoud reward feedback, mobile Oefenwereld, mobile Sterrenstad overview, mobile Sterrenstad build, 360px narrow Sterrenstad build, mobile summary, and 360px narrow summary.
 - `npm.cmd run qa:mobile-touch` touches the real `run` controls, covers the longer child route with real touch events, and produces `.qa-artifacts/mobile-touch-qa/report.json` plus `summary-touch-mobile.png`.
-- Latest validation: `npm.cmd run verify` passes with 33 files / 277 tests and production build, `npm.cmd run qa:viewport` passes 37 scenarios with explicit opening-overlap, reduced-motion, capped-profile, and tiered-Memory checks plus all visible buttons named and at least 44x44px, `npm.cmd run qa:mobile-touch` passes a 38-step real-touch journey with 12 tracked attempts, the first-install offline cache test covers entry plus lazy chunks, and the local ElevenLabs audit passes at 1488/1488 current lines plus 32/32 reading phonemes.
+- Latest validation: `npm.cmd run verify` passes with 33 files / 277 tests and production build, `npm.cmd run qa:viewport` passes 47 scenarios with explicit opening-overlap, reduced-motion, capped-profile, tiered-Memory, and deterministic advanced-content checks plus all visible buttons named and at least 44x44px, `npm.cmd run qa:mobile-touch` passes a 38-step real-touch journey with 12 tracked attempts, the first-install offline cache test covers entry plus lazy chunks, and the local ElevenLabs audit passes at 1488/1488 current lines plus 32/32 reading phonemes.
 
 Remaining for the active product-readiness goal:
 

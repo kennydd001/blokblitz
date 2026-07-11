@@ -1637,3 +1637,41 @@ Release:
   contain the tiered Memory and responsive-grid rules.
 - A fresh in-app-browser production render showed the full Buddy/Sterrenstad
   opening at `?release=322f16bd` with no warning or error logs.
+
+## Advanced Content Small-Screen Proof - 2026-07-11
+
+Completed work:
+
+- Extended viewport QA from 37 to 47 scenarios with deterministic tier-3
+  rounds for every newly adaptive visual mode. The suite now forces €10 at
+  Geldmarkt, nine units at Meetwerf, 19 as 10+? at Tientalhuis, the `ij`
+  grapheme, four rhyme choices, `d-r-ui-f` in Zoemroute, five sound boxes for
+  `b-a-n-aa-n`, an eight-round Luisterbos header, and advanced Zoem/Woordbouw
+  in 844x390 landscape.
+- Added exact assertions for choice count, advanced letter presence, sound
+  stones, word boxes, round dots, horizontal and vertical clipping, title
+  clipping, and 44px minimum choice targets. Random values are temporarily
+  seeded only while each QA scene mounts, then immediately restored.
+- The stricter pass exposed two real layout defects: `Woordbouwplaats` was
+  ellipsized at 332px, and its four advanced answer tiles extended 13px below
+  a 390px-high landscape viewport. The compact child-facing header now says
+  `Woordbouw`; short landscape only reduces that mode's decorative image,
+  gaps, sound boxes, and tile padding while preserving large touch targets.
+- Directly inspected all ten new screenshots. The advanced content is legible,
+  balanced, and conceptually clear; the 4-4-2 Memory grid, four-choice reading
+  layouts, five sound boxes, and short-landscape answer rows remain fully
+  visible without crowding.
+
+Validation and release:
+
+- `npm.cmd run verify` passed with 33 files / 277 tests, typecheck, lint, and a
+  production build. Entry assets are `index-Byz1mxQh.js` (98.78 kB gzip) and
+  `index-Cw5L57YG.css` (31.89 kB gzip).
+- `npm.cmd run qa:viewport` passed all 47 scenarios; `npm.cmd run
+  qa:mobile-touch` passed 38 real touch steps with 12 attempts and one journey
+  node; the ElevenLabs audit remains 1556/1556 clips, 1488/1488 current lines,
+  and 32/32 reading phonemes.
+- WSL Wrangler deployed Worker version
+  `87523ca4-fdbf-410f-8187-46c1e09c0369`. Live root,
+  `index-Byz1mxQh.js`, and `index-Cw5L57YG.css` returned HTTP 200; the served
+  code contains the compact title and short-landscape rules.

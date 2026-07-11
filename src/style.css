@@ -4780,6 +4780,14 @@ input {
 }
 @media (max-height: 480px) and (min-width: 600px) {
   .memory-board { width: min(480px, 80vw); gap: 8px; }
+  .woordbouw-play { gap: 8px; }
+  .woordbouw-board { gap: 5px; }
+  .woordbouw-pic { font-size: 2.3rem; padding: 3px 10px; border-width: 3px; }
+  .woordbouw-boxes { gap: 4px; }
+  .woordbouw-box { min-width: 46px; min-height: 46px; border-width: 3px; }
+  .woordbouw-choices { gap: 8px; }
+  .woordbouw-choice { min-width: 62px; }
+  .woordbouw-tile { font-size: 1.6rem; padding: 4px 10px; }
 }
 
 /* =====================================================================
