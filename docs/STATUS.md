@@ -1816,3 +1816,14 @@ Validation:
   `Je verdiende een nieuwe sticker: Sterrenmeester!` (48,527 bytes). The audio
   audit passes at 1557/1557 clips, 1489/1489 current lines, and 32/32 reading
   phonemes; runtime still makes no TTS request.
+
+Release:
+
+- GitHub `main` contains the validated implementation and local MP3 as commit
+  `b85d593`.
+- WSL Wrangler deployed Worker version
+  `e2381707-0344-4f27-b2b4-6cb3947d74b9`. Cache-busted live root,
+  `index-DsCSeR9w.js`, `index-BMA7HzhA.css`, and the Sterrenmeester MP3 all
+  returned HTTP 200 with correct content types. The MP3 response is the expected
+  48,527 bytes; served JS/CSS contain the collection, sticker, and star-strip
+  code.
