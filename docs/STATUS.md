@@ -1998,3 +1998,49 @@ Release:
   contains the personal-sign prompt, adult-gated switch, retry line, returning
   sign layout, and used-sign state. The existing Lily
   `kijk-nog-eens-goed.mp3` is live as `audio/mpeg` with exactly 18,852 bytes.
+
+## Durable Profile Signs and Audible Entry - 2026-07-11
+
+Completed work:
+
+- Moved the six child identity signs into shared data so storage and UI use one
+  canonical inventory. New profiles now receive a valid unused sign even when
+  a non-UI caller requests a duplicate or unknown id.
+- Existing rosters are repaired deterministically on load: profile order and
+  active child stay unchanged, the first valid owner keeps a sign, and later
+  duplicate/invalid signs receive the first unused sign. Per-child progress,
+  settings, mastery, rewards, and storage keys are untouched.
+- Profile creation/selection now disables every control, marks the screen busy,
+  visually holds the chosen sign, and waits until the existing natural Lily
+  `Hoi! Daar gaan we!` line finishes before opening the Sterrenreis. A rapid
+  second tap can no longer create an accidental extra sibling.
+- Hardened `VoiceManager.speakThen`: when a browser exposes `Audio` but throws
+  while constructing it, the completion callback still runs. Audio-gated
+  navigation therefore degrades to silent progress instead of a frozen screen.
+- Removed a first-session message collision found during live browser review:
+  the Grasland banner no longer renders behind the full-screen Sterrenreis
+  cinematic. It appears with its own narration on the child's first successful
+  return, leaving the opening story as the only message before play.
+
+Validation:
+
+- New storage tests prove duplicate requests and persisted duplicate/invalid
+  legacy rosters become `blitz`, `aqua`, `web` while preserving active `p2`.
+  Flow coverage holds the profile screen until narration completion and proves
+  a disabled second tap cannot create another profile. Audio coverage forces a
+  throwing `Audio` constructor and proves the gated callback still fires. The
+  opening-cinematic flow asserts that no region banner exists before or after
+  its start action while the journey is still untouched.
+- `npm.cmd run verify` passes typecheck, lint, 34 test files / 299 tests, and a
+  clean production build. Entry assets are `index-CC4LJWEL.js` (102.37 kB gzip)
+  and `index-By3veXyl.css` (33.42 kB gzip).
+- `npm.cmd run qa:viewport` passes all 59 scenarios. Its new 332x807 first-
+  journey case advances to decision beat 3 and requires a full-viewport,
+  unclipped cinematic, a visible/clickable >=180x52 start action, and zero
+  competing region banners. The resulting mobile screenshot and a live desktop
+  in-app-browser capture were both inspected directly. In addition,
+  `npm.cmd run qa:mobile-touch` passes the 41-step real-touch route with 12
+  attempts and one completed journey node.
+- `npm.cmd run voice:elevenlabs-audit` remains green at 1558/1558 stored clips,
+  1489/1489 current lines, and 32/32 reading phonemes. The transition reuses an
+  existing Lily clip, so no generated audio or manifest update was required.

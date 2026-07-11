@@ -180,6 +180,28 @@ describe("local ElevenLabs voice-pack", () => {
       Object.defineProperty(globalThis, "Audio", { configurable: true, value: originalAudio });
     }
   });
+
+  it("releases audio-gated gameplay when the browser cannot construct Audio", async () => {
+    const originalAudio = globalThis.Audio;
+    const originalUserAgent = navigator.userAgent;
+    class ThrowingAudio {
+      constructor() {
+        throw new Error("Audio unavailable");
+      }
+    }
+    Object.defineProperty(navigator, "userAgent", { configurable: true, value: "Chrome" });
+    Object.defineProperty(globalThis, "Audio", { configurable: true, value: ThrowingAudio });
+
+    try {
+      const { VoiceManager } = await import("../src/game/VoiceManager");
+      const completed = vi.fn();
+      new VoiceManager().speakThen("Knap!", completed, { interrupt: true });
+      expect(completed).toHaveBeenCalledTimes(1);
+    } finally {
+      Object.defineProperty(navigator, "userAgent", { configurable: true, value: originalUserAgent });
+      Object.defineProperty(globalThis, "Audio", { configurable: true, value: originalAudio });
+    }
+  });
 });
 
 describe("reading audio path", () => {

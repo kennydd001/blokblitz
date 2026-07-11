@@ -1103,6 +1103,7 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".reis-scene")).toBeTruthy();
     expect(root.querySelector(`.reis-node.done[data-node="${firstNode.id}"]`)).toBeTruthy();
     expect(root.querySelector(`.reis-node.now[data-node="${JOURNEY[1].id}"]`)).toBeTruthy();
+    expect(root.querySelector(".reis-region-banner")?.textContent).toContain("Welkom in Grasland!");
   });
 
   it("has a story beat for every region and every rescued friend", () => {
@@ -1173,6 +1174,7 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     const overlay = root.querySelector<HTMLElement>(".reis-story-overlay");
     expect(overlay).toBeTruthy();
+    expect(root.querySelector(".reis-region-banner")).toBeNull();
     expect(overlay?.textContent).toContain(JOURNEY_INTRO.title);
     expect(overlay?.textContent).toContain(JOURNEY_INTRO.lines[0]);
     // Three visual beats: star falls -> colours drain -> Buddy catches it.
@@ -1186,6 +1188,7 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(start?.textContent).toBe(JOURNEY_INTRO.start);
     start!.click();
     expect(root.querySelector(".reis-story-overlay")).toBeNull();
+    expect(root.querySelector(".reis-region-banner")).toBeNull();
     // The map itself is still there underneath the story.
     expect(root.querySelector(".reis-quest")).toBeTruthy();
   });
@@ -2868,6 +2871,32 @@ describe("per-child profiles", () => {
     game.save.createProfile("Kind", "blitz");
     game.showScene("boot");
     root.querySelector<HTMLButtonElement>('.boot-sign[data-correct="true"]')!.click();
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+  });
+
+  it("keeps profile creation locked until the natural welcome line finishes", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    let finishWelcome: (() => void) | undefined;
+    const speakThen = vi.spyOn(game.voice, "speakThen").mockImplementation((text, onComplete) => {
+      if (text === "Hoi! Daar gaan we!") finishWelcome = onComplete;
+    });
+
+    game.showScene("profiles");
+    const start = root.querySelector<HTMLButtonElement>(".profile-create-start")!;
+    start.click();
+
+    expect(speakThen).toHaveBeenCalledWith("Hoi! Daar gaan we!", expect.any(Function), expect.objectContaining({ interrupt: true }));
+    expect(root.querySelector(".profiles-scene")?.getAttribute("aria-busy")).toBe("true");
+    expect(start.disabled).toBe(true);
+    expect(start.textContent).toBe("Daar gaan we!");
+    expect(game.save.listProfiles()).toHaveLength(1);
+    start.click();
+    expect(game.save.listProfiles()).toHaveLength(1);
+    expect(root.querySelector(".reis-scene")).toBeNull();
+
+    finishWelcome?.();
     expect(root.querySelector(".reis-scene")).toBeTruthy();
   });
 });

@@ -31,6 +31,7 @@ const scenarios = [
   { name: "profiles-full-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-full", expectProfiles: true },
   { name: "boot-returning-narrow-mobile", width: 332, height: 807, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
   { name: "boot-returning-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
+  { name: "journey-intro-narrow-mobile", width: 332, height: 807, mobile: true, open: "journey-intro", expectJourneyIntro: true, reducedMotion: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
@@ -243,6 +244,19 @@ async function openScenario(open) {
     `);
     if (!opened) throw new Error("Could not open full profile picker");
     await waitForSelector(".profile-limit", 5_000);
+    return;
+  }
+  if (open === "journey-intro") {
+    await openGameScene("reis");
+    await waitForSelector(".reis-cine-overlay", 5_000);
+    await evaluate(`
+      (() => {
+        const overlay = document.querySelector(".reis-cine-overlay");
+        overlay?.click();
+        overlay?.click();
+      })()
+    `);
+    await delay(120);
     return;
   }
   if (open === "hub-mode-stars") {
@@ -708,6 +722,11 @@ async function collectMetrics(scenario = {}) {
         menuProgress: rect(".kid-progress-strip"),
         menuProgressTokens: rects(".kid-progress-token"),
         journeyTop: rect(".reis-top"),
+        journeyIntroOverlay: rect(".reis-cine-overlay"),
+        journeyIntroStage: rect(".reis-cine"),
+        journeyIntroBeat: document.querySelector(".reis-cine")?.dataset.beat ?? null,
+        journeyIntroStart: rect(".reis-story-start"),
+        journeyRegionBannerCount: document.querySelectorAll(".reis-region-banner").length,
         journeyQuest: rect(".reis-quest"),
         journeyQuestDebug: (() => {
           const quest = document.querySelector(".reis-quest");
@@ -783,7 +802,7 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (!button.name || !button.semanticName) failures.push(`visible button has no meaningful accessible name: ${JSON.stringify(button)}`);
     if (button.width < 44 || button.height < 44) failures.push(`visible button is smaller than 44px: ${JSON.stringify(button)}`);
   }
-  if ((scenario.expectBoot || scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
+  if ((scenario.expectBoot || scenario.expectJourneyIntro || scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
   if (scenario.expectRealRunner && (!metrics.canvas || metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("canvas does not fill viewport");
   if (!scenario.expectRealRunner && metrics.canvas && (metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("loaded canvas does not fill viewport");
   if (scenario.expectBoot) {
@@ -906,6 +925,33 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       if (card.left < -1 || card.right > viewport.width + 1 || card.top < -1 || card.bottom > viewport.height + 1) failures.push(`Memory card is clipped: ${JSON.stringify(card)}`);
       if (card.width < 44 || card.height < 44) failures.push(`Memory card is too small: ${JSON.stringify(card)}`);
     }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectJourneyIntro) {
+    if (!metrics.journeyIntroOverlay || !metrics.journeyIntroStage || !metrics.journeyIntroStart) failures.push("fresh journey cinematic is incomplete");
+    if (metrics.journeyIntroBeat !== "3") failures.push(`journey intro did not reach decision beat 3: ${metrics.journeyIntroBeat}`);
+    if (metrics.journeyRegionBannerCount !== 0) failures.push(`journey intro has ${metrics.journeyRegionBannerCount} competing region banner(s)`);
+    if (
+      metrics.journeyIntroOverlay &&
+      (metrics.journeyIntroOverlay.left > 1 ||
+        metrics.journeyIntroOverlay.top > 1 ||
+        metrics.journeyIntroOverlay.right < viewport.width - 1 ||
+        metrics.journeyIntroOverlay.bottom < viewport.height - 1)
+    )
+      failures.push(`journey intro does not cover the viewport: ${JSON.stringify(metrics.journeyIntroOverlay)}`);
+    if (
+      metrics.journeyIntroStage &&
+      (metrics.journeyIntroStage.left < -1 ||
+        metrics.journeyIntroStage.right > viewport.width + 1 ||
+        metrics.journeyIntroStage.top < -1 ||
+        metrics.journeyIntroStage.bottom > viewport.height + 1)
+    )
+      failures.push(`journey intro stage is clipped: ${JSON.stringify(metrics.journeyIntroStage)}`);
+    if (metrics.journeyIntroStart && (metrics.journeyIntroStart.width < 180 || metrics.journeyIntroStart.height < 52))
+      failures.push(`journey intro action is too small: ${JSON.stringify(metrics.journeyIntroStart)}`);
+    if (metrics.journeyIntroStart && (metrics.journeyIntroStart.opacity < 0.9 || metrics.journeyIntroStart.pointerEvents === "none"))
+      failures.push(`journey intro action is not visibly interactive: ${JSON.stringify(metrics.journeyIntroStart)}`);
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }

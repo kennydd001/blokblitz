@@ -1,25 +1,7 @@
-export interface ProfileAvatar {
-  id: string;
-  label: string;
-  mark: string;
-  color: string;
-  accent: string;
-  ink: string;
-}
+import { PROFILE_AVATARS, profileAvatarById } from "../data/profileAvatars";
 
-/** Profile identity is deliberately separate from star-unlocked hero skins. */
-export const PROFILE_AVATARS: ProfileAvatar[] = [
-  { id: "blitz", label: "Gele ster", mark: "★", color: "#ffd54a", accent: "#f97316", ink: "#172033" },
-  { id: "aqua", label: "Blauwe golf", mark: "≋", color: "#35a7f0", accent: "#0f5fae", ink: "#ffffff" },
-  { id: "web", label: "Roze vonk", mark: "✦", color: "#ef476f", accent: "#7c2fd0", ink: "#ffffff" },
-  { id: "ember", label: "Oranje berg", mark: "▲", color: "#ff7a2f", accent: "#b42318", ink: "#ffffff" },
-  { id: "shadow", label: "Paarse maan", mark: "☾", color: "#7c5ce0", accent: "#34256f", ink: "#ffffff" },
-  { id: "gold", label: "Groene ruit", mark: "◆", color: "#23b26d", accent: "#0f6b45", ink: "#ffffff" }
-];
-
-export function profileAvatarById(id: string | undefined): ProfileAvatar {
-  return PROFILE_AVATARS.find((avatar) => avatar.id === id) ?? PROFILE_AVATARS[0];
-}
+export { PROFILE_AVATARS, profileAvatarById } from "../data/profileAvatars";
+export type { ProfileAvatar } from "../data/profileAvatars";
 
 export function createProfileAvatar(id: string | undefined): HTMLElement {
   const avatar = profileAvatarById(id);

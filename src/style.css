@@ -6496,6 +6496,18 @@ button:focus-visible,
   cursor: not-allowed;
   box-shadow: none;
 }
+.profiles-scene.is-starting .profile-avatar-choice:not(.chosen),
+.profiles-scene.is-starting .profile-card:not(.starting) {
+  opacity: 0.34;
+  filter: grayscale(0.7);
+}
+.profiles-scene.is-starting .profile-avatar-choice.chosen,
+.profiles-scene.is-starting .profile-card.starting {
+  animation: profile-ready 0.75s ease-in-out infinite alternate;
+}
+@keyframes profile-ready {
+  to { transform: translateY(-4px) scale(1.045); box-shadow: 0 0 0 6px rgba(52, 199, 89, 0.35), 0 8px 0 rgba(23, 32, 51, 0.2); }
+}
 .profile-avatar-choice .profile-token { width: 70px; }
 .profile-name-row {
   display: flex;

@@ -193,7 +193,12 @@ export class VoiceManager {
       void audio.play().catch(finish);
     } catch {
       this.activeAudio = undefined;
-      this.playNext();
+      this.activeFinish = undefined;
+      try {
+        request.onComplete?.();
+      } finally {
+        this.playNext();
+      }
     }
   }
 

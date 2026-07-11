@@ -10,6 +10,7 @@ import { BaseScene, sceneHeader } from "./SceneUtils";
 // per-profile data isolation.
 export class ProfilePickerScene extends BaseScene {
   private manage = false;
+  private transitioning = false;
 
   constructor(game: Game) {
     super(game, "profiles");
@@ -158,9 +159,22 @@ export class ProfilePickerScene extends BaseScene {
   }
 
   private play(id: string): void {
+    if (this.transitioning || !this.game.save.listProfiles().some((profile) => profile.id === id)) return;
+    this.transitioning = true;
+    this.root.classList.add("is-starting");
+    this.root.setAttribute("aria-busy", "true");
+    this.root.querySelectorAll<HTMLButtonElement | HTMLInputElement>("button, input").forEach((control) => (control.disabled = true));
+    this.root.querySelectorAll<HTMLElement>(".profile-card").forEach((card) => card.classList.toggle("starting", card.dataset.profile === id));
+    const start = this.root.querySelector<HTMLButtonElement>(".profile-create-start");
+    if (start) start.textContent = "Daar gaan we!";
     this.game.useProfile(id);
-    this.game.voice.speak("Hoi! Daar gaan we!", { interrupt: true, pitch: 1.2 });
-    this.game.showScene("reis");
+    this.game.voice.speakThen(
+      "Hoi! Daar gaan we!",
+      () => {
+        if (this.root.isConnected) this.game.showScene("reis");
+      },
+      { interrupt: true, pitch: 1.2 }
+    );
   }
 
   private confirmDelete(id: string, name: string): void {

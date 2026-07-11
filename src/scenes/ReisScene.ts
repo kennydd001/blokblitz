@@ -649,6 +649,10 @@ export class ReisScene extends BaseScene {
 
   private maybeRegionBanner(here: JourneyNode): void {
     this.pendingRegionWelcome = undefined;
+    // The first map already has a full-screen, spoken opening story. A region
+    // banner behind it creates two competing messages. Let Grasland welcome
+    // the child on the first successful return instead.
+    if (this.journey().completed.length === 0) return;
     if (here.regionId === this.game.journeyLastRegion) return;
     this.game.journeyLastRegion = here.regionId;
     const world = getWorld(here.regionId);
@@ -660,7 +664,7 @@ export class ReisScene extends BaseScene {
     this.root.appendChild(banner);
     const timer = window.setTimeout(() => banner.remove(), 3600);
     this.addCleanup(() => window.clearTimeout(timer));
-    if (this.journey().completed.length > 0) this.pendingRegionWelcome = `Welkom in ${world.name}! ${story}`;
+    this.pendingRegionWelcome = `Welkom in ${world.name}! ${story}`;
   }
 
   private speakPendingRegionWelcome(onDone: () => void = () => {}): void {

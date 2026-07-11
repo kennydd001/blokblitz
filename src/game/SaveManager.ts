@@ -13,6 +13,7 @@ import type {
 } from "../education/types";
 import { districtSeeds } from "../data/districts";
 import { JOURNEY, backfillCompleted, frontierIndex } from "../data/journey";
+import { PROFILE_AVATAR_IDS } from "../data/profileAvatars";
 import { earnedStickerIds } from "../data/stickers";
 import { WORLDS, nextWorldId } from "../runner/worlds";
 
@@ -26,6 +27,23 @@ export const MAX_CHILD_PROFILES = 4;
 export const MAX_STORED_ATTEMPTS = 1200;
 export const MAX_STORED_SESSIONS = 180;
 const RETAIN_PER_LEARNING_TARGET = 6;
+
+function availableProfileAvatar(requested: string, profiles: ChildProfile[]): string {
+  const used = new Set(profiles.map((profile) => profile.avatar));
+  if (PROFILE_AVATAR_IDS.includes(requested) && !used.has(requested)) return requested;
+  return PROFILE_AVATAR_IDS.find((avatar) => !used.has(avatar)) ?? PROFILE_AVATAR_IDS[0];
+}
+
+function normalizeProfileAvatars(roster: ProfileRoster): { roster: ProfileRoster; changed: boolean } {
+  const normalized: ChildProfile[] = [];
+  let changed = false;
+  for (const profile of roster.profiles) {
+    const avatar = availableProfileAvatar(profile.avatar, normalized);
+    changed ||= avatar !== profile.avatar;
+    normalized.push(avatar === profile.avatar ? profile : { ...profile, avatar });
+  }
+  return { roster: changed ? { ...roster, profiles: normalized } : roster, changed };
+}
 
 export interface DailyMissionCompletion {
   isMission: boolean;
@@ -219,7 +237,7 @@ export class SaveManager {
     const profile: ChildProfile = {
       id: this.nextProfileId(),
       name,
-      avatar,
+      avatar: availableProfileAvatar(avatar, this.roster.profiles),
       createdAt
     };
     const profileData = defaultSaveData();
@@ -625,7 +643,10 @@ export class SaveManager {
 
   private initializeRoster(): ProfileRoster {
     const rosterRaw = this.readStorage(ROSTER_STORAGE_KEY);
-    const roster = rosterRaw ? this.parseRoster(rosterRaw) : undefined;
+    const parsedRoster = rosterRaw ? this.parseRoster(rosterRaw) : undefined;
+    const normalizedRoster = parsedRoster ? normalizeProfileAvatars(parsedRoster) : undefined;
+    const roster = normalizedRoster?.roster;
+    if (normalizedRoster?.changed) this.writeStorage(ROSTER_STORAGE_KEY, JSON.stringify(roster));
     if (roster && roster.activeId && roster.profiles.some((profile) => profile.id === roster.activeId)) {
       // Keep old callers that still rewrite the legacy key in the same runtime
       // compatible, while a normal reload continues to trust the active profile.

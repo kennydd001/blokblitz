@@ -56,6 +56,42 @@ describe("SaveManager child profiles", () => {
     expect(save.getData().settings.muted).toBe(true);
   });
 
+  it("assigns a unique valid identity sign even when callers request a duplicate", () => {
+    const save = new SaveManager();
+    const first = save.createProfile("A", "blitz");
+    const second = save.createProfile("B", "blitz");
+    const third = save.createProfile("C", "not-a-sign");
+
+    expect([first.avatar, second.avatar, third.avatar]).toEqual(["blitz", "aqua", "web"]);
+  });
+
+  it("repairs duplicate legacy identity signs without changing profile order or active child", () => {
+    localStorage.setItem(
+      "blokblitz-profiles-v1",
+      JSON.stringify({
+        activeId: "p2",
+        profiles: [
+          { id: "p1", name: "Noor", avatar: "blitz", createdAt: 1 },
+          { id: "p2", name: "Sem", avatar: "blitz", createdAt: 2 },
+          { id: "p3", name: "Mila", avatar: "unknown", createdAt: 3 }
+        ]
+      })
+    );
+
+    const save = new SaveManager();
+    expect(save.listProfiles().map((profile) => [profile.id, profile.avatar])).toEqual([
+      ["p1", "blitz"],
+      ["p2", "aqua"],
+      ["p3", "web"]
+    ]);
+    expect(save.activeProfile()?.id).toBe("p2");
+    expect(JSON.parse(localStorage.getItem("blokblitz-profiles-v1")!).profiles.map((profile: { avatar: string }) => profile.avatar)).toEqual([
+      "blitz",
+      "aqua",
+      "web"
+    ]);
+  });
+
   it("keeps calm-mode best stars monotonic and isolated per child", () => {
     const save = new SaveManager();
     const first = save.createProfile("A", "blitz");
