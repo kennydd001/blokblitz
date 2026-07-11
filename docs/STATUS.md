@@ -2128,3 +2128,13 @@ Validation:
   attempts and one journey node; `npm.cmd run qa:viewport` passes all 59
   scenarios after answer objects can change position.
 - No audio content or routing changed in this fairness pass.
+
+Release:
+
+- GitHub `main` contains the validated answer-position and day-boundary change
+  as commit `7ca7263`.
+- WSL Wrangler deployed Worker version
+  `aed1164a-308c-4f25-9416-041a433fb38d`. The cache-busted live root serves
+  `index-DuYYqNZK.js` and unchanged `index-By3veXyl.css` with HTTP 200. The
+  served JavaScript contains the current Count, curriculum-focus, and correct-
+  option paths and has the expected 387,198 bytes.
