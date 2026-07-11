@@ -6490,6 +6490,12 @@ button:focus-visible,
   border-color: var(--green);
   box-shadow: 0 0 0 5px rgba(52, 199, 89, 0.45), 0 5px 0 rgba(23, 32, 51, 0.2);
 }
+.profile-avatar-choice.used {
+  opacity: 0.36;
+  filter: grayscale(0.85);
+  cursor: not-allowed;
+  box-shadow: none;
+}
 .profile-avatar-choice .profile-token { width: 70px; }
 .profile-name-row {
   display: flex;
@@ -6834,6 +6840,56 @@ button:focus-visible,
   font-style: normal;
 }
 
+.boot-identity {
+  width: min(360px, 100%);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.boot-sign-prompt {
+  color: #172033;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.62);
+}
+
+.boot-signs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.boot-sign {
+  width: 72px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  padding: 5px;
+  border: 4px solid #172033;
+  border-radius: 12px;
+  background: #fffdf2;
+  box-shadow: 0 5px 0 rgba(23, 32, 51, 0.24);
+  cursor: pointer;
+}
+
+.boot-sign:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(23, 32, 51, 0.24); }
+.boot-sign:disabled { cursor: default; }
+.boot-sign.wrong { animation: garage-shake 0.42s ease; border-color: #c94048; background: #ffe2e2; }
+.boot-sign.correct { border-color: #178651; background: #dcf9e8; box-shadow: 0 0 0 5px rgba(52, 199, 89, 0.45), 0 5px 0 rgba(23, 32, 51, 0.24); }
+.boot-sign-token.profile-token { width: 48px; border-width: 3px; box-shadow: inset 0 -5px 0 var(--profile-accent); }
+.boot-sign-token .profile-token-mark { font-size: 1.35rem; }
+
+.boot-switch.btn {
+  min-width: 148px;
+  min-height: 44px;
+  padding: 6px 14px;
+  font-size: 0.84rem;
+  background: rgba(255, 253, 242, 0.9);
+}
+
 .boot-start.btn {
   min-width: 230px;
   min-height: 66px;
@@ -6932,6 +6988,16 @@ button:focus-visible,
     left: -12%;
   }
 
+  .boot-splash[data-returning="true"] .boot-city {
+    bottom: 30%;
+    transform: scale(0.9);
+    transform-origin: 50% 100%;
+  }
+
+  .boot-splash[data-returning="true"] .boot-scenery::after {
+    bottom: 29%;
+  }
+
   .boot-prompt {
     font-size: 1rem;
   }
@@ -6958,7 +7024,13 @@ button:focus-visible,
   .boot-action {
     grid-column: 1;
     align-self: start;
+    gap: 7px;
   }
+
+  .boot-identity { gap: 5px; }
+  .boot-sign { width: 64px; height: 58px; }
+  .boot-sign-token.profile-token { width: 42px; }
+  .boot-switch.btn { min-height: 44px; }
 
   .boot-city {
     right: 0;
@@ -6967,6 +7039,10 @@ button:focus-visible,
   }
 
   .boot-cloud {
+    display: none;
+  }
+
+  .boot-spark {
     display: none;
   }
 }

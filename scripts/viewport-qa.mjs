@@ -29,6 +29,8 @@ const scenarios = [
   { name: "profiles-create-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-create", expectProfileCreate: true },
   { name: "profiles-create-landscape-mobile", width: 844, height: 390, mobile: true, open: "profiles-create", expectProfileCreate: true },
   { name: "profiles-full-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-full", expectProfiles: true },
+  { name: "boot-returning-narrow-mobile", width: 332, height: 807, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
+  { name: "boot-returning-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
@@ -203,6 +205,22 @@ async function openScenario(open) {
   if (open === "boot") {
     await openGameScene("boot");
     await waitForSelector(".boot-splash", 5_000);
+    return;
+  }
+  if (open === "boot-returning") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        if (!game.save.activeProfile()) game.save.createProfile("Noor", "aqua");
+        const progress = game.save.getMutableData().progress;
+        progress.stars = 14;
+        game.showScene("boot");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open returning profile confirmation");
+    await waitForSelector(".boot-signs", 5_000);
     return;
   }
   if (open === "profiles-create") {
@@ -471,6 +489,7 @@ async function collectMetrics(scenario = {}) {
   return evaluate(`
     (() => {
       const miniBoardSelector = ${miniBoardSelector};
+      const freezeAnimations = ${scenario.expectReturningBoot ? "false" : "true"};
       // Neutralise CSS animations while measuring AND for the screenshot that
       // follows: pulse/idle animations scale elements (flaky getBoundingClientRect)
       // and, crucially, entrance animations (.tile-in etc.) start at opacity 0 —
@@ -480,7 +499,7 @@ async function collectMetrics(scenario = {}) {
       const freeze = document.createElement("style");
       freeze.setAttribute("data-qa-freeze", "true");
       freeze.textContent = "* { animation: none !important; transition: none !important; }";
-      document.head.appendChild(freeze);
+      if (freezeAnimations) document.head.appendChild(freeze);
       const rect = (selector) => {
         const el = document.querySelector(selector);
         if (!el) return null;
@@ -521,6 +540,15 @@ async function collectMetrics(scenario = {}) {
         bootCity: rect(".boot-city"),
         bootStart: rect(".boot-start"),
         bootPrompt: rect(".boot-prompt"),
+        bootProgress: rect(".boot-progress"),
+        bootSignPrompt: rect(".boot-sign-prompt"),
+        bootIdentity: rect(".boot-identity"),
+        bootSigns: rects(".boot-sign"),
+        bootCorrectSigns: document.querySelectorAll('.boot-sign[data-correct="true"]').length,
+        bootCorrectAvatar: document.querySelector('.boot-sign[data-correct="true"]')?.dataset.avatar ?? null,
+        bootActiveAvatar: window.__blokblitzGame?.save.activeProfile()?.avatar ?? null,
+        bootSignTokens: rects(".boot-sign .profile-token"),
+        bootSwitch: rect(".boot-switch"),
         bootLostStar: rect(".boot-lost-star"),
         bootTowerCount: document.querySelectorAll(".boot-city .tower").length,
         bootHasLegacyNumberMark: Boolean(document.querySelector(".brand-mark")),
@@ -737,8 +765,10 @@ async function collectMetrics(scenario = {}) {
           return roles;
         })()
       };
-      // NOTE: freeze intentionally left applied so the screenshot below captures
-      // the settled screen (entrance animations at their final opacity, not 0).
+      // NOTE: when applied, freeze is intentionally left in place so the
+      // screenshot captures settled entrance states. Returning boot starts in
+      // reduced-motion mode instead; late compositor freezing can blacken its
+      // already-promoted hero/identity layers in headless Chrome.
       return metrics;
     })()
   `);
@@ -762,8 +792,25 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (!metrics.bootBuddy || metrics.bootBuddy.width < 150 || metrics.bootBuddy.height < 150) failures.push(`Buddy is missing or too small: ${JSON.stringify(metrics.bootBuddy)}`);
     if (!metrics.bootCity || metrics.bootTowerCount !== 6) failures.push(`Sterrenstad opening art is incomplete: ${metrics.bootTowerCount} towers`);
     if (!metrics.bootLostStar) failures.push("missing the lost-star story hook");
-    if (!metrics.bootStart || metrics.bootStart.width < 180 || metrics.bootStart.height < 60) failures.push(`opening action is too small: ${JSON.stringify(metrics.bootStart)}`);
-    if (metrics.bootStart && (metrics.bootStart.left < -1 || metrics.bootStart.right > viewport.width + 1 || metrics.bootStart.bottom > viewport.height + 1)) failures.push(`opening action is clipped: ${JSON.stringify(metrics.bootStart)}`);
+    if (scenario.expectReturningBoot) {
+      if (metrics.bootStart) failures.push("returning boot still exposes the unverified start button");
+      if (!metrics.bootIdentity || metrics.bootSigns.length !== 3 || metrics.bootSignTokens.length !== 3) failures.push(`returning profile signs are incomplete: ${metrics.bootSigns.length}/${metrics.bootSignTokens.length}`);
+      if (metrics.bootCorrectSigns !== 1 || !metrics.bootCorrectAvatar) failures.push(`expected one correct returning sign, got ${metrics.bootCorrectSigns}`);
+      if (metrics.bootCorrectAvatar !== metrics.bootActiveAvatar) failures.push(`correct sign ${metrics.bootCorrectAvatar} does not match active profile ${metrics.bootActiveAvatar}`);
+      if (!metrics.bootSwitch) failures.push("missing adult-gated player switch");
+      if (!metrics.bootSignPrompt || !metrics.bootProgress) failures.push("returning identity prompt or progress is missing");
+      for (const sign of metrics.bootSigns) {
+        if (sign.width < 58 || sign.height < 54) failures.push(`returning profile sign is too small: ${JSON.stringify(sign)}`);
+        if (sign.left < -1 || sign.right > viewport.width + 1 || sign.top < -1 || sign.bottom > viewport.height + 1) failures.push(`returning profile sign is clipped: ${JSON.stringify(sign)}`);
+      }
+      if (metrics.bootIdentity && (metrics.bootIdentity.left < -1 || metrics.bootIdentity.right > viewport.width + 1 || metrics.bootIdentity.bottom > viewport.height + 1)) failures.push(`returning identity check is clipped: ${JSON.stringify(metrics.bootIdentity)}`);
+      if (rectsOverlap(metrics.bootIdentity, metrics.bootBuddy)) failures.push("returning profile check overlaps Buddy");
+      if (viewport.width < viewport.height && rectsOverlap(metrics.bootIdentity, metrics.bootCity)) failures.push("returning profile check overlaps Sterrenstad");
+      if (viewport.width < viewport.height && rectsOverlap(metrics.bootProgress, metrics.bootCity)) failures.push("returning progress overlaps Sterrenstad");
+    } else {
+      if (!metrics.bootStart || metrics.bootStart.width < 180 || metrics.bootStart.height < 60) failures.push(`opening action is too small: ${JSON.stringify(metrics.bootStart)}`);
+      if (metrics.bootStart && (metrics.bootStart.left < -1 || metrics.bootStart.right > viewport.width + 1 || metrics.bootStart.bottom > viewport.height + 1)) failures.push(`opening action is clipped: ${JSON.stringify(metrics.bootStart)}`);
+    }
     if (metrics.bootBrand && (metrics.bootBrand.left < -1 || metrics.bootBrand.right > viewport.width + 1 || metrics.bootBrand.top < -1)) failures.push(`opening brand is clipped: ${JSON.stringify(metrics.bootBrand)}`);
     if (rectsOverlap(metrics.bootBrand, metrics.bootBuddy)) failures.push("opening brand overlaps Buddy");
     if (rectsOverlap(metrics.bootBrand, metrics.bootStart)) failures.push("opening brand overlaps the start action");

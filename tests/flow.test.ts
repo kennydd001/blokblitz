@@ -1069,14 +1069,14 @@ describe("Speeltuin hub + calm game modes", () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
-    // A returning child has already picked a profile, so Start goes straight in.
+    // A returning child confirms the personal sign before the journey opens.
     game.save.createProfile("Test", "blitz");
 
     game.showScene("boot");
     vi.advanceTimersByTime(750);
     expect(root.querySelector(".reis-scene")).toBeFalsy();
     expect(root.querySelector(".splash-panel")).toBeTruthy();
-    root.querySelector<HTMLButtonElement>(".splash-panel .btn")!.click();
+    root.querySelector<HTMLButtonElement>('.boot-sign[data-correct="true"]')!.click();
     expect(root.querySelector(".reis-scene")).toBeTruthy();
     expect(root.querySelectorAll(".reis-node")).toHaveLength(JOURNEY.length);
     expect(root.querySelectorAll(".reis-node.now")).toHaveLength(1);
@@ -2724,10 +2724,22 @@ describe("per-child profiles", () => {
     const returning = root.querySelector<HTMLElement>(".boot-splash")!;
     expect(returning.dataset.returning).toBe("true");
     expect(returning.querySelector('.boot-buddy[data-buddy="blitz"]')).toBeTruthy();
-    expect(returning.querySelector(".boot-prompt")?.textContent).toContain("Noor");
+    expect(returning.querySelector(".boot-sign-prompt")?.textContent).toContain("Noor");
     expect(returning.querySelector(".boot-progress")?.getAttribute("aria-label")).toContain("14 sterren");
     expect(returning.querySelector(".boot-progress")?.getAttribute("aria-label")).toContain("2/");
-    expect(returning.querySelector<HTMLButtonElement>(".boot-start")?.getAttribute("aria-label")).toBe("Verder spelen als Noor");
+    expect(returning.querySelector(".boot-start")).toBeNull();
+    expect(returning.querySelectorAll(".boot-sign")).toHaveLength(3);
+    expect(returning.querySelectorAll('.boot-sign[data-correct="true"]')).toHaveLength(1);
+    expect(returning.querySelector('.boot-sign[data-correct="true"]')?.getAttribute("data-avatar")).toBe("aqua");
+    expect(returning.querySelector<HTMLButtonElement>(".boot-switch")?.getAttribute("aria-label")).toContain("voor volwassenen");
+
+    const speak = vi.spyOn(game.voice, "speak");
+    returning.querySelector<HTMLButtonElement>('.boot-sign[data-correct="false"]')!.click();
+    expect(root.querySelector(".boot-scene")).toBeTruthy();
+    expect(speak).toHaveBeenCalledWith("Kijk nog eens goed.", expect.objectContaining({ interrupt: true }));
+
+    returning.querySelector<HTMLButtonElement>('.boot-sign[data-correct="true"]')!.click();
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
   });
 
   it("shows a clear adult-facing profile limit instead of an unusable add tile", async () => {
@@ -2765,6 +2777,13 @@ describe("per-child profiles", () => {
     expect(active.avatar).toBe("aqua");
     expect(game.data().progress.cosmetics.activeSkin).toBe("blitz");
     expect(root.querySelector(".reis-scene")).toBeTruthy();
+
+    game.showScene("profiles");
+    root.querySelector<HTMLButtonElement>(".profile-add")!.click();
+    const usedSign = root.querySelector<HTMLButtonElement>('.profile-avatar-choice[data-avatar="aqua"]');
+    expect(usedSign?.disabled).toBe(true);
+    expect(usedSign?.getAttribute("aria-label")).toContain("al gebruikt");
+    expect(root.querySelector('.profile-avatar-choice.chosen[data-avatar="aqua"]')).toBeNull();
   });
 
   it("keeps each child's stars and mastery fully independent", async () => {
@@ -2818,7 +2837,27 @@ describe("per-child profiles", () => {
     expect(root.querySelector(".profiles-scene")).toBeTruthy();
   });
 
-  it("routes boot Start to the picker only when no child is chosen", async () => {
+  it("keeps boot-time profile switching behind the same adult hold gate", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Noor", "aqua");
+    game.showScene("boot");
+
+    root.querySelector<HTMLButtonElement>(".boot-switch")!.click();
+    expect(document.querySelector(".parent-gate-overlay")).toBeTruthy();
+    expect(root.querySelector(".profiles-scene")).toBeNull();
+    document.querySelector<HTMLButtonElement>('.parent-gate-option[data-correct="true"]')!.click();
+    const hold = document.querySelector<HTMLButtonElement>(".parent-gate-hold")!;
+    hold.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    vi.advanceTimersByTime(1250);
+
+    expect(document.querySelector(".parent-gate-overlay")).toBeNull();
+    expect(root.querySelector(".profiles-scene")).toBeTruthy();
+  });
+
+  it("routes fresh boot to profile creation and returning boot through the personal sign", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
@@ -2828,7 +2867,7 @@ describe("per-child profiles", () => {
 
     game.save.createProfile("Kind", "blitz");
     game.showScene("boot");
-    root.querySelector<HTMLButtonElement>(".splash-panel .btn")!.click();
+    root.querySelector<HTMLButtonElement>('.boot-sign[data-correct="true"]')!.click();
     expect(root.querySelector(".reis-scene")).toBeTruthy();
   });
 });

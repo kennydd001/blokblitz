@@ -102,7 +102,8 @@ export class ProfilePickerScene extends BaseScene {
   private createPanel(): HTMLElement {
     const panel = document.createElement("div");
     panel.className = "profile-create";
-    let chosen = PROFILE_AVATARS[0].id;
+    const used = new Set(this.game.save.listProfiles().map((profile) => profile.avatar));
+    let chosen = PROFILE_AVATARS.find((avatar) => !used.has(avatar.id))?.id ?? PROFILE_AVATARS[0].id;
 
     const choices = document.createElement("div");
     choices.className = "profile-avatar-choices";
@@ -112,7 +113,10 @@ export class ProfilePickerScene extends BaseScene {
       opt.type = "button";
       opt.className = "profile-avatar-choice";
       opt.dataset.avatar = avatar.id;
-      opt.setAttribute("aria-label", avatar.label);
+      const alreadyUsed = used.has(avatar.id);
+      opt.disabled = alreadyUsed;
+      opt.classList.toggle("used", alreadyUsed);
+      opt.setAttribute("aria-label", alreadyUsed ? `${avatar.label}, al gebruikt` : avatar.label);
       opt.setAttribute("aria-pressed", String(avatar.id === chosen));
       if (avatar.id === chosen) opt.classList.add("chosen");
       const token = createProfileAvatar(avatar.id);

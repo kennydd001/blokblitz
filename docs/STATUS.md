@@ -1946,3 +1946,44 @@ Release:
   sequence code; served CSS contains the treasure and short-landscape rules.
   The representative existing `Dagmissie klaar!` Lily clip is live as
   `audio/mpeg` with the expected 21,359 bytes.
+
+## Child-Safe Returning Profile Confirmation - 2026-07-11
+
+Completed work:
+
+- Closed the remaining accidental sibling-play gap at startup. A returning child
+  no longer gets a blind `Verder spelen` action for whichever profile happened
+  to be active last. Boot shows three large visual signs and only the active
+  profile's own sign opens the Sterrenreis.
+- A wrong sign is safe: the screen stays put, the sign shakes, Buddy asks the
+  child to look again, and the existing natural Lily `Kijk nog eens goed.` clip
+  plays. The correct sign disables the choices, uses the existing `Hoi! Daar
+  gaan we!` clip, and changes scene only after that line completes.
+- `Andere speler` is available from boot but passes through the same adult sum
+  and hold-confirmation as the locked Hub profile chip. Creating another child
+  disables signs already used by siblings, keeping newly created profiles
+  visually distinguishable without passwords or reading pressure.
+- This is deliberately an accidental-use guard, not authentication: all data is
+  local and a determined child can learn another sign. It prevents the common
+  wrong-profile tap while preserving independent child access and parent control.
+- Returning portrait and short-landscape layouts were separately refined. The
+  city/ground move above the taller identity block on narrow phones; decorative
+  landscape sparkles are removed where they could cover the sign prompt.
+
+Validation:
+
+- Flow tests prove wrong sign -> still boot + natural feedback, correct sign ->
+  journey, used sibling sign -> disabled, and boot-time player switching -> sum
+  + hold gate -> profile picker. The full suite passes with 34 files / 295 tests.
+- `npm.cmd run verify` passes typecheck, lint, tests, and production build. Entry
+  assets are `index-DGcIRWX1.js` (102.07 kB gzip) and `index-iuJE1TLI.css`
+  (33.34 kB gzip).
+- `npm.cmd run qa:viewport` passes all 58 scenarios. New 332x807 and 844x390
+  returning-boot checks require three large signs, exactly one correct sign that
+  matches the active profile, an adult switch, no clipping, and no Buddy/profile
+  overlap. Both final screenshots were inspected directly.
+- Fixed-seed `npm.cmd run qa:mobile-touch` passes 41 real touch steps: it taps a
+  wrong sign and remains on boot, taps the correct sign, then completes the full
+  runner/journey/reading/reward route with 12 tracked attempts and one journey
+  node. `npm.cmd run voice:elevenlabs-audit` remains green at 1558/1558 stored,
+  1489/1489 current, and 32/32 phonemes; no new MP3 was needed.

@@ -78,6 +78,24 @@ async function main() {
         return true;
       })()
     `);
+
+    // Returning-child identity: a wrong personal sign must stay put; the
+    // correct sign is the audio-unlocking gesture that opens the journey.
+    await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        if (!game.save.activeProfile()) game.save.createProfile("Noor", "aqua");
+        game.showScene("boot");
+        return true;
+      })()
+    `);
+    await waitForSelector(".boot-signs", 5_000);
+    await assertNoHorizontalOverflow("returning boot");
+    await tap('.boot-sign[data-correct="false"]', "returning boot wrong sign");
+    if (!(await exists(".boot-scene"))) throw new Error("Wrong profile sign left the returning boot");
+    await tap('.boot-sign[data-correct="true"]', "returning boot correct sign");
+    await waitForSelector(".reis-scene", 8_000);
     await assertNoHorizontalOverflow("journey");
 
     await openGameScene("run");
