@@ -15,11 +15,11 @@ export class MasteryTracker {
   private attempts: AttemptLog[];
 
   constructor(attempts: AttemptLog[] = []) {
-    this.attempts = attempts;
+    this.attempts = [...attempts];
   }
 
   setAttempts(attempts: AttemptLog[]): void {
-    this.attempts = attempts;
+    this.attempts = [...attempts];
   }
 
   getAttempts(): AttemptLog[] {

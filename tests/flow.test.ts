@@ -2445,6 +2445,18 @@ describe("per-child profiles", () => {
     expect(returning.querySelector<HTMLButtonElement>(".boot-start")?.getAttribute("aria-label")).toBe("Verder spelen als Noor");
   });
 
+  it("shows a clear adult-facing profile limit instead of an unusable add tile", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    for (let index = 1; index <= 4; index += 1) game.save.createProfile(`Kind ${index}`, "blitz", index);
+
+    game.showScene("profiles");
+    expect(root.querySelectorAll(".profile-card[data-profile]")).toHaveLength(4);
+    expect(root.querySelector(".profile-add")).toBeFalsy();
+    expect(root.querySelector(".profile-limit")?.textContent).toContain("4 spelers op dit toestel");
+  });
+
   it("shows the profile picker on a fresh install and creates the first child", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;

@@ -6258,6 +6258,13 @@ button:focus-visible,
   pointer-events: none;
 }
 .profiles-tools { justify-content: center; }
+.profile-limit {
+  width: min(560px, 94%);
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
 
 .profile-create {
   display: flex;

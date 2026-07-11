@@ -15,6 +15,7 @@ const scenarios = [
   { name: "boot-reduced-motion-mobile", width: 390, height: 844, mobile: true, open: "boot", expectBoot: true, reducedMotion: true },
   { name: "boot-desktop", width: 1280, height: 720, mobile: false, open: "boot", expectBoot: true },
   { name: "boot-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot", expectBoot: true },
+  { name: "profiles-full-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-full", expectProfiles: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
@@ -149,6 +150,22 @@ async function openScenario(open) {
   if (open === "boot") {
     await openGameScene("boot");
     await waitForSelector(".boot-splash", 5_000);
+    return;
+  }
+  if (open === "profiles-full") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        for (let index = game.save.listProfiles().length + 1; index <= 4; index += 1) {
+          game.save.createProfile("Kind " + index, "blitz", index);
+        }
+        game.showScene("profiles");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open full profile picker");
+    await waitForSelector(".profile-limit", 5_000);
     return;
   }
   if (open === "menu") {
@@ -318,6 +335,10 @@ async function collectMetrics(scenario = {}) {
           const style = getComputedStyle(buddy);
           return { duration: style.animationDuration, iterations: style.animationIterationCount };
         })(),
+        profileGrid: rect(".profiles-grid"),
+        profileCards: rects(".profile-card[data-profile]"),
+        profileLimit: rect(".profile-limit"),
+        profileAddPresent: Boolean(document.querySelector(".profile-add")),
         hubGrid: rect(".hub-grid"),
         hubCardCount: document.querySelectorAll(".hub-card").length,
         hubDaily: rect(".hub-daily"),
@@ -485,6 +506,19 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       const durations = metrics.bootAnimation?.duration?.split(",").map((value) => Number.parseFloat(value) || 0) ?? [];
       if (durations.length === 0 || durations.some((seconds) => seconds > 0.002)) failures.push(`opening animation did not reduce to 1ms: ${JSON.stringify(metrics.bootAnimation)}`);
       if (metrics.bootAnimation?.iterations?.includes("infinite")) failures.push(`opening animation still loops under reduced motion: ${JSON.stringify(metrics.bootAnimation)}`);
+    }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectProfiles) {
+    if (!metrics.profileGrid) failures.push("missing profile grid");
+    if (metrics.profileCards.length !== 4) failures.push(`expected four child profiles, got ${metrics.profileCards.length}`);
+    if (!metrics.profileLimit) failures.push("missing profile-limit explanation");
+    if (metrics.profileAddPresent) failures.push("new-child tile remains available at the profile cap");
+    if (metrics.profileGrid && (metrics.profileGrid.left < -1 || metrics.profileGrid.right > viewport.width + 1)) failures.push(`profile grid is clipped: ${JSON.stringify(metrics.profileGrid)}`);
+    for (const card of metrics.profileCards) {
+      if (card.left < -1 || card.right > viewport.width + 1) failures.push(`profile card is clipped: ${JSON.stringify(card)}`);
+      if (card.width < 100 || card.height < 120) failures.push(`profile card is too small: ${JSON.stringify(card)}`);
     }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

@@ -1545,3 +1545,42 @@ Validation and release:
   `365d99e1-4120-4a48-983f-15fb66a9f13b`. Live root, JS, and CSS returned HTTP
   200 with the correct content types; the served bundles contain the new boot
   scene and reduced-motion rules.
+
+## Long-Term Profile Storage Resilience - 2026-07-11
+
+Completed work:
+
+- Bounded each child's stored history at 1200 attempts, 180 sessions, 120
+  completed activities, and eight recent challenge ids. This prevents months
+  of replay across siblings from growing one origin toward localStorage quota.
+- Attempt compaction is target-aware rather than a blunt newest-only slice. It
+  first reserves the six newest examples for each curriculum target or classic
+  number-skill/representation/range/quantity cell, then fills remaining room
+  with the newest attempts globally. Weak old targets therefore remain visible
+  to mastery, review, and adaptation while recent play still dominates.
+- Migration compacts the active save and every oversized inactive profile
+  before the next write. The live MasteryTracker is resynchronised after each
+  persisted attempt, so the in-memory and reload views use exactly the same
+  bounded evidence.
+- Limited new profile creation to four children per device. Existing progress
+  is never overwritten: at the cap the parent-gated picker removes the `Nieuw`
+  tile, keeps all four large profile cards, and explains that `Beheer` can make
+  room. Direct storage calls enforce the same invariant.
+
+Validation and release:
+
+- Added storage-resilience tests. A 1350-attempt/240-session legacy save is
+  migrated to 1200/180, all 75 represented learning targets survive, recent
+  order and latest evidence are preserved, activity history is bounded, and
+  the pretty-printed exported profile remains below 1 MB.
+- `npm.cmd run verify` passed with 33 files / 267 tests, typecheck, lint, and a
+  production build. Current entry assets are `index-OmOLSFaN.js` (97.83 kB
+  gzip) and `index-DdtH3iyW.css` (31.71 kB gzip).
+- `npm.cmd run qa:viewport` passed all 34 scenarios, including direct visual
+  inspection of four profiles at 332x807 with no add tile, clipping, small
+  button, or overflow. `npm.cmd run qa:mobile-touch` passed 39 touch steps.
+- The unchanged ElevenLabs pack still passes at 1555/1555 files, 1487/1487
+  current lines, and 32/32 reading phonemes.
+- WSL Wrangler deployed Worker version
+  `091d0d05-7ded-4452-86b2-47eea8280c10`. Live root, JS, and CSS returned HTTP
+  200; the served bundles contain both the profile cap and profile-limit UI.

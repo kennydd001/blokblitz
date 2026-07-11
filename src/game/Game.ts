@@ -234,6 +234,7 @@ export class Game {
     });
     const logged = this.mastery.logAttempt(attempt);
     this.save.appendAttempt(logged);
+    this.mastery.setAttempts(this.save.getMutableData().progress.attempts);
 
     if (option.isCorrect) {
       const isSnap = challenge.skill === "subitize" && reactionTimeMs <= subitizeThresholdMs(challenge.quantity);
@@ -260,6 +261,7 @@ export class Game {
   recordCurriculumAttempt(attempt: AttemptLog): boolean {
     const logged = this.mastery.logAttempt(attempt);
     this.save.appendAttempt(logged);
+    this.mastery.setAttempts(this.save.getMutableData().progress.attempts);
     if (attempt.wasCorrect) {
       this.save.award({ stars: 1, blocks: 1, streakDelta: 1 });
       this.audio.play("success");

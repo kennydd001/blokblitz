@@ -1,4 +1,5 @@
 import type { Game } from "../game/Game";
+import { MAX_CHILD_PROFILES } from "../game/SaveManager";
 import { HERO_SKINS, skinById } from "../runner/skins";
 import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
@@ -62,15 +63,23 @@ export class ProfilePickerScene extends BaseScene {
       grid.appendChild(card);
     });
 
-    // "New child" tile.
-    const add = document.createElement("button");
-    add.type = "button";
-    add.className = "profile-card profile-add";
-    add.setAttribute("aria-label", "Nieuw kind");
-    add.innerHTML = `<span class="profile-add-plus" aria-hidden="true">＋</span><strong>Nieuw</strong>`;
-    add.addEventListener("click", () => this.root.replaceChildren(sceneHeader("Nieuwe dino", "Kies er een!"), this.createPanel()));
-    grid.appendChild(add);
+    if (profiles.length < MAX_CHILD_PROFILES) {
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "profile-card profile-add";
+      add.setAttribute("aria-label", "Nieuw kind");
+      add.innerHTML = `<span class="profile-add-plus" aria-hidden="true">＋</span><strong>Nieuw</strong>`;
+      add.addEventListener("click", () => this.root.replaceChildren(sceneHeader("Nieuwe dino", "Kies er een!"), this.createPanel()));
+      grid.appendChild(add);
+    }
     this.root.appendChild(grid);
+
+    if (profiles.length >= MAX_CHILD_PROFILES) {
+      const limit = document.createElement("p");
+      limit.className = "profile-limit";
+      limit.textContent = `${MAX_CHILD_PROFILES} spelers op dit toestel. Gebruik Beheer om plaats te maken.`;
+      this.root.appendChild(limit);
+    }
 
     const tools = document.createElement("div");
     tools.className = "menu-tools profiles-tools";

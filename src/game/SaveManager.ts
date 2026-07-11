@@ -22,6 +22,11 @@ const PROFILE_STORAGE_PREFIX = `${STORAGE_KEY}::`;
 const memoryStorage = new Map<string, string>();
 const migratedLegacySources = new Map<string, string>();
 
+export const MAX_CHILD_PROFILES = 4;
+export const MAX_STORED_ATTEMPTS = 1200;
+export const MAX_STORED_SESSIONS = 180;
+const RETAIN_PER_LEARNING_TARGET = 6;
+
 export interface DailyMissionCompletion {
   isMission: boolean;
   newlyCompleted: boolean;
@@ -46,6 +51,43 @@ function makeWorldRecord(): Record<string, WorldProgress> {
   return Object.fromEntries(
     WORLDS.map((world, index) => [world.id, { unlocked: index === 0, completed: false, bestStars: 0 }])
   );
+}
+
+function attemptStorageGroup(attempt: AttemptLog): string {
+  if (attempt.domain) {
+    return `${attempt.domain}::${attempt.skill}::${attempt.targetKey ?? attempt.quantity}`;
+  }
+  return `math-number::${attempt.skill}::${attempt.representation}::${attempt.quantityRange}::${attempt.quantity}`;
+}
+
+/**
+ * Bound localStorage growth without turning the cap into "forget every old
+ * target". Reserve the latest samples for each learning target first, then
+ * fill the remaining room with the newest attempts across the whole profile.
+ */
+export function compactAttemptHistory(attempts: AttemptLog[], limit = MAX_STORED_ATTEMPTS): AttemptLog[] {
+  const safeLimit = Math.max(1, Math.floor(limit));
+  if (attempts.length <= safeLimit) return [...attempts];
+
+  const selected = new Set<number>();
+  const retainedByTarget = new Map<string, number>();
+  for (let index = attempts.length - 1; index >= 0 && selected.size < safeLimit; index -= 1) {
+    const key = attemptStorageGroup(attempts[index]);
+    const retained = retainedByTarget.get(key) ?? 0;
+    if (retained >= RETAIN_PER_LEARNING_TARGET) continue;
+    selected.add(index);
+    retainedByTarget.set(key, retained + 1);
+  }
+
+  for (let index = attempts.length - 1; index >= 0 && selected.size < safeLimit; index -= 1) selected.add(index);
+  return attempts.filter((_attempt, index) => selected.has(index));
+}
+
+function compactProgressForStorage(progress: GameProgress): void {
+  progress.attempts = compactAttemptHistory(Array.isArray(progress.attempts) ? progress.attempts : []);
+  progress.sessions = (Array.isArray(progress.sessions) ? progress.sessions : []).slice(-MAX_STORED_SESSIONS);
+  progress.activityHistory = (Array.isArray(progress.activityHistory) ? progress.activityHistory : []).slice(-120);
+  progress.lastChallengeIds = (Array.isArray(progress.lastChallengeIds) ? progress.lastChallengeIds : []).slice(-8);
 }
 
 export function defaultSettings(): GameSettings {
@@ -122,6 +164,7 @@ export class SaveManager {
 
   constructor() {
     this.roster = this.initializeRoster();
+    this.compactStoredProfiles();
     this.data = this.load();
   }
 
@@ -147,6 +190,9 @@ export class SaveManager {
   }
 
   createProfile(name: string, avatar: string, createdAt = 0): ChildProfile {
+    if (this.roster.profiles.length >= MAX_CHILD_PROFILES) {
+      throw new Error(`BlokBlitz supports at most ${MAX_CHILD_PROFILES} child profiles on one device.`);
+    }
     const profile: ChildProfile = {
       id: this.nextProfileId(),
       name,
@@ -209,6 +255,7 @@ export class SaveManager {
   }
 
   save(): void {
+    compactProgressForStorage(this.data.progress);
     this.writeStorage(this.storageKey(), JSON.stringify(this.data));
   }
 
@@ -445,7 +492,7 @@ export class SaveManager {
     // so a returning child keeps whatever they had (both off if it was muted).
     const savedSettings = data.settings ?? {};
     const legacyMuted = savedSettings.muted === true;
-    return {
+    const migrated: SaveData = {
       version: 1,
       settings: {
         ...fallback.settings,
@@ -479,6 +526,8 @@ export class SaveManager {
         dailyPlan: data.progress?.dailyPlan ?? { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
       }
     };
+    compactProgressForStorage(migrated.progress);
+    return migrated;
   }
 
   /** Count a finished activity toward the treasure chest; caps at 3 (= full). */
@@ -568,6 +617,31 @@ export class SaveManager {
     const emptyRoster: ProfileRoster = { activeId: "", profiles: [] };
     this.writeStorage(ROSTER_STORAGE_KEY, JSON.stringify(emptyRoster));
     return emptyRoster;
+  }
+
+  /** Shrink inactive legacy profiles too, before a new active-profile write. */
+  private compactStoredProfiles(): void {
+    for (const profile of this.roster.profiles) {
+      const key = profileStorageKey(profile.id);
+      const raw = this.readStorage(key);
+      if (!raw) continue;
+      try {
+        const parsed = JSON.parse(raw) as SaveData;
+        const progress = parsed?.progress;
+        if (!progress) continue;
+        const needsCompaction =
+          (progress.attempts?.length ?? 0) > MAX_STORED_ATTEMPTS ||
+          (progress.sessions?.length ?? 0) > MAX_STORED_SESSIONS ||
+          (progress.activityHistory?.length ?? 0) > 120 ||
+          (progress.lastChallengeIds?.length ?? 0) > 8;
+        if (!needsCompaction) continue;
+        compactProgressForStorage(progress);
+        this.writeStorage(key, JSON.stringify(parsed));
+      } catch {
+        // A corrupt or quota-blocked inactive profile must not stop another
+        // child from opening the game. Loading that profile still uses migrate().
+      }
+    }
   }
 
   private persistRoster(): void {
