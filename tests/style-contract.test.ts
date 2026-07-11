@@ -41,4 +41,12 @@ describe("responsive gameplay CSS contract", () => {
     expect(css).toContain("overscroll-behavior: none");
     expect(css).toContain("-webkit-tap-highlight-color: transparent");
   });
+
+  it("keeps the visual opening frame and reduced-motion fallback", () => {
+    expect(css).toContain(".boot-splash {");
+    expect(css).toContain(".boot-buddy.buddy {");
+    expect(css).toContain(".boot-city .tower {");
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(css).toContain("animation-iteration-count: 1 !important");
+  });
 });

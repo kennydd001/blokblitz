@@ -11,6 +11,10 @@ const artifactDir = path.join(root, ".qa-artifacts", "viewport-qa");
 mkdirSync(artifactDir, { recursive: true });
 
 const scenarios = [
+  { name: "boot-narrow-mobile", width: 332, height: 807, mobile: true, open: "boot", expectBoot: true },
+  { name: "boot-reduced-motion-mobile", width: 390, height: 844, mobile: true, open: "boot", expectBoot: true, reducedMotion: true },
+  { name: "boot-desktop", width: 1280, height: 720, mobile: false, open: "boot", expectBoot: true },
+  { name: "boot-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot", expectBoot: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
@@ -101,6 +105,9 @@ try {
       deviceScaleFactor: 1,
       mobile: scenario.mobile
     });
+    await cdp.send("Emulation.setEmulatedMedia", {
+      features: [{ name: "prefers-reduced-motion", value: scenario.reducedMotion ? "reduce" : "no-preference" }]
+    });
     await cdp.send("Page.navigate", { url: `${baseUrl}?qa=${Date.now()}-${scenario.name}` });
     await waitForSelector(".scene", 8_000);
     await openScenario(scenario.open);
@@ -139,6 +146,11 @@ try {
 }
 
 async function openScenario(open) {
+  if (open === "boot") {
+    await openGameScene("boot");
+    await waitForSelector(".boot-splash", 5_000);
+    return;
+  }
   if (open === "menu") {
     await openGameScene("reis");
     await waitForSelector(".reis-scene", 5_000);
@@ -289,6 +301,23 @@ async function collectMetrics(scenario = {}) {
         };
       });
       const metrics = {
+        bootSplash: rect(".boot-splash"),
+        bootBrand: rect(".boot-brand"),
+        bootBuddy: rect(".boot-buddy"),
+        bootBubble: rect(".boot-buddy .buddy-bubble.show"),
+        bootCity: rect(".boot-city"),
+        bootStart: rect(".boot-start"),
+        bootPrompt: rect(".boot-prompt"),
+        bootLostStar: rect(".boot-lost-star"),
+        bootTowerCount: document.querySelectorAll(".boot-city .tower").length,
+        bootHasLegacyNumberMark: Boolean(document.querySelector(".brand-mark")),
+        reducedMotionMatches: matchMedia("(prefers-reduced-motion: reduce)").matches,
+        bootAnimation: (() => {
+          const buddy = document.querySelector(".boot-buddy");
+          if (!buddy) return null;
+          const style = getComputedStyle(buddy);
+          return { duration: style.animationDuration, iterations: style.animationIterationCount };
+        })(),
         hubGrid: rect(".hub-grid"),
         hubCardCount: document.querySelectorAll(".hub-card").length,
         hubDaily: rect(".hub-daily"),
@@ -432,9 +461,34 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (!button.name || !button.semanticName) failures.push(`visible button has no meaningful accessible name: ${JSON.stringify(button)}`);
     if (button.width < 44 || button.height < 44) failures.push(`visible button is smaller than 44px: ${JSON.stringify(button)}`);
   }
-  if ((scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
+  if ((scenario.expectBoot || scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
   if (scenario.expectRealRunner && (!metrics.canvas || metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("canvas does not fill viewport");
   if (!scenario.expectRealRunner && metrics.canvas && (metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("loaded canvas does not fill viewport");
+  if (scenario.expectBoot) {
+    if (!metrics.bootSplash) failures.push("missing opening scene");
+    if (!metrics.bootBrand) failures.push("missing BlokBlitz brand");
+    if (!metrics.bootBuddy || metrics.bootBuddy.width < 150 || metrics.bootBuddy.height < 150) failures.push(`Buddy is missing or too small: ${JSON.stringify(metrics.bootBuddy)}`);
+    if (!metrics.bootCity || metrics.bootTowerCount !== 6) failures.push(`Sterrenstad opening art is incomplete: ${metrics.bootTowerCount} towers`);
+    if (!metrics.bootLostStar) failures.push("missing the lost-star story hook");
+    if (!metrics.bootStart || metrics.bootStart.width < 180 || metrics.bootStart.height < 60) failures.push(`opening action is too small: ${JSON.stringify(metrics.bootStart)}`);
+    if (metrics.bootStart && (metrics.bootStart.left < -1 || metrics.bootStart.right > viewport.width + 1 || metrics.bootStart.bottom > viewport.height + 1)) failures.push(`opening action is clipped: ${JSON.stringify(metrics.bootStart)}`);
+    if (metrics.bootBrand && (metrics.bootBrand.left < -1 || metrics.bootBrand.right > viewport.width + 1 || metrics.bootBrand.top < -1)) failures.push(`opening brand is clipped: ${JSON.stringify(metrics.bootBrand)}`);
+    if (rectsOverlap(metrics.bootBrand, metrics.bootBuddy)) failures.push("opening brand overlaps Buddy");
+    if (rectsOverlap(metrics.bootBrand, metrics.bootStart)) failures.push("opening brand overlaps the start action");
+    if (rectsOverlap(metrics.bootBuddy, metrics.bootStart)) failures.push("Buddy overlaps the start action");
+    if (rectsOverlap(metrics.bootBuddy, metrics.bootPrompt)) failures.push("Buddy overlaps the opening prompt");
+    if (rectsOverlap(metrics.bootBubble, metrics.bootBrand)) failures.push("Buddy's speech bubble overlaps the brand");
+    if (rectsOverlap(metrics.bootBubble, metrics.bootStart)) failures.push("Buddy's speech bubble overlaps the start action");
+    if (metrics.bootHasLegacyNumberMark) failures.push("legacy generic number mark is still visible");
+    if (scenario.reducedMotion) {
+      if (!metrics.reducedMotionMatches) failures.push("browser reduced-motion preference was not applied");
+      const durations = metrics.bootAnimation?.duration?.split(",").map((value) => Number.parseFloat(value) || 0) ?? [];
+      if (durations.length === 0 || durations.some((seconds) => seconds > 0.002)) failures.push(`opening animation did not reduce to 1ms: ${JSON.stringify(metrics.bootAnimation)}`);
+      if (metrics.bootAnimation?.iterations?.includes("infinite")) failures.push(`opening animation still loops under reduced motion: ${JSON.stringify(metrics.bootAnimation)}`);
+    }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
   if (scenario.expectJourneyMap) {
     if (!metrics.journeyTop) failures.push("missing journey top bar");
     if (!metrics.journeyProgress) failures.push("missing journey progress pill");
@@ -600,6 +654,11 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     }
   }
   if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+}
+
+function rectsOverlap(a, b) {
+  if (!a || !b) return false;
+  return Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
 }
 
 async function evaluate(expression) {

@@ -2417,6 +2417,34 @@ describe("per-child profiles", () => {
     localStorage.clear();
   });
 
+  it("opens with Buddy, Sterrenstad and return-aware journey progress", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    game.showScene("boot");
+    const fresh = root.querySelector<HTMLElement>(".boot-splash")!;
+    expect(fresh.dataset.returning).toBe("false");
+    expect(fresh.querySelector(".boot-buddy")).toBeTruthy();
+    expect(fresh.querySelectorAll(".boot-city .tower")).toHaveLength(6);
+    expect(fresh.querySelector(".boot-lost-star")).toBeTruthy();
+    expect(fresh.querySelector("h1")?.textContent).toBe("BlokBlitz");
+    expect(fresh.querySelector(".brand-mark")).toBeFalsy();
+    expect(fresh.querySelector<HTMLButtonElement>(".boot-start")?.getAttribute("aria-label")).toBe("Start het avontuur");
+
+    game.save.createProfile("Noor", "aqua");
+    game.save.award({ stars: 14 });
+    game.save.advanceJourney(JOURNEY[0].id);
+    game.showScene("boot");
+
+    const returning = root.querySelector<HTMLElement>(".boot-splash")!;
+    expect(returning.dataset.returning).toBe("true");
+    expect(returning.querySelector(".boot-prompt")?.textContent).toContain("Noor");
+    expect(returning.querySelector(".boot-progress")?.getAttribute("aria-label")).toContain("14 sterren");
+    expect(returning.querySelector(".boot-progress")?.getAttribute("aria-label")).toContain("2/");
+    expect(returning.querySelector<HTMLButtonElement>(".boot-start")?.getAttribute("aria-label")).toBe("Verder spelen als Noor");
+  });
+
   it("shows the profile picker on a fresh install and creates the first child", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;

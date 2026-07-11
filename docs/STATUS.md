@@ -1506,3 +1506,42 @@ Validation:
 - The final current-state requirement audit is recorded in
   `docs/ACCEPTANCE_AUDIT.md`. No technical/curriculum/automated finding remains;
   physical child-in-hand phone feel is the sole external proof still open.
+
+## Return-Aware Opening and Reduced Motion - 2026-07-11
+
+Completed work:
+
+- Replaced the generic first-load numeral card with a full-viewport opening
+  frame showing the BlokBlitz brand, Buddy, the fallen star, and colourful
+  Sterrenstad. The required first tap still unlocks browser audio, but now feels
+  like the first beat of the adventure instead of a loading gate.
+- New children get one large `Start avontuur` action. Returning children see
+  their own name, selected Buddy skin, stars, current Sterrenreis position, and
+  one `Verder spelen` action. Profile names are inserted with `textContent`.
+- Kept the opening entirely local and light: semantic DOM, the existing Buddy
+  SVG, and CSS block scenery; no Three.js, external assets, or new spoken line.
+  The complete 1555-file ElevenLabs pack remains unchanged and fully covered.
+- Added a global `prefers-reduced-motion: reduce` fallback that ends decorative
+  CSS animation and transitions in 1 ms and prevents infinite loops while
+  leaving JavaScript-driven controls and runner simulation functional.
+- Expanded viewport QA with narrow portrait, desktop, mobile landscape, and
+  emulated reduced-motion opening scenarios. It now asserts Buddy/city/story
+  presence, a >=60px primary action, no legacy number mark, no critical element
+  overlaps, no eager canvas, and actual reduced animation durations.
+
+Validation and release:
+
+- `npm.cmd run verify` passed with 32 files / 263 tests, typecheck, lint, and a
+  production build. Current entry assets are `index-hNdOFqAq.js` (97.33 kB
+  gzip) and `index-fCTg8hpA.css` (31.68 kB gzip).
+- `npm.cmd run qa:viewport` passed all 33 scenarios. The three primary opening
+  screenshots were inspected directly; an independent in-app-browser render
+  at 844x390 confirmed the live layout after a local PNG decoder anomaly.
+- `npm.cmd run qa:mobile-touch` passed 39 coordinate-touch steps with 12
+  tracked attempts and one completed journey node.
+- `npm.cmd run voice:elevenlabs-audit` passed at 1555/1555 files, 1487/1487
+  current lines, and 32/32 reading phonemes. No audio generation was needed.
+- WSL Wrangler deployed Worker version
+  `365d99e1-4120-4a48-983f-15fb66a9f13b`. Live root, JS, and CSS returned HTTP
+  200 with the correct content types; the served bundles contain the new boot
+  scene and reduced-motion rules.
