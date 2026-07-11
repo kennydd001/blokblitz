@@ -1725,3 +1725,43 @@ Release:
   `index-iPaDLrus.js`, and `index-i1Aa8ApN.css` returned HTTP 200 with the
   correct content types; the served bundles contain `Nieuwe held!` and the
   responsive `.skin-reveal` rules.
+
+## Profile Identity / Hero Economy Separation - 2026-07-11
+
+Completed work:
+
+- Found and closed a progression loophole: profile creation offered every hero
+  colour and copied that choice into `activeSkin`, so a new child could start
+  as Goud or Schaduw while the same garage card still claimed to be locked.
+- Split identity from rewards. A child now chooses one of six high-contrast
+  profile signs (star, wave, spark, mountain, moon, diamond); every new playable
+  Buddy starts as Blitz. Profile cards and the locked Hub chip use the sign,
+  while the opening frame, calm games, journey, and runner use the genuinely
+  selected and unlocked hero skin.
+- Kept all existing profiles compatible. Legacy migration preserves the old
+  colour id as that child's profile sign, keeps a legitimately unlocked active
+  hero, and resets only impossible `activeSkin` values that are absent from the
+  profile-local unlocked list. Blitz is always restored to that list.
+- Removed hero-name speech from profile-sign taps, so identity selection cannot
+  imply a free hero and cannot interrupt the existing natural profile greeting.
+  This introduced no new spoken line or runtime asset.
+- Added pressed-state semantics to the six sign choices. On 332px portrait the
+  name label/input stack cleanly; at 844x390 the six signs form one compact row.
+  Four-profile cards show distinct signs without exposing playable Buddy skins.
+
+Validation:
+
+- Save/flow regressions cover new-profile defaults, legitimate and impossible
+  legacy active skins, preserved profile signs, six non-Buddy choices, pressed
+  state, Hub identity/Buddy separation, locked garage cards, and opening-screen
+  use of the actual active hero.
+- `npm.cmd run verify` passed with 34 files / 285 tests, typecheck, lint, and a
+  production build. Entry assets are `index-8H64ID8Q.js` (100.00 kB gzip) and
+  `index-Clly7zk0.css` (32.47 kB gzip).
+- `npm.cmd run qa:viewport` passed all 51 scenarios, including new first-profile
+  portrait/landscape checks and four distinct capped-profile signs. Directly
+  inspected both create layouts, the full roster, and the narrow Hub; controls,
+  labels, and input stay unclipped and the Hub sign differs clearly from Buddy.
+- `npm.cmd run qa:mobile-touch` passed 39 steps with 12 tracked attempts and one
+  journey node. The unchanged audio pack passes at 1556/1556 clips, 1488/1488
+  current lines, and 32/32 reading phonemes.

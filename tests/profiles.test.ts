@@ -18,7 +18,7 @@ describe("SaveManager child profiles", () => {
 
     const second = save.createProfile("B", "aqua", 200);
     expect(save.getData().progress.stars).toBe(0);
-    expect(save.getData().progress.cosmetics.activeSkin).toBe("aqua");
+    expect(save.getData().progress.cosmetics.activeSkin).toBe("blitz");
     save.award({ stars: 3 });
 
     save.switchProfile(first.id);
@@ -69,8 +69,25 @@ describe("SaveManager child profiles", () => {
     expect(save.hasChosenProfile()).toBe(true);
     expect(save.activeProfile()).toEqual({ id: "p1", name: "Speler 1", avatar: "ember", createdAt: 0 });
     expect(save.getData().progress.stars).toBe(13);
+    expect(save.getData().progress.cosmetics.activeSkin).toBe("ember");
     expect(JSON.parse(localStorage.getItem("blokblitz-save-v1::p1")!).progress.stars).toBe(13);
     expect(localStorage.getItem("blokblitz-save-v1")).not.toBeNull();
+  });
+
+  it("keeps an old profile sign but resets a locked avatar skin to Blitz", () => {
+    localStorage.setItem(
+      "blokblitz-save-v1",
+      JSON.stringify({
+        version: 1,
+        settings: { muted: false },
+        progress: { stars: 0, cosmetics: { activeSkin: "gold", unlockedSkins: ["blitz"] } }
+      })
+    );
+
+    const save = new SaveManager();
+    expect(save.activeProfile()?.avatar).toBe("gold");
+    expect(save.getData().progress.cosmetics.activeSkin).toBe("blitz");
+    expect(save.getData().progress.cosmetics.unlockedSkins).toEqual(["blitz"]);
   });
 
   it("deletes a profile and reactivates the first remaining profile", () => {

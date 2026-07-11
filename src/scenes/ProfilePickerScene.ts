@@ -1,8 +1,7 @@
 import type { Game } from "../game/Game";
 import { MAX_CHILD_PROFILES } from "../game/SaveManager";
-import { HERO_SKINS, skinById } from "../runner/skins";
-import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
+import { PROFILE_AVATARS, createProfileAvatar } from "./profileAvatars";
 import { BaseScene, sceneHeader } from "./SceneUtils";
 
 // The parent-controlled profile picker. Normal boot keeps the last child active;
@@ -26,7 +25,7 @@ export class ProfilePickerScene extends BaseScene {
   private render(): void {
     this.root.replaceChildren();
     const profiles = this.game.save.listProfiles();
-    this.root.appendChild(sceneHeader(profiles.length === 0 ? "Maak je dino" : "Kies de speler", profiles.length === 0 ? "Kies er een!" : "Voor volwassenen"));
+    this.root.appendChild(sceneHeader(profiles.length === 0 ? "Maak je speler" : "Kies de speler", profiles.length === 0 ? "Kies je teken" : "Voor volwassenen"));
 
     // Brand-new install: go straight to "make your dino".
     if (profiles.length === 0) {
@@ -44,9 +43,9 @@ export class ProfilePickerScene extends BaseScene {
       card.className = "profile-card";
       card.dataset.profile = profile.id;
       card.setAttribute("aria-label", profile.name || "Speler");
-      const buddy = createBuddy(skinById(profile.avatar), 0);
-      buddy.el.classList.add("profile-avatar");
-      card.appendChild(buddy.el);
+      const avatar = createProfileAvatar(profile.avatar);
+      avatar.classList.add("profile-avatar");
+      card.appendChild(avatar);
       const name = document.createElement("strong");
       name.textContent = profile.name || "Speler";
       card.appendChild(name);
@@ -69,7 +68,7 @@ export class ProfilePickerScene extends BaseScene {
       add.className = "profile-card profile-add";
       add.setAttribute("aria-label", "Nieuw kind");
       add.innerHTML = `<span class="profile-add-plus" aria-hidden="true">＋</span><strong>Nieuw</strong>`;
-      add.addEventListener("click", () => this.root.replaceChildren(sceneHeader("Nieuwe dino", "Kies er een!"), this.createPanel()));
+      add.addEventListener("click", () => this.root.replaceChildren(sceneHeader("Nieuwe speler", "Kies je teken"), this.createPanel()));
       grid.appendChild(add);
     }
     this.root.appendChild(grid);
@@ -99,30 +98,34 @@ export class ProfilePickerScene extends BaseScene {
     this.root.appendChild(tools);
   }
 
-  // The create flow: pick a dino, optional name, start playing as that child.
+  // The profile sign identifies the child; star-unlocked playable heroes are separate.
   private createPanel(): HTMLElement {
     const panel = document.createElement("div");
     panel.className = "profile-create";
-    let chosen = HERO_SKINS[0].id;
+    let chosen = PROFILE_AVATARS[0].id;
 
     const choices = document.createElement("div");
     choices.className = "profile-avatar-choices";
-    HERO_SKINS.forEach((skin) => {
+    choices.setAttribute("aria-label", "Profielteken");
+    PROFILE_AVATARS.forEach((avatar) => {
       const opt = document.createElement("button");
       opt.type = "button";
       opt.className = "profile-avatar-choice";
-      opt.dataset.avatar = skin.id;
-      opt.setAttribute("aria-label", skin.name);
-      if (skin.id === chosen) opt.classList.add("chosen");
-      const buddy = createBuddy(skin, 0);
-      buddy.el.classList.add("profile-avatar");
-      opt.appendChild(buddy.el);
+      opt.dataset.avatar = avatar.id;
+      opt.setAttribute("aria-label", avatar.label);
+      opt.setAttribute("aria-pressed", String(avatar.id === chosen));
+      if (avatar.id === chosen) opt.classList.add("chosen");
+      const token = createProfileAvatar(avatar.id);
+      token.classList.add("profile-avatar");
+      opt.appendChild(token);
       opt.addEventListener("click", () => {
-        chosen = skin.id;
-        choices.querySelectorAll(".profile-avatar-choice").forEach((c) => c.classList.remove("chosen"));
-        opt.classList.add("chosen");
+        chosen = avatar.id;
+        choices.querySelectorAll<HTMLButtonElement>(".profile-avatar-choice").forEach((choice) => {
+          const selected = choice === opt;
+          choice.classList.toggle("chosen", selected);
+          choice.setAttribute("aria-pressed", String(selected));
+        });
         this.game.audio.play("snap");
-        this.game.voice.speak(skin.name, { interrupt: true });
       });
       choices.appendChild(opt);
     });

@@ -6334,15 +6334,29 @@ button:focus-visible,
   font-weight: 900;
   font-size: 0.9rem;
 }
-/* The buddy dino is position:fixed globally; inside a card it sits inline. */
-.profile-avatar.buddy,
-.hub-profile-avatar.buddy {
+/* A child's profile sign is identity only; playable Buddy colours stay rewards. */
+.profile-token {
   position: relative;
-  left: auto;
-  bottom: auto;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
   width: 84px;
-  z-index: auto;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 4px solid var(--edge);
+  border-radius: 50%;
+  background: var(--profile-color);
+  box-shadow: inset 0 -9px 0 var(--profile-accent), 0 4px 0 rgba(23, 32, 51, 0.2);
   pointer-events: none;
+}
+.profile-token-mark {
+  position: relative;
+  z-index: 1;
+  color: var(--profile-ink);
+  font-size: 2.25rem;
+  font-weight: 950;
+  line-height: 1;
+  text-shadow: 0 2px 0 rgba(23, 32, 51, 0.18);
 }
 .profiles-tools { justify-content: center; }
 .profile-limit {
@@ -6382,7 +6396,7 @@ button:focus-visible,
   border-color: var(--green);
   box-shadow: 0 0 0 5px rgba(52, 199, 89, 0.45), 0 5px 0 rgba(23, 32, 51, 0.2);
 }
-.profile-avatar-choice .profile-avatar.buddy { width: 74px; }
+.profile-avatar-choice .profile-token { width: 70px; }
 .profile-name-row {
   display: flex;
   align-items: center;
@@ -6391,6 +6405,7 @@ button:focus-visible,
   color: var(--ink);
 }
 .profile-name-input {
+  box-sizing: border-box;
   padding: 10px 14px;
   font-size: 1.1rem;
   font-weight: 800;
@@ -6400,6 +6415,11 @@ button:focus-visible,
   min-width: 160px;
 }
 .profile-create-start { min-height: 58px; font-size: 1.15rem; }
+
+@media (max-width: 380px) {
+  .profile-name-row { flex-direction: column; width: 100%; gap: 6px; }
+  .profile-name-input { width: min(240px, 100%); min-width: 0; }
+}
 
 /* Hub "who's playing" chip. */
 .hub-title { position: relative; }
@@ -6419,12 +6439,25 @@ button:focus-visible,
   transition: transform 130ms var(--spring);
 }
 .hub-profile:active { transform: scale(0.96); }
-.hub-profile-avatar.buddy { width: 40px; }
+.hub-profile-avatar.profile-token { width: 40px; border-width: 3px; box-shadow: inset 0 -5px 0 var(--profile-accent); }
+.hub-profile-avatar .profile-token-mark { font-size: 1.15rem; }
 .hub-profile-lock { font-size: 0.78rem; line-height: 1; margin-left: 2px; }
 .parent-gate-hold { position: relative; min-width: 190px; overflow: hidden; isolation: isolate; }
 .parent-gate-hold::after { content: ""; position: absolute; z-index: -1; inset: 0 auto 0 0; width: 0; background: rgba(255, 255, 255, 0.35); }
 .parent-gate-hold.holding::after { animation: parentGateHold 1.2s linear forwards; }
 @keyframes parentGateHold { from { width: 0; } to { width: 100%; } }
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .profiles-scene { gap: 8px; padding-top: 8px; padding-bottom: 8px; }
+  .profiles-scene .scene-header { margin-bottom: 0; }
+  .profile-create { gap: 7px; width: min(720px, 94%); }
+  .profile-avatar-choices { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .profile-avatar-choice { padding: 5px; }
+  .profile-avatar-choice .profile-token { width: 52px; border-width: 3px; }
+  .profile-avatar-choice .profile-token-mark { font-size: 1.55rem; }
+  .profile-name-input { padding-top: 7px; padding-bottom: 7px; }
+  .profile-create-start { min-height: 50px; }
+}
 
 /* -------------------------------------------------------------------------
    Opening frame: the first user gesture unlocks audio, so make that tap part

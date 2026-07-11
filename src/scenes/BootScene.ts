@@ -58,7 +58,7 @@ export class BootScene extends BaseScene {
 
     const hero = document.createElement("div");
     hero.className = "boot-hero";
-    const buddy = createBuddy(skinById(active?.avatar ?? data.progress.cosmetics.activeSkin), data.progress.stars);
+    const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin), data.progress.stars);
     buddy.el.classList.add("boot-buddy");
     buddy.setMood("wow");
     buddy.say(returning ? "Daar gaan we!" : "Ga je mee?");

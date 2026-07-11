@@ -26,6 +26,8 @@ const scenarios = [
   { name: "boot-reduced-motion-mobile", width: 390, height: 844, mobile: true, open: "boot", expectBoot: true, reducedMotion: true },
   { name: "boot-desktop", width: 1280, height: 720, mobile: false, open: "boot", expectBoot: true },
   { name: "boot-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot", expectBoot: true },
+  { name: "profiles-create-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-create", expectProfileCreate: true },
+  { name: "profiles-create-landscape-mobile", width: 844, height: 390, mobile: true, open: "profiles-create", expectProfileCreate: true },
   { name: "profiles-full-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-full", expectProfiles: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
@@ -196,13 +198,19 @@ async function openScenario(open) {
     await waitForSelector(".boot-splash", 5_000);
     return;
   }
+  if (open === "profiles-create") {
+    await openGameScene("profiles");
+    await waitForSelector(".profile-create", 5_000);
+    return;
+  }
   if (open === "profiles-full") {
     const opened = await evaluate(`
       (() => {
         const game = window.__blokblitzGame;
         if (!game) return false;
+        const avatars = ["blitz", "aqua", "web", "ember"];
         for (let index = game.save.listProfiles().length + 1; index <= 4; index += 1) {
-          game.save.createProfile("Kind " + index, "blitz", index);
+          game.save.createProfile("Kind " + index, avatars[index - 1], index);
         }
         game.showScene("profiles");
         return true;
@@ -425,6 +433,15 @@ async function collectMetrics(scenario = {}) {
         })(),
         profileGrid: rect(".profiles-grid"),
         profileCards: rects(".profile-card[data-profile]"),
+        profileCreate: rect(".profile-create"),
+        profileAvatarChoices: rects(".profile-avatar-choice"),
+        profileTokens: rects(".profile-token"),
+        profileTokenIds: [...document.querySelectorAll(".profile-token")].map((token) => token.dataset.avatar ?? ""),
+        profileNameRow: rect(".profile-name-row"),
+        profileNameInput: rect(".profile-name-input"),
+        profileCreateStart: rect(".profile-create-start"),
+        profileChosenCount: document.querySelectorAll('.profile-avatar-choice.chosen[aria-pressed="true"]').length,
+        profileBuddyCount: document.querySelectorAll(".profile-avatar-choice .buddy, .profile-card .buddy").length,
         profileLimit: rect(".profile-limit"),
         profileAddPresent: Boolean(document.querySelector(".profile-add")),
         hubGrid: rect(".hub-grid"),
@@ -631,10 +648,34 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (metrics.profileCards.length !== 4) failures.push(`expected four child profiles, got ${metrics.profileCards.length}`);
     if (!metrics.profileLimit) failures.push("missing profile-limit explanation");
     if (metrics.profileAddPresent) failures.push("new-child tile remains available at the profile cap");
+    if (metrics.profileTokens.length !== 4) failures.push(`expected four profile signs, got ${metrics.profileTokens.length}`);
+    if (new Set(metrics.profileTokenIds).size !== 4) failures.push(`expected four distinct profile signs, got ${metrics.profileTokenIds.join(", ")}`);
+    if (metrics.profileBuddyCount !== 0) failures.push(`profile cards still expose ${metrics.profileBuddyCount} playable hero(s)`);
     if (metrics.profileGrid && (metrics.profileGrid.left < -1 || metrics.profileGrid.right > viewport.width + 1)) failures.push(`profile grid is clipped: ${JSON.stringify(metrics.profileGrid)}`);
     for (const card of metrics.profileCards) {
       if (card.left < -1 || card.right > viewport.width + 1) failures.push(`profile card is clipped: ${JSON.stringify(card)}`);
       if (card.width < 100 || card.height < 120) failures.push(`profile card is too small: ${JSON.stringify(card)}`);
+    }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectProfileCreate) {
+    if (!metrics.profileCreate) failures.push("missing profile creation panel");
+    if (metrics.profileAvatarChoices.length !== 6) failures.push(`expected six profile signs, got ${metrics.profileAvatarChoices.length}`);
+    if (metrics.profileTokens.length !== 6) failures.push(`expected six rendered profile tokens, got ${metrics.profileTokens.length}`);
+    if (metrics.profileChosenCount !== 1) failures.push(`expected one selected profile sign, got ${metrics.profileChosenCount}`);
+    if (metrics.profileBuddyCount !== 0) failures.push(`profile creation still gives away ${metrics.profileBuddyCount} playable hero(s)`);
+    if (!metrics.profileNameInput || metrics.profileNameInput.height < 44) failures.push(`profile name input is missing or too small: ${JSON.stringify(metrics.profileNameInput)}`);
+    if (!metrics.profileNameRow || (metrics.profileNameRow.left < -1 || metrics.profileNameRow.right > viewport.width + 1)) failures.push(`profile name row is clipped: ${JSON.stringify(metrics.profileNameRow)}`);
+    if (metrics.profileNameInput && (metrics.profileNameInput.left < -1 || metrics.profileNameInput.right > viewport.width + 1 || metrics.profileNameInput.bottom > viewport.height + 1)) failures.push(`profile name input is clipped: ${JSON.stringify(metrics.profileNameInput)}`);
+    if (!metrics.profileCreateStart || metrics.profileCreateStart.width < 150 || metrics.profileCreateStart.height < 48) failures.push(`profile start action is missing or too small: ${JSON.stringify(metrics.profileCreateStart)}`);
+    if (metrics.profileCreateStart && (metrics.profileCreateStart.left < -1 || metrics.profileCreateStart.right > viewport.width + 1 || metrics.profileCreateStart.bottom > viewport.height + 1)) failures.push(`profile start action is clipped: ${JSON.stringify(metrics.profileCreateStart)}`);
+    for (const choice of metrics.profileAvatarChoices) {
+      if (choice.width < 44 || choice.height < 44) failures.push(`profile sign choice is too small: ${JSON.stringify(choice)}`);
+      if (choice.left < -1 || choice.right > viewport.width + 1 || choice.top < -1 || choice.bottom > viewport.height + 1) failures.push(`profile sign choice is clipped: ${JSON.stringify(choice)}`);
+    }
+    for (const token of metrics.profileTokens) {
+      if (token.width < 44 || token.height < 44) failures.push(`profile token is too small: ${JSON.stringify(token)}`);
     }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

@@ -477,6 +477,8 @@ describe("game shell — menu, run, results", () => {
     expect(aqua?.dataset.locked).toBe("false");
     aqua!.click();
     expect(game.data().progress.cosmetics.activeSkin).toBe("aqua");
+    game.showScene("boot");
+    expect(root.querySelector('.boot-buddy[data-buddy="aqua"]')).toBeTruthy();
   });
 
   it("starts a run from the menu, requesting fullscreen", async () => {
@@ -2535,6 +2537,7 @@ describe("per-child profiles", () => {
 
     const returning = root.querySelector<HTMLElement>(".boot-splash")!;
     expect(returning.dataset.returning).toBe("true");
+    expect(returning.querySelector('.boot-buddy[data-buddy="blitz"]')).toBeTruthy();
     expect(returning.querySelector(".boot-prompt")?.textContent).toContain("Noor");
     expect(returning.querySelector(".boot-progress")?.getAttribute("aria-label")).toContain("14 sterren");
     expect(returning.querySelector(".boot-progress")?.getAttribute("aria-label")).toContain("2/");
@@ -2562,7 +2565,10 @@ describe("per-child profiles", () => {
     game.showScene("profiles");
     // Empty install goes straight to "make your dino".
     expect(root.querySelector(".profile-create")).toBeTruthy();
+    expect(root.querySelectorAll(".profile-avatar-choice .profile-token")).toHaveLength(6);
+    expect(root.querySelector(".profile-avatar-choice .buddy")).toBeNull();
     root.querySelector<HTMLButtonElement>('.profile-avatar-choice[data-avatar="aqua"]')!.click();
+    expect(root.querySelector('.profile-avatar-choice[data-avatar="aqua"]')?.getAttribute("aria-pressed")).toBe("true");
     const nameInput = root.querySelector<HTMLInputElement>(".profile-name-input")!;
     nameInput.value = "Roos";
     root.querySelector<HTMLButtonElement>(".profile-create-start")!.click();
@@ -2571,6 +2577,7 @@ describe("per-child profiles", () => {
     const active = game.save.activeProfile()!;
     expect(active.name).toBe("Roos");
     expect(active.avatar).toBe("aqua");
+    expect(game.data().progress.cosmetics.activeSkin).toBe("blitz");
     expect(root.querySelector(".reis-scene")).toBeTruthy();
   });
 
@@ -2598,6 +2605,10 @@ describe("per-child profiles", () => {
     expect(root.querySelectorAll(".profile-card:not(.profile-add)")).toHaveLength(2);
     game.showScene("hub");
     expect(root.querySelector(".hub-profile")?.textContent).toContain("Kind B");
+    expect(root.querySelector('.hub-profile-avatar.profile-token[data-avatar="ember"]')).toBeTruthy();
+    expect(root.querySelector('.hub-buddy[data-buddy="blitz"]')).toBeTruthy();
+    expect(root.querySelector<HTMLElement>('.garage-card[data-skin="ember"]')?.dataset.locked).toBe("true");
+    expect(game.data().progress.cosmetics.activeSkin).toBe("blitz");
   });
 
   it("keeps profile switching behind the parent gate", async () => {

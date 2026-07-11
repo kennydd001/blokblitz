@@ -39,6 +39,17 @@ function profileStorageKey(id: string): string {
   return `${PROFILE_STORAGE_PREFIX}${id}`;
 }
 
+function savedActiveSkin(raw: string | null): string | undefined {
+  if (!raw) return undefined;
+  try {
+    const parsed = JSON.parse(raw) as { progress?: { cosmetics?: { activeSkin?: unknown } } };
+    const active = parsed?.progress?.cosmetics?.activeSkin;
+    return typeof active === "string" ? active : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function makeSessionId(): string {
   return `session-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -200,7 +211,6 @@ export class SaveManager {
       createdAt
     };
     const profileData = defaultSaveData();
-    profileData.progress.cosmetics.activeSkin = avatar;
     this.writeStorage(profileStorageKey(profile.id), JSON.stringify(profileData));
     this.roster.profiles.push(profile);
     this.roster.activeId = profile.id;
@@ -483,10 +493,14 @@ export class SaveManager {
     const fallback = defaultSaveData();
     const districts = { ...fallback.progress.cityDistricts, ...(data.progress?.cityDistricts ?? {}) };
     const savedCosmetics = data.progress?.cosmetics;
+    const savedUnlocked = Array.isArray(savedCosmetics?.unlockedSkins)
+      ? savedCosmetics.unlockedSkins.filter((id): id is string => typeof id === "string")
+      : [];
+    const unlockedSkins = [...new Set([...fallback.progress.cosmetics.unlockedSkins, ...savedUnlocked])];
+    const requestedActive = typeof savedCosmetics?.activeSkin === "string" ? savedCosmetics.activeSkin : fallback.progress.cosmetics.activeSkin;
     const cosmetics = {
-      activeSkin: savedCosmetics?.activeSkin ?? fallback.progress.cosmetics.activeSkin,
-      unlockedSkins:
-        savedCosmetics?.unlockedSkins?.length ? [...new Set(savedCosmetics.unlockedSkins)] : [...fallback.progress.cosmetics.unlockedSkins]
+      activeSkin: unlockedSkins.includes(requestedActive) ? requestedActive : fallback.progress.cosmetics.activeSkin,
+      unlockedSkins
     };
     // Old saves only had a single `muted` master; split it into music + sound
     // so a returning child keeps whatever they had (both off if it was muted).
@@ -604,7 +618,7 @@ export class SaveManager {
       const profile: ChildProfile = {
         id: "p1",
         name: "Speler 1",
-        avatar: legacyData.progress.cosmetics.activeSkin,
+        avatar: savedActiveSkin(legacyRaw) ?? legacyData.progress.cosmetics.activeSkin,
         createdAt: 0
       };
       this.writeStorage(profileStorageKey(profile.id), JSON.stringify(legacyData));
