@@ -1873,3 +1873,15 @@ Validation:
   stall story start or return navigation.
 - `npm.cmd run voice:elevenlabs-audit` passes at 1558/1558 sentence clips,
   1489/1489 current lines, and 32/32 reading phonemes.
+
+Release:
+
+- GitHub `main` contains the validated implementation and local profile-sign MP3
+  as commit `97dfef1`.
+- WSL Wrangler deployed Worker version
+  `c334bf9c-dd1e-4fb6-9844-1f87af444689`. Cache-busted live root,
+  `index-DWEEaG7y.js`, `index-D1BbbXxX.css`, and
+  `hoi-uitroep-kies-jouw-teken.mp3` all returned HTTP 200 with correct content
+  types. The served JS contains both the corrected profile line and Buddy growth
+  sequence, the CSS contains the level dialog rules, and the MP3 response is the
+  expected 33,062 bytes.
