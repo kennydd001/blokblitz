@@ -2044,3 +2044,18 @@ Validation:
 - `npm.cmd run voice:elevenlabs-audit` remains green at 1558/1558 stored clips,
   1489/1489 current lines, and 32/32 reading phonemes. The transition reuses an
   existing Lily clip, so no generated audio or manifest update was required.
+
+Release:
+
+- GitHub `main` contains the validated identity/audio/onboarding hardening as
+  commit `cabbb11`.
+- WSL Wrangler deployed Worker version
+  `bbe3600b-cde9-4117-9516-0261c9ecccdc`. The cache-busted live root serves
+  `index-CC4LJWEL.js` and `index-By3veXyl.css` with HTTP 200; served code/CSS
+  contain the canonical signs, busy transition, natural welcome line, journey
+  intro, and selected-profile animation. The Lily
+  `hoi-uitroep-daar-gaan-we-uitroep.mp3` is live as `audio/mpeg` with exactly
+  26,793 bytes.
+- A final in-app-browser check on the canonical Sprintsite confirmed the live
+  returning sign opens the fresh journey with `intro=true`, `journey=true`, and
+  `regionBanners=0`; the resulting clean cinematic screenshot was inspected.
