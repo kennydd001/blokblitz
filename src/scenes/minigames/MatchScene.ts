@@ -16,7 +16,8 @@ export class MatchScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    return matchChallenge(this.focusQuantity(2, 8));
+    const max = this.tier() === 1 ? 5 : this.tier() === 2 ? 8 : 10;
+    return matchChallenge(this.focusQuantity(2, max));
   }
 
   protected renderPlay(challenge: Challenge): HTMLElement {

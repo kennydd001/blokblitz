@@ -191,6 +191,10 @@ function collectUserDataByRole(root: unknown, role: string): Array<Record<string
   return matches;
 }
 
+function countEveryAnimal(root: HTMLElement): void {
+  root.querySelectorAll<HTMLButtonElement>(".count-item:not(.counted)").forEach((animal) => animal.click());
+}
+
 describe("RunnerCore — real-time runner logic", () => {
   it("finishes a run and never reaches a game-over state", () => {
     const core = new RunnerCore({ provider: fixedGateProvider(1), gatesTotal: 4, rng: () => 0.5 });
@@ -912,6 +916,7 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-header")).toBeTruthy();
 
     for (let r = 0; r < 15 && !root.querySelector(".mini-done"); r += 1) {
+      countEveryAnimal(root);
       root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')!.click();
       vi.advanceTimersByTime(1100);
     }
@@ -1934,6 +1939,7 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-instruction")).toBeTruthy();
     const before = game.data().progress.attempts.length;
     for (let r = 0; r < 15 && !root.querySelector(".results-card"); r += 1) {
+      countEveryAnimal(root);
       const correct = root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]');
       if (!correct) break;
       correct.click();
@@ -1947,6 +1953,60 @@ describe("Speeltuin hub + calm game modes", () => {
   it("plays Zoek hetzelfde end to end and logs attempts", () => choicePlay("match"));
   it("plays Wat is meer? end to end and logs attempts", () => choicePlay("compare"));
   it("plays Eentje erbij end to end and logs attempts", () => choicePlay("onemoreless"));
+
+  it("makes counting every animal unlock the answer and visibly rescues its group", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("count");
+
+    const choices = Array.from(root.querySelectorAll<HTMLButtonElement>(".count-choices .mini-choice"));
+    expect(root.querySelectorAll(".count-rescue-trail > span")).toHaveLength(5);
+    expect(choices.every((choice) => choice.disabled)).toBe(true);
+    expect(root.querySelector(".count-counter")?.textContent).toContain("0");
+
+    countEveryAnimal(root);
+    expect(choices.every((choice) => !choice.disabled)).toBe(true);
+    expect(root.querySelectorAll('.count-item[aria-pressed="true"]')).toHaveLength(root.querySelectorAll(".count-item").length);
+    expect(root.querySelector(".count-choices.ready")).toBeTruthy();
+    root.querySelector<HTMLButtonElement>('.count-choices .mini-choice[data-correct="true"]')!.click();
+    expect(root.querySelectorAll(".count-rescue-trail > .rescued")).toHaveLength(1);
+    expect(root.querySelector(".count-rescue-trail > .arriving")).toBeTruthy();
+    expect(root.querySelector(".count-rescue-trail")?.getAttribute("aria-label")).toBe("1 van 5 dierengroepjes gered");
+  });
+
+  it("feeds the winning quantity to the comparison dino", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("compare");
+
+    root.querySelector<HTMLButtonElement>('.compare-choice[data-correct="true"]')!.click();
+    expect(root.querySelector(".compare-choice.winner .compare-crown")).toBeTruthy();
+    expect(root.querySelector(".compare-dino.eating")).toBeTruthy();
+    expect(root.querySelectorAll(".compare-feed-meter > .filled")).toHaveLength(1);
+    expect(root.querySelector(".compare-feed-meter")?.getAttribute("aria-label")).toBe("1 van 7 hapjes");
+    expect(root.querySelector(".compare-food-fly")).toBeTruthy();
+  });
+
+  it("shows the before-and-after number structure while reteaching one more or less", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("onemoreless");
+
+    expect(root.querySelector(".onemore-state.after .onemore-mystery")).toBeTruthy();
+    const correct = root.querySelector<HTMLButtonElement>('.numeral-choice[data-correct="true"]')!;
+    root.querySelector<HTMLButtonElement>('.numeral-choice[data-correct="false"]')!.click();
+    expect(root.querySelector(".onemore-state.after.revealed.teaching strong")?.textContent).toBe(correct.textContent);
+
+    correct.click();
+    expect(root.querySelector(".onemore-state.after.revealed.success")).toBeTruthy();
+    expect(root.querySelector(".onemore-state.after.teaching")).toBeFalsy();
+  });
 
   it("plays Op volgorde by tapping numbers small to big", async () => {
     vi.useFakeTimers();
@@ -2037,6 +2097,7 @@ describe("rewards, voice and parent gate", () => {
     const game = new Game(root);
     game.showScene("count");
     for (let r = 0; r < 15 && !root.querySelector(".results-card"); r += 1) {
+      countEveryAnimal(root);
       const correct = root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]');
       if (!correct) break;
       correct.click();
@@ -2055,6 +2116,13 @@ describe("rewards, voice and parent gate", () => {
     const before = game.data().progress.attempts.length;
     const wrong = root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="false"]');
     expect(wrong).toBeTruthy();
+    expect(wrong!.disabled).toBe(true);
+    wrong!.click();
+    expect(game.data().progress.attempts.length).toBe(before);
+    countEveryAnimal(root);
+    expect(wrong!.disabled).toBe(false);
+    expect(root.querySelector(".count-choices.ready")).toBeTruthy();
+    expect(root.querySelector(".count-counter.complete")).toBeTruthy();
     wrong!.click();
     expect(root.querySelector(".mini-scaffold")).toBeTruthy();
     expect(root.querySelector(".mini-scaffold .quantity-svg")).toBeTruthy();
@@ -2072,10 +2140,12 @@ describe("rewards, voice and parent gate", () => {
     game.showScene("count");
     expect(root.querySelector(".buddy")).toBeTruthy();
     // first correct: buddy cheers
+    countEveryAnimal(root);
     root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')!.click();
     expect(root.querySelector(".buddy.mood-happy, .buddy.mood-wow")).toBeTruthy();
     vi.advanceTimersByTime(1100);
     // second correct in a row: a streak banner appears
+    countEveryAnimal(root);
     root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')!.click();
     expect(root.querySelector(".mini-streak")).toBeTruthy();
   });
@@ -2208,6 +2278,7 @@ describe("De Sterrenreis — story mode", () => {
     expect(game.lastJourneyNode).toBe(first.id);
     expect(root.querySelector(".mini-header")).toBeTruthy();
     for (let r = 0; r < 15 && !root.querySelector(".results-card"); r += 1) {
+      countEveryAnimal(root);
       const correct = root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]');
       if (!correct) break;
       correct.click();

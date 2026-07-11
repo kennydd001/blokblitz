@@ -131,7 +131,9 @@ async function main() {
     `);
     if (!metrics.hasGameHook) throw new Error("Missing QA game hook; mobile touch QA must run with ?qa=");
     if (!metrics.scene.includes("hub")) throw new Error(`Expected hub scene at the end, got ${metrics.scene}`);
-    if (metrics.attempts < 14) throw new Error(`Expected at least 14 tracked attempts after the touch playthrough, got ${metrics.attempts}`);
+    // The journey's introductory Count rescue is deliberately five rounds;
+    // Klankgrot remains seven, so a complete two-activity journey logs 12+.
+    if (metrics.attempts < 12) throw new Error(`Expected at least 12 tracked attempts after the touch playthrough, got ${metrics.attempts}`);
     if (metrics.journeyDone < 1) throw new Error("Touch playthrough did not advance De Sterrenreis");
     if (metrics.treasureFill < 2 && metrics.treasureFill !== 0) throw new Error(`Expected the treasure meter to count both finished activities, got ${metrics.treasureFill}`);
     if (errors.length > 0) throw new Error(`Browser errors during touch QA:\n- ${errors.join("\n- ")}`);
@@ -177,6 +179,9 @@ async function dismissRewardOverlays(label) {
 async function completeMiniRounds(label, maxSteps) {
   for (let step = 0; step < maxSteps; step += 1) {
     if (await exists(".mini-done")) return;
+    while (await exists(".count-item:not(.counted)")) {
+      await tap(".count-item:not(.counted)", `${label} count animal`);
+    }
     if (!(await exists(".mini-choice[data-correct='true']"))) {
       await delay(320);
       continue;

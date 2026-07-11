@@ -25,7 +25,10 @@ export class CompareScene extends MiniGameScene {
 
     const dino = document.createElement("div");
     dino.className = "compare-dino";
-    dino.textContent = "🦖";
+    dino.innerHTML = `<span class="compare-dino-face" aria-hidden="true">🦖</span><span class="compare-feed-meter" aria-label="${this.correctRounds} van ${this.total} hapjes">${Array.from(
+      { length: this.total },
+      (_, index) => `<i class="${index < this.correctRounds ? "filled" : ""}"></i>`
+    ).join("")}</span>`;
 
     // Same getalbeeld on both sides so the choice is purely about amount.
     const rep = REPS[Math.floor(Math.random() * REPS.length)];
@@ -48,7 +51,8 @@ export class CompareScene extends MiniGameScene {
 
   protected onWrong(): void {
     this.root.querySelector('.compare-choice[data-correct="true"]')?.classList.add("reveal");
-    this.reteach("Tel de stippen: welke heeft er meer?");
+    this.root.querySelector(".compare-dino")?.classList.add("still-hungry");
+    this.reteach("Tel beide groepjes en kijk goed.");
   }
 
   // Signature moment: the winning group gets the crown.
@@ -61,5 +65,23 @@ export class CompareScene extends MiniGameScene {
     crown.setAttribute("aria-hidden", "true");
     crown.textContent = "👑";
     winner.appendChild(crown);
+
+    const dino = this.root.querySelector<HTMLElement>(".compare-dino");
+    const art = winner.querySelector<HTMLElement>(".compare-art");
+    if (!dino || !art) return;
+    dino.classList.add("eating");
+    dino.querySelectorAll<HTMLElement>(".compare-feed-meter i")[this.correctRounds - 1]?.classList.add("filled", "fresh");
+    dino.querySelector(".compare-feed-meter")?.setAttribute("aria-label", `${this.correctRounds} van ${this.total} hapjes`);
+    const food = document.createElement("div");
+    food.className = "compare-food-fly";
+    food.innerHTML = art.innerHTML;
+    const from = art.getBoundingClientRect();
+    const to = dino.getBoundingClientRect();
+    food.style.left = `${from.left + from.width / 2}px`;
+    food.style.top = `${from.top + from.height / 2}px`;
+    food.style.setProperty("--feed-x", `${to.left + to.width / 2 - (from.left + from.width / 2)}px`);
+    food.style.setProperty("--feed-y", `${to.top + to.height / 2 - (from.top + from.height / 2)}px`);
+    this.root.appendChild(food);
+    this.later(() => food.remove(), 900);
   }
 }

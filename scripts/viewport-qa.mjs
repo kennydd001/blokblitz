@@ -21,6 +21,9 @@ const scenarios = [
   { name: "real-runner-narrow-mobile", width: 360, height: 740, mobile: true, open: "real-runner", expectRealRunner: true },
   { name: "real-runner-short-desktop", width: 1280, height: 720, mobile: false, open: "real-runner", expectRealRunner: true },
   { name: "real-runner-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "real-runner", expectRealRunner: true },
+  { name: "count-narrow-mobile", width: 332, height: 807, mobile: true, open: "count", expectMiniMode: ".count-play", expectCountSequence: true },
+  { name: "compare-mobile", width: 390, height: 844, mobile: true, open: "compare", expectMiniMode: ".compare-play", expectCompareFeeding: true },
+  { name: "onemoreless-narrow-mobile", width: 332, height: 807, mobile: true, open: "onemoreless", expectMiniMode: ".onemore-play", expectBeforeAfter: true },
   { name: "klankgrot-mobile", width: 390, height: 844, mobile: true, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
   { name: "klankgrot-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "klankgrot", expectMiniMode: ".klankgrot-play" },
   { name: "rijmrivier-narrow-mobile", width: 332, height: 807, mobile: true, open: "rijmspel", expectMiniMode: ".rhyme-river" },
@@ -296,6 +299,12 @@ async function collectMetrics(scenario = {}) {
         miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
         miniChoiceCount: document.querySelectorAll(".mini-choice").length,
         miniChoices: rects(".mini-choice"),
+        countItems: rects(".count-item"),
+        countDisabledChoices: document.querySelectorAll(".count-choices .mini-choice:disabled").length,
+        countRescueSlots: document.querySelectorAll(".count-rescue-trail > span").length,
+        compareFeedDots: document.querySelectorAll(".compare-feed-meter > i").length,
+        oneMoreStates: rects(".onemore-state"),
+        oneMoreMysteryVisible: Boolean(document.querySelector(".onemore-state.after .onemore-mystery")),
         miniTitleClipped: (() => {
           const title = document.querySelector(".mini-title strong");
           return title ? title.scrollWidth > title.clientWidth + 1 : false;
@@ -484,6 +493,22 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     for (const choice of metrics.miniChoices) {
       if (choice.left < -1 || choice.right > viewport.width + 1) failures.push(`mini choice is horizontally clipped: ${JSON.stringify(choice)}`);
       if (choice.width < 44 || choice.height < 44) failures.push(`mini choice is too small: ${JSON.stringify(choice)}`);
+    }
+    if (scenario.expectCountSequence) {
+      if (metrics.countRescueSlots !== 5) failures.push(`expected 5 rescue slots, got ${metrics.countRescueSlots}`);
+      if (metrics.countItems.length < 2) failures.push(`expected countable animals, got ${metrics.countItems.length}`);
+      if (metrics.countDisabledChoices !== metrics.miniChoiceCount) failures.push("count answers are not locked before all animals are counted");
+      for (const item of metrics.countItems) {
+        if (item.width < 44 || item.height < 44) failures.push(`count animal is too small: ${JSON.stringify(item)}`);
+      }
+    }
+    if (scenario.expectCompareFeeding && metrics.compareFeedDots !== 7) failures.push(`expected 7 dino feed dots, got ${metrics.compareFeedDots}`);
+    if (scenario.expectBeforeAfter) {
+      if (metrics.oneMoreStates.length !== 2) failures.push(`expected before and after cards, got ${metrics.oneMoreStates.length}`);
+      if (!metrics.oneMoreMysteryVisible) failures.push("missing one-more/less mystery state");
+      for (const state of metrics.oneMoreStates) {
+        if (state.left < -1 || state.right > viewport.width + 1) failures.push(`one-more/less state is clipped: ${JSON.stringify(state)}`);
+      }
     }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

@@ -1324,3 +1324,45 @@ Validation:
   build as Worker version `aa787aab-8e65-4ddb-8a7e-cf1773c5d378`; both live
   roots returned HTTP 200, served `index-CX3H29Yv.js` / `index-DNuqrtDr.css`,
   and both new mission MP3s returned HTTP 200 with `audio/mpeg`.
+
+## Core Number Mode Deepening - 2026-07-11
+
+Completed work:
+
+- Turned `Tel mee` into a five-round animal rescue instead of a disconnected
+  numeral quiz. Every animal must be touched and counted before the numeral
+  answers unlock; each completed group visibly hatches into the rescue trail.
+  The introductory tier stays within 5, while later trajectories reach 8 and
+  10. Counted state, unlock state, and rescue progress are screen-reader safe.
+- Extended `Zoek hetzelfde` from a fixed ceiling of 8 to a staged 5/8/10
+  trajectory so stronger children continue into ten-structure work without
+  raising the entry difficulty for a new profile.
+- Gave `Wat is meer?` a continuous feeding goal. Every correct quantity now
+  flies from the chosen group to the dino and fills one of seven visible bites;
+  a mistake keeps the dino hungry and re-teaches by comparing both groups.
+- Rebuilt `Eentje erbij` around an explicit `NU -> +/-1 -> DAARNA` structure.
+  The unknown side reveals the same dots, frame, blocks, or beads after success
+  and during a safe retry, making the number change visible instead of relying
+  on the spoken question alone.
+- Increased every count-animal touch target to at least 52x52 CSS pixels after
+  the new narrow-phone QA caught a 40px-high hit area.
+
+Audio:
+
+- Reused existing natural ElevenLabs Lily `eleven_v3` instructions and hints;
+  no new spoken line or browser speech fallback was introduced.
+- `npm.cmd run voice:elevenlabs-audit` remains green at 1555/1555 sentence
+  clips, 1487/1487 currently reachable game lines, and 32/32 reading phonemes.
+
+Validation:
+
+- Added regression coverage for answer locking, animal rescue progress,
+  accessible live labels, dino feeding, and before/after re-teaching.
+- `npm.cmd run verify` passed: 30 files / 255 tests, typecheck, lint, and the
+  production build.
+- `npm.cmd run qa:viewport` now covers 27 scenarios and passed new 332px Count
+  and OneMoreLess screens plus mobile Compare, including structural and minimum
+  touch-target assertions. All three screenshots were visually inspected.
+- `npm.cmd run qa:mobile-touch` passed a 37-step coordinate-touch journey,
+  including touching every Count animal, with 12 tracked attempts, one journey
+  node completed, and two checked daily missions visible on the final Hub.
