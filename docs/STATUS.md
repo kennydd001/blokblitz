@@ -1497,3 +1497,12 @@ Validation:
   `Stage3D-Ebj8xytC.js`, and `three-CsgmhPiE.js`.
 - `node --check public/sw.js`, targeted acceptance/offline tests, and typecheck
   passed. Full validation follows in the release gate below.
+- `npm.cmd run verify` passed with 32 files / 261 tests and the production
+  build. GitHub `main` contains commit `6dc63e8`.
+- WSL Wrangler deployed the service-worker release as Worker version
+  `83117e2c-f56d-4cf3-ba2f-a9fcbc9c3549`; live `/sw.js` returned HTTP 200 as
+  JavaScript and contained cache v3, `precacheProductionBundles`, and lazy
+  dependency discovery.
+- The final current-state requirement audit is recorded in
+  `docs/ACCEPTANCE_AUDIT.md`. No technical/curriculum/automated finding remains;
+  physical child-in-hand phone feel is the sole external proof still open.

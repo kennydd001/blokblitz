@@ -11,23 +11,23 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 - Tests: `npm.cmd run test` passes with 32 test files / 261 tests.
 - Production build: `npm.cmd run build` passes without warnings.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
-- Local server smoke: `http://127.0.0.1:5273/` returned HTTP 200.
-- Cloudflare smoke: `https://definition-some-cat-involvement.trycloudflare.com` returned HTTP 200.
-- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 24 Chrome scenarios covering the Sterrenreis, the personal-mission Speeltuin, the real runner, core reading/math modes, bosses, narrow phones, desktop fullscreen, and mobile landscape.
-- Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. The latest 29-step run exercised runner controls and swipes, tapped through the three-beat Sterrenreis intro, completed the current journey quest, selected the reading category, finished Klankgrot, logged 14 attempts, advanced one node, and returned to a Hub showing two checked daily missions.
-- Browser layout checks: no console errors, no horizontal overflow, no tiny visible buttons, no visible button overlap, non-flat screenshots, and nonzero Three.js canvas across the automated viewport set.
+- Local server smoke: `http://127.0.0.1:5287/?qa=final-audit` returned HTTP 200.
+- Sprintsite smoke: `https://blokblitz.sprintsite.be/?audit=final` returned HTTP 200 with the current production JS/CSS hashes.
+- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 29 Chrome scenarios covering Sterrenreis, the personal-mission Speeltuin, the real runner, core reading/math/discovery modes, bosses, 332px phones, desktop fullscreen, and mobile landscape.
+- Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. The latest 38-step run exercised runner controls and swipes, completed audio-gated Count, selected the reading category, finished Klankgrot, logged 12 attempts, advanced one node, and returned to a Hub showing two checked daily missions.
+- Browser layout checks: no console errors or horizontal overflow; every visible button has a meaningful accessible name and is at least 44x44px; screenshots are non-flat; pure DOM first paint has no eager canvas; runner canvases fill the viewport.
 - Story-mode browser QA: in-app browser at `390x844` opened the 48-node Sterrenreis with one active frontier, Buddy, the friend meadow, a child-facing quest card, and progress pill; completing a story activity moves the frontier without page-level map overflow.
 - Personal trajectory QA: pure tests verify balanced math/reading/discovery recommendations, curriculum-stage gating, weak-domain prioritization, repeat avoidance, local-day stability, profile-local persistence, and idempotent rewards. Browser and viewport checks verify three mission cards, five complete categories, no gift/progress overlap, and usable 360 px/fullscreen layouts.
-- Visual inspection: latest mobile screenshots for menu, 360px narrow menu, Number Portal, real runner with big in-world numerals, runner, 360px narrow runner, runner gate clarity, WebWoud, reward state, city overview, city build, 360px narrow city build, summary, 360px narrow summary, real-touch summary, and Sterrenreis story mode including the expanded quest-card state were inspected during product-readiness passes.
+- Visual inspection: current mobile screenshots for the journey, personal-mission Hub, Count, Compare, OneMoreLess, Vormenburcht, Verkeerspad, core reading/splitting modes, bosses, real runner, narrow portrait, fullscreen desktop, and landscape runner were inspected during product-readiness passes.
 - Procedural device-feedback checks: tests verify distinct local Web Audio cue patterns, short optional vibration patterns, persisted haptic settings, and shared attempt-pipeline routing for Snap, rescue, city-building, herd rescue, and gentle retry feedback.
-- Asset policy: `assets/ASSET_MANIFEST.json` documents generated local assets and no external runtime assets.
+- Asset policy: `assets/ASSET_MANIFEST.json` documents both generated ElevenLabs source packs and all project-generated local assets; runtime source tests reject external requests and browser speech.
 
 ## Completion Criteria
 
 | # | Criterion | Status | Evidence |
 |---|---|---|---|
 | 1 | The app installs locally. | Proven | `npm.cmd install` passed; dependencies are locked in `package-lock.json`. |
-| 2 | The app runs locally. | Proven | Vite served this project at `http://127.0.0.1:5273/` with HTTP 200; Cloudflare tunnel browser smoke also returned HTTP 200. |
+| 2 | The app runs locally. | Proven | Vite served the current project at `http://127.0.0.1:5287/` with HTTP 200; the canonical Sprintsite deployment also returned HTTP 200. |
 | 3 | Production build succeeds. | Proven | `npm.cmd run build` passed without warnings. |
 | 4 | Main menu works. | Proven | Automated runtime flow and browser QA both navigate from the main menu without console or layout errors. |
 | 5 | Number of the Day works. | Proven | `NumberOfDayScene` is registered, shows concrete/schematic/abstract representations, logs a tracked number-name practice attempt, and was clicked through in browser QA. |
@@ -41,7 +41,7 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 | 13 | localStorage/IndexedDB persistence works. | Proven | `SaveManager` localStorage persistence is covered by tests, including attempts, rewards, restored districts, unlocked level, sessions, and settings. |
 | 14 | Parent dashboard shows real saved mastery data. | Proven | Flow tests record attempts, open the dashboard, verify all required readout panels from saved data, export JSON, and reset with confirmation; browser QA confirmed dashboard real data after gameplay. |
 | 15 | Assets are local at runtime. | Proven | Runtime source tests reject remote URLs and network APIs, visuals are procedural SVG/CSS/Three.js/Web Audio, and asset audit tests enforce this policy. |
-| 16 | Asset manifest exists and is accurate. | Proven | `assets/ASSET_MANIFEST.json` exists, lists no external assets, and documents generated local asset categories. |
+| 16 | Asset manifest exists and is accurate. | Proven | `assets/ASSET_MANIFEST.json` records both ElevenLabs-generated local packs, exact counts/paths, and all project-generated asset categories. |
 | 17 | README explains setup, controls, architecture, asset policy, adding representations, adding challenges, and the learning model. | Proven | README contains the required sections, documents viewport/touch QA commands, and acceptance tests check the section names. |
 | 18 | The player cannot ignore number structures and still play optimally. | Proven | Runner gates, boosts, bridges, shields, anchors, deterministic city restoration, minigames, and level unlocking all require structured number choices; tests and browser QA verify structured-choice progression. |
 | 19 | Mistakes are safe and scaffolded. | Proven | Safe wrong-attempt handling, visible scaffold feedback, retryable scenes, hints, lower-pressure adaptive choices, and no hard game over are implemented, tested, and browser-checked. |
@@ -55,12 +55,44 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 - Narrow mobile viewport `360x740`: main menu, Runner, Sterrenstad build, and Summary, with child actions reachable and no control overlap or blocked playfield.
 - Mobile touch route `390x844`: start adventure, wake Number Portal, enter Sprint, move with left/right controls and swipes, complete runner choices, move through WebWoud controls and swipes, complete WebWoud choices, use city `Bouw nu`, move through city build controls and swipes, restore a district, and reach Summary through coordinate touch events rather than DOM `.click()`.
 - Story-mode viewport `390x844`: Sterrenreis default route, active frontier node, Buddy, free-play backpack, progress pill, quest card, friend meadow, story activity completion, bloom return state, and no document-level page scroll.
-- QA URL: `https://definition-some-cat-involvement.trycloudflare.com`.
+- QA URL: `https://blokblitz.sprintsite.be/`.
 - Result: no console errors, no horizontal overflow, no tiny visible buttons, no visible button overlap, and nonzero canvas size.
 
 ## Remaining Required Proof
 
 No required proof remains open for the original completion checklist as of the latest validation pass. The newer product-readiness goal remains active and is tracked below.
+
+## Final Current-State Audit - 2026-07-11
+
+- Milestones 1-3 remain proven by durable docs, locked local setup, all 12
+  canonical representations, mastery/adaptation tests, scene navigation,
+  profile-local persistence, parent export/reset, and first-install offline
+  caching of current entry plus lazy production bundles.
+- Milestones 4-5 remain proven by the real three-control runner, all eleven
+  number-driven runner mechanic roles, timing-based Snap, WebWoud decisions,
+  persistent Sterrenstad restoration, viewport pixel checks, and real Chrome
+  touch input. Sterrenreis is now the child-facing orchestration layer around
+  those required systems rather than a replacement for their logic.
+- Milestone 6 is exceeded: the original 12 templates still share the attempt
+  pipeline, while 25 calm curriculum modes cover number sense, splitting,
+  reading/phonemic awareness, operations to 20, geometry, measurement, money,
+  time, listening, and traffic. Mistakes remain retryable and scaffolded.
+- Milestone 7 is current, not inherited: 32 files / 261 tests, typecheck, lint,
+  production build, 29 viewport scenarios, 38-step touch journey, 1487/1487
+  reachable sentence clips, 32/32 reading phonemes, live Sprintsite shell/code/
+  audio/service-worker smokes, and a clean Git worktree all pass on 2026-07-11.
+- Product-readiness dimensions were re-audited directly: first impression is
+  one Sterrenreis/frontier; each profile gets three balanced daily missions;
+  weak/due targets and tier gates shape practice; early math/discovery modes
+  have persistent thematic goals; audio is natural, serialized, pausable, and
+  fully local; profile switching is parent-gated plus hold-confirmed; visible
+  controls are named and >=44px; passive startup defers WebGL; background work
+  pauses; and every release is pushed and smoke-tested on the canonical domain.
+
+Result: no current automated, code-review, curriculum-order, audio-coverage,
+layout, persistence, offline-shell, or deployment finding remains open. The
+only residual proof is a physical device/child feel test, which cannot be
+simulated by repository tooling.
 
 ## Product Readiness Follow-Up
 
@@ -97,6 +129,5 @@ Current follow-up evidence:
 
 Remaining for the active product-readiness goal:
 
-- Physical hands-on phone QA through the latest Cloudflare URL. Automated Chrome viewport and real-touch emulation are strong evidence for layout and hit targets, but they are still not a substitute for actual phone feel in a child's hands.
-- A final requirement-by-requirement audit against `docs/GAME_SPEC.md` and `docs/PLAN.md` using current evidence, not the older original-checklist evidence.
-- Any findings from that phone QA or final audit must be fixed before marking the goal complete.
+- Physical hands-on phone QA through the canonical Sprintsite URL. Automated Chrome viewport and real-touch emulation are strong evidence for layout and hit targets, but they are still not a substitute for actual phone feel in a child's hands.
+- Any finding from that physical phone/child QA must be fixed before treating product feel as final.
