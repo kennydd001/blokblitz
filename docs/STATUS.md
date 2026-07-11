@@ -1987,3 +1987,14 @@ Validation:
   runner/journey/reading/reward route with 12 tracked attempts and one journey
   node. `npm.cmd run voice:elevenlabs-audit` remains green at 1558/1558 stored,
   1489/1489 current, and 32/32 phonemes; no new MP3 was needed.
+
+Release:
+
+- GitHub `main` contains the validated returning-profile confirmation as commit
+  `295f03e`.
+- WSL Wrangler deployed Worker version
+  `a3ef169d-05a5-4f07-833c-b8172875a843`. The cache-busted live root serves
+  `index-DGcIRWX1.js` and `index-iuJE1TLI.css` with HTTP 200. Served code
+  contains the personal-sign prompt, adult-gated switch, retry line, returning
+  sign layout, and used-sign state. The existing Lily
+  `kijk-nog-eens-goed.mp3` is live as `audio/mpeg` with exactly 18,852 bytes.
