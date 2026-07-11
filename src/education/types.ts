@@ -252,6 +252,18 @@ export interface SaveData {
   progress: GameProgress;
 }
 
+export interface ChildProfile {
+  id: string;
+  name: string;
+  avatar: string;
+  createdAt: number;
+}
+
+export interface ProfileRoster {
+  activeId: string;
+  profiles: ChildProfile[];
+}
+
 export const SKILLS: Skill[] = [
   "subitize",
   "make10",

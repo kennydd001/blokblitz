@@ -5816,3 +5816,126 @@ input {
   70% { transform: translateX(min(44vw, 240px)) translateY(-16px); }
   100% { transform: translateX(min(62vw, 330px)) translateY(0); opacity: 1; }
 }
+
+/* ===== Profile picker: "Wie speelt er?" (per-child trajectories) ===== */
+.profiles-scene { gap: 18px; }
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+  width: min(560px, 94%);
+}
+.profile-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px 12px;
+  min-height: 150px;
+  border: 4px solid var(--edge);
+  border-radius: 22px;
+  background: linear-gradient(160deg, #fff7df, #ffe8a8);
+  box-shadow: 0 6px 0 rgba(23, 32, 51, 0.24), var(--glow);
+  cursor: pointer;
+  transition: transform 130ms var(--spring), box-shadow 130ms ease;
+}
+.profile-card:hover { transform: translateY(-3px) scale(1.03); }
+.profile-card:active { transform: translateY(2px) scale(0.98); }
+.profile-card strong { font-size: 1.1rem; color: var(--ink); }
+.profile-card.profile-add { background: linear-gradient(160deg, #e7f0ff, #c9defb); justify-content: center; }
+.profile-add-plus { font-size: 3rem; line-height: 1; color: var(--blue); font-weight: 900; }
+.profile-delete {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  border: 3px solid #fff;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+/* The buddy dino is position:fixed globally; inside a card it sits inline. */
+.profile-avatar.buddy,
+.hub-profile-avatar.buddy {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  width: 84px;
+  z-index: auto;
+  pointer-events: none;
+}
+.profiles-tools { justify-content: center; }
+
+.profile-create {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: min(560px, 94%);
+}
+.profile-avatar-choices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+.profile-avatar-choice {
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  border: 4px solid var(--edge);
+  border-radius: 18px;
+  background: var(--panel-strong);
+  box-shadow: 0 5px 0 rgba(23, 32, 51, 0.2);
+  cursor: pointer;
+  transition: transform 130ms var(--spring), box-shadow 130ms ease;
+}
+.profile-avatar-choice:active { transform: scale(0.96); }
+.profile-avatar-choice.chosen {
+  border-color: var(--green);
+  box-shadow: 0 0 0 5px rgba(52, 199, 89, 0.45), 0 5px 0 rgba(23, 32, 51, 0.2);
+}
+.profile-avatar-choice .profile-avatar.buddy { width: 74px; }
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.profile-name-input {
+  padding: 10px 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  border: 3px solid var(--edge);
+  border-radius: 12px;
+  background: #fff;
+  min-width: 160px;
+}
+.profile-create-start { min-height: 58px; font-size: 1.15rem; }
+
+/* Hub "who's playing" chip. */
+.hub-title { position: relative; }
+.hub-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 5px 14px 5px 6px;
+  border: 3px solid var(--edge);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff, #fdf3d6);
+  box-shadow: 0 4px 0 rgba(23, 32, 51, 0.2);
+  cursor: pointer;
+  font-weight: 900;
+  color: var(--ink);
+  transition: transform 130ms var(--spring);
+}
+.hub-profile:active { transform: scale(0.96); }
+.hub-profile-avatar.buddy { width: 40px; }

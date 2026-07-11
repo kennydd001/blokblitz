@@ -1,11 +1,29 @@
 import { stableQuantityFromDate } from "../education/quantityLayouts";
-import type { AttemptLog, DayStreak, DistrictProgress, GameProgress, GameSettings, SaveData, WorldProgress } from "../education/types";
+import type {
+  AttemptLog,
+  ChildProfile,
+  DayStreak,
+  DistrictProgress,
+  GameProgress,
+  GameSettings,
+  ProfileRoster,
+  SaveData,
+  WorldProgress
+} from "../education/types";
 import { districtSeeds } from "../data/districts";
 import { JOURNEY, backfillCompleted, frontierIndex } from "../data/journey";
 import { earnedStickerIds } from "../data/stickers";
 import { WORLDS, nextWorldId } from "../runner/worlds";
 
 const STORAGE_KEY = "blokblitz-save-v1";
+const ROSTER_STORAGE_KEY = "blokblitz-profiles-v1";
+const PROFILE_STORAGE_PREFIX = `${STORAGE_KEY}::`;
+const memoryStorage = new Map<string, string>();
+const migratedLegacySources = new Map<string, string>();
+
+function profileStorageKey(id: string): string {
+  return `${PROFILE_STORAGE_PREFIX}${id}`;
+}
 
 function makeSessionId(): string {
   return `session-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -88,9 +106,11 @@ export function defaultSaveData(): SaveData {
 
 export class SaveManager {
   private data: SaveData;
-  private memoryValue = "";
+  private memoryValue = memoryStorage;
+  private roster: ProfileRoster;
 
   constructor() {
+    this.roster = this.initializeRoster();
     this.data = this.load();
   }
 
@@ -102,8 +122,72 @@ export class SaveManager {
     return this.data;
   }
 
+  listProfiles(): ChildProfile[] {
+    return structuredClone(this.roster.profiles);
+  }
+
+  activeProfile(): ChildProfile | undefined {
+    const profile = this.roster.activeId ? this.roster.profiles.find((item) => item.id === this.roster.activeId) : undefined;
+    return profile ? structuredClone(profile) : undefined;
+  }
+
+  hasChosenProfile(): boolean {
+    return Boolean(this.activeProfile());
+  }
+
+  createProfile(name: string, avatar: string, createdAt = 0): ChildProfile {
+    const profile: ChildProfile = {
+      id: this.nextProfileId(),
+      name,
+      avatar,
+      createdAt
+    };
+    const profileData = defaultSaveData();
+    profileData.progress.cosmetics.activeSkin = avatar;
+    this.writeStorage(profileStorageKey(profile.id), JSON.stringify(profileData));
+    this.roster.profiles.push(profile);
+    this.roster.activeId = profile.id;
+    this.data = profileData;
+    this.persistRoster();
+    return structuredClone(profile);
+  }
+
+  switchProfile(id: string): void {
+    if (!this.roster.profiles.some((profile) => profile.id === id)) return;
+    this.roster.activeId = id;
+    this.data = this.load();
+    this.persistRoster();
+  }
+
+  renameProfile(id: string, name: string): void {
+    const profile = this.roster.profiles.find((item) => item.id === id);
+    if (!profile) return;
+    profile.name = name;
+    this.persistRoster();
+  }
+
+  deleteProfile(id: string): void {
+    const wasActive = this.roster.activeId === id;
+    const remaining = this.roster.profiles.filter((profile) => profile.id !== id);
+    if (remaining.length === this.roster.profiles.length) return;
+
+    this.roster.profiles = remaining;
+    this.removeStorage(profileStorageKey(id));
+    if (wasActive) {
+      const next = remaining[0];
+      if (next) {
+        this.roster.activeId = next.id;
+        this.data = this.load();
+      } else {
+        this.roster.activeId = "";
+        this.data = defaultSaveData();
+      }
+    }
+    this.persistRoster();
+  }
+
   load(): SaveData {
-    const raw = this.readStorage();
+    const raw = this.readStorage(this.storageKey());
     if (!raw) return defaultSaveData();
     try {
       const parsed = JSON.parse(raw) as SaveData;
@@ -114,7 +198,7 @@ export class SaveManager {
   }
 
   save(): void {
-    this.writeStorage(JSON.stringify(this.data));
+    this.writeStorage(this.storageKey(), JSON.stringify(this.data));
   }
 
   updateSettings(mutator: (settings: GameSettings) => void): SaveData {
@@ -384,16 +468,112 @@ export class SaveManager {
     return true;
   }
 
-  private readStorage(): string | null {
-    if (typeof localStorage !== "undefined") return localStorage.getItem(STORAGE_KEY);
-    return this.memoryValue || null;
+  private initializeRoster(): ProfileRoster {
+    const rosterRaw = this.readStorage(ROSTER_STORAGE_KEY);
+    const roster = rosterRaw ? this.parseRoster(rosterRaw) : undefined;
+    if (roster && roster.activeId && roster.profiles.some((profile) => profile.id === roster.activeId)) {
+      // Keep old callers that still rewrite the legacy key in the same runtime
+      // compatible, while a normal reload continues to trust the active profile.
+      const legacyRaw = this.readStorage(STORAGE_KEY);
+      const migratedSource = migratedLegacySources.get(roster.activeId);
+      if (legacyRaw && migratedSource !== undefined && legacyRaw !== migratedSource) {
+        const legacyData = this.parseSaveData(legacyRaw);
+        if (legacyData) {
+          this.writeStorage(profileStorageKey(roster.activeId), JSON.stringify(legacyData));
+          migratedLegacySources.set(roster.activeId, legacyRaw);
+        }
+      }
+      return roster;
+    }
+
+    const legacyRaw = this.readStorage(STORAGE_KEY);
+    const legacyData = legacyRaw ? this.parseSaveData(legacyRaw) : undefined;
+    if (legacyData) {
+      const profile: ChildProfile = {
+        id: "p1",
+        name: "Speler 1",
+        avatar: legacyData.progress.cosmetics.activeSkin,
+        createdAt: 0
+      };
+      this.writeStorage(profileStorageKey(profile.id), JSON.stringify(legacyData));
+      if (legacyRaw) migratedLegacySources.set(profile.id, legacyRaw);
+      const migratedRoster: ProfileRoster = { activeId: profile.id, profiles: [profile] };
+      this.writeStorage(ROSTER_STORAGE_KEY, JSON.stringify(migratedRoster));
+      return migratedRoster;
+    }
+
+    const emptyRoster: ProfileRoster = { activeId: "", profiles: [] };
+    this.writeStorage(ROSTER_STORAGE_KEY, JSON.stringify(emptyRoster));
+    return emptyRoster;
   }
 
-  private writeStorage(value: string): void {
+  private persistRoster(): void {
+    this.writeStorage(ROSTER_STORAGE_KEY, JSON.stringify(this.roster));
+  }
+
+  private storageKey(): string {
+    return this.hasChosenProfile() ? profileStorageKey(this.roster.activeId) : STORAGE_KEY;
+  }
+
+  private nextProfileId(): string {
+    let number = 1;
+    while (this.roster.profiles.some((profile) => profile.id === `p${number}`)) number += 1;
+    return `p${number}`;
+  }
+
+  private parseRoster(raw: string): ProfileRoster | undefined {
+    try {
+      const parsed = JSON.parse(raw) as Partial<ProfileRoster>;
+      if (!parsed || typeof parsed.activeId !== "string" || !Array.isArray(parsed.profiles)) return undefined;
+      if (
+        !parsed.profiles.every(
+          (profile) =>
+            Boolean(profile) &&
+            typeof profile.id === "string" &&
+            typeof profile.name === "string" &&
+            typeof profile.avatar === "string" &&
+            typeof profile.createdAt === "number"
+        )
+      ) {
+        return undefined;
+      }
+      return {
+        activeId: parsed.activeId,
+        profiles: parsed.profiles.map((profile) => ({ ...profile })) as ChildProfile[]
+      };
+    } catch {
+      return undefined;
+    }
+  }
+
+  private parseSaveData(raw: string): SaveData | undefined {
+    try {
+      const parsed = JSON.parse(raw) as SaveData;
+      if (!parsed || typeof parsed !== "object") return undefined;
+      return this.migrate(parsed);
+    } catch {
+      return undefined;
+    }
+  }
+
+  private readStorage(key: string): string | null {
+    if (typeof localStorage !== "undefined") return localStorage.getItem(key);
+    return this.memoryValue.get(key) ?? null;
+  }
+
+  private writeStorage(key: string, value: string): void {
     if (typeof localStorage !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, value);
+      localStorage.setItem(key, value);
       return;
     }
-    this.memoryValue = value;
+    this.memoryValue.set(key, value);
+  }
+
+  private removeStorage(key: string): void {
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem(key);
+      return;
+    }
+    this.memoryValue.delete(key);
   }
 }

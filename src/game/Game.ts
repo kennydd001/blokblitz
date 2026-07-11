@@ -47,6 +47,7 @@ import { VormenburchtScene } from "../scenes/minigames/VormenburchtScene";
 import { WoordbouwplaatsScene } from "../scenes/minigames/WoordbouwplaatsScene";
 import { ZoemrouteScene } from "../scenes/minigames/ZoemrouteScene";
 import { SettingsScene } from "../scenes/SettingsScene";
+import { ProfilePickerScene } from "../scenes/ProfilePickerScene";
 import type { Stage3D } from "./Stage3D";
 
 export class Game {
@@ -97,7 +98,6 @@ export class Game {
     this.voice.setSettings(this.save.getMutableData().settings);
     this.readingAudio.setSettings(this.save.getMutableData().settings);
     this.voice.setDuckHook((ms) => this.audio.duck(ms));
-    this.readingAudio.setDuckHook((ms) => this.audio.duck(ms));
     this.registerScenes();
     this.resize();
     window.addEventListener("resize", () => this.resize());
@@ -132,10 +132,29 @@ export class Game {
   stop(): void {
     this.input.detach();
     this.loop.stop();
+    this.voice.cancel();
   }
 
   showScene(name: string, params?: unknown): void {
     this.scenes.goTo(name, params);
+  }
+
+  /**
+   * Switch to a child profile: point the save layer at it, refresh the mastery
+   * tracker to THAT child's attempts, re-apply their settings, and clear the
+   * transient story-map view state so the picked child sees their own trajectory.
+   * The caller navigates (usually to "reis").
+   */
+  useProfile(id: string): void {
+    if (id) this.save.switchProfile(id);
+    this.mastery.setAttempts(this.save.getMutableData().progress.attempts);
+    this.lastJourneyNode = undefined;
+    this.journeyLastRegion = undefined;
+    this.journeySeenCompleted = this.save.getData().progress.journey.completed.length;
+    this.audio.setSettings(this.save.getMutableData().settings);
+    this.haptics.setSettings(this.save.getMutableData().settings);
+    this.voice.setSettings(this.save.getMutableData().settings);
+    this.readingAudio.setSettings(this.save.getMutableData().settings);
   }
 
   requestFullscreenPlay(): void {
@@ -274,6 +293,7 @@ export class Game {
     this.scenes.register("bossRush", (game) => new BossRushScene(game));
     this.scenes.register("parentDashboard", (game) => new ParentDashboardScene(game));
     this.scenes.register("settings", (game) => new SettingsScene(game));
+    this.scenes.register("profiles", (game) => new ProfilePickerScene(game));
   }
 
   private resize(): void {

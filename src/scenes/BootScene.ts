@@ -23,7 +23,9 @@ export class BootScene extends BaseScene {
       <div class="brand-mark">10</div>
       <p>Getallen maken de stad wakker.</p>
     `;
-    panel.appendChild(this.button("Start", () => this.game.showScene("reis")));
+    // Returning child (one profile already chosen) drops straight into the
+    // adventure; a new or empty install picks who plays first.
+    panel.appendChild(this.button("Start", () => this.game.showScene(this.game.save.hasChosenProfile() ? "reis" : "profiles")));
     return panel;
   }
 }

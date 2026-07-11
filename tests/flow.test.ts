@@ -879,6 +879,8 @@ describe("Speeltuin hub + calm game modes", () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
+    // A returning child has already picked a profile, so Start goes straight in.
+    game.save.createProfile("Test", "blitz");
 
     game.showScene("boot");
     vi.advanceTimersByTime(750);
@@ -1682,9 +1684,15 @@ describe("Speeltuin hub + calm game modes", () => {
     });
 
     game.showScene("reis");
+    const speak = vi.spyOn(game.voice, "speak");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${lb.id}"]`)!.click();
     expect(root.querySelector(".luister-story")).toBeTruthy();
     expect(root.querySelectorAll(".luister-choice")).toHaveLength(3);
+    expect(speak).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(250);
+    expect(speak).toHaveBeenCalledTimes(2);
+    expect(speak.mock.calls[0][1]).toMatchObject({ interrupt: true });
+    expect(speak.mock.calls[1][1]).toMatchObject({ interrupt: false });
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.luister-choice[data-correct="true"]')?.click();
@@ -2057,6 +2065,80 @@ describe("De Sterrenreis — story mode", () => {
     settings = new SaveManager().getData().settings;
     expect(settings.music).toBe(false);
     expect(settings.sound).toBe(true);
+  });
+});
+
+describe("per-child profiles", () => {
+  beforeEach(() => {
+    document.body.className = "";
+    document.body.innerHTML = '<div id="app"></div>';
+    localStorage.clear();
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+    localStorage.clear();
+  });
+
+  it("shows the profile picker on a fresh install and creates the first child", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    expect(game.save.hasChosenProfile()).toBe(false);
+
+    game.showScene("profiles");
+    // Empty install goes straight to "make your dino".
+    expect(root.querySelector(".profile-create")).toBeTruthy();
+    root.querySelector<HTMLButtonElement>('.profile-avatar-choice[data-avatar="aqua"]')!.click();
+    const nameInput = root.querySelector<HTMLInputElement>(".profile-name-input")!;
+    nameInput.value = "Roos";
+    root.querySelector<HTMLButtonElement>(".profile-create-start")!.click();
+
+    expect(game.save.hasChosenProfile()).toBe(true);
+    const active = game.save.activeProfile()!;
+    expect(active.name).toBe("Roos");
+    expect(active.avatar).toBe("aqua");
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
+  });
+
+  it("keeps each child's stars and mastery fully independent", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const a = game.save.createProfile("Kind A", "blitz");
+    game.useProfile(a.id);
+    game.save.award({ stars: 12 });
+    const b = game.save.createProfile("Kind B", "ember");
+    game.useProfile(b.id);
+    // B starts clean; A's 12 stars did not leak.
+    expect(game.data().progress.stars).toBe(0);
+    game.save.award({ stars: 3 });
+
+    game.useProfile(a.id);
+    expect(game.data().progress.stars).toBe(12);
+    game.useProfile(b.id);
+    expect(game.data().progress.stars).toBe(3);
+
+    // The picker lists both, and the hub shows who is playing.
+    game.showScene("profiles");
+    expect(root.querySelectorAll(".profile-card:not(.profile-add)")).toHaveLength(2);
+    game.showScene("hub");
+    expect(root.querySelector(".hub-profile")?.textContent).toContain("Kind B");
+  });
+
+  it("routes boot Start to the picker only when no child is chosen", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.showScene("boot");
+    root.querySelector<HTMLButtonElement>(".splash-panel .btn")!.click();
+    expect(root.querySelector(".profiles-scene")).toBeTruthy();
+
+    game.save.createProfile("Kind", "blitz");
+    game.showScene("boot");
+    root.querySelector<HTMLButtonElement>(".splash-panel .btn")!.click();
+    expect(root.querySelector(".reis-scene")).toBeTruthy();
   });
 });
 

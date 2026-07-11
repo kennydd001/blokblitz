@@ -72,6 +72,23 @@ export class HubScene extends BaseScene {
     title.className = "hub-title";
     title.innerHTML = `<span class="menu-logo" aria-hidden="true">🦖</span><h1>Speeltuin</h1><p>Kies een spelletje en leer de getallen!</p>`;
 
+    // Who's playing? A tappable chip with the child's own dino; tap to switch.
+    const active = this.game.save.activeProfile();
+    if (active) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "hub-profile";
+      chip.setAttribute("aria-label", `${active.name || "Speler"} — wissel van speler`);
+      const face = createBuddy(skinById(active.avatar), data.progress.stars);
+      face.el.classList.add("hub-profile-avatar");
+      chip.appendChild(face.el);
+      const nm = document.createElement("strong");
+      nm.textContent = active.name || "Speler";
+      chip.append(nm);
+      chip.addEventListener("click", () => this.game.showScene("profiles"));
+      title.appendChild(chip);
+    }
+
     const badges = document.createElement("div");
     badges.className = "menu-badges";
     badges.append(
