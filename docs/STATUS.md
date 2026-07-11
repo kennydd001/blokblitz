@@ -1716,3 +1716,12 @@ Validation:
   node, and returns to the Hub.
 - `npm.cmd run voice:elevenlabs-audit` remains green at 1556/1556 sentence
   clips, 1488/1488 current lines, and 32/32 reading phonemes.
+
+Release:
+
+- GitHub `main` contains the validated implementation as commit `1b00353`.
+- WSL Wrangler deployed it as Worker version
+  `967d4f11-b6df-4660-8e84-0192353e1a3c`. Cache-busted live root,
+  `index-iPaDLrus.js`, and `index-i1Aa8ApN.css` returned HTTP 200 with the
+  correct content types; the served bundles contain `Nieuwe held!` and the
+  responsive `.skin-reveal` rules.
