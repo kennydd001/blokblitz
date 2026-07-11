@@ -160,12 +160,16 @@ async function main() {
   }
 }
 
-// Reward moments (sticker unboxing, Buddy level-up) overlay the whole screen;
+// Reward moments (stickers, new heroes, Buddy level-up) overlay the whole screen;
 // tap through them so the next control tap actually lands on its target.
 async function dismissRewardOverlays(label) {
   for (let i = 0; i < 4; i += 1) {
     if (await exists(".sticker-reveal")) {
       await tap(".sticker-reveal", `${label} dismiss sticker reveal`);
+      continue;
+    }
+    if (await exists(".skin-reveal")) {
+      await tap(".skin-reveal-choose", `${label} choose earned hero`);
       continue;
     }
     if (await exists(".buddy-levelup")) {

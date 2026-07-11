@@ -4,6 +4,7 @@ import type { RunSummary } from "../runner/RunnerCore";
 import type { HeroSkin } from "../runner/skins";
 import { getWorld, nextWorldId, type WorldDef } from "../runner/worlds";
 import { BaseScene } from "./SceneUtils";
+import { showSkinUnlock } from "./skinRewards";
 
 interface ResultsParams {
   summary: RunSummary;
@@ -145,6 +146,7 @@ export class ResultsScene extends BaseScene {
     card.appendChild(actions);
 
     this.root.append(burst, card);
+    showSkinUnlock(this.root, this.game, result.unlocked);
   }
 
   private bigStat(icon: string, value: string, label: string, highlight = false): HTMLElement {

@@ -1,7 +1,8 @@
 import type { Game } from "../game/Game";
-import { HERO_SKINS, unlockedSkinIds } from "../runner/skins";
+import { HERO_SKINS } from "../runner/skins";
 import { WORLDS, cssHex, getWorld } from "../runner/worlds";
 import { openParentGate } from "./parentGate";
+import { showSkinUnlock, unlockEligibleSkins } from "./skinRewards";
 import { BaseScene } from "./SceneUtils";
 
 export class MainMenuScene extends BaseScene {
@@ -13,8 +14,15 @@ export class MainMenuScene extends BaseScene {
     super.mount();
     this.game.resetWorld("menu");
     // Make sure every skin the star total has earned is available to pick.
-    this.game.save.syncUnlockedSkins(unlockedSkinIds(this.game.data().progress.stars));
+    const newSkins = unlockEligibleSkins(this.game);
     this.render();
+    showSkinUnlock(this.root, this.game, newSkins, {
+      onSelect: (skin) => {
+        this.root.querySelectorAll<HTMLElement>(".garage-card").forEach((card) => {
+          card.classList.toggle("active", card.dataset.skin === skin.id);
+        });
+      }
+    });
   }
 
   private render(): void {

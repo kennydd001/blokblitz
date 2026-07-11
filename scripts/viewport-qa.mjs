@@ -68,7 +68,9 @@ const scenarios = [
   { name: "kloktoren-mobile", width: 390, height: 844, mobile: true, open: "kloktoren", expectMiniMode: ".klok-play" },
   { name: "boss-mobile", width: 390, height: 844, mobile: true, open: "boss", expectMiniMode: ".boss-arena" },
   { name: "boss-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "boss", expectMiniMode: ".boss-arena" },
-  { name: "real-runner-landscape-mobile", width: 844, height: 390, mobile: true, open: "real-runner", expectRealRunner: true }
+  { name: "real-runner-landscape-mobile", width: 844, height: 390, mobile: true, open: "real-runner", expectRealRunner: true },
+  { name: "skin-unlock-narrow-mobile", width: 332, height: 807, mobile: true, open: "skin-unlock", expectSkinUnlock: true },
+  { name: "skin-unlock-landscape-mobile", width: 844, height: 390, mobile: true, open: "skin-unlock", expectSkinUnlock: true }
 ];
 
 const errors = [];
@@ -171,6 +173,24 @@ try {
 }
 
 async function openScenario(open) {
+  if (open === "skin-unlock") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        if (!game.save.hasChosenProfile()) game.save.createProfile("Test", "blitz");
+        const progress = game.save.getMutableData().progress;
+        progress.stars = 12;
+        progress.cosmetics.activeSkin = "blitz";
+        progress.cosmetics.unlockedSkins = ["blitz"];
+        game.showScene("hub");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open hero unlock reveal");
+    await waitForSelector('.skin-reveal[data-skin="aqua"]', 5_000);
+    return;
+  }
   if (open === "boot") {
     await openGameScene("boot");
     await waitForSelector(".boot-splash", 5_000);
@@ -415,6 +435,27 @@ async function collectMetrics(scenario = {}) {
         hubActiveTabs: document.querySelectorAll('.hub-tab[aria-selected="true"]').length,
         hubAdventure: rect(".hub-adventure"),
         menuGarage: rect(".menu-garage"),
+        skinReveal: rect(".skin-reveal"),
+        skinRevealCard: rect(".skin-reveal-card"),
+        skinRevealHero: rect(".skin-reveal-hero"),
+        skinRevealActions: rect(".skin-reveal-actions"),
+        skinRevealButtons: rects(".skin-reveal-actions .btn"),
+        skinRevealId: document.querySelector(".skin-reveal")?.dataset.skin ?? null,
+        skinRevealLabelled: (() => {
+          const dialog = document.querySelector(".skin-reveal");
+          const labelledBy = dialog?.getAttribute("aria-labelledby");
+          const describedBy = dialog?.getAttribute("aria-describedby");
+          return Boolean(
+            dialog?.getAttribute("role") === "dialog" &&
+            dialog?.getAttribute("aria-modal") === "true" &&
+            labelledBy && document.getElementById(labelledBy) &&
+            describedBy && document.getElementById(describedBy)
+          );
+        })(),
+        skinRevealContentFits: (() => {
+          const card = document.querySelector(".skin-reveal-card");
+          return card ? card.scrollHeight <= card.clientHeight + 1 && card.scrollWidth <= card.clientWidth + 1 : false;
+        })(),
         miniBoardPresent: miniBoardSelector ? Boolean(document.querySelector(miniBoardSelector)) : false,
         miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
         miniChoiceCount: document.querySelectorAll(".mini-choice").length,
@@ -595,6 +636,22 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       if (card.left < -1 || card.right > viewport.width + 1) failures.push(`profile card is clipped: ${JSON.stringify(card)}`);
       if (card.width < 100 || card.height < 120) failures.push(`profile card is too small: ${JSON.stringify(card)}`);
     }
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectSkinUnlock) {
+    if (!metrics.skinReveal || !metrics.skinRevealCard) failures.push("missing hero unlock dialog");
+    if (metrics.skinRevealId !== "aqua") failures.push(`expected Aqua unlock, got ${metrics.skinRevealId}`);
+    if (!metrics.skinRevealLabelled) failures.push("hero unlock dialog is not fully labelled");
+    if (!metrics.skinRevealContentFits) failures.push("hero unlock card requires internal scrolling");
+    if (!metrics.skinRevealHero || metrics.skinRevealHero.width < 90 || metrics.skinRevealHero.height < 90) failures.push(`unlock Buddy is missing or too small: ${JSON.stringify(metrics.skinRevealHero)}`);
+    if (!metrics.skinRevealActions || metrics.skinRevealButtons.length !== 2) failures.push(`expected two immediate hero choices, got ${metrics.skinRevealButtons.length}`);
+    if (metrics.skinRevealCard && (metrics.skinRevealCard.left < -1 || metrics.skinRevealCard.right > viewport.width + 1 || metrics.skinRevealCard.top < -1 || metrics.skinRevealCard.bottom > viewport.height + 1)) failures.push(`hero unlock card is clipped: ${JSON.stringify(metrics.skinRevealCard)}`);
+    for (const button of metrics.skinRevealButtons) {
+      if (button.width < 44 || button.height < 44) failures.push(`hero choice is too small: ${JSON.stringify(button)}`);
+      if (button.left < -1 || button.right > viewport.width + 1 || button.top < -1 || button.bottom > viewport.height + 1) failures.push(`hero choice is clipped: ${JSON.stringify(button)}`);
+    }
+    if (rectsOverlap(metrics.skinRevealHero, metrics.skinRevealActions)) failures.push("unlock Buddy overlaps the hero choices");
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }

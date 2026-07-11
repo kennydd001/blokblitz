@@ -655,6 +655,45 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector<HTMLElement>(".schat-meter")?.dataset.treasureFill).toBe("0");
   });
 
+  it("reveals a hero when a treasure chest crosses its star threshold", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Mila", "blitz");
+    game.save.award({ stars: 7 });
+    game.save.syncStickers();
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+    game.showScene("reis");
+
+    root.querySelector<HTMLButtonElement>(".schat-chest")!.click();
+    vi.advanceTimersByTime(350);
+
+    expect(root.querySelector('.skin-reveal[data-skin="aqua"]')).toBeTruthy();
+  });
+
+  it("does not leak a delayed chest reveal into the next game scene", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Noor", "blitz");
+    game.save.award({ stars: 7 });
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+    game.save.bumpTreasure();
+    game.showScene("reis");
+
+    root.querySelector<HTMLButtonElement>(".schat-chest")!.click();
+    game.showScene("count");
+    vi.advanceTimersByTime(350);
+
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+    expect(root.querySelector(".count-play")).toBeTruthy();
+  });
+
   it("finishing a mini mode fills the treasure meter", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -2208,6 +2247,44 @@ describe("rewards, voice and parent gate", () => {
     }
     expect(game.data().progress.stickers).toContain("first-star");
     expect(root.querySelector(".results-unlock.sticker")).toBeTruthy();
+  });
+
+  it("reveals a hero earned in a calm mode and lets the child equip it", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Mila", "blitz");
+    game.save.award({ stars: 11 });
+    game.save.syncStickers();
+    game.showScene("count");
+
+    for (let round = 0; round < 15 && !root.querySelector(".mini-done"); round += 1) {
+      countEveryAnimal(root);
+      root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    const reveal = root.querySelector<HTMLElement>('.skin-reveal[data-skin="aqua"]');
+    expect(reveal).toBeTruthy();
+    reveal!.querySelector<HTMLButtonElement>(".skin-reveal-choose")!.click();
+    expect(game.data().progress.cosmetics.activeSkin).toBe("aqua");
+    expect(root.querySelector(".skin-reveal")).toBeNull();
+  });
+
+  it("updates the hub garage and Buddy as soon as an earned hero is chosen", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.createProfile("Noor", "blitz");
+    game.save.award({ stars: 12 });
+    game.showScene("hub");
+
+    root.querySelector<HTMLButtonElement>(".skin-reveal-choose")!.click();
+
+    expect(root.querySelector('.garage-card.active[data-skin="aqua"]')).toBeTruthy();
+    expect(root.querySelector('.hub-buddy[data-buddy="aqua"]')).toBeTruthy();
+    expect(game.data().progress.cosmetics.activeSkin).toBe("aqua");
   });
 
   it("re-teaches with a scaffold visual on a wrong answer instead of just failing", async () => {

@@ -8,6 +8,7 @@ import { praiseWord } from "../../game/VoiceManager";
 import { skinById } from "../../runner/skins";
 import { cssHex, getWorld } from "../../runner/worlds";
 import { createBuddy, type Buddy } from "../buddy";
+import { showSkinUnlock, unlockEligibleSkins } from "../skinRewards";
 import { BaseScene } from "../SceneUtils";
 import { buildDoneScreen, showStickerReveal, starsFromPerfect } from "./miniUi";
 
@@ -384,6 +385,7 @@ export abstract class MiniGameScene extends BaseScene {
     const daily = this.game.completeActivity(this.name);
     // Every finished activity fills the treasure meter (chest at 3).
     this.game.save.bumpTreasure();
+    const newSkins = unlockEligibleSkins(this.game);
     const stars = starsFromPerfect(this.perfectRounds, this.total);
     if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
     else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
@@ -410,8 +412,11 @@ export abstract class MiniGameScene extends BaseScene {
       })
     );
     if (this.buddy) this.root.appendChild(this.buddy.el);
-    // New sticker? Big unboxing moment on top of the done screen.
-    showStickerReveal(this.root, newStickers);
+    // Queue reward reveals so two earned collectibles never overlap.
+    const revealSkins = (): void => {
+      showSkinUnlock(this.root, this.game, newSkins);
+    };
+    if (!showStickerReveal(this.root, newStickers, revealSkins)) revealSkins();
   }
 
   protected mountReplay(): void {

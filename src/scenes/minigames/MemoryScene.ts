@@ -3,8 +3,9 @@ import { RepresentationFactory } from "../../education/representations/Represent
 import type { Representation } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { BaseScene } from "../SceneUtils";
+import { showSkinUnlock, unlockEligibleSkins } from "../skinRewards";
 import { memoryMatchChallenge, shuffle } from "./miniChallenges";
-import { buildDoneScreen } from "./miniUi";
+import { buildDoneScreen, showStickerReveal } from "./miniUi";
 
 interface MemoryCard {
   quantity: number;
@@ -176,6 +177,7 @@ export class MemoryScene extends BaseScene {
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
     const daily = this.game.completeActivity(this.name);
     this.game.save.bumpTreasure();
+    const newSkins = unlockEligibleSkins(this.game);
     if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
     else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
     else this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: false, pitch: 1.25 });
@@ -199,6 +201,10 @@ export class MemoryScene extends BaseScene {
         onHome: () => this.game.showScene(this.returnScene())
       })
     );
+    const revealSkins = (): void => {
+      showSkinUnlock(this.root, this.game, newSkins);
+    };
+    if (!showStickerReveal(this.root, newStickers, revealSkins)) revealSkins();
   }
 
   private returnScene(): string {

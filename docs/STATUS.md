@@ -1675,3 +1675,44 @@ Validation and release:
   `87523ca4-fdbf-410f-8187-46c1e09c0369`. Live root,
   `index-Byz1mxQh.js`, and `index-Cw5L57YG.css` returned HTTP 200; the served
   code contains the compact title and short-landscape rules.
+
+## Profile-Local Hero Reward Choice - 2026-07-11
+
+Completed work:
+
+- Audited every hero-skin reward source. Runner results already announced new
+  looks, but stars earned in the 25 calm modes, daily missions, and treasure
+  chests could silently unlock a hero without giving the child a collection
+  moment or choice. All reward paths now use one profile-local unlock helper.
+- Added a full-screen `Nieuwe held!` reveal with the actual evolved Buddy in
+  the earned colours and two large choices: equip the hero now or keep it for
+  later. Choosing immediately updates the saved active skin, Hub Buddy, and
+  garage selection without re-rendering away a simultaneous Buddy level-up or
+  daily gift.
+- Sticker and hero reveals are explicitly serialized after calm games and
+  Memory. Runner results, legacy earned progress discovered on Hub/menu entry,
+  daily gifts, and three-session treasure chests surface the same choice.
+- Delayed chest reveals are tied to the original chest element. Leaving the
+  scene during its opening animation can no longer inject an obsolete modal
+  over the next activity.
+- The reveal is a labelled modal with initial focus on the positive choice,
+  >=48px actions, a compact two-column short-landscape layout, and no internal
+  scroll at 332x807 or 844x390. It reuses the five existing local Lily skin-name
+  clips; no browser voice, runtime API, or new spoken line was introduced.
+
+Validation:
+
+- Added a dedicated reward test file plus end-to-end flow coverage for
+  one-time unlocks, two-child isolation, `Later`, immediate equip, calm-mode
+  earning, Hub refresh, chest earning, and stale-timer prevention.
+- `npm.cmd run verify` passed with 34 files / 284 tests, typecheck, lint, and a
+  production build. Entry assets are `index-iPaDLrus.js` (99.61 kB gzip) and
+  `index-i1Aa8ApN.css` (32.27 kB gzip).
+- `npm.cmd run qa:viewport` passed all 49 scenarios. Both new reward screenshots
+  were inspected directly; the Buddy, copy, and two choices stay visible and
+  unclipped in narrow portrait and short mobile landscape.
+- `npm.cmd run qa:mobile-touch` passed 39 real touch steps. The route now earns
+  Aqua at 12 stars, touches `Kies Aqua`, logs 12 attempts, advances one journey
+  node, and returns to the Hub.
+- `npm.cmd run voice:elevenlabs-audit` remains green at 1556/1556 sentence
+  clips, 1488/1488 current lines, and 32/32 reading phonemes.

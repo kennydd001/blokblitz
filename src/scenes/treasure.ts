@@ -6,6 +6,7 @@ import type { Game } from "../game/Game";
 import { localDayKey } from "../education/dailyPlan";
 import { skinById } from "../runner/skins";
 import { buddyLevel, createBuddy, type Buddy } from "./buddy";
+import { showSkinUnlock, unlockEligibleSkins } from "./skinRewards";
 
 /**
  * The daily gift chest + come-back-tomorrow streak. Shown once per day on the
@@ -27,6 +28,7 @@ export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): H
     const { count, best } = game.save.dayStreak();
     const reward = 3 + Math.min(3, count - 1); // +3 today, growing to +6 by day 4
     game.save.award({ stars: reward, blocks: reward });
+    const newSkins = unlockEligibleSkins(game);
     game.audio.play("win");
     game.haptics.play("win");
     const line =
@@ -51,6 +53,9 @@ export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): H
     chest.classList.add("opened");
     chest.disabled = true;
     window.setTimeout(() => chest.remove(), 900);
+    window.setTimeout(() => {
+      if (chest.isConnected) showSkinUnlock(root, game, newSkins);
+    }, 350);
   });
   root.appendChild(chest);
   return chest;
@@ -89,6 +94,7 @@ export function spawnTreasureChest(game: Game, root: HTMLElement, buddy?: Buddy)
   chest.addEventListener("click", () => {
     if (!game.save.claimTreasure()) return;
     game.save.award({ stars: 5, blocks: 5 });
+    const newSkins = unlockEligibleSkins(game);
     game.audio.play("win");
     game.haptics.play("win");
     game.voice.speak("Hoera!", { interrupt: true, pitch: 1.25 });
@@ -111,6 +117,9 @@ export function spawnTreasureChest(game: Game, root: HTMLElement, buddy?: Buddy)
         pill.querySelectorAll(".schat-gem").forEach((gem) => gem.classList.remove("filled"));
       });
     }, 900);
+    window.setTimeout(() => {
+      if (chest.isConnected) showSkinUnlock(root, game, newSkins);
+    }, 350);
   });
   root.appendChild(chest);
   return chest;

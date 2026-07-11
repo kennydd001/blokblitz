@@ -1,10 +1,11 @@
 import { STICKERS } from "../data/stickers";
 import { PLAY_CATEGORIES, PLAY_MODES, playModeByScene, type PlayCategoryId, type PlayMode } from "../data/playModes";
 import type { Game } from "../game/Game";
-import { HERO_SKINS, skinById, unlockedSkinIds } from "../runner/skins";
+import { HERO_SKINS, skinById, type HeroSkin } from "../runner/skins";
 import { cssHex } from "../runner/worlds";
 import { createBuddy } from "./buddy";
 import { openParentGate } from "./parentGate";
+import { showSkinUnlock, unlockEligibleSkins } from "./skinRewards";
 import { maybeBuddyLevelUp, maybeDailyChest, spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
@@ -19,10 +20,11 @@ export class HubScene extends BaseScene {
   mount(): void {
     super.mount();
     this.game.resetWorld("menu");
-    this.game.save.syncUnlockedSkins(unlockedSkinIds(this.game.data().progress.stars));
+    const newSkins = unlockEligibleSkins(this.game);
     this.game.save.syncStickers();
     this.game.audio.startMusic("hub");
     this.render();
+    showSkinUnlock(this.root, this.game, newSkins, { onSelect: (skin) => this.refreshSelectedSkin(skin) });
   }
 
   private render(): void {
@@ -333,5 +335,17 @@ export class HubScene extends BaseScene {
     });
     garage.appendChild(row);
     return garage;
+  }
+
+  private refreshSelectedSkin(skin: HeroSkin): void {
+    this.root.querySelectorAll<HTMLElement>(".garage-card").forEach((card) => {
+      card.classList.toggle("active", card.dataset.skin === skin.id);
+    });
+    const currentBuddy = this.root.querySelector<HTMLElement>(".hub-buddy");
+    if (!currentBuddy) return;
+    const buddy = createBuddy(skin, this.game.data().progress.stars);
+    buddy.el.classList.add("hub-buddy");
+    currentBuddy.replaceWith(buddy.el);
+    buddy.setMood("happy", 1500);
   }
 }
