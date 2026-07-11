@@ -1,4 +1,5 @@
 import { STICKERS } from "../data/stickers";
+import { PLAY_CATEGORIES, PLAY_MODES, playModeByScene, type PlayCategoryId, type PlayMode } from "../data/playModes";
 import type { Game } from "../game/Game";
 import { HERO_SKINS, skinById, unlockedSkinIds } from "../runner/skins";
 import { cssHex } from "../runner/worlds";
@@ -7,52 +8,9 @@ import { openParentGate } from "./parentGate";
 import { maybeBuddyLevelUp, maybeDailyChest, spawnTreasureChest, treasureMeter } from "./treasure";
 import { BaseScene } from "./SceneUtils";
 
-interface ModeCard {
-  scene: string;
-  emoji: string;
-  name: string;
-  desc: string;
-  tone: string;
-}
-
-const MODES: ModeCard[] = [
-  // Avontuur
-  { scene: "reis", emoji: "🗺️", name: "Sterrenreis", desc: "Breng de ster thuis", tone: "adventure" },
-  // Getallen 1-10
-  { scene: "count", emoji: "🐣", name: "Tel mee", desc: "Tel de diertjes", tone: "count" },
-  { scene: "match", emoji: "🧩", name: "Zoek hetzelfde", desc: "Vind even veel", tone: "match" },
-  { scene: "compare", emoji: "🦖", name: "Wat is meer?", desc: "Kies de grootste", tone: "compare" },
-  { scene: "onemoreless", emoji: "➕", name: "Eentje erbij", desc: "Meer of minder", tone: "onemore" },
-  { scene: "order", emoji: "🔢", name: "Op volgorde", desc: "Klein naar groot", tone: "order" },
-  { scene: "memory", emoji: "🧠", name: "Memory", desc: "Zoek de paren", tone: "memory" },
-  // Splitsen en de tien
-  { scene: "fill", emoji: "🔟", name: "Vul de tien", desc: "Maak het getal", tone: "fill" },
-  { scene: "vriendjes", emoji: "🤝", name: "Vriendjes van 10", desc: "Samen tot 10", tone: "vriendjes" },
-  { scene: "splitbord", emoji: "⚖️", name: "Splitsbord", desc: "Maak het getal samen", tone: "splitbord" },
-  // Lezen
-  { scene: "klankgrot", emoji: "🔊", name: "Klankgrot", desc: "Luister naar klanken", tone: "klankgrot" },
-  { scene: "rijmspel", emoji: "🌊", name: "Rijmrivier", desc: "Vind wat rijmt", tone: "rijmspel" },
-  { scene: "letterkompas", emoji: "🧭", name: "Letterkompas", desc: "Letter en klank", tone: "letterkompas" },
-  { scene: "zoemroute", emoji: "🐝", name: "Zoemroute", desc: "Zoem tot een woord", tone: "zoemroute" },
-  { scene: "woordbouwplaats", emoji: "🔤", name: "Woordbouw", desc: "Bouw het woord", tone: "woordbouw" },
-  // Rekenen tot 20
-  { scene: "tientalhuis", emoji: "🏠", name: "Tientalhuis", desc: "Tien en nog wat", tone: "tientalhuis" },
-  { scene: "getallenlijn", emoji: "📏", name: "Getallenlijn", desc: "De lijn tot 20", tone: "getallenlijn" },
-  { scene: "sprongpad", emoji: "🦘", name: "Sprongpad", desc: "Tel per 2, 5 en 10", tone: "sprongpad" },
-  { scene: "tienbrug", emoji: "🌉", name: "Tienbrug", desc: "Plus en min tot 20", tone: "tienbrug" },
-  { scene: "dubbelspel", emoji: "✌️", name: "Dubbelspel", desc: "Dubbel en even", tone: "dubbelspel" },
-  // Vormen & meten
-  { scene: "vormenburcht", emoji: "🔷", name: "Vormenburcht", desc: "Vormen en patronen", tone: "vormen" },
-  { scene: "meetwerf", emoji: "📐", name: "Meetwerf", desc: "Langer of korter", tone: "meet" },
-  { scene: "geldmarkt", emoji: "🪙", name: "Geldmarkt", desc: "Tel het geld", tone: "geld" },
-  { scene: "kloktoren", emoji: "🕐", name: "Kloktoren", desc: "Lees de klok", tone: "klok" },
-  // Verkeer
-  { scene: "verkeerspad", emoji: "🚦", name: "Verkeerspad", desc: "Veilig op straat", tone: "verkeer" },
-  { scene: "luisterbos", emoji: "🌳", name: "Luisterbos", desc: "Luister het verhaaltje", tone: "luister" }
-];
-
 export class HubScene extends BaseScene {
   private greeted = false;
+  private selectedCategory: PlayCategoryId = "getallen";
 
   constructor(game: Game) {
     super(game, "hub");
@@ -74,7 +32,7 @@ export class HubScene extends BaseScene {
 
     const title = document.createElement("div");
     title.className = "hub-title";
-    title.innerHTML = `<span class="menu-logo" aria-hidden="true">🦖</span><h1>Speeltuin</h1><p>Kies een spelletje en leer de getallen!</p>`;
+    title.innerHTML = `<span class="menu-logo" aria-hidden="true">🦖</span><h1>Speeltuin</h1><p>Kies je missie of speel wat jij leuk vindt.</p>`;
 
     // The active child stays locked for the play session. A grown-up passes the
     // parent gate before another profile can be selected.
@@ -107,27 +65,9 @@ export class HubScene extends BaseScene {
       treasureMeter(this.game)
     );
 
-    const grid = document.createElement("div");
-    grid.className = "hub-grid";
-    // The Sterrenarena boss-rush unlocks once the star is home — a tier-scaling
-    // rematch of all six bosses for the "beat the game" child.
-    const modes = this.game.save.journeyComplete()
-      ? [{ scene: "bossRush", emoji: "🏆", name: "Sterrenarena", desc: "Versla alle bazen", tone: "adventure" } as ModeCard, ...MODES]
-      : MODES;
-    modes.forEach((mode) => {
-      const card = document.createElement("button");
-      card.type = "button";
-      card.className = `hub-card ${mode.tone}`;
-      card.dataset.mode = mode.scene;
-      card.setAttribute("aria-label", mode.name);
-      card.innerHTML = `
-        <span class="hub-emoji" aria-hidden="true">${mode.emoji}</span>
-        <strong>${mode.name}</strong>
-        <small>${mode.desc}</small>
-      `;
-      card.addEventListener("click", () => this.enter(mode.scene));
-      grid.appendChild(card);
-    });
+    const dailyPlan = this.buildDailyPlan();
+    const adventure = this.buildAdventure();
+    const modeBrowser = this.buildModeBrowser();
 
     const garage = this.buildGarage();
     const stickers = this.buildStickerBook();
@@ -139,22 +79,24 @@ export class HubScene extends BaseScene {
       this.button("Instellingen", () => this.parentArea("settings"), "ghost")
     );
 
-    this.root.append(title, badges, grid, garage, stickers, tools);
+    this.root.append(title, badges, dailyPlan, adventure, modeBrowser, garage, stickers, tools);
 
     // Your hero greets you here too, in its chosen colour — picking a new hero in
     // the garage updates the buddy instantly.
     const buddy = createBuddy(skinById(data.progress.cosmetics.activeSkin), data.progress.stars);
+    buddy.el.classList.add("hub-buddy");
     this.root.appendChild(buddy.el);
     buddy.setMood("happy", 1500);
-    maybeDailyChest(this.game, this.root, buddy);
+    const dailyGift = maybeDailyChest(this.game, this.root, buddy);
+    if (dailyGift) {
+      dailyGift.classList.add("hub-gift");
+      badges.appendChild(dailyGift);
+    }
     spawnTreasureChest(this.game, this.root, buddy);
     maybeBuddyLevelUp(this.game, this.root);
     if (!this.greeted) {
       this.greeted = true;
-      buddy.say(`Hoi! Ik ben ${buddy.name}. Wat spelen we?`);
       this.game.voice.speak("Hoi! Wat gaan we spelen?", { interrupt: true });
-    } else {
-      buddy.say("Leuke keuze!");
     }
   }
 
@@ -180,6 +122,148 @@ export class HubScene extends BaseScene {
     });
     book.appendChild(row);
     return book;
+  }
+
+  private buildDailyPlan(): HTMLElement {
+    const plan = this.game.dailyPlan();
+    const completed = new Set(plan.completedModeIds);
+    const section = document.createElement("section");
+    section.className = `hub-daily${plan.rewardClaimed ? " complete" : ""}`;
+    section.setAttribute("aria-label", "Jouw missies voor vandaag");
+
+    const heading = document.createElement("div");
+    heading.className = "hub-section-heading";
+    heading.innerHTML = `<span><small>VOOR JOU</small><strong>Jouw 3 missies</strong></span><b>${completed.size}/3</b>`;
+
+    const row = document.createElement("div");
+    row.className = "daily-mission-row";
+    const labels = ["Rekenen", "Lezen", "Ontdekken"];
+    plan.modeIds.forEach((scene, index) => {
+      const mode = playModeByScene(scene);
+      if (!mode) return;
+      const done = completed.has(scene);
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = `daily-mission ${mode.tone}${done ? " done" : ""}`;
+      card.dataset.dailyMode = scene;
+      card.setAttribute("aria-label", `${labels[index]}: ${mode.name}${done ? ", klaar" : ""}`);
+      card.innerHTML = `
+        <small>${labels[index]}</small>
+        <span class="daily-mission-emoji" aria-hidden="true">${done ? "✅" : mode.emoji}</span>
+        <strong>${mode.name}</strong>
+      `;
+      card.addEventListener("click", () => this.enter(scene));
+      row.appendChild(card);
+    });
+
+    const reward = document.createElement("div");
+    reward.className = "daily-reward";
+    reward.innerHTML = plan.rewardClaimed
+      ? `<span aria-hidden="true">🏆</span><strong>Alle missies klaar!</strong>`
+      : `<span aria-hidden="true">🎁</span><strong>3 klaar = 10 bonussterren</strong><span class="daily-reward-dots" aria-hidden="true">${[0, 1, 2]
+          .map((index) => `<i class="${index < completed.size ? "filled" : ""}"></i>`)
+          .join("")}</span>`;
+
+    section.append(heading, row, reward);
+    return section;
+  }
+
+  private buildAdventure(): HTMLElement {
+    const row = document.createElement("div");
+    row.className = "hub-adventure-row";
+    const adventure = document.createElement("button");
+    adventure.type = "button";
+    adventure.className = "hub-adventure";
+    adventure.dataset.mode = "reis";
+    adventure.setAttribute("aria-label", "Ga verder met de Sterrenreis");
+    adventure.innerHTML = `<span aria-hidden="true">🗺️</span><span><small>AVONTUUR</small><strong>Ga verder met de Sterrenreis</strong><em>Breng de ster thuis</em></span><b aria-hidden="true">▶</b>`;
+    adventure.addEventListener("click", () => this.enter("reis"));
+    row.appendChild(adventure);
+
+    if (this.game.save.journeyComplete()) {
+      const arena = document.createElement("button");
+      arena.type = "button";
+      arena.className = "hub-arena";
+      arena.dataset.mode = "bossRush";
+      arena.setAttribute("aria-label", "Sterrenarena");
+      arena.innerHTML = `<span aria-hidden="true">🏆</span><strong>Arena</strong>`;
+      arena.addEventListener("click", () => this.enter("bossRush"));
+      row.appendChild(arena);
+    }
+    return row;
+  }
+
+  private buildModeBrowser(): HTMLElement {
+    const section = document.createElement("section");
+    section.className = "hub-browser";
+    const heading = document.createElement("div");
+    heading.className = "hub-section-heading free";
+    heading.innerHTML = `<span><small>VRIJ SPELEN</small><strong>Kies zelf</strong></span>`;
+
+    const tabs = document.createElement("div");
+    tabs.className = "hub-tabs";
+    tabs.setAttribute("role", "tablist");
+    tabs.setAttribute("aria-label", "Soort spelletje");
+    const grid = document.createElement("div");
+    grid.className = "hub-grid";
+    grid.id = "hub-mode-panel";
+    grid.setAttribute("role", "tabpanel");
+
+    const renderModes = (): void => {
+      grid.replaceChildren();
+      PLAY_MODES.filter((mode) => mode.category === this.selectedCategory).forEach((mode) => grid.appendChild(this.buildModeCard(mode)));
+      tabs.querySelectorAll<HTMLButtonElement>(".hub-tab").forEach((tab) => {
+        const active = tab.dataset.category === this.selectedCategory;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      grid.setAttribute("aria-label", PLAY_CATEGORIES.find((category) => category.id === this.selectedCategory)?.label ?? "Spelletjes");
+    };
+
+    PLAY_CATEGORIES.forEach((category) => {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "hub-tab";
+      tab.dataset.category = category.id;
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-controls", grid.id);
+      tab.innerHTML = `<span aria-hidden="true">${category.emoji}</span><strong>${category.label}</strong>`;
+      tab.addEventListener("click", () => {
+        this.selectedCategory = category.id;
+        renderModes();
+      });
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const current = PLAY_CATEGORIES.findIndex((item) => item.id === this.selectedCategory);
+        const next =
+          event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? PLAY_CATEGORIES.length - 1
+              : (current + (event.key === "ArrowRight" ? 1 : -1) + PLAY_CATEGORIES.length) % PLAY_CATEGORIES.length;
+        this.selectedCategory = PLAY_CATEGORIES[next].id;
+        renderModes();
+        tabs.querySelector<HTMLButtonElement>(`.hub-tab[data-category="${this.selectedCategory}"]`)?.focus();
+      });
+      tabs.appendChild(tab);
+    });
+
+    renderModes();
+    section.append(heading, tabs, grid);
+    return section;
+  }
+
+  private buildModeCard(mode: PlayMode): HTMLButtonElement {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `hub-card ${mode.tone}`;
+    card.dataset.mode = mode.scene;
+    card.setAttribute("aria-label", mode.name);
+    card.innerHTML = `<span class="hub-emoji" aria-hidden="true">${mode.emoji}</span><strong>${mode.name}</strong><small>${mode.desc}</small>`;
+    card.addEventListener("click", () => this.enter(mode.scene));
+    return card;
   }
 
   private enter(scene: string): void {

@@ -3,6 +3,7 @@
 // map and the Speeltuin hub so the loop is visible wherever the child lands.
 
 import type { Game } from "../game/Game";
+import { localDayKey } from "../education/dailyPlan";
 import { skinById } from "../runner/skins";
 import { buddyLevel, createBuddy, type Buddy } from "./buddy";
 
@@ -13,7 +14,7 @@ import { buddyLevel, createBuddy, type Buddy } from "./buddy";
  * return is welcomed, never shamed.
  */
 export function maybeDailyChest(game: Game, root: HTMLElement, buddy?: Buddy): HTMLButtonElement | null {
-  const dayKey = new Date().toISOString().slice(0, 10);
+  const dayKey = localDayKey();
   if (!game.save.dailyChestAvailable(dayKey)) return null;
   const chest = document.createElement("button");
   chest.type = "button";

@@ -153,7 +153,11 @@ export class MemoryScene extends BaseScene {
     const extra = this.flips - PAIRS;
     const stars = extra <= 1 ? 3 : extra <= 4 ? 2 : 1;
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
-    this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
+    const daily = this.game.completeActivity(this.name);
+    this.game.save.bumpTreasure();
+    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: true, pitch: 1.2 });
+    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: true, pitch: 1.18 });
+    else this.game.voice.speak(stars >= 3 ? "Perfect geheugen!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
     const newStickers = this.game.save
       .syncStickers()
       .map((id) => stickerById(id))
@@ -166,6 +170,9 @@ export class MemoryScene extends BaseScene {
         stars,
         sub: `Alle paren gevonden in ${this.flips} beurten!`,
         newStickers,
+        dailyMission: daily.newlyCompleted
+          ? { completedCount: daily.completedCount, total: daily.total, rewardEarned: daily.rewardEarned }
+          : undefined,
         onReplay: () => this.startBoard(),
         homeLabel: this.game.lastJourneyNode ? "Verder" : "Speeltuin",
         onHome: () => this.game.showScene(this.returnScene())

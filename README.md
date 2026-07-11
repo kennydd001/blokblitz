@@ -1,6 +1,10 @@
 ﻿# BlokBlitz Run
 
-Local-first TypeScript/Vite **number-sense game for children aged 4-7**, built around a kid-first **Speeltuin (playground) hub** with several distinct game modes:
+Local-first TypeScript/Vite **educational action game for children aged 4-7**, built around a kid-first **Sterrenreis** and **Speeltuin** with number sense, early reading, operations to 20, shapes, measurement, listening, and traffic safety.
+
+Every child gets three stable, profile-specific daily missions: one math activity, one reading activity, and one discovery activity. The recommendation engine combines curriculum stage, recurring errors, memory decay, and recent completed modes, so it can revisit a weak sound without serving the same game shell again immediately. Later content such as money, clock reading, skip-counting, and bridging through ten is never recommended to a new child, but remains reachable in free play.
+
+Representative modes include:
 
 - **🐣 Tel mee** — tap each animal to count, then pick the numeral (counting & cardinality).
 - **🧩 Zoek hetzelfde** — find the group with the same amount, shown across different getalbeelden (cross-representation equivalence).
@@ -88,8 +92,8 @@ Settings (behind the parent gate, from the menu):
 
 ## Game Flow
 
-0. **De Sterrenreis** (the story mode, the front door — `ReisScene`/`src/data/journey.ts`): the app boots onto ONE winding road that ties every activity into a single adventure — *help Buddy carry the lost star home*. ~26 nodes (the 7 tap modes as "stops", the 6 runner worlds as region "gates", rescued friends, and the final star) follow a curve over the six world colour bands, so the map literally IS the world progression and difficulty rises along it. Exactly one node glows (the frontier); Buddy stands on it; finishing the activity blooms that node into colour, slides the star up the sky, lights the next node, and (per region) pops a friend into the meadow. No reading required — Buddy + spoken voice carry the story. A `🎒 Vrij spelen` button opens the free-play Speeltuin.
-1. **Speeltuin hub** (free-play): big tappable cards for each game mode (Avontuur + the calm tap modes), a hero garage, a sticker book, and `Ouders` / `Instellingen`. Each calm mode is a short set of rounds with a 1–3 star screen at the end.
+0. **De Sterrenreis** (the story mode, the front door — `ReisScene`/`src/data/journey.ts`): the app boots onto one winding road that ties the full curriculum into a single adventure — *help Buddy carry the lost star home*. The current road has 48 stops, gates, bosses, rescued friends, and the final star across six world colour bands. Exactly one node glows; finishing it blooms the node into colour, moves the star, and opens the next step. No reading is required because Buddy and the spoken voice carry the story. A `🎒 Vrij spelen` button opens the Speeltuin.
+1. **Speeltuin hub** (free-play): three personal daily missions appear first, followed by one clear Sterrenreis action and five compact category tabs (`Getallen`, `Splitsen`, `Lezen`, `Tot 20`, `Ontdekken`). Only one child-sized category is shown at a time; all 25 calm modes remain reachable. Completing the three recommendations pays one profile-local 10-star bonus, exactly once. The garage, sticker book, `Ouders`, and `Instellingen` remain below.
 2. **Avontuur → world map**: six themed worlds shown as tappable cards, unlocked one by one (🌳 Grasland → 🪙 Muntgrot → ❄️ IJsbaan → 🕸️ Webwoud → 🧱 Bouwdorp → 🚀 Sterrenrace). Each world has its own look, number cap (5 → 10), gate types (subitise → count → compare) and mechanic mix (coins, web-swings, build moments).
 3. **A run**: a 3-2-1 countdown, then number gates with coin trails, jumpable barriers, web-swing zips and a Minecraft build moment in between. The gate getalbeeld rotates through every pattern (dice, dots, ten-frames, fingers, beads, dominoes, eggs, numerals, paws…). A wrong gate or a bump is safe — it only slows you briefly and shows the correct quantity.
 4. **Results**: a 1–3 star rating, stars/blocks earned, distance and best record, and any newly unlocked world or hero — then `Volgende!`, `Nog eens!` or back to the map. Finishing a world unlocks the next.
@@ -106,7 +110,8 @@ The full representation/mastery/adaptive education engine drives every gate unde
 - `src/runner`: the revamped real-time runner — pure `RunnerCore` simulation, `RunnerView` voxel rendering, the adaptive gate provider, and unlockable hero skins
 - `src/scenes`: Boot, `HubScene` (Speeltuin), `MainMenuScene` (world map), `RunScene`, `ResultsScene`, plus the retained guided scenes (number of day, legacy runner, WebWoud, city, minigames, summary, dashboard, settings)
 - `src/scenes/minigames`: the calm tap modes — `MiniGameScene` base + `miniUi` (shared done screen) + `CountScene`, `MatchScene`, `CompareScene`, `FillScene`, `OneMoreLessScene`, `OrderScene`, `MemoryScene`, and `miniChallenges` (their Challenge builders)
-- `src/education`: educational types, canonical layouts, mastery tracker, adaptive engine, challenge factory, misconception detection
+- `src/education`: educational types, canonical layouts, mastery tracker, adaptive engine, spaced repetition, the daily recommendation engine, challenge factory, and misconception detection
+- `src/data/playModes.ts`: the single catalog for free-play labels, curriculum category, recommendation stage, learning track, and attempt mapping
 - `src/education/representations`: reusable SVG renderers for all 12 quantity representations
 - `src/gameplay`: layer-specific mechanic labels and templates
 - `assets/ASSET_MANIFEST.json`: local asset and license record
@@ -114,7 +119,7 @@ The full representation/mastery/adaptive education engine drives every gate unde
 
 ## Learning Model
 
-The shared `MasteryTracker` logs every attempt with skill, representation, range, quantity, prompt, answer, correctness, reaction time, hint use, and misconception. The `AdaptiveEngine` reads those attempts and shifts future challenges toward weak skills while avoiding exact-repeat loops.
+The shared `MasteryTracker` logs every attempt with skill, representation, range, quantity, prompt, answer, correctness, reaction time, hint use, and misconception. The `AdaptiveEngine` reads those attempts and shifts future challenges toward weak skills while avoiding exact-repeat loops. `dailyPlan.ts` adds a child-visible layer on top: it balances math, literacy, and discovery, gates recommendations by trajectory stage, prioritizes repeated errors or due practice, and uses the profile's recent activity history to avoid shell fatigue.
 
 Tracked skills:
 

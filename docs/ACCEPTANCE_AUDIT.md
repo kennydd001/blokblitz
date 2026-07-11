@@ -1,6 +1,6 @@
 # Acceptance Audit
 
-Last updated: 2026-06-25.
+Last updated: 2026-07-11.
 
 This audit maps the Codex goal completion criteria to concrete project evidence. It is intentionally stricter than the automated test suite and includes browser UI/gameplay verification.
 
@@ -8,15 +8,16 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 
 - Install: `npm.cmd install` has passed for this project and dependencies are locked.
 - Static checks: `npm.cmd run typecheck` and `npm.cmd run lint` pass.
-- Tests: `npm.cmd run test` passes with 5 test files / 67 tests.
+- Tests: `npm.cmd run test` passes with 30 test files / 252 tests.
 - Production build: `npm.cmd run build` passes without warnings.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
 - Local server smoke: `http://127.0.0.1:5273/` returned HTTP 200.
 - Cloudflare smoke: `https://definition-some-cat-involvement.trycloudflare.com` returned HTTP 200.
-- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 16 Chrome viewport scenarios: `menu-mobile`, `menu-narrow-mobile`, `number-mobile`, `real-runner-mobile`, `runner-mobile`, `runner-narrow-mobile`, `runner-scaffold-mobile`, `runner-short-desktop`, `web-mobile`, `web-reward-mobile`, `minigame-mobile`, `city-overview-mobile`, `city-build-mobile`, `city-build-narrow-mobile`, `summary-mobile`, and `summary-narrow-mobile`.
-- Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. Latest run completed 41 touch steps, touched the real `run` scene controls, then completed the Number Portal -> Sprint -> WebWoud -> Sterrenstad -> Summary path, logged 22 attempts through the real attempt pipeline, restored 1 district, and verified runner/WebWoud/city left-right controls plus swipe-left/swipe-right gestures.
+- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 24 Chrome scenarios covering the Sterrenreis, the personal-mission Speeltuin, the real runner, core reading/math modes, bosses, narrow phones, desktop fullscreen, and mobile landscape.
+- Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a phone-like Chrome route using real `Input.dispatchTouchEvent` touches. The latest 29-step run exercised runner controls and swipes, tapped through the three-beat Sterrenreis intro, completed the current journey quest, selected the reading category, finished Klankgrot, logged 14 attempts, advanced one node, and returned to a Hub showing two checked daily missions.
 - Browser layout checks: no console errors, no horizontal overflow, no tiny visible buttons, no visible button overlap, non-flat screenshots, and nonzero Three.js canvas across the automated viewport set.
-- Story-mode browser QA: in-app browser at `390x844` opened the Sterrenreis map, verified 26 journey nodes with one active frontier, Buddy, the friend meadow, a child-facing quest card, the progress pill, completed the first story activity, returned to the map with one done node and a new active node, and confirmed the page itself no longer scrolls outside the internal journey road.
+- Story-mode browser QA: in-app browser at `390x844` opened the 48-node Sterrenreis with one active frontier, Buddy, the friend meadow, a child-facing quest card, and progress pill; completing a story activity moves the frontier without page-level map overflow.
+- Personal trajectory QA: pure tests verify balanced math/reading/discovery recommendations, curriculum-stage gating, weak-domain prioritization, repeat avoidance, local-day stability, profile-local persistence, and idempotent rewards. Browser and viewport checks verify three mission cards, five complete categories, no gift/progress overlap, and usable 360 px/fullscreen layouts.
 - Visual inspection: latest mobile screenshots for menu, 360px narrow menu, Number Portal, real runner with big in-world numerals, runner, 360px narrow runner, runner gate clarity, WebWoud, reward state, city overview, city build, 360px narrow city build, summary, 360px narrow summary, real-touch summary, and Sterrenreis story mode including the expanded quest-card state were inspected during product-readiness passes.
 - Procedural device-feedback checks: tests verify distinct local Web Audio cue patterns, short optional vibration patterns, persisted haptic settings, and shared attempt-pipeline routing for Snap, rescue, city-building, herd rescue, and gentle retry feedback.
 - Asset policy: `assets/ASSET_MANIFEST.json` documents generated local assets and no external runtime assets.

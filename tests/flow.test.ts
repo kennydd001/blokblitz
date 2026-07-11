@@ -7,6 +7,7 @@ import { buildCurriculumAttempt } from "../src/education/challengeLogger";
 import { AdaptiveGateProvider } from "../src/runner/gateProvider";
 import { RunnerCore, type GateProvider, type GateSpec, type RunnerSnapshot } from "../src/runner/RunnerCore";
 import { STICKERS } from "../src/data/stickers";
+import { PLAY_MODES } from "../src/data/playModes";
 import { BOSSES, FRIENDS, FRIEND_STORY, JOURNEY, JOURNEY_INTRO, REGION_STORY, backfillCompleted, frontierIndex, journeyNodeAction, journeyNodeTitle } from "../src/data/journey";
 import { WORLDS, nextWorldId, starsForRun } from "../src/runner/worlds";
 
@@ -545,46 +546,47 @@ describe("Speeltuin hub + calm game modes", () => {
     localStorage.clear();
   });
 
-  it("shows game-mode cards and a garage in the hub", async () => {
+  it("shows three personal missions and category-sized free-play choices", async () => {
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
     const game = new Game(root);
     game.showScene("hub");
-    // Free play exposes EVERY game: the adventure, the 1-10 number modes, the
-    // splits + math-to-20 modes, and the reading modes.
-    const expected = [
-      "reis",
-      "count",
-      "match",
-      "compare",
-      "onemoreless",
-      "order",
-      "memory",
-      "fill",
-      "vriendjes",
-      "splitbord",
-      "klankgrot",
-      "rijmspel",
-      "letterkompas",
-      "zoemroute",
-      "woordbouwplaats",
-      "tientalhuis",
-      "getallenlijn",
-      "sprongpad",
-      "tienbrug",
-      "dubbelspel",
-      "vormenburcht",
-      "meetwerf",
-      "geldmarkt",
-      "kloktoren",
-      "verkeerspad",
-      "luisterbos"
-    ];
-    expect(root.querySelectorAll(".hub-card").length).toBe(expected.length);
-    expected.forEach((mode) => {
-      expect(root.querySelector(`.hub-card[data-mode="${mode}"]`)).toBeTruthy();
-    });
+    expect(root.querySelectorAll(".daily-mission")).toHaveLength(3);
+    expect(new Set([...root.querySelectorAll<HTMLElement>(".daily-mission")].map((card) => card.dataset.dailyMode)).size).toBe(3);
+    expect(root.querySelector('.hub-adventure[data-mode="reis"]')).toBeTruthy();
+    expect(root.querySelectorAll(".hub-tab")).toHaveLength(5);
+    expect(root.querySelectorAll(".hub-card")).toHaveLength(6);
+
+    const visibleModes = new Set<string>();
+    for (const tab of root.querySelectorAll<HTMLButtonElement>(".hub-tab")) {
+      tab.click();
+      root.querySelectorAll<HTMLElement>(".hub-card").forEach((card) => visibleModes.add(card.dataset.mode ?? ""));
+    }
+    expect(visibleModes).toEqual(new Set(PLAY_MODES.map((mode) => mode.scene)));
+    const numberTab = root.querySelector<HTMLButtonElement>('.hub-tab[data-category="getallen"]')!;
+    numberTab.click();
+    numberTab.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    expect(root.querySelector('.hub-tab[data-category="splitsen"]')?.getAttribute("aria-selected")).toBe("true");
+    expect(root.querySelector(".hub-grid")?.getAttribute("role")).toBe("tabpanel");
     expect(root.querySelector(".menu-garage")).toBeTruthy();
+  });
+
+  it("awards the daily bonus exactly once and shows completed missions on return", async () => {
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const now = new Date(2026, 6, 11, 12, 0, 0).getTime();
+    const plan = game.dailyPlan(now);
+    const starsBefore = game.data().progress.stars;
+
+    plan.modeIds.forEach((scene) => game.completeActivity(scene, now));
+    expect(game.data().progress.stars).toBe(starsBefore + 10);
+    game.completeActivity(plan.modeIds[2], now);
+    expect(game.data().progress.stars).toBe(starsBefore + 10);
+
+    game.showScene("hub");
+    expect(root.querySelectorAll(".daily-mission.done")).toHaveLength(3);
+    expect(root.querySelector(".hub-daily.complete")?.textContent).toContain("Alle missies klaar");
   });
 
   it("free play: a curriculum mode launched from the hub returns to the hub, journey untouched", async () => {
@@ -595,6 +597,7 @@ describe("Speeltuin hub + calm game modes", () => {
     const journeyBefore = game.data().progress.journey.completed.length;
 
     game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-tab[data-category="lezen"]')!.click();
     root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
     expect(root.querySelector(".klankgrot-play")).toBeTruthy();
 
@@ -651,6 +654,7 @@ describe("Speeltuin hub + calm game modes", () => {
 
     expect(game.data().progress.sessionChestFill).toBe(0);
     game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-tab[data-category="lezen"]')!.click();
     root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')?.click();
@@ -735,6 +739,7 @@ describe("Speeltuin hub + calm game modes", () => {
     // Force golden: random 0 => every round after the first goes golden.
     const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
     game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-tab[data-category="lezen"]')!.click();
     root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
     // Round 1 is never golden.
     expect(root.querySelector(".mini-golden-banner")).toBeNull();
@@ -1179,7 +1184,7 @@ describe("Speeltuin hub + calm game modes", () => {
 
     // Locked until the star is home.
     game.showScene("hub");
-    expect(root.querySelector('.hub-card[data-mode="bossRush"]')).toBeNull();
+    expect(root.querySelector('[data-mode="bossRush"]')).toBeNull();
 
     game.save.updateProgress((progress) => {
       progress.journey.completed = JOURNEY.map((node) => node.id);
@@ -1187,7 +1192,7 @@ describe("Speeltuin hub + calm game modes", () => {
     });
     expect(game.save.journeyComplete()).toBe(true);
     game.showScene("hub");
-    expect(root.querySelector('.hub-card[data-mode="bossRush"]')).toBeTruthy();
+    expect(root.querySelector('[data-mode="bossRush"]')).toBeTruthy();
 
     // Enter the gauntlet: the first boss arena is up.
     game.showScene("bossRush");
@@ -1314,6 +1319,35 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(game.data().progress.journey.completed).toContain(kg.id);
     // Logged as a reading (literacy-phonemic) attempt for the dashboard.
     expect(game.mastery.getAttempts().some((a) => a.domain === "literacy-phonemic")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("checks a real completed mode off on its mission result screen", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const dayKey = game.dailyPlan().dayKey;
+    game.save.updateProgress((progress) => {
+      progress.dailyPlan = {
+        dayKey,
+        modeIds: ["klankgrot", "count", "vormenburcht"],
+        completedModeIds: [],
+        rewardClaimed: false
+      };
+    });
+
+    game.showScene("hub");
+    root.querySelector<HTMLButtonElement>('.hub-tab[data-category="lezen"]')!.click();
+    root.querySelector<HTMLButtonElement>('.hub-card[data-mode="klankgrot"]')!.click();
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.klankgrot-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    expect(root.querySelector(".results-unlock.daily")?.textContent).toContain("Missie 1/3 klaar");
+    expect(game.data().progress.dailyPlan.completedModeIds).toEqual(["klankgrot"]);
+    expect(game.data().progress.activityHistory.at(-1)).toMatchObject({ sceneId: "klankgrot", inJourney: false });
     vi.useRealTimers();
   });
 

@@ -2,6 +2,7 @@ import { stableQuantityFromDate } from "../education/quantityLayouts";
 import type {
   AttemptLog,
   ChildProfile,
+  DailyPlanProgress,
   DayStreak,
   DistrictProgress,
   GameProgress,
@@ -20,6 +21,14 @@ const ROSTER_STORAGE_KEY = "blokblitz-profiles-v1";
 const PROFILE_STORAGE_PREFIX = `${STORAGE_KEY}::`;
 const memoryStorage = new Map<string, string>();
 const migratedLegacySources = new Map<string, string>();
+
+export interface DailyMissionCompletion {
+  isMission: boolean;
+  newlyCompleted: boolean;
+  completedCount: number;
+  total: number;
+  rewardEarned: boolean;
+}
 
 function profileStorageKey(id: string): string {
   return `${PROFILE_STORAGE_PREFIX}${id}`;
@@ -83,7 +92,9 @@ export function defaultProgress(): GameProgress {
     dailyChestDay: "",
     streak: { count: 0, best: 0, lastDay: "" },
     sessionChestFill: 0,
-    buddyLevelSeen: 1
+    buddyLevelSeen: 1,
+    activityHistory: [],
+    dailyPlan: { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
   };
 }
 
@@ -361,6 +372,56 @@ export class SaveManager {
     return this.getData();
   }
 
+  /** Keep one stable set of recommendations for this child for the whole day. */
+  ensureDailyPlan(dayKey: string, modeIds: string[]): DailyPlanProgress {
+    const uniqueModeIds = [...new Set(modeIds.filter(Boolean))].slice(0, 3);
+    const current = this.data.progress.dailyPlan;
+    if (current.dayKey !== dayKey || current.modeIds.length !== 3) {
+      this.data.progress.dailyPlan = {
+        dayKey,
+        modeIds: uniqueModeIds,
+        completedModeIds: [],
+        rewardClaimed: false
+      };
+      this.save();
+    }
+    return structuredClone(this.data.progress.dailyPlan);
+  }
+
+  /** Mark one of today's three recommendations done. Replays stay idempotent. */
+  completeDailyMode(sceneId: string): DailyMissionCompletion {
+    const plan = this.data.progress.dailyPlan;
+    const total = plan.modeIds.length;
+    if (!plan.modeIds.includes(sceneId)) {
+      return { isMission: false, newlyCompleted: false, completedCount: plan.completedModeIds.length, total, rewardEarned: false };
+    }
+    if (plan.completedModeIds.includes(sceneId)) {
+      return { isMission: true, newlyCompleted: false, completedCount: plan.completedModeIds.length, total, rewardEarned: false };
+    }
+
+    plan.completedModeIds.push(sceneId);
+    const rewardEarned = total === 3 && plan.completedModeIds.length === total && !plan.rewardClaimed;
+    if (rewardEarned) plan.rewardClaimed = true;
+    this.save();
+    return {
+      isMission: true,
+      newlyCompleted: true,
+      completedCount: plan.completedModeIds.length,
+      total,
+      rewardEarned
+    };
+  }
+
+  /** A short profile-local history prevents the game from recommending the same shell repeatedly. */
+  recordActivityComplete(sceneId: string, inJourney: boolean, completedAt = Date.now()): SaveData {
+    this.data.progress.activityHistory = [
+      ...this.data.progress.activityHistory,
+      { sceneId, completedAt, inJourney }
+    ].slice(-120);
+    this.save();
+    return this.getData();
+  }
+
   reset(): SaveData {
     this.data = defaultSaveData();
     this.save();
@@ -413,7 +474,9 @@ export class SaveManager {
         dailyChestDay: data.progress?.dailyChestDay ?? "",
         streak: data.progress?.streak ?? { count: 0, best: 0, lastDay: "" },
         sessionChestFill: data.progress?.sessionChestFill ?? 0,
-        buddyLevelSeen: data.progress?.buddyLevelSeen ?? 1
+        buddyLevelSeen: data.progress?.buddyLevelSeen ?? 1,
+        activityHistory: data.progress?.activityHistory ?? [],
+        dailyPlan: data.progress?.dailyPlan ?? { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
       }
     };
   }

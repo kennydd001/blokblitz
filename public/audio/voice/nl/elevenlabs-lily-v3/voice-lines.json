@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T14:37:54.757Z",
+  "generatedAt": "2026-07-11T15:38:37.074Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1553,
+  "lineCount": 1555,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -3113,6 +3113,14 @@
       "file": "alle-bazen-verslagen-uitroep-jij-bent-de-kampioen-van-de-sterrenarena-uitroep.mp3"
     },
     {
+      "id": "source-scenes/minigames/MiniGameScene.ts-15912-0",
+      "slug": "alle-drie-missies-klaar-uitroep-tien-bonussterren-uitroep",
+      "text": "Alle drie missies klaar! Tien bonussterren!",
+      "spokenText": "Alle drie missies klaar! Tien bonussterren!",
+      "category": "source-static",
+      "file": "alle-drie-missies-klaar-uitroep-tien-bonussterren-uitroep.mp3"
+    },
+    {
       "id": "runtime-extra-3",
       "slug": "alle-kleuren-verdwenen-maar-samen-brengen-we-ze-terug-uitroep",
       "text": "Alle kleuren verdwenen... maar samen brengen we ze terug!",
@@ -3447,6 +3455,14 @@
       "spokenText": "Daar gaan we! Volg de weg.",
       "category": "common",
       "file": "daar-gaan-we-uitroep-volg-de-weg.mp3"
+    },
+    {
+      "id": "source-scenes/minigames/MiniGameScene.ts-16050-0",
+      "slug": "dagmissie-klaar-uitroep",
+      "text": "Dagmissie klaar!",
+      "spokenText": "Dagmissie klaar!",
+      "category": "source-static",
+      "file": "dagmissie-klaar-uitroep.mp3"
     },
     {
       "id": "listen-option-vos-verjaardag-0-2",

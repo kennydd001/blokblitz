@@ -286,6 +286,11 @@ async function collectMetrics(scenario = {}) {
       const metrics = {
         hubGrid: rect(".hub-grid"),
         hubCardCount: document.querySelectorAll(".hub-card").length,
+        hubDaily: rect(".hub-daily"),
+        hubMissions: rects(".daily-mission"),
+        hubTabs: rects(".hub-tab"),
+        hubActiveTabs: document.querySelectorAll('.hub-tab[aria-selected="true"]').length,
+        hubAdventure: rect(".hub-adventure"),
         menuGarage: rect(".menu-garage"),
         miniBoardPresent: miniBoardSelector ? Boolean(document.querySelector(miniBoardSelector)) : false,
         miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
@@ -453,7 +458,20 @@ function validateScenario(scenario, metrics, scenarioErrors) {
   }
   if (scenario.expectHub) {
     if (!metrics.hubGrid) failures.push("missing hub grid");
-    if (metrics.hubCardCount < 20) failures.push(`expected at least 20 hub cards, got ${metrics.hubCardCount}`);
+    if (metrics.hubCardCount < 3 || metrics.hubCardCount > 6) failures.push(`expected one compact hub category (3-6 cards), got ${metrics.hubCardCount}`);
+    if (!metrics.hubDaily) failures.push("missing personal daily plan");
+    if (metrics.hubMissions.length !== 3) failures.push(`expected 3 daily missions, got ${metrics.hubMissions.length}`);
+    if (metrics.hubTabs.length !== 5) failures.push(`expected 5 free-play category tabs, got ${metrics.hubTabs.length}`);
+    if (metrics.hubActiveTabs !== 1) failures.push(`expected one active hub category, got ${metrics.hubActiveTabs}`);
+    if (!metrics.hubAdventure) failures.push("missing Sterrenreis adventure action");
+    if (metrics.hubDaily && (metrics.hubDaily.left < -1 || metrics.hubDaily.right > viewport.width + 1)) failures.push(`daily plan is clipped: ${JSON.stringify(metrics.hubDaily)}`);
+    for (const mission of metrics.hubMissions) {
+      if (mission.width < 88 || mission.height < 96) failures.push(`daily mission too small: ${JSON.stringify(mission)}`);
+      if (mission.left < -1 || mission.right > viewport.width + 1) failures.push(`daily mission clipped: ${JSON.stringify(mission)}`);
+    }
+    for (const tab of metrics.hubTabs) {
+      if (tab.width < 44 || tab.height < 44) failures.push(`hub category tab too small: ${JSON.stringify(tab)}`);
+    }
     if (!metrics.menuGarage) failures.push("missing hero garage");
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;

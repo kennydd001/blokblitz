@@ -1274,3 +1274,49 @@ Validation:
   and desktop for Rijmrivier, Sprongpad, Vriendjes, and Dubbelspel. Interactive
   in-app browser checks confirmed rhyme bridge payoff, skip-path fit at 332 px,
   ten-frame filling, doubles strategy reveal, and the parent-gated profile flow.
+
+## Personal Daily Plan and Speeltuin Focus - 2026-07-11
+
+Completed work:
+
+- Replaced the 26-choice free-play wall with a focused child flow: three
+  profile-specific daily missions, one prominent Sterrenreis action, and five
+  category tabs that expose all 25 calm modes without showing them at once.
+- Added `src/data/playModes.ts` as the single catalog for mode labels,
+  categories, learning tracks, recommendation stages, domains, and attempt keys.
+- Added a pure recommendation engine in `src/education/dailyPlan.ts`. Every plan
+  balances one math, one literacy, and one discovery activity while combining
+  trajectory stage, repeated errors, due practice, novelty, and recent-mode
+  fatigue. Advanced content is never recommended to a new child.
+- Added profile-local activity history and persisted daily-plan state. Plans are
+  stable for the child's local calendar day, reset without losing history, and
+  remain isolated across sibling profiles and old-save migration.
+- Completing a recommended mode checks it off on the shared result screen. All
+  three pay one 10-star/5-block bonus; replays are idempotent and cannot pay it
+  twice. Memory now also fills the existing three-game treasure meter.
+- Moved the daily gift into the Hub badge row, removed its overlap with mission
+  progress, fitted all five tabs on 360 px, and removed the temporary Hub speech
+  bubble that visually covered free-play controls.
+
+Audio:
+
+- Generated two new local ElevenLabs Lily `eleven_v3` clips for mission
+  completion. The sentence pack now contains 1555 MP3s and covers 1487/1487
+  current game lines; reading phonemes remain 32/32. No runtime API or fallback
+  voice was introduced.
+
+Validation:
+
+- Added `tests/dailyPlan.test.ts` plus flow coverage for balanced plans,
+  stage-gating, weak-reading selection, repeat avoidance, daily persistence,
+  one-time rewards, category reachability, and completed mission state.
+- `npm.cmd run verify` passed: 30 files / 252 tests, typecheck, lint, and
+  production build. `npm.cmd run voice:elevenlabs-audit` passed at 1487/1487 +
+  32/32.
+- `npm.cmd run qa:viewport` passed all 24 scenarios after replacing the obsolete
+  "20 cards at once" assertion with three-mission, five-tab, clipping, and touch
+  target checks. Mobile screenshots and an interactive 360x740 browser pass were
+  visually inspected.
+- `npm.cmd run qa:mobile-touch` passed with 29 real touch steps, 14 tracked
+  attempts, one completed journey node, category selection, and two visible
+  checked missions on the final Hub screenshot.

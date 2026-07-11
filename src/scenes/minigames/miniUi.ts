@@ -7,6 +7,7 @@ export interface DoneScreenOptions {
   stars: number;
   sub: string;
   newStickers?: { emoji: string; name: string }[];
+  dailyMission?: { completedCount: number; total: number; rewardEarned: boolean };
   homeLabel?: string;
   onReplay: () => void;
   onHome: () => void;
@@ -48,6 +49,15 @@ export function buildDoneScreen(options: DoneScreenOptions): HTMLElement {
   sub.textContent = options.sub;
 
   card.append(eyebrow, title, starRow, sub);
+
+  if (options.dailyMission) {
+    const daily = document.createElement("div");
+    daily.className = `results-unlock daily${options.dailyMission.rewardEarned ? " grand" : ""}`;
+    daily.innerHTML = options.dailyMission.rewardEarned
+      ? `<span aria-hidden="true">🏆</span><strong>3 missies klaar: +10 sterren!</strong>`
+      : `<span aria-hidden="true">✅</span><strong>Missie ${options.dailyMission.completedCount}/${options.dailyMission.total} klaar!</strong>`;
+    card.appendChild(daily);
+  }
 
   for (const sticker of options.newStickers ?? []) {
     const banner = document.createElement("div");

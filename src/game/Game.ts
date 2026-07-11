@@ -1,18 +1,19 @@
 import { AdaptiveEngine } from "../education/adaptiveEngine";
 import { journeyTier, recentAccuracy, type DifficultyTier } from "../education/difficulty";
 import { dueForReview } from "../education/review";
+import { buildDailyPlayPlan, localDayKey } from "../education/dailyPlan";
 import { JOURNEY, nodeIndexById } from "../data/journey";
 import { buildAttemptLog } from "../education/challengeLogger";
 import { ChallengeFactory } from "../education/challengeFactory";
 import { MasteryTracker } from "../education/masteryTracker";
 import { subitizeThresholdMs } from "../education/quantityLayouts";
-import type { AttemptLog, Challenge, ChallengeOption, SaveData } from "../education/types";
+import type { AttemptLog, Challenge, ChallengeOption, DailyPlanProgress, SaveData } from "../education/types";
 import { AssetManager } from "./AssetManager";
 import { AudioManager } from "./AudioManager";
 import { GameLoop } from "./GameLoop";
 import { HapticManager } from "./HapticManager";
 import { InputManager } from "./InputManager";
-import { SaveManager } from "./SaveManager";
+import { SaveManager, type DailyMissionCompletion } from "./SaveManager";
 import { ReadingAudioManager } from "./ReadingAudioManager";
 import { VoiceManager } from "./VoiceManager";
 import type { SoundCue } from "./AudioManager";
@@ -264,6 +265,29 @@ export class Game {
     if (shaky) return shaky;
     const due = dueForReview(this.mastery.getAttempts(), Date.now()).find((item) => item.domain === domain);
     return due?.targetKey;
+  }
+
+  /** Three balanced, stable recommendations generated from this child's own history. */
+  dailyPlan(now = Date.now()): DailyPlanProgress {
+    const data = this.data();
+    const recommendations = buildDailyPlayPlan({
+      dayKey: localDayKey(new Date(now)),
+      now,
+      attempts: data.progress.attempts,
+      activityHistory: data.progress.activityHistory,
+      journeyIndex: data.progress.journey.nodeIndex,
+      journeyRound: data.progress.journey.round ?? 1
+    });
+    return this.save.ensureDailyPlan(localDayKey(new Date(now)), recommendations.map((item) => item.scene));
+  }
+
+  /** Shared completion hook for recommendations, recent-play variation and the daily bonus. */
+  completeActivity(sceneId: string, now = Date.now()): DailyMissionCompletion {
+    this.dailyPlan(now);
+    const daily = this.save.completeDailyMode(sceneId);
+    this.save.recordActivityComplete(sceneId, Boolean(this.lastJourneyNode), now);
+    if (daily.rewardEarned) this.save.award({ stars: 10, blocks: 5 });
+    return daily;
   }
 
   flashMessage(message: string, tone: "good" | "warn" = "good"): void {

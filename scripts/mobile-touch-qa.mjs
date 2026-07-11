@@ -81,11 +81,17 @@ async function main() {
     // De Sterrenreis: dismiss the story card, then finish the frontier stop by touch.
     await openGameScene("reis");
     await waitForSelector(".reis-scene", 5_000);
-    if (await exists(".reis-story-start")) await tap(".reis-story-start", "journey story start");
+    if (await exists(".reis-cine-overlay")) {
+      await tap(".reis-cine-overlay", "journey intro beat 2");
+      await tap(".reis-cine-overlay", "journey intro beat 3");
+      await tap(".reis-story-start", "journey story start");
+    } else if (await exists(".reis-story-start")) {
+      await tap(".reis-story-start", "journey story start");
+    }
     await assertNoHorizontalOverflow("journey map");
     await dismissRewardOverlays("journey map");
-    await waitForSelector(".reis-node.now", 5_000);
-    await tap(".reis-node.now", "journey frontier stop");
+    await waitForSelector(".reis-quest", 5_000);
+    await tap(".reis-quest", "journey current quest");
     await waitForSelector(".mini-scene", 5_000);
     await assertNoHorizontalOverflow("journey mini mode");
     await completeMiniRounds("journey stop", 14);
@@ -98,6 +104,8 @@ async function main() {
     await openGameScene("hub");
     await waitForSelector(".hub-grid", 5_000);
     await assertNoHorizontalOverflow("speeltuin hub");
+    await tap('.hub-tab[data-category="lezen"]', "open reading category");
+    await waitForSelector('.hub-card[data-mode="klankgrot"]', 5_000);
     await tap('.hub-card[data-mode="klankgrot"]', "open klankgrot");
     await waitForSelector(".klankgrot-play", 5_000);
     await completeMiniRounds("klankgrot", 14);

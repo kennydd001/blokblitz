@@ -350,10 +350,13 @@ export abstract class MiniGameScene extends BaseScene {
     this.buddy?.say("Joepie!");
     // In story mode, finishing this stop drops a stone for Buddy's star.
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
+    const daily = this.game.completeActivity(this.name);
     // Every finished activity fills the treasure meter (chest at 3).
     this.game.save.bumpTreasure();
     const stars = starsFromPerfect(this.perfectRounds, this.total);
-    this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
+    if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: true, pitch: 1.2 });
+    else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: true, pitch: 1.18 });
+    else this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: true, pitch: 1.25 });
     const newStickers = this.game.save
       .syncStickers()
       .map((id) => stickerById(id))
@@ -367,6 +370,9 @@ export abstract class MiniGameScene extends BaseScene {
         stars,
         sub: `Je had er ${this.correctRounds} van de ${this.total} goed!`,
         newStickers,
+        dailyMission: daily.newlyCompleted
+          ? { completedCount: daily.completedCount, total: daily.total, rewardEarned: daily.rewardEarned }
+          : undefined,
         homeLabel: this.game.lastJourneyNode ? "Verder" : "Speeltuin",
         onReplay: () => this.mountReplay(),
         onHome: () => this.game.showScene(this.returnScene())

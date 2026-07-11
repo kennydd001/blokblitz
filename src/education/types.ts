@@ -207,6 +207,19 @@ export interface JourneyProgress {
   round?: number;
 }
 
+export interface ActivityHistoryEntry {
+  sceneId: string;
+  completedAt: number;
+  inJourney: boolean;
+}
+
+export interface DailyPlanProgress {
+  dayKey: string;
+  modeIds: string[];
+  completedModeIds: string[];
+  rewardClaimed: boolean;
+}
+
 export interface GameProgress {
   sessionId: string;
   stars: number;
@@ -239,6 +252,10 @@ export interface GameProgress {
   sessionChestFill: number;
   /** Highest Buddy level already celebrated with the level-up moment. */
   buddyLevelSeen: number;
+  /** Recent completed activities, used to vary each child's recommendations. */
+  activityHistory: ActivityHistoryEntry[];
+  /** Stable, profile-local set of three recommended activities for one day. */
+  dailyPlan: DailyPlanProgress;
 }
 
 export interface DayStreak {

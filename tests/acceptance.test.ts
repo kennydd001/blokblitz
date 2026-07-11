@@ -188,7 +188,9 @@ describe("acceptance checklist audit", () => {
     expect(script).toContain("swipe left");
     expect(script).toContain("swipe right");
     // The touch route covers the REAL game: journey stop + a Speeltuin mode.
-    expect(script).toContain(".reis-node.now");
+    expect(script).toContain(".reis-cine-overlay");
+    expect(script).toContain(".reis-quest");
+    expect(script).toContain('.hub-tab[data-category="lezen"]');
     expect(script).toContain('.hub-card[data-mode="klankgrot"]');
     expect(script).toContain(".mini-choice[data-correct='true']");
   });
