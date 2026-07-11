@@ -1,5 +1,6 @@
 import type { Game } from "../game/Game";
 import { childFocusAction, childFocusTitle, childRepresentationName } from "../education/focusLabels";
+import { availableRemediations } from "../education/literacy/minimalPairs";
 import { weeklyDigest } from "../education/parentInsights";
 import type { CurriculumCell } from "../education/types";
 import { BaseScene, sceneHeader } from "./SceneUtils";
@@ -49,6 +50,7 @@ export class ParentDashboardScene extends BaseScene {
       this.panel("Per doel: wat kan je kind al?", this.curriculumMasteryRows()),
       this.panel("Splits (rekenbordje)", this.splitRows()),
       this.panel("Lezen (klanken)", this.readingRows()),
+      this.panel("Klankparen om te oefenen", this.klankparenRows()),
       this.panel("Rekenen tot 20", this.math20Rows()),
       this.panel("Vormen & meten", this.geomRows()),
       this.panel(
@@ -108,6 +110,18 @@ export class ParentDashboardScene extends BaseScene {
     if (digest.needsPractice.length) rows.push(this.line("Oefen nog", digest.needsPractice.slice(0, 3).map((t) => this.humanTarget(t.targetKey)).join(", ")));
     rows.push(this.line("Tip", digest.encouragement));
     return rows;
+  }
+
+  // Minimal-pair home practice: once the child has read a bit, suggest concrete
+  // "hear the difference" word pairs (vis/vos, bal/bel) for the sound contrasts
+  // that trip up beginners — the strongest remediation a parent can do at home.
+  private klankparenRows(): HTMLElement[] {
+    const hasReading = this.game.mastery.getAttempts().some((a) => a.domain?.startsWith("literacy"));
+    if (!hasReading) return [];
+    return availableRemediations().map(({ contrast, pairs }) => {
+      const p = pairs[0];
+      return this.line(`Hoor ${contrast[0]} / ${contrast[1]}`, `${p.a.emoji} ${p.a.word} – ${p.b.emoji} ${p.b.word}`);
+    });
   }
 
   // Splitbord progress: the part-whole splits logged via the Splitbord mode.

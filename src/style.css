@@ -3681,6 +3681,21 @@ input {
 @keyframes dubbelReveal { 0% { transform: scale(0.6); opacity: 0.3; } 60% { transform: scale(1.25); } 100% { transform: scale(1); opacity: 1; } }
 @keyframes dubbelEven { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.06); } }
 @keyframes dubbelWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-16deg); } 75% { transform: rotate(16deg); } }
+
+/* Vriendjes van 10 — make-10 bonds on the familiar ten-frame. */
+.bond-stage { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.bond-frame .quantity-svg { width: 150px; height: auto; max-height: 74px; }
+.bond-op { font-size: 1.7rem; font-weight: 900; color: #5a6b8c; }
+.bond-ask { flex-basis: 100%; text-align: center; font-size: 0.9rem; font-weight: 800; color: #5a6b8c; }
+.bond-choices { gap: 14px; }
+.bond-choice { min-width: 78px; }
+.bond-num { font-size: 2rem; font-weight: 900; }
+/* Signature moment: the ten-frame fills up and glows whole. */
+.bond-stage.bond-vol .bond-frame { animation: bondVol 0.6s ease-out; }
+.bond-stage.bond-vol .bond-frame::after { content: "10!"; position: absolute; inset: auto 0 -6px 0; text-align: center; font-weight: 900; color: #2f9e44; animation: bondTen 0.7s ease-out; }
+.bond-frame { position: relative; }
+@keyframes bondVol { 0% { transform: scale(1); } 45% { transform: scale(1.07); filter: drop-shadow(0 0 10px rgba(102, 192, 106, 0.75)); } 100% { transform: scale(1); } }
+@keyframes bondTen { 0% { transform: translateY(6px); opacity: 0; } 60% { transform: translateY(-2px); opacity: 1; } 100% { transform: translateY(0); opacity: 1; } }
 .tienbrug-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
 
 /* ===== Getallenlijn Glijbaan — number line to 20 ===== */
@@ -3981,6 +3996,7 @@ input {
 .hub-card.getallenlijn { background: linear-gradient(160deg, #c4eef3, #46b6c8); }
 .hub-card.tienbrug { background: linear-gradient(160deg, #cfe0ff, #5f86e6); }
 .hub-card.dubbelspel { background: linear-gradient(160deg, #ffe0c2, #f5904b); }
+.hub-card.vriendjes { background: linear-gradient(160deg, #d6f5c9, #66c06a); }
 .hub-card.vormen { background: linear-gradient(160deg, #d6f0ff, #38b0e0); }
 .hub-card.klok { background: linear-gradient(160deg, #ffe3e0, #f08a7c); }
 .hub-card.geld { background: linear-gradient(160deg, #fff0c2, #f3c53a); }

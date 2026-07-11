@@ -560,6 +560,7 @@ describe("Speeltuin hub + calm game modes", () => {
       "order",
       "memory",
       "fill",
+      "vriendjes",
       "splitbord",
       "klankgrot",
       "letterkompas",
@@ -1511,6 +1512,35 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(db.id);
     expect(game.mastery.getAttempts().some((a) => a.domain === "math-operations")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Vriendjes van 10 from the journey: a ten-frame + partner choices, finishing advances + logs make10", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const vIndex = JOURNEY.findIndex((node) => node.scene === "vriendjes");
+    const v = JOURNEY[vIndex];
+    expect(vIndex).toBeGreaterThan(-1);
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, vIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${v.id}"]`)!.click();
+    expect(root.querySelector(".bond-play")).toBeTruthy();
+    expect(root.querySelectorAll(".bond-choice").length).toBeGreaterThanOrEqual(2);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.bond-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(v.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-number" && a.skill === "make10")).toBe(true);
     vi.useRealTimers();
   });
 

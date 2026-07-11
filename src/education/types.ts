@@ -49,6 +49,7 @@ export type SceneId =
   | "woordbouwplaats"
   | "tienbrug"
   | "dubbelspel"
+  | "vriendjes"
   | "vormenburcht"
   | "kloktoren"
   | "geldmarkt"

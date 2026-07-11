@@ -40,6 +40,7 @@ import { MeetwerfScene } from "../scenes/minigames/MeetwerfScene";
 import { MemoryScene } from "../scenes/minigames/MemoryScene";
 import { OneMoreLessScene } from "../scenes/minigames/OneMoreLessScene";
 import { OrderScene } from "../scenes/minigames/OrderScene";
+import { BondsScene } from "../scenes/minigames/BondsScene";
 import { DoublesScene } from "../scenes/minigames/DoublesScene";
 import { SplitbordScene } from "../scenes/minigames/SplitbordScene";
 import { TienbrugScene } from "../scenes/minigames/TienbrugScene";
@@ -301,6 +302,7 @@ export class Game {
     this.scenes.register("woordbouwplaats", (game) => new WoordbouwplaatsScene(game));
     this.scenes.register("tienbrug", (game) => new TienbrugScene(game));
     this.scenes.register("dubbelspel", (game) => new DoublesScene(game));
+    this.scenes.register("vriendjes", (game) => new BondsScene(game));
     this.scenes.register("vormenburcht", (game) => new VormenburchtScene(game));
     this.scenes.register("kloktoren", (game) => new KloktorenScene(game));
     this.scenes.register("geldmarkt", (game) => new GeldmarktScene(game));

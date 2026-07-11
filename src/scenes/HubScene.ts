@@ -27,6 +27,7 @@ const MODES: ModeCard[] = [
   { scene: "memory", emoji: "🧠", name: "Memory", desc: "Zoek de paren", tone: "memory" },
   // Splitsen en de tien
   { scene: "fill", emoji: "🔟", name: "Vul de tien", desc: "Maak het getal", tone: "fill" },
+  { scene: "vriendjes", emoji: "🤝", name: "Vriendjes van 10", desc: "Samen tot 10", tone: "vriendjes" },
   { scene: "splitbord", emoji: "⚖️", name: "Splitsbord", desc: "Maak het getal samen", tone: "splitbord" },
   // Lezen
   { scene: "klankgrot", emoji: "🔊", name: "Klankgrot", desc: "Luister naar klanken", tone: "klankgrot" },
