@@ -37,6 +37,7 @@ const MODES: ModeCard[] = [
   { scene: "tientalhuis", emoji: "🏠", name: "Tientalhuis", desc: "Tien en nog wat", tone: "tientalhuis" },
   { scene: "getallenlijn", emoji: "📏", name: "Getallenlijn", desc: "De lijn tot 20", tone: "getallenlijn" },
   { scene: "tienbrug", emoji: "🌉", name: "Tienbrug", desc: "Plus en min tot 20", tone: "tienbrug" },
+  { scene: "dubbelspel", emoji: "✌️", name: "Dubbelspel", desc: "Dubbel en even", tone: "dubbelspel" },
   // Vormen & meten
   { scene: "vormenburcht", emoji: "🔷", name: "Vormenburcht", desc: "Vormen en patronen", tone: "vormen" },
   { scene: "meetwerf", emoji: "📐", name: "Meetwerf", desc: "Langer of korter", tone: "meet" },

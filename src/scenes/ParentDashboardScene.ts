@@ -1,5 +1,6 @@
 import type { Game } from "../game/Game";
 import { childFocusAction, childFocusTitle, childRepresentationName } from "../education/focusLabels";
+import { weeklyDigest } from "../education/parentInsights";
 import type { CurriculumCell } from "../education/types";
 import { BaseScene, sceneHeader } from "./SceneUtils";
 
@@ -43,6 +44,7 @@ export class ParentDashboardScene extends BaseScene {
     `;
 
     dashboard.append(
+      this.panel("Deze week", this.weekRows()),
       this.panel("Mastery per skill", tracker.masteryBySkill().map((item) => this.bar(childFocusTitle(item.skill), item.accuracy, `${item.exposures}x ${item.mastery}`))),
       this.panel("Per doel: wat kan je kind al?", this.curriculumMasteryRows()),
       this.panel("Splits (rekenbordje)", this.splitRows()),
@@ -86,6 +88,26 @@ export class ParentDashboardScene extends BaseScene {
       this.button("Menu", () => this.game.showScene("mainMenu"), "ghost")
     );
     this.root.append(sceneHeader("Ouder dashboard", "Echte opgeslagen mastery data."), guide, dashboard, actions);
+  }
+
+  // This week at a glance — the parent's weekly digest: how much the child
+  // practised, how it went, the most-played domain, and which specific targets
+  // are strong or still need a visit. Pure summary from the logged attempts.
+  private weekRows(): HTMLElement[] {
+    const digest = weeklyDigest(this.game.mastery.getAttempts(), Date.now());
+    const rows: HTMLElement[] = [this.line("Samenvatting", digest.headline)];
+    if (digest.attempts === 0) return rows;
+    rows.push(
+      this.line("Opdrachten", `${digest.attempts} op ${digest.activeDays} ${digest.activeDays === 1 ? "dag" : "dagen"}`),
+      this.line("Juist", `${Math.round(digest.accuracy * 100)}%`),
+      this.line("Oefentijd", `± ${digest.minutesPracticed} min`)
+    );
+    const top = digest.domains[0];
+    if (top) rows.push(this.line("Meest gespeeld", `${top.label} · ${top.attempts}x`));
+    if (digest.mastered.length) rows.push(this.line("Sterk", digest.mastered.slice(0, 3).map((t) => this.humanTarget(t.targetKey)).join(", ")));
+    if (digest.needsPractice.length) rows.push(this.line("Oefen nog", digest.needsPractice.slice(0, 3).map((t) => this.humanTarget(t.targetKey)).join(", ")));
+    rows.push(this.line("Tip", digest.encouragement));
+    return rows;
   }
 
   // Splitbord progress: the part-whole splits logged via the Splitbord mode.

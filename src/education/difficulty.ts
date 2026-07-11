@@ -61,6 +61,7 @@ export const SCENE_DOMAINS: Record<string, string> = {
   tientalhuis: "math-number",
   getallenlijn: "math-number",
   tienbrug: "math-operations",
+  dubbelspel: "math-operations",
   vormenburcht: "math-geometry",
   kloktoren: "math-measurement",
   geldmarkt: "math-measurement",

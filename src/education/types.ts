@@ -48,6 +48,7 @@ export type SceneId =
   | "getallenlijn"
   | "woordbouwplaats"
   | "tienbrug"
+  | "dubbelspel"
   | "vormenburcht"
   | "kloktoren"
   | "geldmarkt"

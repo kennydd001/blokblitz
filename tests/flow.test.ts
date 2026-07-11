@@ -568,6 +568,7 @@ describe("Speeltuin hub + calm game modes", () => {
       "tientalhuis",
       "getallenlijn",
       "tienbrug",
+      "dubbelspel",
       "vormenburcht",
       "meetwerf",
       "geldmarkt",
@@ -1480,6 +1481,35 @@ describe("Speeltuin hub + calm game modes", () => {
     }
     expect(root.querySelector(".mini-done")).toBeTruthy();
     expect(game.data().progress.journey.completed).toContain(tb.id);
+    expect(game.mastery.getAttempts().some((a) => a.domain === "math-operations")).toBe(true);
+    vi.useRealTimers();
+  });
+
+  it("plays Dubbelspel from the journey: doubles/even-odd choices, finishing advances + logs operations", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+
+    const dbIndex = JOURNEY.findIndex((node) => node.scene === "dubbelspel");
+    const db = JOURNEY[dbIndex];
+    expect(dbIndex).toBeGreaterThan(-1);
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, dbIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${db.id}"]`)!.click();
+    expect(root.querySelector(".dubbel-play")).toBeTruthy();
+    expect(root.querySelectorAll(".dubbel-choice").length).toBeGreaterThanOrEqual(2);
+
+    for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
+      root.querySelector<HTMLButtonElement>('.dubbel-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(db.id);
     expect(game.mastery.getAttempts().some((a) => a.domain === "math-operations")).toBe(true);
     vi.useRealTimers();
   });

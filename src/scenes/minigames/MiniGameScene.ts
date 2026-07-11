@@ -105,11 +105,11 @@ export abstract class MiniGameScene extends BaseScene {
 
   protected startRound(): void {
     this.current = this.makeChallenge();
-    // Adaptive resurfacing: if the child has a weak target in this mode's
-    // learning domain, re-roll a few times so that weak /s/, word or split
-    // comes back around instead of a uniform-random pick. Bounded so a rare
-    // target never starves the round.
-    const focus = this.game.adaptive.recommendCurriculumFocus(SCENE_DOMAINS[this.name]);
+    // Adaptive resurfacing: steer toward a weak or a memory-decayed target in
+    // this mode's learning domain (spaced repetition), re-rolling a few times so
+    // that shaky /s/, word or split comes back around instead of a uniform-random
+    // pick. Bounded so a rare target never starves the round.
+    const focus = this.game.curriculumFocus(SCENE_DOMAINS[this.name]);
     if (focus) {
       for (let i = 0; i < 10 && this.currentTargetKey() !== focus; i += 1) this.current = this.makeChallenge();
     }
@@ -140,6 +140,11 @@ export abstract class MiniGameScene extends BaseScene {
       this.root.appendChild(this.buddy.el);
       this.buddy.setMood("think", 1100);
     }
+    this.announceRound();
+  }
+
+  /** Speak this round once its UI is ready. Special modes may sequence richer audio. */
+  protected announceRound(): void {
     this.game.voice.speak(this.instruction, { interrupt: true });
   }
 

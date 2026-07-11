@@ -1,5 +1,6 @@
 import { AdaptiveEngine } from "../education/adaptiveEngine";
 import { journeyTier, recentAccuracy, type DifficultyTier } from "../education/difficulty";
+import { dueForReview } from "../education/review";
 import { JOURNEY, nodeIndexById } from "../data/journey";
 import { buildAttemptLog } from "../education/challengeLogger";
 import { ChallengeFactory } from "../education/challengeFactory";
@@ -39,6 +40,7 @@ import { MeetwerfScene } from "../scenes/minigames/MeetwerfScene";
 import { MemoryScene } from "../scenes/minigames/MemoryScene";
 import { OneMoreLessScene } from "../scenes/minigames/OneMoreLessScene";
 import { OrderScene } from "../scenes/minigames/OrderScene";
+import { DoublesScene } from "../scenes/minigames/DoublesScene";
 import { SplitbordScene } from "../scenes/minigames/SplitbordScene";
 import { TienbrugScene } from "../scenes/minigames/TienbrugScene";
 import { TientalhuisScene } from "../scenes/minigames/TientalhuisScene";
@@ -246,6 +248,21 @@ export class Game {
     });
   }
 
+  /**
+   * The curriculum target to steer this round toward. Two signals, in order:
+   * (1) a currently-shaky target the child is struggling with right now, and if
+   * there is none, (2) the target whose memory has decayed most since it was
+   * last practised — spaced repetition, so a skill learned last week comes back
+   * before it fades. Undefined lets the generator roll a fresh target freely.
+   */
+  curriculumFocus(domain?: string): string | undefined {
+    if (!domain) return undefined;
+    const shaky = this.adaptive.recommendCurriculumFocus(domain);
+    if (shaky) return shaky;
+    const due = dueForReview(this.mastery.getAttempts(), Date.now()).find((item) => item.domain === domain);
+    return due?.targetKey;
+  }
+
   flashMessage(message: string, tone: "good" | "warn" = "good"): void {
     const node = document.createElement("div");
     node.className = `toast ${tone}`;
@@ -283,6 +300,7 @@ export class Game {
     this.scenes.register("getallenlijn", (game) => new GetallenlijnScene(game));
     this.scenes.register("woordbouwplaats", (game) => new WoordbouwplaatsScene(game));
     this.scenes.register("tienbrug", (game) => new TienbrugScene(game));
+    this.scenes.register("dubbelspel", (game) => new DoublesScene(game));
     this.scenes.register("vormenburcht", (game) => new VormenburchtScene(game));
     this.scenes.register("kloktoren", (game) => new KloktorenScene(game));
     this.scenes.register("geldmarkt", (game) => new GeldmarktScene(game));
