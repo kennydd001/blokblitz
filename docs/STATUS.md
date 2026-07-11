@@ -1765,3 +1765,12 @@ Validation:
 - `npm.cmd run qa:mobile-touch` passed 39 steps with 12 tracked attempts and one
   journey node. The unchanged audio pack passes at 1556/1556 clips, 1488/1488
   current lines, and 32/32 reading phonemes.
+
+Release:
+
+- GitHub `main` contains the validated implementation as commit `7e8753d`.
+- WSL Wrangler deployed Worker version
+  `9b574b6f-f024-4c5d-a774-df24892b9e80`. Cache-busted live root,
+  `index-8H64ID8Q.js`, and `index-Clly7zk0.css` returned HTTP 200 with correct
+  content types; served code contains the profile-sign semantics and
+  `.profile-token` visuals.
