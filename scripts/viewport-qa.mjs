@@ -33,6 +33,7 @@ const scenarios = [
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "hub-mobile", width: 390, height: 844, mobile: true, open: "hub", expectHub: true },
   { name: "hub-narrow-mobile", width: 360, height: 740, mobile: true, open: "hub", expectHub: true },
+  { name: "hub-mode-stars-narrow-mobile", width: 332, height: 807, mobile: true, open: "hub-mode-stars", expectHub: true, expectModeStars: { count: 3, match: 2, compare: 1, memory: 3 } },
   { name: "menu-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "menu", expectJourneyMap: true },
   { name: "hub-fullscreen-desktop", width: 1920, height: 1080, mobile: false, open: "hub", expectHub: true },
   { name: "real-runner-mobile", width: 390, height: 844, mobile: true, open: "real-runner", expectRealRunner: true },
@@ -218,6 +219,25 @@ async function openScenario(open) {
     `);
     if (!opened) throw new Error("Could not open full profile picker");
     await waitForSelector(".profile-limit", 5_000);
+    return;
+  }
+  if (open === "hub-mode-stars") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        game.save.recordActivityStars("count", 3);
+        game.save.recordActivityStars("match", 2);
+        game.save.recordActivityStars("compare", 1);
+        game.save.recordActivityStars("memory", 3);
+        game.showScene("hub");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open Hub mode-star collection");
+    await waitForSelector(".hub-mode-stars", 5_000);
+    await evaluate(`document.querySelector(".hub-grid")?.scrollIntoView({ block: "center" })`);
+    await delay(180);
     return;
   }
   if (open === "memory-tier-1" || open === "memory-tier-3") {
@@ -451,6 +471,18 @@ async function collectMetrics(scenario = {}) {
         hubTabs: rects(".hub-tab"),
         hubActiveTabs: document.querySelectorAll('.hub-tab[aria-selected="true"]').length,
         hubAdventure: rect(".hub-adventure"),
+        hubModeTotal: document.querySelector(".hub-mode-total")?.textContent?.trim() ?? null,
+        hubModeRatings: [...document.querySelectorAll(".hub-card")].map((card) => {
+          const rating = card.querySelector(".hub-mode-stars");
+          const r = rating?.getBoundingClientRect();
+          return {
+            mode: card.dataset.mode ?? "",
+            earned: rating?.querySelectorAll(".earned").length ?? 0,
+            total: rating?.querySelectorAll("i").length ?? 0,
+            label: rating?.getAttribute("aria-label") ?? "",
+            rect: r ? { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height } : null
+          };
+        }),
         menuGarage: rect(".menu-garage"),
         skinReveal: rect(".skin-reveal"),
         skinRevealCard: rect(".skin-reveal-card"),
@@ -781,6 +813,20 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       if (tab.width < 44 || tab.height < 44) failures.push(`hub category tab too small: ${JSON.stringify(tab)}`);
     }
     if (!metrics.menuGarage) failures.push("missing hero garage");
+    if (!metrics.hubModeTotal) failures.push("missing overall calm-mode star collection");
+    if (metrics.hubModeRatings.length !== metrics.hubCardCount) failures.push(`expected one star rating per Hub mode, got ${metrics.hubModeRatings.length}/${metrics.hubCardCount}`);
+    for (const rating of metrics.hubModeRatings) {
+      if (rating.total !== 3 || !rating.label) failures.push(`invalid mode star rating: ${JSON.stringify(rating)}`);
+      if (rating.rect && (rating.rect.left < -1 || rating.rect.right > viewport.width + 1)) failures.push(`mode star rating is clipped: ${JSON.stringify(rating)}`);
+    }
+    if (scenario.expectModeStars) {
+      const expectedTotal = Object.values(scenario.expectModeStars).reduce((total, stars) => total + stars, 0);
+      if (metrics.hubModeTotal !== `${expectedTotal}/${25 * 3} ★`) failures.push(`expected ${expectedTotal}/75 Hub collection, got ${metrics.hubModeTotal}`);
+      for (const [mode, expected] of Object.entries(scenario.expectModeStars)) {
+        const actual = metrics.hubModeRatings.find((rating) => rating.mode === mode)?.earned;
+        if (actual !== expected) failures.push(`expected ${mode} to show ${expected} stars, got ${actual}`);
+      }
+    }
     if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
     return;
   }

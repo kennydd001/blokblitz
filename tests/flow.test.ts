@@ -2251,6 +2251,28 @@ describe("rewards, voice and parent gate", () => {
     expect(root.querySelector(".results-unlock.sticker")).toBeTruthy();
   });
 
+  it("persists a better calm-mode rating as a visible 75-star collection goal", async () => {
+    vi.useFakeTimers();
+    const { Game } = await import("../src/game/Game");
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    game.save.recordActivityStars("count", 1);
+    game.showScene("count");
+
+    for (let round = 0; round < 15 && !root.querySelector(".mini-done"); round += 1) {
+      countEveryAnimal(root);
+      root.querySelector<HTMLButtonElement>('.mini-choice[data-correct="true"]')?.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    expect(game.data().progress.activityBestStars.count).toBe(3);
+    expect(root.querySelector(".results-unlock.personal-best")?.textContent).toContain("3/3 sterren");
+    game.showScene("hub");
+    expect(root.querySelector(".hub-mode-total")?.textContent).toContain("3/75");
+    expect(root.querySelectorAll('.hub-card[data-mode="count"] .hub-mode-stars .earned')).toHaveLength(3);
+    expect(root.querySelector('.hub-card[data-mode="count"]')?.getAttribute("aria-label")).toContain("3 van 3 sterren");
+  });
+
   it("reveals a hero earned in a calm mode and lets the child equip it", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");

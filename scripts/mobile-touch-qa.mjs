@@ -7,6 +7,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const root = process.cwd();
 const artifactDir = path.join(root, ".qa-artifacts", "mobile-touch-qa");
+const QA_RANDOM_SEED = 0xb10cb17;
 mkdirSync(artifactDir, { recursive: true });
 
 const errors = [];
@@ -67,6 +68,16 @@ async function main() {
     await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await cdp.send("Page.navigate", { url: `${baseUrl}?qa=mobile-touch-${Date.now()}` });
     await waitForGameHook(8_000);
+    await evaluate(`
+      (() => {
+        let state = ${QA_RANDOM_SEED} >>> 0;
+        Math.random = () => {
+          state = (Math.imul(1664525, state) + 1013904223) >>> 0;
+          return state / 4294967296;
+        };
+        return true;
+      })()
+    `);
     await assertNoHorizontalOverflow("journey");
 
     await openGameScene("run");
@@ -142,7 +153,7 @@ async function main() {
     const screenshotPath = path.join(artifactDir, "summary-touch-mobile.png");
     writeFileSync(screenshotPath, Buffer.from(screenshot.data, "base64"));
     const reportPath = path.join(artifactDir, "report.json");
-    writeFileSync(reportPath, JSON.stringify({ generatedAt: new Date().toISOString(), steps, metrics, screenshot: screenshotPath }, null, 2));
+    writeFileSync(reportPath, JSON.stringify({ generatedAt: new Date().toISOString(), randomSeed: QA_RANDOM_SEED, steps, metrics, screenshot: screenshotPath }, null, 2));
     console.log(`Mobile touch QA passed: ${steps.length} touch steps, ${metrics.attempts} tracked attempts, journey ${metrics.journeyDone} node(s) done.`);
     console.log(`Artifacts: ${artifactDir}`);
   } finally {

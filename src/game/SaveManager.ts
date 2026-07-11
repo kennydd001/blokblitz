@@ -101,6 +101,17 @@ function compactProgressForStorage(progress: GameProgress): void {
   progress.lastChallengeIds = (Array.isArray(progress.lastChallengeIds) ? progress.lastChallengeIds : []).slice(-8);
 }
 
+function normalizeActivityBestStars(value: unknown): Record<string, number> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const normalized: Record<string, number> = {};
+  for (const [sceneId, raw] of Object.entries(value)) {
+    if (!sceneId || typeof raw !== "number" || !Number.isFinite(raw)) continue;
+    const stars = Math.max(0, Math.min(3, Math.round(raw)));
+    if (stars > 0) normalized[sceneId] = stars;
+  }
+  return normalized;
+}
+
 export function defaultSettings(): GameSettings {
   return {
     speed: 1,
@@ -147,6 +158,7 @@ export function defaultProgress(): GameProgress {
     sessionChestFill: 0,
     buddyLevelSeen: 1,
     activityHistory: [],
+    activityBestStars: {},
     dailyPlan: { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
   };
 }
@@ -479,6 +491,19 @@ export class SaveManager {
     return this.getData();
   }
 
+  /** Keep a child's best calm-mode rating. A later weaker run never removes stars. */
+  recordActivityStars(sceneId: string, stars: number): { previousBest: number; best: number; newBest: boolean } {
+    const score = Math.max(0, Math.min(3, Math.round(stars)));
+    const previousBest = this.data.progress.activityBestStars[sceneId] ?? 0;
+    const best = Math.max(previousBest, score);
+    const newBest = best > previousBest;
+    if (newBest && sceneId) {
+      this.data.progress.activityBestStars[sceneId] = best;
+      this.save();
+    }
+    return { previousBest, best, newBest };
+  }
+
   reset(): SaveData {
     this.data = defaultSaveData();
     this.save();
@@ -537,6 +562,7 @@ export class SaveManager {
         sessionChestFill: data.progress?.sessionChestFill ?? 0,
         buddyLevelSeen: data.progress?.buddyLevelSeen ?? 1,
         activityHistory: data.progress?.activityHistory ?? [],
+        activityBestStars: normalizeActivityBestStars(data.progress?.activityBestStars),
         dailyPlan: data.progress?.dailyPlan ?? { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
       }
     };

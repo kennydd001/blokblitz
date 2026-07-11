@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { PLAY_MODES } from "../src/data/playModes";
 import { defaultSaveData, SaveManager } from "../src/game/SaveManager";
 
 beforeEach(() => {
@@ -55,6 +56,34 @@ describe("SaveManager child profiles", () => {
     expect(save.getData().settings.muted).toBe(true);
   });
 
+  it("keeps calm-mode best stars monotonic and isolated per child", () => {
+    const save = new SaveManager();
+    const first = save.createProfile("A", "blitz");
+    expect(save.recordActivityStars("count", 2)).toEqual({ previousBest: 0, best: 2, newBest: true });
+    expect(save.recordActivityStars("count", 1)).toEqual({ previousBest: 2, best: 2, newBest: false });
+    expect(save.recordActivityStars("count", 3)).toEqual({ previousBest: 2, best: 3, newBest: true });
+
+    const second = save.createProfile("B", "aqua");
+    expect(save.getData().progress.activityBestStars).toEqual({});
+    expect(save.recordActivityStars("count", 1).best).toBe(1);
+
+    save.switchProfile(first.id);
+    expect(save.getData().progress.activityBestStars).toEqual({ count: 3 });
+    save.switchProfile(second.id);
+    expect(save.getData().progress.activityBestStars).toEqual({ count: 1 });
+  });
+
+  it("awards Sterrenmeester only after all 75 calm-mode stars are collected", () => {
+    const save = new SaveManager();
+    save.createProfile("A", "blitz");
+    for (const mode of PLAY_MODES) save.recordActivityStars(mode.scene, mode.scene === "count" ? 2 : 3);
+    expect(save.syncStickers()).not.toContain("all-mode-stars");
+
+    save.recordActivityStars("count", 3);
+    expect(save.syncStickers()).toContain("all-mode-stars");
+    expect(save.syncStickers()).not.toContain("all-mode-stars");
+  });
+
   it("migrates a legacy save into the active p1 profile without losing stars", () => {
     localStorage.setItem(
       "blokblitz-save-v1",
@@ -80,7 +109,11 @@ describe("SaveManager child profiles", () => {
       JSON.stringify({
         version: 1,
         settings: { muted: false },
-        progress: { stars: 0, cosmetics: { activeSkin: "gold", unlockedSkins: ["blitz"] } }
+        progress: {
+          stars: 0,
+          cosmetics: { activeSkin: "gold", unlockedSkins: ["blitz"] },
+          activityBestStars: { count: 9, match: 2.2, bad: -1, text: "3" }
+        }
       })
     );
 
@@ -88,6 +121,7 @@ describe("SaveManager child profiles", () => {
     expect(save.activeProfile()?.avatar).toBe("gold");
     expect(save.getData().progress.cosmetics.activeSkin).toBe("blitz");
     expect(save.getData().progress.cosmetics.unlockedSkins).toEqual(["blitz"]);
+    expect(save.getData().progress.activityBestStars).toEqual({ count: 3, match: 2 });
   });
 
   it("deletes a profile and reactivates the first remaining profile", () => {

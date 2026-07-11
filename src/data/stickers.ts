@@ -4,6 +4,7 @@
 // greyed out, which is exactly the "I want them all" pull young kids love.
 
 import type { GameProgress } from "../education/types";
+import { PLAY_MODES } from "./playModes";
 
 export interface Sticker {
   id: string;
@@ -24,7 +25,8 @@ export const STICKERS: Sticker[] = [
   { id: "world-web", emoji: "🕸️", name: "Webwoud", earned: (p) => Boolean(p.worlds.webwoud?.completed) },
   { id: "brainy", emoji: "🧠", name: "Getallenbaas", earned: (p) => p.attempts.length >= 60 },
   { id: "champion", emoji: "🏆", name: "Kampioen", earned: (p) => p.stars >= 60 },
-  { id: "rainbow", emoji: "🌈", name: "Alle werelden", earned: (p) => Object.values(p.worlds).length > 0 && Object.values(p.worlds).every((w) => w.completed) }
+  { id: "rainbow", emoji: "🌈", name: "Alle werelden", earned: (p) => Object.values(p.worlds).length > 0 && Object.values(p.worlds).every((w) => w.completed) },
+  { id: "all-mode-stars", emoji: "🌠", name: "Sterrenmeester", earned: (p) => PLAY_MODES.every((mode) => (p.activityBestStars?.[mode.scene] ?? 0) >= 3) }
 ];
 
 export function earnedStickerIds(progress: GameProgress): string[] {

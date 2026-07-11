@@ -8,6 +8,7 @@ export interface DoneScreenOptions {
   sub: string;
   newStickers?: { emoji: string; name: string }[];
   dailyMission?: { completedCount: number; total: number; rewardEarned: boolean };
+  personalBest?: { stars: number };
   homeLabel?: string;
   onReplay: () => void;
   onHome: () => void;
@@ -49,6 +50,13 @@ export function buildDoneScreen(options: DoneScreenOptions): HTMLElement {
   sub.textContent = options.sub;
 
   card.append(eyebrow, title, starRow, sub);
+
+  if (options.personalBest) {
+    const best = document.createElement("div");
+    best.className = "results-unlock personal-best";
+    best.innerHTML = `<span aria-hidden="true">🏅</span><strong>Nieuwe beste: ${options.personalBest.stars}/3 sterren!</strong>`;
+    card.appendChild(best);
+  }
 
   if (options.dailyMission) {
     const daily = document.createElement("div");

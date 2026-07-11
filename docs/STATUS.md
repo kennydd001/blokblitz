@@ -1774,3 +1774,45 @@ Release:
   `index-8H64ID8Q.js`, and `index-Clly7zk0.css` returned HTTP 200 with correct
   content types; served code contains the profile-sign semantics and
   `.profile-token` visuals.
+
+## Calm-Mode 75-Star Replay Collection - 2026-07-11
+
+Completed work:
+
+- Audited voluntary replay after the first journey and found that every calm
+  mode's 1-3 star rating disappeared with its result screen. Children had no
+  persistent way to see which favourite game still had a star to improve.
+- Added profile-local `activityBestStars`: each of the 25 calm modes keeps its
+  best 1-3 rating, a weaker replay can never lower it, reset still clears it,
+  and legacy values are defensively rounded/clamped while malformed entries are
+  discarded.
+- Every free-play card now shows a stable three-star strip. `Kies zelf` shows
+  the combined collection (`0/75` through `75/75`), turning the complete mode
+  library into a visible long-term goal without locking educational content.
+- Improving an already-played mode adds a compact `Nieuwe beste` medal to the
+  existing friendly result screen. A first attempt stays uncluttered; mistakes
+  remain safe, untimed, and replayable regardless of rating.
+- The collection follows the active child only. Profile switching preserves
+  each sibling's own bests and cannot transfer stars between trajectories.
+- Made mobile touch QA deterministic with a fixed browser-side random seed.
+  Two consecutive full runs now produce the same interaction count instead of
+  varying with the random number of Count animals.
+
+Validation:
+
+- Save tests prove 2→1 remains 2, 2→3 becomes 3, profile isolation, reload
+  persistence, and corrupt legacy normalization. Flow coverage completes Count
+  perfectly over a prior one-star best, sees the medal, returns to the Hub, and
+  verifies `3/75` plus three earned card stars and accessible labels.
+- `npm.cmd run verify` passed with 34 files / 288 tests, typecheck, lint, and a
+  production build. Entry assets are `index-DsCSeR9w.js` (100.55 kB gzip) and
+  `index-BMA7HzhA.css` (32.59 kB gzip).
+- `npm.cmd run qa:viewport` passed all 52 scenarios. A deterministic 332x807
+  screenshot with 3/2/1/3 saved ratings shows `9/75`, legible earned/empty
+  stars, all six Getallen cards, and no clipping before the hero garage.
+- `npm.cmd run qa:mobile-touch` passed twice consecutively at exactly 40 touch
+  steps, 12 tracked attempts, one journey node, and the Aqua equip action.
+- Added the one required Lily `eleven_v3` announcement build-time and locally:
+  `Je verdiende een nieuwe sticker: Sterrenmeester!` (48,527 bytes). The audio
+  audit passes at 1557/1557 clips, 1489/1489 current lines, and 32/32 reading
+  phonemes; runtime still makes no TTS request.

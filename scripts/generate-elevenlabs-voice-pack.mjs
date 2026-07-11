@@ -141,7 +141,8 @@ function addSupplementalRuntimeLines(bySlug) {
     "Webwoud",
     "Getallenbaas",
     "Kampioen",
-    "Alle werelden"
+    "Alle werelden",
+    "Sterrenmeester"
   ];
 
   buddyTitles.forEach((title, index) => addRuntimeLine(bySlug, `runtime-buddy-level-${index + 1}`, `Buddy groeit! ${title}!`));

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T18:21:39.411Z",
+  "generatedAt": "2026-07-11T19:50:00.269Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1556,
+  "lineCount": 1557,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -5455,6 +5455,14 @@
       "spokenText": "Je verdiende een nieuwe sticker: Muntgrot!",
       "category": "runtime-dynamic",
       "file": "je-verdiende-een-nieuwe-sticker-muntgrot-uitroep.mp3"
+    },
+    {
+      "id": "sticker-all-mode-stars",
+      "slug": "je-verdiende-een-nieuwe-sticker-sterrenmeester-uitroep",
+      "text": "Je verdiende een nieuwe sticker: Sterrenmeester!",
+      "spokenText": "Je verdiende een nieuwe sticker: Sterrenmeester!",
+      "category": "reward",
+      "file": "je-verdiende-een-nieuwe-sticker-sterrenmeester-uitroep.mp3"
     },
     {
       "id": "runtime-sticker-6",

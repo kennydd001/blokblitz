@@ -175,6 +175,7 @@ export class MemoryScene extends BaseScene {
     const extra = this.flips - this.pairCount;
     const stars = extra <= 1 ? 3 : extra <= 4 ? 2 : 1;
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
+    const best = this.game.save.recordActivityStars(this.name, stars);
     const daily = this.game.completeActivity(this.name);
     this.game.save.bumpTreasure();
     const newSkins = unlockEligibleSkins(this.game);
@@ -193,6 +194,7 @@ export class MemoryScene extends BaseScene {
         stars,
         sub: `Alle paren gevonden in ${this.flips} beurten!`,
         newStickers,
+        personalBest: best.newBest && best.previousBest > 0 ? { stars: best.best } : undefined,
         dailyMission: daily.newlyCompleted
           ? { completedCount: daily.completedCount, total: daily.total, rewardEarned: daily.rewardEarned }
           : undefined,

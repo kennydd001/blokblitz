@@ -197,11 +197,14 @@ export class HubScene extends BaseScene {
   }
 
   private buildModeBrowser(): HTMLElement {
+    const bestByMode = this.game.data().progress.activityBestStars;
+    const collectedStars = PLAY_MODES.reduce((total, mode) => total + this.activityStars(bestByMode[mode.scene]), 0);
+    const availableStars = PLAY_MODES.length * 3;
     const section = document.createElement("section");
     section.className = "hub-browser";
     const heading = document.createElement("div");
     heading.className = "hub-section-heading free";
-    heading.innerHTML = `<span><small>VRIJ SPELEN</small><strong>Kies zelf</strong></span>`;
+    heading.innerHTML = `<span><small>VRIJ SPELEN</small><strong>Kies zelf</strong></span><b class="hub-mode-total${collectedStars === availableStars ? " complete" : ""}" aria-label="${collectedStars} van ${availableStars} spelsterren">${collectedStars}/${availableStars} ★</b>`;
 
     const tabs = document.createElement("div");
     tabs.className = "hub-tabs";
@@ -214,7 +217,7 @@ export class HubScene extends BaseScene {
 
     const renderModes = (): void => {
       grid.replaceChildren();
-      PLAY_MODES.filter((mode) => mode.category === this.selectedCategory).forEach((mode) => grid.appendChild(this.buildModeCard(mode)));
+      PLAY_MODES.filter((mode) => mode.category === this.selectedCategory).forEach((mode) => grid.appendChild(this.buildModeCard(mode, bestByMode[mode.scene])));
       tabs.querySelectorAll<HTMLButtonElement>(".hub-tab").forEach((tab) => {
         const active = tab.dataset.category === this.selectedCategory;
         tab.classList.toggle("active", active);
@@ -258,15 +261,22 @@ export class HubScene extends BaseScene {
     return section;
   }
 
-  private buildModeCard(mode: PlayMode): HTMLButtonElement {
+  private buildModeCard(mode: PlayMode, savedStars = 0): HTMLButtonElement {
+    const stars = this.activityStars(savedStars);
     const card = document.createElement("button");
     card.type = "button";
     card.className = `hub-card ${mode.tone}`;
     card.dataset.mode = mode.scene;
-    card.setAttribute("aria-label", mode.name);
-    card.innerHTML = `<span class="hub-emoji" aria-hidden="true">${mode.emoji}</span><strong>${mode.name}</strong><small>${mode.desc}</small>`;
+    card.setAttribute("aria-label", `${mode.name}, ${stars} van 3 sterren`);
+    card.innerHTML = `<span class="hub-emoji" aria-hidden="true">${mode.emoji}</span><strong>${mode.name}</strong><small>${mode.desc}</small><span class="hub-mode-stars" aria-label="${stars} van 3 sterren">${[0, 1, 2]
+      .map((index) => `<i class="${index < stars ? "earned" : ""}" aria-hidden="true">★</i>`)
+      .join("")}</span>`;
     card.addEventListener("click", () => this.enter(mode.scene));
     return card;
+  }
+
+  private activityStars(value: number | undefined): number {
+    return Math.max(0, Math.min(3, Math.round(value ?? 0)));
   }
 
   private enter(scene: string): void {

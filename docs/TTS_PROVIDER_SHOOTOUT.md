@@ -9,7 +9,7 @@ QA samples remain under `.qa-artifacts`.
 
 - Active sentence/instruction voice-pack:
   `C:\Users\de_do\Documents\miel\public\audio\voice\nl\elevenlabs-lily-v3\`
-- 1555 local ElevenLabs MP3 clips, generated build-time with `eleven_v3` and
+- 1557 local ElevenLabs MP3 clips (1489 current game lines), generated build-time with `eleven_v3` and
   voice `Lily - Velvety Actress`.
 - Active isolated reading phoneme pack:
   `C:\Users\de_do\Documents\miel\public\audio\reading\nl\elevenlabs-lily-v3\phonemes\`

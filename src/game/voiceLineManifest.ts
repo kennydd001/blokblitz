@@ -684,6 +684,7 @@ export const VOICE_LINE_SLUGS = new Set<string>([
   "je-verdiende-een-nieuwe-sticker-hardloper-uitroep",
   "je-verdiende-een-nieuwe-sticker-kampioen-uitroep",
   "je-verdiende-een-nieuwe-sticker-muntgrot-uitroep",
+  "je-verdiende-een-nieuwe-sticker-sterrenmeester-uitroep",
   "je-verdiende-een-nieuwe-sticker-sterrenvanger-uitroep",
   "je-verdiende-een-nieuwe-sticker-tien-sterren-uitroep",
   "je-verdiende-een-nieuwe-sticker-vlijtig-uitroep",

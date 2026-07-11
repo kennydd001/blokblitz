@@ -3421,6 +3421,10 @@ input {
 .hub-card .hub-emoji { font-size: 2.8rem; line-height: 1.1; filter: drop-shadow(0 3px 0 rgba(23, 32, 51, 0.18)); }
 .hub-card strong { font-size: 1.1rem; }
 .hub-card small { color: var(--muted); font-weight: 700; font-size: 0.8rem; }
+.hub-mode-stars { display: inline-flex; gap: 2px; min-height: 18px; margin-top: 4px; }
+.hub-mode-stars i { color: rgba(23, 32, 51, 0.2); font-size: 0.95rem; font-style: normal; line-height: 1; }
+.hub-mode-stars i.earned { color: #e49300; text-shadow: 0 1px 0 #fff2a8; }
+.hub-mode-total.complete { background: #ffe26f; box-shadow: 0 0 0 3px #36b86b, 0 3px 0 rgba(23, 32, 51, 0.2); }
 .hub-card.adventure { background: linear-gradient(160deg, #ffe08a, #f6a821); }
 .hub-card.count { background: linear-gradient(160deg, #bff0c8, #5bd06e); }
 .hub-card.match { background: linear-gradient(160deg, #cfe0ff, #6f9bf5); }
@@ -3554,6 +3558,16 @@ input {
 .hub-browser .hub-grid { width: 100%; }
 .results-unlock.daily { background: linear-gradient(145deg, #dff8ff, #b8e4ff); }
 .results-unlock.daily.grand { background: linear-gradient(145deg, #fff2a8, #ffd24f); }
+.results-unlock.personal-best {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-block: 9px;
+  background: linear-gradient(145deg, #fff1a8, #ffd052);
+}
+.results-unlock.personal-best > span { font-size: 1.7rem; }
+.results-unlock.personal-best > strong { font-size: 1rem; }
 .reis-chest.hub-gift {
   position: static;
   flex: 0 0 62px;

@@ -254,6 +254,8 @@ export interface GameProgress {
   buddyLevelSeen: number;
   /** Recent completed activities, used to vary each child's recommendations. */
   activityHistory: ActivityHistoryEntry[];
+  /** Best 1-3 star rating per calm activity, keyed by scene id. */
+  activityBestStars: Record<string, number>;
   /** Stable, profile-local set of three recommended activities for one day. */
   dailyPlan: DailyPlanProgress;
 }

@@ -382,11 +382,12 @@ export abstract class MiniGameScene extends BaseScene {
     this.buddy?.say("Joepie!");
     // In story mode, finishing this stop drops a stone for Buddy's star.
     if (this.game.lastJourneyNode) this.game.save.advanceJourney(this.game.lastJourneyNode);
+    const stars = starsFromPerfect(this.perfectRounds, this.total);
+    const best = this.game.save.recordActivityStars(this.name, stars);
     const daily = this.game.completeActivity(this.name);
     // Every finished activity fills the treasure meter (chest at 3).
     this.game.save.bumpTreasure();
     const newSkins = unlockEligibleSkins(this.game);
-    const stars = starsFromPerfect(this.perfectRounds, this.total);
     if (daily.rewardEarned) this.game.voice.speak("Alle drie missies klaar! Tien bonussterren!", { interrupt: false, pitch: 1.2 });
     else if (daily.newlyCompleted) this.game.voice.speak("Dagmissie klaar!", { interrupt: false, pitch: 1.18 });
     else this.game.voice.speak(stars >= 3 ? "Perfect! Heel knap gedaan!" : "Goed gedaan!", { interrupt: false, pitch: 1.25 });
@@ -403,6 +404,7 @@ export abstract class MiniGameScene extends BaseScene {
         stars,
         sub: `Je had er ${this.correctRounds} van de ${this.total} goed!`,
         newStickers,
+        personalBest: best.newBest && best.previousBest > 0 ? { stars: best.best } : undefined,
         dailyMission: daily.newlyCompleted
           ? { completedCount: daily.completedCount, total: daily.total, rewardEarned: daily.rewardEarned }
           : undefined,
