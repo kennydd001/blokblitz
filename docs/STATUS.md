@@ -1366,3 +1366,9 @@ Validation:
 - `npm.cmd run qa:mobile-touch` passed a 37-step coordinate-touch journey,
   including touching every Count animal, with 12 tracked attempts, one journey
   node completed, and two checked daily missions visible on the final Hub.
+- GitHub `main` contains commit `fe3768e`. WSL Wrangler deployed that build as
+  Worker version `43d0e67b-fc1a-494a-9fff-464b86b81eb2` to
+  `https://blokblitz.sprintsite.be/`.
+- Live HTTP smoke checks returned 200 for the root and production assets
+  `index-Dr5H-yqG.js` and `index-C_x5RXlF.css`, with the expected JavaScript and
+  CSS content types.
