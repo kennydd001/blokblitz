@@ -1,6 +1,6 @@
 import { AdaptiveEngine } from "../education/adaptiveEngine";
 import { journeyTier, recentAccuracy, type DifficultyTier } from "../education/difficulty";
-import { dueForReview, nextInterleavedTarget } from "../education/review";
+import { dueForReview, nextInterleavedTarget, sessionWarmup } from "../education/review";
 import { buildDailyPlayPlan, localDayKey } from "../education/dailyPlan";
 import { JOURNEY, nodeIndexById } from "../data/journey";
 import { buildAttemptLog } from "../education/challengeLogger";
@@ -85,6 +85,9 @@ export class Game {
   private stage3dPromise?: Promise<Stage3D>;
   private worldTheme: "menu" | "summary" = "menu";
   private active = false;
+  private focusSessionId = "";
+  private readonly warmupTargets = new Map<string, string[]>();
+  private lastFocusReason: "warmup" | "adaptive" | "review" | "discovery" = "discovery";
 
   private readonly onResize = (): void => this.resize();
 
@@ -195,6 +198,9 @@ export class Game {
   useProfile(id: string): void {
     if (id) this.save.switchProfile(id);
     this.mastery.setAttempts(this.save.getMutableData().progress.attempts);
+    this.focusSessionId = "";
+    this.warmupTargets.clear();
+    this.lastFocusReason = "discovery";
     this.lastJourneyNode = undefined;
     this.journeyLastRegion = undefined;
     this.journeySeenCompleted = this.save.getData().progress.journey.completed.length;
@@ -304,18 +310,42 @@ export class Game {
    * before it fades. Undefined lets the generator roll a fresh target freely.
    */
   curriculumFocus(domain?: string): string | undefined {
+    this.lastFocusReason = "discovery";
     if (!domain) return undefined;
     const attempts = this.mastery.getAttempts();
+    const sessionId = this.save.getMutableData().progress.sessionId;
+    if (sessionId !== this.focusSessionId) {
+      this.focusSessionId = sessionId;
+      this.warmupTargets.clear();
+    }
+    if (!this.warmupTargets.has(domain)) {
+      const historical = attempts.filter((attempt) => attempt.sessionId !== sessionId && attempt.domain === domain);
+      this.warmupTargets.set(
+        domain,
+        sessionWarmup(historical, Date.now(), 3).map((item) => item.targetKey)
+      );
+    }
+    const warmup = this.warmupTargets.get(domain)?.shift();
     const shaky = this.adaptive.recommendCurriculumFocus(domain);
     const due = dueForReview(attempts, Date.now())
       .filter((item) => item.domain === domain)
       .map((item) => item.targetKey);
-    return nextInterleavedTarget(
-      [shaky, ...due],
+    const target = nextInterleavedTarget(
+      [warmup, shaky, ...due],
       attempts,
-      this.save.getMutableData().progress.sessionId,
+      sessionId,
       domain
     );
+    if (target) {
+      if (warmup && target === warmup) this.lastFocusReason = "warmup";
+      else if (shaky && target === shaky) this.lastFocusReason = "adaptive";
+      else this.lastFocusReason = "review";
+    }
+    return target;
+  }
+
+  curriculumFocusReason(): "warmup" | "adaptive" | "review" | "discovery" {
+    return this.lastFocusReason;
   }
 
   /** Three balanced, stable recommendations generated from this child's own history. */

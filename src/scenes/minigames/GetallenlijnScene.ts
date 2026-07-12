@@ -1,5 +1,11 @@
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
-import { classifyLineError, lineChallenge, lineRound, type LineRound } from "../../education/math/numberline";
+import {
+  classifyLineError,
+  lineChallenge,
+  lineRemediation,
+  lineRound,
+  type LineRound
+} from "../../education/math/numberline";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { MiniGameScene } from "./MiniGameScene";
@@ -74,9 +80,27 @@ export class GetallenlijnScene extends MiniGameScene {
     return this.game.recordCurriculumAttempt(attempt);
   }
 
-  protected onWrong(): void {
-    this.root.querySelector('.getallenlijn-choice[data-correct="true"]')?.classList.add("reveal");
-    this.reteach("Tel rustig langs de lijn.");
+  protected onWrong(option: ChallengeOption): void {
+    const player = Number(option.value);
+    const error = classifyLineError(this.currentRound.target, player, this.currentRound.mode);
+    const plan = this.remediation(lineRemediation(this.currentRound, error, player));
+    this.showDirection(plan.level);
+    if (plan.revealAnswer) this.root.querySelector('.getallenlijn-choice[data-correct="true"]')?.classList.add("reveal");
+    this.reteach(plan.text);
+  }
+
+  private showDirection(level: "nudge" | "guided" | "model"): void {
+    this.root.querySelector(".getallenlijn-direction")?.remove();
+    const cue = document.createElement("div");
+    cue.className = `getallenlijn-direction ${level}`;
+    if (this.currentRound.mode === "before") cue.innerHTML = `<strong aria-hidden="true">&#8592;</strong><span>voor</span>`;
+    else if (this.currentRound.mode === "after") cue.innerHTML = `<span>na</span><strong aria-hidden="true">&#8594;</strong>`;
+    else cue.innerHTML = `<strong aria-hidden="true">&#8596;</strong><span>tel langs de lijn</span>`;
+    this.root.querySelector(".getallenlijn-line")?.insertAdjacentElement("afterend", cue);
+    if (level === "model") {
+      const blank = this.root.querySelector<HTMLElement>(".getallenlijn-cell.blank b");
+      if (blank) blank.textContent = String(this.currentRound.target);
+    }
   }
 
   // Signature moment: the answer lands in the gap and a star SLIDES down the

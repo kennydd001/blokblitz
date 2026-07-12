@@ -4,6 +4,7 @@
 // en zonder scene-code getest en herhaald kunnen worden.
 
 import type { Challenge, ChallengeOption, Representation } from "../types";
+import type { RemediationCopy } from "../remediation";
 
 export type BondMode = "find-partner" | "pick-pair" | "is-ten";
 
@@ -152,6 +153,28 @@ export function classifyBondError(round: BondRound, playerAnswer: number | strin
   if (player === round.a && round.a !== answer) return "counted-to-a-not-ten";
   if (Math.abs(player - answer) === 1) return "partner-off-by-one";
   return "bond-weak";
+}
+
+export function bondRemediation(round: BondRound, error: BondMisconception): RemediationCopy {
+  if (error === "not-ten-confusion") {
+    return {
+      nudge: "Is het tienframe precies vol?",
+      guided: "Tel de twee kleuren samen.",
+      model: round.hintText
+    };
+  }
+  if (error === "counted-to-a-not-ten") {
+    return {
+      nudge: "Kijk alleen naar de lege vakjes.",
+      guided: "Tel alleen de lege vakjes.",
+      model: round.hintText
+    };
+  }
+  return {
+    nudge: "Kijk naar de lege vakjes.",
+    guided: "Tel de lege vakjes één voor één.",
+    model: round.hintText
+  };
 }
 
 let bondCounter = 0;

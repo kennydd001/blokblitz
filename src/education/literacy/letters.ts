@@ -3,22 +3,90 @@
 // two-letter graphemes later. The ORDER stays data-driven + configurable.
 
 import type { DifficultyTier } from "../difficulty";
-import type { Challenge, ChallengeOption, Representation } from "../types";
+import type { AttemptLog, Challenge, ChallengeOption, Representation } from "../types";
 import { PHONICS_WORDS } from "./phonics";
 
 export type LetterMode = "sound-to-letter" | "letter-to-word";
 
-// Default starter order; swap this array for a school method's order later.
+// One new grapheme is combined with familiar ones. This is the supported game
+// inventory in a deliberate initial-reading order; a school's exact method can
+// still replace the data without changing the progression engine.
 export const LETTERS = [
-  // Single-letter graphemes (consonants + short vowels).
-  "m", "s", "v", "r", "n", "b", "k", "z", "h", "t", "l", "d", "p", "f", "w", "o", "a", "e", "i", "u",
-  // Two-letter graphemes (long vowels + digraphs) the decodable words use, so
-  // Letterkompas teaches "aa"/"ui" as one sound-picture instead of two letters.
-  "aa", "ee", "oo", "oe", "ie", "ui", "eu", "ij"
+  "i", "k", "m", "s",
+  "p", "aa", "r", "e", "v",
+  "n", "t", "ee", "b", "oo",
+  "d", "oe", "z", "ij", "h",
+  "w", "o", "a", "u", "eu", "ie", "l", "ui", "f"
 ];
 
-const SINGLE_LETTERS = LETTERS.slice(0, 20);
-export const STARTER_LETTERS = ["m", "s", "v", "r", "n", "b", "k", "z", "h", "t", "o", "a"];
+const SINGLE_LETTERS = LETTERS.filter((letter) => letter.length === 1);
+export const STARTER_LETTERS = LETTERS.slice(0, 4);
+const CLEAN_SUCCESSES_TO_EARN_A_LETTER = 2;
+
+export interface LetterProgress {
+  unlockedLetters: string[];
+  masteredLetters: string[];
+  nextLetter?: string;
+}
+
+function attemptedLetter(attempt: AttemptLog): string | undefined {
+  if (attempt.domain !== "literacy-reading" || !attempt.targetKey?.startsWith("letter-")) return undefined;
+  const letter = attempt.targetKey.slice("letter-".length).toLowerCase();
+  return LETTERS.includes(letter) ? letter : undefined;
+}
+
+/** Profile-local letter book: never relock legacy-seen letters; otherwise each
+ * grapheme with two independent, unhinted successes earns one new grapheme. */
+export function letterProgress(attempts: AttemptLog[]): LetterProgress {
+  const letterAttempts = attempts
+    .map((attempt) => ({ attempt, letter: attemptedLetter(attempt) }))
+    .filter((item): item is { attempt: AttemptLog; letter: string } => Boolean(item.letter));
+  const cleanByLetter = new Map<string, number>();
+  let seenFrontier = STARTER_LETTERS.length;
+  for (const { attempt, letter } of letterAttempts) {
+    seenFrontier = Math.max(seenFrontier, LETTERS.indexOf(letter) + 1);
+    if (attempt.wasCorrect && !attempt.hintUsed) cleanByLetter.set(letter, (cleanByLetter.get(letter) ?? 0) + 1);
+  }
+  const masteredLetters = LETTERS.filter(
+    (letter) => (cleanByLetter.get(letter) ?? 0) >= CLEAN_SUCCESSES_TO_EARN_A_LETTER
+  );
+  const unlockedCount = Math.min(
+    LETTERS.length,
+    Math.max(STARTER_LETTERS.length, seenFrontier, STARTER_LETTERS.length + masteredLetters.length)
+  );
+  return {
+    unlockedLetters: LETTERS.slice(0, unlockedCount),
+    masteredLetters,
+    nextLetter: LETTERS[unlockedCount]
+  };
+}
+
+/** Prefer an explicit adaptive target; otherwise spread practice over the least
+ * evidenced unlocked grapheme so the first four do not depend on lucky rolls. */
+export function letterPracticeTarget(
+  attempts: AttemptLog[],
+  unlockedLetters: readonly string[],
+  adaptiveTarget?: string
+): string {
+  const focused = adaptiveTarget?.startsWith("letter-") ? adaptiveTarget.slice("letter-".length).toLowerCase() : undefined;
+  if (focused && unlockedLetters.includes(focused)) return focused;
+
+  const stats = new Map<string, { clean: number; exposures: number; lastSeen: number }>();
+  for (const letter of unlockedLetters) stats.set(letter, { clean: 0, exposures: 0, lastSeen: 0 });
+  for (const attempt of attempts) {
+    const letter = attemptedLetter(attempt);
+    const current = letter ? stats.get(letter) : undefined;
+    if (!current) continue;
+    current.exposures += 1;
+    current.lastSeen = Math.max(current.lastSeen, attempt.timestamp);
+    if (attempt.wasCorrect && !attempt.hintUsed) current.clean += 1;
+  }
+  return [...unlockedLetters].sort((a, b) => {
+    const aa = stats.get(a)!;
+    const bb = stats.get(b)!;
+    return aa.clean - bb.clean || aa.exposures - bb.exposures || aa.lastSeen - bb.lastSeen || LETTERS.indexOf(a) - LETTERS.indexOf(b);
+  })[0] ?? STARTER_LETTERS[0];
+}
 
 // Letters that have a picture word (for letter -> word rounds).
 const LETTERS_WITH_WORDS = [...new Set(PHONICS_WORDS.map((w) => w.begin))].filter((l) => LETTERS.includes(l));
@@ -47,13 +115,22 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function letterkompasRound(mode?: LetterMode, tier: DifficultyTier = 2): LetterRound {
-  const eligibleModes: LetterMode[] = tier === 1 ? ["sound-to-letter"] : MODES;
-  const roundMode = mode ?? pickOne(eligibleModes);
-  const letterPool = tier === 1 ? STARTER_LETTERS : tier === 2 ? SINGLE_LETTERS : LETTERS;
+export function letterkompasRound(
+  mode?: LetterMode,
+  tier: DifficultyTier = 2,
+  availableLetters?: readonly string[],
+  preferredLetter?: string
+): LetterRound {
+  const tierPool = tier === 1 ? STARTER_LETTERS : tier === 2 ? SINGLE_LETTERS : LETTERS;
+  const requestedPool = availableLetters?.filter((letter) => LETTERS.includes(letter)) ?? tierPool;
+  const letterPool = requestedPool.length >= 2 ? [...requestedPool] : [...STARTER_LETTERS];
+  const preferred = preferredLetter && letterPool.includes(preferredLetter) ? preferredLetter : undefined;
+  const canUsePreferredWord = !preferred || LETTERS_WITH_WORDS.includes(preferred);
+  const eligibleModes: LetterMode[] = tier === 1 || !canUsePreferredWord ? ["sound-to-letter"] : MODES;
+  const roundMode = mode && eligibleModes.includes(mode) ? mode : mode ? "sound-to-letter" : pickOne(eligibleModes);
   const optionCount = tier === 1 ? 2 : tier === 2 ? 3 : 4;
   if (roundMode === "sound-to-letter") {
-    const letter = pickOne(letterPool);
+    const letter = preferred ?? pickOne(letterPool);
     const others = shuffle(letterPool.filter((l) => l !== letter)).slice(0, optionCount - 1);
     return {
       mode: roundMode,
@@ -73,7 +150,7 @@ export function letterkompasRound(mode?: LetterMode, tier: DifficultyTier = 2): 
     ? PHONICS_WORDS.filter((word) => STARTER_LETTERS.includes(word.begin) && word.units.length === 3)
     : PHONICS_WORDS;
   const eligibleLetters = LETTERS_WITH_WORDS.filter((letter) => letterPool.includes(letter) && wordPool.some((word) => word.begin === letter));
-  const letter = pickOne(eligibleLetters);
+  const letter = preferred && eligibleLetters.includes(preferred) ? preferred : pickOne(eligibleLetters);
   const target = pickOne(wordPool.filter((word) => word.begin === letter));
   const others = shuffle(wordPool.filter((word) => word.begin !== letter)).slice(0, optionCount - 1);
   return {

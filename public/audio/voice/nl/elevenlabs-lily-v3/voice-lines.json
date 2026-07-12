@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T20:07:15.405Z",
+  "generatedAt": "2026-07-12T14:52:53.996Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1558,
+  "lineCount": 1584,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -3441,6 +3441,14 @@
       "file": "buddy-groeit-uitroep-superdino-uitroep.mp3"
     },
     {
+      "id": "adaptive-remediation-13",
+      "slug": "controleer-je-laatste-sprong",
+      "text": "Controleer je laatste sprong.",
+      "spokenText": "Controleer je laatste sprong.",
+      "category": "adaptive-remediation",
+      "file": "controleer-je-laatste-sprong.mp3"
+    },
+    {
       "id": "sound-d",
       "slug": "d",
       "text": "d",
@@ -4321,6 +4329,14 @@
       "file": "eerst-kijken-dan-oversteken.mp3"
     },
     {
+      "id": "adaptive-remediation-25",
+      "slug": "eerst-tien-tel-daarna-de-losse-een-voor-een",
+      "text": "Eerst tien, tel daarna de losse één voor één.",
+      "spokenText": "Eerst tien, tel daarna de losse één voor één.",
+      "category": "adaptive-remediation",
+      "file": "eerst-tien-tel-daarna-de-losse-een-voor-een.mp3"
+    },
+    {
       "id": "number-11",
       "slug": "elf",
       "text": "elf",
@@ -4383,6 +4399,14 @@
       "spokenText": "foto",
       "category": "reading-word",
       "file": "foto.mp3"
+    },
+    {
+      "id": "adaptive-remediation-14",
+      "slug": "ga-eerst-naar-tien-en-tel-de-rest-nog-eens",
+      "text": "Ga eerst naar tien en tel de rest nog eens.",
+      "spokenText": "Ga eerst naar tien en tel de rest nog eens.",
+      "category": "adaptive-remediation",
+      "file": "ga-eerst-naar-tien-en-tel-de-rest-nog-eens.mp3"
     },
     {
       "id": "common-2",
@@ -5361,6 +5385,14 @@
       "file": "is-9-even-of-oneven-vraag.mp3"
     },
     {
+      "id": "adaptive-remediation-7",
+      "slug": "is-het-tienframe-precies-vol-vraag",
+      "text": "Is het tienframe precies vol?",
+      "spokenText": "Is het tienframe precies vol?",
+      "category": "adaptive-remediation",
+      "file": "is-het-tienframe-precies-vol-vraag.mp3"
+    },
+    {
       "id": "verkeer-prompt-9",
       "slug": "je-bal-rolt-de-straat-op-wat-doe-je-vraag",
       "text": "Je bal rolt de straat op. Wat doe je?",
@@ -5657,6 +5689,38 @@
       "file": "kies-wie-er-nu-speelt.mp3"
     },
     {
+      "id": "adaptive-remediation-9",
+      "slug": "kijk-alleen-naar-de-lege-vakjes",
+      "text": "Kijk alleen naar de lege vakjes.",
+      "spokenText": "Kijk alleen naar de lege vakjes.",
+      "category": "adaptive-remediation",
+      "file": "kijk-alleen-naar-de-lege-vakjes.mp3"
+    },
+    {
+      "id": "adaptive-remediation-1",
+      "slug": "kijk-alleen-naar-het-lege-vak",
+      "text": "Kijk alleen naar het lege vak.",
+      "spokenText": "Kijk alleen naar het lege vak.",
+      "category": "adaptive-remediation",
+      "file": "kijk-alleen-naar-het-lege-vak.mp3"
+    },
+    {
+      "id": "adaptive-remediation-18",
+      "slug": "kijk-een-vakje-naar-links",
+      "text": "Kijk één vakje naar links.",
+      "spokenText": "Kijk één vakje naar links.",
+      "category": "adaptive-remediation",
+      "file": "kijk-een-vakje-naar-links.mp3"
+    },
+    {
+      "id": "adaptive-remediation-17",
+      "slug": "kijk-een-vakje-naar-rechts",
+      "text": "Kijk één vakje naar rechts.",
+      "spokenText": "Kijk één vakje naar rechts.",
+      "category": "adaptive-remediation",
+      "file": "kijk-een-vakje-naar-rechts.mp3"
+    },
+    {
       "id": "common-20",
       "slug": "kijk-eerst-vijf-dan-de-extra-blokjes",
       "text": "Kijk: eerst vijf, dan de extra blokjes.",
@@ -5671,6 +5735,30 @@
       "spokenText": "Kijk goed naar de vorm.",
       "category": "minigame-reteach",
       "file": "kijk-goed-naar-de-vorm.mp3"
+    },
+    {
+      "id": "adaptive-remediation-23",
+      "slug": "kijk-naar-de-getallen-naast-het-lege-vak",
+      "text": "Kijk naar de getallen naast het lege vak.",
+      "spokenText": "Kijk naar de getallen naast het lege vak.",
+      "category": "adaptive-remediation",
+      "file": "kijk-naar-de-getallen-naast-het-lege-vak.mp3"
+    },
+    {
+      "id": "adaptive-remediation-11",
+      "slug": "kijk-naar-de-lege-vakjes",
+      "text": "Kijk naar de lege vakjes.",
+      "spokenText": "Kijk naar de lege vakjes.",
+      "category": "adaptive-remediation",
+      "file": "kijk-naar-de-lege-vakjes.mp3"
+    },
+    {
+      "id": "adaptive-remediation-5",
+      "slug": "kijk-naar-de-twee-delen",
+      "text": "Kijk naar de twee delen.",
+      "spokenText": "Kijk naar de twee delen.",
+      "category": "adaptive-remediation",
+      "file": "kijk-naar-de-twee-delen.mp3"
     },
     {
       "id": "klok-wrong",
@@ -5895,6 +5983,14 @@
       "spokenText": "lamp",
       "category": "reading-word",
       "file": "lamp.mp3"
+    },
+    {
+      "id": "adaptive-remediation-2",
+      "slug": "leg-de-eieren-in-het-lege-vak",
+      "text": "Leg de eieren in het lege vak.",
+      "spokenText": "Leg de eieren in het lege vak.",
+      "category": "adaptive-remediation",
+      "file": "leg-de-eieren-in-het-lege-vak.mp3"
     },
     {
       "id": "even-odd-hint",
@@ -7281,6 +7377,14 @@
       "file": "n-eu-s-neus.mp3"
     },
     {
+      "id": "adaptive-remediation-19",
+      "slug": "na-is-naar-rechts",
+      "text": "Na is naar rechts.",
+      "spokenText": "Na is naar rechts.",
+      "category": "adaptive-remediation",
+      "file": "na-is-naar-rechts.mp3"
+    },
+    {
       "id": "listen-option-trein-berg-0-2",
       "slug": "naar-de-maan",
       "text": "naar de maan",
@@ -7833,6 +7937,14 @@
       "file": "sok.mp3"
     },
     {
+      "id": "adaptive-remediation-16",
+      "slug": "splits-de-sprong-eerst-naar-tien",
+      "text": "Splits de sprong: eerst naar tien.",
+      "spokenText": "Splits de sprong: eerst naar tien.",
+      "category": "adaptive-remediation",
+      "file": "splits-de-sprong-eerst-naar-tien.mp3"
+    },
+    {
       "id": "one-more-1",
       "slug": "spring-naar-eentje-meer-dan-1",
       "text": "Spring naar eentje meer dan 1.",
@@ -8033,12 +8145,52 @@
       "file": "tel-allebei-de-groepjes-en-kijk-welke-even-veel-heeft.mp3"
     },
     {
+      "id": "adaptive-remediation-10",
+      "slug": "tel-alleen-de-lege-vakjes",
+      "text": "Tel alleen de lege vakjes.",
+      "spokenText": "Tel alleen de lege vakjes.",
+      "category": "adaptive-remediation",
+      "file": "tel-alleen-de-lege-vakjes.mp3"
+    },
+    {
       "id": "minigame-reteach-8",
       "slug": "tel-beide-groepjes-en-kijk-goed",
       "text": "Tel beide groepjes en kijk goed.",
       "spokenText": "Tel beide groepjes en kijk goed.",
       "category": "minigame-reteach",
       "file": "tel-beide-groepjes-en-kijk-goed.mp3"
+    },
+    {
+      "id": "adaptive-remediation-4",
+      "slug": "tel-de-eieren-in-het-lege-vak-een-voor-een",
+      "text": "Tel de eieren in het lege vak één voor één.",
+      "spokenText": "Tel de eieren in het lege vak één voor één.",
+      "category": "adaptive-remediation",
+      "file": "tel-de-eieren-in-het-lege-vak-een-voor-een.mp3"
+    },
+    {
+      "id": "adaptive-remediation-3",
+      "slug": "tel-de-eieren-nog-eens",
+      "text": "Tel de eieren nog eens.",
+      "spokenText": "Tel de eieren nog eens.",
+      "category": "adaptive-remediation",
+      "file": "tel-de-eieren-nog-eens.mp3"
+    },
+    {
+      "id": "adaptive-remediation-12",
+      "slug": "tel-de-lege-vakjes-een-voor-een",
+      "text": "Tel de lege vakjes één voor één.",
+      "spokenText": "Tel de lege vakjes één voor één.",
+      "category": "adaptive-remediation",
+      "file": "tel-de-lege-vakjes-een-voor-een.mp3"
+    },
+    {
+      "id": "adaptive-remediation-26",
+      "slug": "tel-de-losse-stippen-nog-eens",
+      "text": "Tel de losse stippen nog eens.",
+      "spokenText": "Tel de losse stippen nog eens.",
+      "category": "adaptive-remediation",
+      "file": "tel-de-losse-stippen-nog-eens.mp3"
     },
     {
       "id": "geld-wrong",
@@ -8057,6 +8209,14 @@
       "file": "tel-de-stippen-welke-heeft-er-meer-vraag.mp3"
     },
     {
+      "id": "adaptive-remediation-6",
+      "slug": "tel-de-twee-delen-een-voor-een",
+      "text": "Tel de twee delen één voor één.",
+      "spokenText": "Tel de twee delen één voor één.",
+      "category": "adaptive-remediation",
+      "file": "tel-de-twee-delen-een-voor-een.mp3"
+    },
+    {
       "id": "minigame-reteach-20",
       "slug": "tel-de-twee-delen-samen",
       "text": "Tel de twee delen samen.",
@@ -8065,12 +8225,36 @@
       "file": "tel-de-twee-delen-samen.mp3"
     },
     {
+      "id": "adaptive-remediation-8",
+      "slug": "tel-de-twee-kleuren-samen",
+      "text": "Tel de twee kleuren samen.",
+      "spokenText": "Tel de twee kleuren samen.",
+      "category": "adaptive-remediation",
+      "file": "tel-de-twee-kleuren-samen.mp3"
+    },
+    {
       "id": "minigame-reteach-18",
       "slug": "tel-de-twee-vakjes-samen-eerst-vijf-dan-de-rest",
       "text": "Tel de twee vakjes samen. Eerst vijf, dan de rest.",
       "spokenText": "Tel de twee vakjes samen. Eerst vijf, dan de rest.",
       "category": "minigame-reteach",
       "file": "tel-de-twee-vakjes-samen-eerst-vijf-dan-de-rest.mp3"
+    },
+    {
+      "id": "adaptive-remediation-22",
+      "slug": "tel-een-stap-terug",
+      "text": "Tel één stap terug.",
+      "spokenText": "Tel één stap terug.",
+      "category": "adaptive-remediation",
+      "file": "tel-een-stap-terug.mp3"
+    },
+    {
+      "id": "adaptive-remediation-21",
+      "slug": "tel-een-stap-verder",
+      "text": "Tel één stap verder.",
+      "spokenText": "Tel één stap verder.",
+      "category": "adaptive-remediation",
+      "file": "tel-een-stap-verder.mp3"
     },
     {
       "id": "minigame-reteach-10",
@@ -9321,6 +9505,14 @@
       "file": "verder-met-de-reis-uitroep-waar-gaan-we-heen-vraag.mp3"
     },
     {
+      "id": "adaptive-remediation-24",
+      "slug": "vergeet-het-volle-tiental-niet",
+      "text": "Vergeet het volle tiental niet.",
+      "spokenText": "Vergeet het volle tiental niet.",
+      "category": "adaptive-remediation",
+      "file": "vergeet-het-volle-tiental-niet.mp3"
+    },
+    {
       "id": "number-4",
       "slug": "vier",
       "text": "vier",
@@ -9527,6 +9719,14 @@
       "spokenText": "Vonk de vos snuffelt de muntjes zo voor je op!",
       "category": "story",
       "file": "vonk-de-vos-snuffelt-de-muntjes-zo-voor-je-op-uitroep.mp3"
+    },
+    {
+      "id": "adaptive-remediation-20",
+      "slug": "voor-is-naar-links",
+      "text": "Voor is naar links.",
+      "spokenText": "Voor is naar links.",
+      "category": "adaptive-remediation",
+      "file": "voor-is-naar-links.mp3"
     },
     {
       "id": "verkeer-option-10-2",
@@ -12367,6 +12567,14 @@
       "spokenText": "Zoek de paren: het getal en het groepje met even veel.",
       "category": "number-prompts",
       "file": "zoek-de-paren-het-getal-en-het-groepje-met-even-veel.mp3"
+    },
+    {
+      "id": "adaptive-remediation-15",
+      "slug": "zoek-eerst-de-tien",
+      "text": "Zoek eerst de tien.",
+      "spokenText": "Zoek eerst de tien.",
+      "category": "adaptive-remediation",
+      "file": "zoek-eerst-de-tien.mp3"
     },
     {
       "id": "minigame-reteach-11",

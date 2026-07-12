@@ -95,6 +95,16 @@ describe("splitbord challenge generation + logging", () => {
     expect(overlay.querySelectorAll(".splitbord-nest .splitbord-egg")).toHaveLength(1);
     // The answer flow is unchanged: numeral buttons still resolve the round.
     expect(overlay.querySelector('.splitbord-choice[data-correct="true"]')).toBeTruthy();
+    const wrong = overlay.querySelector<HTMLButtonElement>('.splitbord-choice[data-correct="false"]')!;
+    wrong.click();
+    expect(game.mastery.getAttempts().at(-1)).toMatchObject({
+      domain: "math-number",
+      skill: "partwhole",
+      wasCorrect: false
+    });
+    expect(game.mastery.getAttempts().at(-1)?.errorType).toBeTruthy();
+    expect(overlay.querySelector<HTMLElement>(".scene.splitbord")?.dataset.supportLevel).toBe("model");
+    expect(overlay.querySelector('.splitbord-choice[data-correct="true"]')?.classList.contains("reveal")).toBe(true);
     scene.unmount();
   });
 });

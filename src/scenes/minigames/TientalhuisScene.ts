@@ -1,5 +1,5 @@
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
-import { classifyTeenError, teenChallenge, teenRound, type TeenRound } from "../../education/math/teens";
+import { classifyTeenError, teenChallenge, teenRemediation, teenRound, type TeenRound } from "../../education/math/teens";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -76,9 +76,23 @@ export class TientalhuisScene extends MiniGameScene {
     return this.game.recordCurriculumAttempt(attempt);
   }
 
-  protected onWrong(): void {
-    this.root.querySelector('.tientalhuis-choice[data-correct="true"]')?.classList.add("reveal");
-    this.reteach("Eerst de volle tien, dan de losse.");
+  protected onWrong(option: ChallengeOption): void {
+    const error = classifyTeenError(this.currentRound, Number(option.value));
+    const plan = this.remediation(teenRemediation(this.currentRound, error));
+    this.showStructure(plan.level === "model");
+    this.root.querySelector<HTMLElement>(".tientalhuis-board")?.classList.add(`support-${plan.level}`);
+    if (plan.revealAnswer) this.root.querySelector('.tientalhuis-choice[data-correct="true"]')?.classList.add("reveal");
+    this.reteach(plan.text);
+  }
+
+  private showStructure(complete: boolean): void {
+    this.root.querySelector(".tientalhuis-equation")?.remove();
+    const equation = document.createElement("div");
+    equation.className = `tientalhuis-equation${complete ? " complete" : ""}`;
+    equation.innerHTML = complete
+      ? `<span>10</span><b>+</b><span>${this.currentRound.ones}</span><b>=</b><strong>${this.currentRound.total}</strong>`
+      : `<span>10</span><b>+</b><span class="loose">losse stippen</span>`;
+    this.root.querySelector(".tientalhuis-board")?.insertAdjacentElement("afterend", equation);
   }
 
   // Signature moment: the whole house lights up with a star on the roof.

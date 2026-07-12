@@ -3701,6 +3701,12 @@ input {
 .mini-title { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; justify-content: center; font-weight: 900; font-size: 1.3rem; color: var(--ink); }
 .mini-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mini-title span { font-size: 1.6rem; }
+.mini-warmup {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 3px; padding: 3px 6px;
+  border: 2px solid #5e88b8; border-radius: 7px; background: #e5f4ff; color: #285c91;
+}
+.mini-title .mini-warmup > span { font-size: 0.9rem; line-height: 1; }
+.mini-warmup small { font-size: 0.62rem; font-weight: 900; text-transform: uppercase; }
 .mini-dots { display: flex; gap: 6px; flex: 0 0 auto; }
 .mini-dot { position: relative; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--edge); background: #fff; }
 .mini-dot.done { background: var(--green); }
@@ -3795,6 +3801,14 @@ input {
 .splitbord-choices { gap: 14px; }
 .splitbord-choice { min-width: 78px; }
 .splitbord-choice-num { display: block; font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+.splitbord-board.support-nudge .empty,
+.splitbord-board.support-guided .empty { animation: adaptive-cue 0.75s ease-in-out infinite alternate; }
+.splitbord-tray.support-guided { border-color: #3185c4; background: rgba(218, 243, 255, 0.86); }
+.splitbord-model-fact { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 5px; }
+.splitbord-model-fact strong,
+.splitbord-model-fact b { min-width: 34px; padding: 3px 7px; border-radius: 6px; background: #fff; font-size: 1.15rem; }
+.splitbord-model-fact strong { background: #fff0a8; }
+.splitbord-model-fact span { font-weight: 900; color: #53627c; }
 
 /* ===== Klankgrot — phonemic awareness (voice-first, emoji pictures) ===== */
 .klankgrot-play { gap: 18px; }
@@ -3839,6 +3853,19 @@ input {
 
 /* ===== Letterkompas — letter <-> sound ===== */
 .letterkompas-play { gap: 18px; }
+.letterkompas-book {
+  width: min(430px, 92vw); min-height: 42px; display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 8px; padding: 5px 9px; border: 3px solid #426e9c; border-radius: 8px;
+  background: rgba(239, 248, 255, 0.94); box-shadow: 0 4px 0 rgba(23, 32, 51, 0.14); color: var(--ink);
+}
+.letterkompas-book-icon { font-size: 1.35rem; line-height: 1; }
+.letterkompas-book-letters { min-width: 0; display: flex; justify-content: center; gap: 4px; overflow: hidden; }
+.letterkompas-book-letters i {
+  flex: 0 0 27px; height: 27px; display: grid; place-items: center; border: 2px solid #6c91b9;
+  border-radius: 6px; background: #fff; font-size: 0.78rem; font-style: normal; font-weight: 950;
+}
+.letterkompas-book-letters i.locked { border-style: dashed; color: #6c7890; background: #e7edf4; }
+.letterkompas-book strong { font-size: 0.78rem; }
 .letterkompas-compass {
   min-width: 92px; min-height: 92px; padding: 0 14px; border-radius: 22px;
   border: 5px solid var(--edge);
@@ -3852,6 +3879,20 @@ input {
 .letterkompas-choices { gap: 16px; }
 .letterkompas-choice.rune { min-width: 86px; }
 .letterkompas-rune { display: block; font-size: 2.8rem; font-weight: 900; line-height: 1; padding: 10px 16px; color: var(--ink); }
+.letterkompas-unlock {
+  position: fixed; z-index: 85; left: 50%; top: 50%; width: 150px; height: 150px;
+  transform: translate(-50%, -50%); display: grid; place-items: center; align-content: center; gap: 3px;
+  border: 5px solid var(--edge); border-radius: 50%; background: #fff2a8;
+  box-shadow: 0 0 0 10px rgba(255, 216, 75, 0.5), 0 18px 42px rgba(23, 32, 51, 0.28);
+  animation: letter-unlock-pop 0.9s var(--spring, ease-out) forwards;
+}
+.letterkompas-unlock small { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; }
+.letterkompas-unlock strong { font-size: 4rem; line-height: 1; }
+@keyframes letter-unlock-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.35) rotate(-8deg); }
+  45% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(3deg); }
+  100% { opacity: 0; transform: translate(-50%, -58%) scale(1); }
+}
 
 /* ===== Zoemroute — connected blending (sound stones) ===== */
 .zoemroute-play { gap: 18px; }
@@ -3956,6 +3997,14 @@ input {
 .tienbrug-bridge .quantity-svg { width: 150px; height: auto; max-height: 70px; }
 .tienbrug-choices { gap: 14px; }
 .tienbrug-choice { min-width: 78px; }
+.tienbrug-bridge.support-nudge,
+.tienbrug-bridge.support-guided { animation: adaptive-cue 0.75s ease-in-out infinite alternate; }
+.tienbrug-step {
+  min-height: 38px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 7px;
+  padding: 5px 10px; border: 3px solid #4f84b6; border-radius: 8px; background: #e8f5ff; color: var(--ink);
+}
+.tienbrug-step span, .tienbrug-step b { font-size: 0.82rem; font-weight: 850; }
+.tienbrug-step strong { padding: 2px 7px; border-radius: 6px; background: #d5f3cf; font-size: 1rem; }
 
 /* Dubbelspel — doubles shown as two mirrored groups; even/odd as actual pairs. */
 .dubbel-stage { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
@@ -4011,6 +4060,8 @@ input {
 .bond-choices { gap: 14px; }
 .bond-choice { min-width: 78px; }
 .bond-num { font-size: 2rem; font-weight: 900; }
+.bond-stage.support-nudge .bond-frame,
+.bond-stage.support-guided .bond-frame { animation: adaptive-cue 0.75s ease-in-out infinite alternate; }
 /* Signature moment: the ten-frame fills up and glows whole. */
 .bond-stage.bond-vol .bond-frame { animation: bondVol 0.6s ease-out; }
 .bond-stage.bond-vol .bond-frame::after { content: "10!"; position: absolute; inset: auto 0 -6px 0; text-align: center; font-weight: 900; color: #2f9e44; animation: bondTen 0.7s ease-out; }
@@ -4065,6 +4116,12 @@ input {
 .getallenlijn-choices { gap: 14px; }
 .getallenlijn-choice { min-width: 78px; }
 .getallenlijn-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+.getallenlijn-direction {
+  min-height: 34px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: #285c91; font-weight: 900; animation: adaptive-cue 0.75s ease-in-out infinite alternate;
+}
+.getallenlijn-direction strong { font-size: 2rem; line-height: 1; }
+.getallenlijn-direction.model { color: #257337; }
 
 /* ===== Woordbouwplaats — sound segmentation (fill the missing sound box) ===== */
 .woordbouw-play { gap: 18px; }
@@ -4097,6 +4154,26 @@ input {
 .tientalhuis-choices { gap: 14px; }
 .tientalhuis-choice { min-width: 78px; }
 .tientalhuis-num { display: block; font-size: 2.3rem; font-weight: 900; line-height: 1; color: var(--ink); padding: 6px 14px; }
+.tientalhuis-board.support-nudge .tientalhuis-room,
+.tientalhuis-board.support-guided .tientalhuis-room { animation: adaptive-cue 0.75s ease-in-out infinite alternate; }
+.tientalhuis-equation {
+  min-height: 38px; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 5px 11px; border: 3px solid #4f84b6; border-radius: 8px; background: #e8f5ff; color: var(--ink);
+}
+.tientalhuis-equation span, .tientalhuis-equation b { font-size: 1rem; font-weight: 900; }
+.tientalhuis-equation .loose { font-size: 0.78rem; }
+.tientalhuis-equation strong { padding: 2px 8px; border-radius: 6px; background: #d5f3cf; font-size: 1.2rem; }
+
+@keyframes adaptive-cue {
+  from { filter: drop-shadow(0 0 0 rgba(49, 133, 196, 0)); transform: translateY(0); }
+  to { filter: drop-shadow(0 0 7px rgba(49, 133, 196, 0.7)); transform: translateY(-2px); }
+}
+
+@media (max-width: 480px) {
+  .mini-warmup small { display: none; }
+  .mini-warmup { padding: 3px; }
+  .letterkompas-book-letters i { flex-basis: 24px; height: 24px; font-size: 0.7rem; }
+}
 
 /* ===== Boss fights — each region's colour-stealing climax ===== */
 .boss-play { gap: 14px; }
@@ -5721,8 +5798,8 @@ button:focus-visible,
   .mini-header { gap: 6px; }
   .mini-dots { gap: 4px; }
   .mini-dot { width: 10px; height: 10px; }
-  .mini-title { font-size: 1.05rem; gap: 5px; }
-  .mini-title span { font-size: 1.25rem; }
+  .mini-title { font-size: 0.9rem; gap: 3px; }
+  .mini-title span { font-size: 1.05rem; }
 
   /* Sterrenreis top bar: compact pills so stars + meter + pill + knop fit. */
   .reis-top { gap: 5px; padding-left: 8px; padding-right: 8px; }

@@ -1,5 +1,14 @@
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
-import { classifyLetterError, letterkompasChallenge, letterkompasRound, type LetterRound } from "../../education/literacy/letters";
+import {
+  LETTERS,
+  STARTER_LETTERS,
+  classifyLetterError,
+  letterkompasChallenge,
+  letterkompasRound,
+  letterPracticeTarget,
+  letterProgress,
+  type LetterRound
+} from "../../education/literacy/letters";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { MiniGameScene } from "./MiniGameScene";
@@ -11,13 +20,18 @@ export class LetterkompasScene extends MiniGameScene {
   protected readonly emoji = "🧭";
   protected readonly heading = "Letterkompas";
   private currentRound!: LetterRound;
+  private unlockedLetters = [...STARTER_LETTERS];
 
   constructor(game: Game) {
     super(game, "letterkompas");
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = letterkompasRound(undefined, this.tier());
+    const attempts = this.game.mastery.getAttempts();
+    const progress = letterProgress(attempts);
+    this.unlockedLetters = progress.unlockedLetters;
+    const preferred = letterPracticeTarget(attempts, this.unlockedLetters, this.adaptiveTargetKey());
+    this.currentRound = letterkompasRound(undefined, this.tier(), this.unlockedLetters, preferred);
     this.instruction = this.currentRound.prompt;
     return letterkompasChallenge(this.currentRound);
   }
@@ -25,6 +39,15 @@ export class LetterkompasScene extends MiniGameScene {
   protected renderPlay(challenge: Challenge): HTMLElement {
     const wrap = document.createElement("div");
     wrap.className = "mini-play letterkompas-play";
+
+    const book = document.createElement("div");
+    book.className = "letterkompas-book";
+    book.setAttribute("aria-label", `${this.unlockedLetters.length} van ${LETTERS.length} klanken vrij`);
+    const visible = this.unlockedLetters.slice(-6);
+    book.innerHTML = `<span class="letterkompas-book-icon" aria-hidden="true">&#128214;</span><span class="letterkompas-book-letters">${visible
+      .map((letter) => `<i>${letter.toUpperCase()}</i>`)
+      .join("")}${this.unlockedLetters.length < LETTERS.length ? `<i class="locked" aria-hidden="true">?</i>` : ""}</span><strong>${this.unlockedLetters.length}/${LETTERS.length}</strong>`;
+    wrap.appendChild(book);
 
     const compass = document.createElement("button");
     compass.type = "button";
@@ -96,5 +119,15 @@ export class LetterkompasScene extends MiniGameScene {
   // Signature moment: the compass spins a full turn — letter found!
   protected onCorrect(): void {
     this.root.querySelector(".letterkompas-compass")?.classList.add("found");
+    const progress = letterProgress(this.game.mastery.getAttempts());
+    if (progress.unlockedLetters.length <= this.unlockedLetters.length) return;
+    const letter = progress.unlockedLetters[this.unlockedLetters.length];
+    const reveal = document.createElement("div");
+    reveal.className = "letterkompas-unlock";
+    reveal.setAttribute("role", "status");
+    reveal.innerHTML = `<small>Nieuwe klank!</small><strong>${letter.toUpperCase()}</strong>`;
+    this.root.appendChild(reveal);
+    this.game.audio.play("golden");
+    this.later(() => reveal.remove(), 950);
   }
 }

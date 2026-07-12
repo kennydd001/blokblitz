@@ -3,6 +3,7 @@
 // one that comes before/after. Pure data + round generation.
 
 import type { Challenge, ChallengeOption, Representation } from "../types";
+import type { RemediationCopy } from "../remediation";
 
 export type LineMode = "missing" | "after" | "before";
 
@@ -78,6 +79,22 @@ export function classifyLineError(target: number, player: number, mode: LineMode
   }
   if (Math.abs(player - target) === 1) return "line-off-by-one";
   return "line-weak";
+}
+
+export function lineRemediation(round: LineRound, error: LineMisconception, player: number): RemediationCopy {
+  if (error === "line-direction") {
+    const after = round.mode === "after";
+    return {
+      nudge: after ? "Kijk één vakje naar rechts." : "Kijk één vakje naar links.",
+      guided: after ? "Na is naar rechts." : "Voor is naar links.",
+      model: "Tel rustig langs de lijn."
+    };
+  }
+  return {
+    nudge: player < round.target ? "Tel één stap verder." : "Tel één stap terug.",
+    guided: "Kijk naar de getallen naast het lege vak.",
+    model: "Tel rustig langs de lijn."
+  };
 }
 
 let lineCounter = 0;

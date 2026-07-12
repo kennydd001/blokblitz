@@ -1,6 +1,7 @@
 import { JOURNEY } from "../../data/journey";
 import { stickerById } from "../../data/stickers";
 import { SCENE_DOMAINS } from "../../education/difficulty";
+import { buildRemediationPlan, type RemediationCopy, type RemediationPlan } from "../../education/remediation";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -31,6 +32,9 @@ export abstract class MiniGameScene extends BaseScene {
   private previousTargetKey?: string;
   private previousCorrectOptionIndex?: number;
   private correctOptionPositionRun = 0;
+  private wrongAttemptsThisRound = 0;
+  private warmupRound = false;
+  protected roundFocusTarget?: string;
   protected goldenRound = false;
   protected buddy?: Buddy;
   /** Tracked timeouts so a fast child tapping Home mid-animation can't trigger work on a detached scene. */
@@ -109,15 +113,26 @@ export abstract class MiniGameScene extends BaseScene {
     return undefined;
   }
 
+  /** The weak/due target selected before makeChallenge(), for generators that can force it directly. */
+  protected adaptiveTargetKey(): string | undefined {
+    return this.roundFocusTarget;
+  }
+
   protected startRound(): void {
     // Adaptive resurfacing: steer toward a weak or a memory-decayed target in
     // this mode's learning domain (spaced repetition), re-rolling a few times so
     // that shaky /s/, word or split comes back around instead of a uniform-random
     // pick. Without an explicit focus, avoid the immediately previous target so
     // practice stays interleaved rather than becoming a same-card drill.
-    const focus = this.game.curriculumFocus(SCENE_DOMAINS[this.name]);
+    const domain = SCENE_DOMAINS[this.name];
+    const focus = this.game.curriculumFocus(domain);
+    this.roundFocusTarget = focus;
+    this.warmupRound = this.game.curriculumFocusReason() === "warmup";
     const avoid = focus ? undefined : this.previousTargetKey;
-    for (let attempt = 0; attempt < 11; attempt += 1) {
+    // Some literacy pools contain more than forty targets. Enough cheap,
+    // DOM-free rolls make a due word genuinely likely to appear, rather than
+    // merely recording an adaptive intention that the child rarely sees.
+    for (let attempt = 0; attempt < 96; attempt += 1) {
       this.current = this.makeChallenge();
       const target = this.currentTargetKey();
       if (focus && target !== focus) continue;
@@ -127,9 +142,11 @@ export abstract class MiniGameScene extends BaseScene {
     this.previousTargetKey = this.currentTargetKey();
     this.breakCorrectOptionPositionStreak();
     this.hintUsed = false;
+    this.wrongAttemptsThisRound = 0;
     this.resolving = false;
     this.spokenChoicePending = false;
     this.startedAt = performance.now();
+    delete this.root.dataset.supportLevel;
     const play = this.renderPlay(this.current);
     this.root.replaceChildren(this.buildHeader(), this.instructionBar(), play);
     // Juice: every tappable tile pops in one-by-one, so each round OPENS with
@@ -214,6 +231,7 @@ export abstract class MiniGameScene extends BaseScene {
       this.later(() => (this.round > this.total ? this.finish() : this.startRound()), 1000);
     } else {
       this.hintUsed = true;
+      this.wrongAttemptsThisRound += 1;
       this.streak = 0;
       this.root.classList.remove("mini-fever");
       // Multi-sensory "oops" + a teaching scaffold, then let them retry. The
@@ -224,7 +242,7 @@ export abstract class MiniGameScene extends BaseScene {
       this.buddy?.setMood("oops", 1400);
       this.buddy?.say("Probeer nog!");
       this.showScaffold(option);
-      this.onWrong();
+      this.onWrong(option);
     }
   }
 
@@ -257,8 +275,21 @@ export abstract class MiniGameScene extends BaseScene {
   }
 
   /** Override to highlight the right answer on a wrong tap. Speaks + shows the hint. */
-  protected onWrong(): void {
+  protected onWrong(_option?: ChallengeOption): void {
     this.reteach(this.current.hint || "Bijna! Probeer nog eens.");
+  }
+
+  /** Resolve the least intrusive useful help for this exact target and miss. */
+  protected remediation(copy: RemediationCopy): RemediationPlan {
+    const plan = buildRemediationPlan({
+      attempts: this.game.mastery.getAttempts(),
+      domain: SCENE_DOMAINS[this.name],
+      targetKey: this.currentTargetKey(),
+      wrongAttempts: this.wrongAttemptsThisRound,
+      copy
+    });
+    this.root.dataset.supportLevel = plan.level;
+    return plan;
   }
 
   /** Override for a mode's signature "yes!" moment (played before the shared celebrate). */
@@ -367,6 +398,13 @@ export abstract class MiniGameScene extends BaseScene {
     const title = document.createElement("div");
     title.className = "mini-title";
     title.innerHTML = `<span aria-hidden="true">${this.emoji}</span><strong>${this.heading}</strong>`;
+    if (this.warmupRound) {
+      const warmup = document.createElement("span");
+      warmup.className = "mini-warmup";
+      warmup.setAttribute("aria-label", "Even opwarmen met iets van vroeger");
+      warmup.innerHTML = `<span aria-hidden="true">&#8635;</span><small>Opwarmen</small>`;
+      title.appendChild(warmup);
+    }
     const dots = document.createElement("div");
     dots.className = "mini-dots";
     dots.setAttribute("aria-label", `Ronde ${Math.min(this.round, this.total)} van ${this.total}`);

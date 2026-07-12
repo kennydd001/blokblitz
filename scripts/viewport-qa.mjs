@@ -49,6 +49,7 @@ const scenarios = [
   { name: "calm-done-next-narrow-mobile", width: 332, height: 807, mobile: true, open: "calm-done-next", expectCalmDone: { fill: 1, next: "count", treasureReady: false } },
   { name: "calm-done-treasure-landscape", width: 844, height: 390, mobile: true, open: "calm-done-treasure", expectCalmDone: { fill: 3, next: null, treasureReady: true } },
   { name: "memory-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "memory-tier-1", expectMemory: { tier: 1, cards: 6 } },
+  { name: "letterkompas-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "letterkompas", expectMiniMode: ".letterkompas-play", expectChoiceCount: 2, expectLetterBook: "4 van 28" },
   { name: "memory-advanced-narrow-mobile", width: 390, height: 844, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "memory-advanced-landscape", width: 844, height: 390, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "geldmarkt-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:geldmarkt", expectMiniMode: ".geld-play", expectChoiceCount: 3 },
@@ -74,6 +75,7 @@ const scenarios = [
   { name: "vriendjes-narrow-mobile", width: 332, height: 807, mobile: true, open: "vriendjes", expectMiniMode: ".bond-frame" },
   { name: "dubbelspel-mobile", width: 390, height: 844, mobile: true, open: "dubbelspel", expectMiniMode: ".dubbel-stage" },
   { name: "splitbord-mobile", width: 390, height: 844, mobile: true, open: "splitbord", expectMiniMode: ".splitbord-board" },
+  { name: "splitbord-remediation-narrow-mobile", width: 332, height: 807, mobile: true, open: "splitbord-wrong", expectMiniMode: ".splitbord-board", expectRemediation: "model" },
   { name: "tienbrug-narrow-mobile", width: 360, height: 740, mobile: true, open: "tienbrug", expectMiniMode: ".tienbrug-sum" },
   { name: "kloktoren-mobile", width: 390, height: 844, mobile: true, open: "kloktoren", expectMiniMode: ".klok-play" },
   { name: "boss-mobile", width: 390, height: 844, mobile: true, open: "boss", expectMiniMode: ".boss-arena" },
@@ -373,6 +375,36 @@ async function openScenario(open) {
   if (open.startsWith("tier-3:")) {
     const scene = open.slice("tier-3:".length);
     const randomValues = advancedModeSeeds[scene] ?? [0.75];
+    const advancedProfileSetup =
+      scene === "letterkompas"
+        ? `
+          const attempts = Array.from({ length: 3 }, (_, index) => ({
+            timestamp: Date.now() - 1000 + index,
+            sessionId: "qa-earlier-letter-session",
+            levelId: "literacy-reading",
+            scene: "minigame",
+            challengeType: "literacy-reading:letterSound",
+            skill: "letterSound",
+            representation: "numeral",
+            quantity: 0,
+            quantityRange: "1-3",
+            promptRepresentation: "numeral",
+            correctAnswer: "letter-ij",
+            playerAnswer: "i",
+            wasCorrect: false,
+            reactionTimeMs: 500,
+            hintUsed: false,
+            errorType: "letter-sound-weak",
+            domain: "literacy-reading",
+            targetKey: "letter-ij",
+            rangeKey: "letters",
+            stimulusKey: "ij",
+            responseKey: "i"
+          }));
+          game.save.getMutableData().progress.attempts.push(...attempts);
+          game.mastery.setAttempts(game.save.getMutableData().progress.attempts);
+        `
+        : "";
     const opened = await evaluate(`
       (() => {
         const game = window.__blokblitzGame;
@@ -381,6 +413,7 @@ async function openScenario(open) {
         journey.round = 3;
         journey.nodeIndex = 0;
         game.lastJourneyNode = undefined;
+        ${advancedProfileSetup}
         const randomValues = ${JSON.stringify(randomValues)};
         const originalRandom = Math.random;
         Math.random = () => randomValues.shift() ?? 0.75;
@@ -408,6 +441,13 @@ async function openScenario(open) {
   if (open === "hub") {
     await openGameScene("hub");
     await waitForSelector(".hub-grid", 5_000);
+    return;
+  }
+  if (open === "splitbord-wrong") {
+    await openGameScene("splitbord");
+    await waitForSelector(".splitbord-choice[data-correct='false']", 5_000);
+    await click(".splitbord-choice[data-correct='false']");
+    await waitForSelector(".mini-scaffold", 5_000);
     return;
   }
   if (open !== "real-runner") {
@@ -657,10 +697,13 @@ async function collectMetrics(scenario = {}) {
         miniBoard: miniBoardSelector ? rect(miniBoardSelector) : null,
         miniChoiceCount: document.querySelectorAll(".mini-choice").length,
         miniChoices: rects(".mini-choice"),
+        miniScaffold: rect(".mini-scaffold"),
+        supportLevel: document.querySelector(".mini-scene")?.dataset.supportLevel ?? null,
         memoryBoard: rect(".memory-board"),
         memoryTier: document.querySelector(".memory-board")?.dataset.tier ?? null,
         memoryCards: rects(".memory-card"),
         advancedLetterChoices: [...document.querySelectorAll(".letterkompas-choice")].map((choice) => choice.textContent?.trim() ?? ""),
+        letterBook: document.querySelector(".letterkompas-book")?.getAttribute("aria-label") ?? null,
         soundStones: rects(".zoemroute-stone"),
         wordBoxes: rects(".woordbouw-box"),
         roundDotCount: document.querySelectorAll(".mini-dot").length,
@@ -1064,6 +1107,8 @@ function validateScenario(scenario, metrics, scenarioErrors) {
       if (choice.width < 44 || choice.height < 44) failures.push(`mini choice is too small: ${JSON.stringify(choice)}`);
     }
     if (scenario.expectAdvancedLetter && !metrics.advancedLetterChoices.includes(scenario.expectAdvancedLetter)) failures.push(`missing advanced letter ${scenario.expectAdvancedLetter}: ${metrics.advancedLetterChoices.join(", ")}`);
+    if (scenario.expectLetterBook && !metrics.letterBook?.includes(scenario.expectLetterBook)) failures.push(`letter book mismatch: ${metrics.letterBook}`);
+    if (scenario.expectRemediation && (metrics.supportLevel !== scenario.expectRemediation || !metrics.miniScaffold)) failures.push(`remediation mismatch: level=${metrics.supportLevel}, scaffold=${JSON.stringify(metrics.miniScaffold)}`);
     if (scenario.expectSoundStones !== undefined && metrics.soundStones.length !== scenario.expectSoundStones) failures.push(`expected ${scenario.expectSoundStones} sound stones, got ${metrics.soundStones.length}`);
     if (scenario.expectWordBoxes !== undefined && metrics.wordBoxes.length !== scenario.expectWordBoxes) failures.push(`expected ${scenario.expectWordBoxes} word boxes, got ${metrics.wordBoxes.length}`);
     if (scenario.expectRoundDots !== undefined && metrics.roundDotCount !== scenario.expectRoundDots) failures.push(`expected ${scenario.expectRoundDots} round dots, got ${metrics.roundDotCount}`);

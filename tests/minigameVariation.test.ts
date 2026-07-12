@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { Challenge } from "../src/education/types";
+import type { AttemptLog, Challenge } from "../src/education/types";
 import { Game } from "../src/game/Game";
 import { MiniGameScene } from "../src/scenes/minigames/MiniGameScene";
 
@@ -81,6 +81,53 @@ afterEach(() => {
 });
 
 describe("within-session variation", () => {
+  it("does not label a fresh discovery round as a warm-up", () => {
+    const game = new Game(document.querySelector<HTMLElement>("#app")!);
+    expect(game.curriculumFocus("literacy-reading")).toBeUndefined();
+    expect(game.curriculumFocusReason()).toBe("discovery");
+  });
+
+  it("consumes a profile-local due-target warm-up before normal adaptive review", () => {
+    const game = new Game(document.querySelector<HTMLElement>("#app")!);
+    const old = Date.now() - 12 * 86_400_000;
+    const historical = ["letter-i", "letter-k", "letter-m"].map(
+      (targetKey, index) =>
+        ({
+          timestamp: old + index,
+          sessionId: "last-week",
+          levelId: "literacy-reading",
+          scene: "minigame",
+          challengeType: "literacy-reading:letterSound",
+          skill: "letterSound",
+          representation: "numeral",
+          quantity: 0,
+          quantityRange: "1-3",
+          promptRepresentation: "numeral",
+          correctAnswer: targetKey,
+          playerAnswer: targetKey,
+          wasCorrect: true,
+          reactionTimeMs: 500,
+          hintUsed: false,
+          domain: "literacy-reading",
+          targetKey
+        }) as AttemptLog
+    );
+    game.save.updateProgress((progress) => {
+      progress.attempts = historical;
+    });
+    game.mastery.setAttempts(historical);
+    game.save.startNewSession();
+
+    expect(game.curriculumFocus("literacy-reading")).toBe("letter-i");
+    expect(game.curriculumFocusReason()).toBe("warmup");
+    expect(game.curriculumFocus("literacy-reading")).toBe("letter-k");
+    expect(game.curriculumFocusReason()).toBe("warmup");
+    expect(game.curriculumFocus("literacy-reading")).toBe("letter-m");
+    expect(game.curriculumFocusReason()).toBe("warmup");
+    expect(game.curriculumFocus("literacy-reading")).toBe("letter-i");
+    expect(game.curriculumFocusReason()).toBe("review");
+  });
+
   it("rerolls an accidental immediate target repeat", () => {
     const game = new Game(document.querySelector<HTMLElement>("#app")!);
     const scene = new VariationScene(game, ["a", "a", "b"]);

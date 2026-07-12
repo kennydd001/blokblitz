@@ -62,6 +62,7 @@ export const SCENE_DOMAINS: Record<string, string> = {
   zoemroute: "literacy-reading",
   woordbouwplaats: "literacy-reading",
   luisterbos: "listening-comprehension",
+  splitbord: "math-number",
   tientalhuis: "math-number",
   getallenlijn: "math-number",
   tienbrug: "math-operations",

@@ -1,7 +1,22 @@
+import { buildCurriculumAttempt } from "../../education/challengeLogger";
+import {
+  classifySplitError,
+  splitRemediation,
+  type SplitMisconception,
+  type SplitMode
+} from "../../education/math/splits";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
 import { splitbordChallenge } from "./miniChallenges";
 import { MiniGameScene } from "./MiniGameScene";
+
+interface SplitContext {
+  mode: SplitMode;
+  total: number;
+  left: number;
+  right: number;
+  targetKey: string;
+}
 
 // The rekenbordje met 3 vakjes: one "samen" (total) box on top and two part
 // boxes below. Depending on the round the child picks the two parts, the missing
@@ -10,15 +25,42 @@ import { MiniGameScene } from "./MiniGameScene";
 export class SplitbordScene extends MiniGameScene {
   protected readonly emoji = "⚖️";
   protected readonly heading = "Splitsbord";
+  private split?: SplitContext;
+  private splitChallengeId = "";
 
   constructor(game: Game) {
     super(game, "splitbord");
   }
 
   protected makeChallenge(): Challenge {
-    const challenge = splitbordChallenge(this.focusQuantity(3, 10));
+    const focusedTotal = Number(this.adaptiveTargetKey()?.match(/^split-(\d+)-/)?.[1]);
+    const challenge = splitbordChallenge(
+      Number.isFinite(focusedTotal) ? Math.max(2, Math.min(10, focusedTotal)) : this.focusQuantity(3, 10)
+    );
+    this.split = this.contextFor(challenge);
+    this.splitChallengeId = challenge.id;
     this.instruction = challenge.prompt;
     return challenge;
+  }
+
+  private contextFor(challenge: Challenge): SplitContext {
+    const [, rawMode, totalDisplay, leftDisplay, rightDisplay] = challenge.mechanic.split("|");
+    const mode = rawMode as SplitMode;
+    const correct = challenge.options.find((option) => option.isCorrect);
+    const pair = String(correct?.label ?? "").match(/^(\d+)\+(\d+)$/);
+    let total = totalDisplay === "?" ? Number(correct?.value) : Number(totalDisplay);
+    let left = leftDisplay === "?" ? Number.NaN : Number(leftDisplay);
+    let right = rightDisplay === "?" ? Number.NaN : Number(rightDisplay);
+    if (mode === "pick-parts" && pair) {
+      left = Number(pair[1]);
+      right = Number(pair[2]);
+    } else if (mode === "pick-missing") {
+      right = Number(correct?.value);
+    }
+    if (!Number.isFinite(total)) total = left + right;
+    if (!Number.isFinite(left)) left = total - right;
+    if (!Number.isFinite(right)) right = total - left;
+    return { mode, total, left, right, targetKey: `split-${total}-${left}-${right}` };
   }
 
   protected renderPlay(challenge: Challenge): HTMLElement {
@@ -102,9 +144,83 @@ export class SplitbordScene extends MiniGameScene {
     return tray;
   }
 
-  protected onWrong(): void {
-    this.root.querySelector('.splitbord-choice[data-correct="true"]')?.classList.add("reveal");
-    this.reteach(this.current.hint || "Samen is het nog niet zoveel. Kijk naar het lege vak.");
+  protected currentTargetKey(): string | undefined {
+    return this.activeSplit()?.targetKey;
+  }
+
+  private activeSplit(): SplitContext | undefined {
+    if (!this.current) return this.split;
+    if (!this.split || this.splitChallengeId !== this.current.id) {
+      this.split = this.contextFor(this.current);
+      this.splitChallengeId = this.current.id;
+    }
+    return this.split;
+  }
+
+  private errorFor(option: ChallengeOption): SplitMisconception | undefined {
+    const split = this.activeSplit();
+    if (!split) return undefined;
+    const pair = String(option.label ?? "").match(/^(\d+)\+(\d+)$/);
+    return classifySplitError({
+      mode: split.mode,
+      total: split.total,
+      correctLeft: split.left,
+      correctRight: split.right,
+      knownPart: split.mode === "pick-missing" ? split.left : undefined,
+      playerLeft: pair ? Number(pair[1]) : undefined,
+      playerRight: pair ? Number(pair[2]) : undefined,
+      playerValue: pair ? undefined : Number(option.value)
+    });
+  }
+
+  protected logAttempt(option: ChallengeOption): boolean {
+    const split = this.activeSplit();
+    if (!split) return super.logAttempt(option);
+    const attempt = buildCurriculumAttempt({
+      sessionId: this.game.save.getMutableData().progress.sessionId,
+      domain: "math-number",
+      skill: "partwhole",
+      targetKey: split.targetKey,
+      rangeKey: "splits-10",
+      stimulusKey: `${split.total}=${split.left}+${split.right}`,
+      responseKey: String(option.label ?? option.value),
+      wasCorrect: option.isCorrect,
+      reactionTimeMs: performance.now() - this.startedAt,
+      hintUsed: this.hintUsed,
+      errorType: this.errorFor(option)
+    });
+    // Preserve the established activity identity while enriching the attempt
+    // with domain/target metadata for adaptive split remediation.
+    attempt.levelId = this.current.levelId;
+    attempt.challengeType = this.current.challengeType;
+    return this.game.recordCurriculumAttempt(attempt);
+  }
+
+  protected showScaffold(): void {}
+
+  protected onWrong(option: ChallengeOption): void {
+    const error = this.errorFor(option);
+    const plan = this.remediation(splitRemediation(error, this.current.hint || "Tel de twee delen samen."));
+    const board = this.root.querySelector<HTMLElement>(".splitbord-board");
+    board?.classList.add(`support-${plan.level}`);
+    if (plan.level !== "nudge") this.root.querySelector<HTMLElement>(".splitbord-tray")?.classList.add("support-guided");
+    if (plan.revealAnswer) {
+      this.root.querySelector('.splitbord-choice[data-correct="true"]')?.classList.add("reveal");
+      this.showWorkedSplit();
+    }
+    this.reteach(plan.text);
+  }
+
+  private showWorkedSplit(): void {
+    const split = this.activeSplit();
+    if (!split) return;
+    this.root.querySelector(".mini-scaffold")?.remove();
+    const panel = document.createElement("div");
+    panel.className = "mini-scaffold splitbord-model";
+    panel.dataset.scaffold = "true";
+    panel.innerHTML = `<small>Kijk: ${split.total} is ${split.left} en ${split.right}.</small><div class="splitbord-model-fact"><strong>${split.total}</strong><span>=</span><b>${split.left}</b><span>+</span><b>${split.right}</b></div>`;
+    this.root.appendChild(panel);
+    this.later(() => panel.remove(), 2400);
   }
 
   // Signature moment: the split CLICKS together and the missing numbers LAND

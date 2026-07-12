@@ -1,5 +1,11 @@
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
-import { bridgeChallenge, bridgeRound, classifyBridgeError, type BridgeRound } from "../../education/math/addsub20";
+import {
+  bridgeChallenge,
+  bridgeRemediation,
+  bridgeRound,
+  classifyBridgeError,
+  type BridgeRound
+} from "../../education/math/addsub20";
 import { RepresentationFactory } from "../../education/representations/RepresentationFactory";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -74,9 +80,32 @@ export class TienbrugScene extends MiniGameScene {
     return this.game.recordCurriculumAttempt(attempt);
   }
 
-  protected onWrong(): void {
-    this.root.querySelector('.tienbrug-choice[data-correct="true"]')?.classList.add("reveal");
-    this.reteach(this.currentRound.bridgeText);
+  protected onWrong(option: ChallengeOption): void {
+    const error = classifyBridgeError(this.currentRound, Number(option.value));
+    const plan = this.remediation(bridgeRemediation(this.currentRound, error));
+    this.showBridgeStep(plan.level === "model");
+    this.root.querySelector<HTMLElement>(".tienbrug-bridge")?.classList.add(`support-${plan.level}`);
+    if (plan.revealAnswer) this.root.querySelector('.tienbrug-choice[data-correct="true"]')?.classList.add("reveal");
+    this.reteach(plan.text);
+  }
+
+  private showBridgeStep(complete: boolean): void {
+    this.root.querySelector(".tienbrug-step")?.remove();
+    const step = document.createElement("div");
+    step.className = `tienbrug-step${complete ? " complete" : ""}`;
+    const sign = this.currentRound.op;
+    if (this.currentRound.mode === "to-ten") {
+      step.innerHTML = complete
+        ? `<span>${this.currentRound.a} + ${this.currentRound.bridge.toTen} = 10</span><strong>? = ${this.currentRound.answer}</strong>`
+        : `<span>${this.currentRound.a} + ? = 10</span><b>maak de tien vol</b>`;
+      this.root.querySelector(".tienbrug-bridge")?.insertAdjacentElement("afterend", step);
+      return;
+    }
+    const first = `${this.currentRound.a} ${sign} ${this.currentRound.bridge.toTen} = 10`;
+    step.innerHTML = complete
+      ? `<span>${first}</span><b>${sign} ${this.currentRound.bridge.rest}</b><strong>= ${this.currentRound.answer}</strong>`
+      : `<span>${first}</span><b>dan de rest</b>`;
+    this.root.querySelector(".tienbrug-bridge")?.insertAdjacentElement("afterend", step);
   }
 
   // Signature moment: a light-wave rolls across the ten-frame and a runner

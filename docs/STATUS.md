@@ -2138,3 +2138,62 @@ Release:
   `index-DuYYqNZK.js` and unchanged `index-By3veXyl.css` with HTTP 200. The
   served JavaScript contains the current Count, curriculum-focus, and correct-
   option paths and has the expected 387,198 bytes.
+
+## Earned Letters and Adaptive Remediation - 2026-07-12
+
+Audit outcome:
+
+- The proposed minimal-pair and voice-audit gaps were stale: Klankgrot already
+  serves misconception-triggered pair duels in-game, and the local Lily audit
+  already rejects missing runtime clips and browser speech fallback.
+- Letterkompas was tiered, but its first jump was still broad (12 then 20
+  graphemes) and was not earned per profile. Misconception labels did resurface
+  weak targets, but the immediate help did not distinguish the child's exact
+  error or fade with mastery. `sessionWarmup()` was pure and tested but unused.
+- A default playtime lock, seventh world, and orphan trace-scorer foundation
+  were not added. Playtime policy needs an explicit parent-controlled product
+  decision; another region would broaden a 49-node journey before deepening it;
+  handwriting should arrive as a complete playable mode, not dead plumbing.
+
+Completed work:
+
+- Added a profile-local Letterkompas book in an initial-reading order beginning
+  with `i, k, m, s`. Two correct, unhinted responses on a grapheme earn one new
+  grapheme. New profiles therefore see 4/28, the generator deliberately spreads
+  evidence over the least-practised unlocked letters, and legacy-seen letters
+  never become locked again. A newly earned grapheme gets a visible unlock beat.
+- Activated the three-item spaced-review warm-up at the start of each real play
+  session. Warm-up queues are isolated per profile/session/domain, consumed
+  before ordinary shaky/due focus, visibly marked only when a real old target is
+  served, and reset on profile or session change. Adaptive target generation now
+  gets enough cheap data-only rolls to make large word pools genuinely obey the
+  requested focus; Letterkompas can force its selected grapheme directly.
+- Added a pure fading-remediation contract: unseen/shaky targets receive a full
+  worked model, secure targets receive a guided step, fluent targets receive a
+  small nudge, and a second/third miss in the same round escalates support again.
+- Connected the existing misconception classifiers to child-facing teaching in
+  Splitsbord, Vriendjes 10, Tientalhuis, Getallenlijn, and Tienbrug. Splitsbord
+  now logs profile-local `math-number` split facts and exact error types while
+  preserving its established activity identity; its full model renders the
+  actual fact (for example `3 = 1 + 2`) rather than a disconnected quantity.
+- Added 26 natural Lily `eleven_v3` remediation clips. They are generated at
+  build time, committed locally, catalogued, and never call a paid runtime API.
+- Compact mini-game headers now use one stable phone size below 400px, fixing
+  real clipping found for Letterkompas and Vormenburcht during viewport QA.
+
+Validation:
+
+- Pure and behavioral regressions cover fresh discovery versus true warm-up,
+  three queued due targets, full/guided/nudge support and same-round escalation,
+  starter/earned/legacy letters, deliberate letter rotation, and Splitbord's
+  curriculum error logging plus worked model.
+- `npm.cmd run verify` passes typecheck, lint, 36 test files / 312 tests, and a
+  production build. Entry assets are `index-DnUDxhxt.js` (106.48 kB gzip) and
+  `index-DDjuguac.css` (34.15 kB gzip).
+- `npm.cmd run qa:viewport` passes all 61 scenarios, including explicit 332px
+  4/28 starter letters, an 18/28 advanced `IJ` profile, and a rendered wrong-
+  answer Splitbord model. The starter and remediation screenshots were inspected
+  directly. `npm.cmd run qa:mobile-touch` passes 41 real touch steps, 12 tracked
+  attempts, and one completed journey node.
+- `npm.cmd run voice:elevenlabs-audit` passes at 1584/1584 stored Lily clips,
+  1515/1515 current spoken lines, and 32/32 reading phonemes.

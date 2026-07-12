@@ -1,4 +1,4 @@
-import { bondChallenge, bondRound, classifyBondError, type BondRound } from "../../education/math/bonds";
+import { bondChallenge, bondRemediation, bondRound, classifyBondError, type BondRound } from "../../education/math/bonds";
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -110,14 +110,21 @@ export class BondsScene extends MiniGameScene {
     return this.game.recordCurriculumAttempt(attempt);
   }
 
-  protected onWrong(): void {
-    this.root.querySelector('.bond-choice[data-correct="true"]')?.classList.add("reveal");
-    if (this.currentRound.mode === "is-ten") {
-      this.root.querySelector<HTMLElement>(".bond-stage")?.classList.add(this.currentRound.makesTen ? "bond-vol" : "bond-not-ten");
-    } else {
-      this.root.querySelectorAll<HTMLElement>(".bond-cell.missing").forEach((cell) => cell.classList.add("preview"));
+  protected onWrong(option: ChallengeOption): void {
+    const answer = Array.isArray(option.value) ? String(option.value) : option.value;
+    const error = classifyBondError(this.currentRound, answer);
+    const plan = this.remediation(bondRemediation(this.currentRound, error));
+    const stage = this.root.querySelector<HTMLElement>(".bond-stage");
+    stage?.classList.add(`support-${plan.level}`);
+    if (plan.level !== "nudge") {
+      if (this.currentRound.mode === "is-ten") {
+        stage?.classList.add(this.currentRound.makesTen ? "bond-vol" : "bond-not-ten");
+      } else {
+        this.root.querySelectorAll<HTMLElement>(".bond-cell.missing").forEach((cell) => cell.classList.add("preview"));
+      }
     }
-    this.reteach(this.currentRound.hintText);
+    if (plan.revealAnswer) this.root.querySelector('.bond-choice[data-correct="true"]')?.classList.add("reveal");
+    this.reteach(plan.text);
   }
 
   // Signature moment: the ten-frame fills up and glows — the child sees the ten

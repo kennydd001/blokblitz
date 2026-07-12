@@ -3,6 +3,7 @@
 // loose ones; the child either reads the teen number or finds the loose-ones part.
 
 import type { DifficultyTier } from "../difficulty";
+import type { RemediationCopy } from "../remediation";
 import type { Challenge, ChallengeOption, Representation } from "../types";
 
 export type TeenMode = "read-teen" | "build-teen";
@@ -83,6 +84,21 @@ export function classifyTeenError(round: TeenRound, player: number): TeenMisconc
   if (round.mode === "read-teen" && player === round.ones) return "teen-tens-confusion";
   if (Math.abs(player - correct) === 1) return "teen-off-by-one";
   return "teen-weak";
+}
+
+export function teenRemediation(_round: TeenRound, error: TeenMisconception): RemediationCopy {
+  if (error === "teen-tens-confusion") {
+    return {
+      nudge: "Vergeet het volle tiental niet.",
+      guided: "Eerst tien, tel daarna de losse één voor één.",
+      model: "Eerst de volle tien, dan de losse."
+    };
+  }
+  return {
+    nudge: "Tel de losse stippen nog eens.",
+    guided: "Eerst tien, tel daarna de losse één voor één.",
+    model: "Eerst de volle tien, dan de losse."
+  };
 }
 
 let teenCounter = 0;

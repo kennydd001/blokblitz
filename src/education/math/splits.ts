@@ -3,6 +3,8 @@
 // covers every split 0..n for n = 1..10, including the zero-splits (0+n, n+0) and
 // reversal pairs (2+3 vs 3+2), which the Splitbord Builder mode teaches.
 
+import type { RemediationCopy } from "../remediation";
+
 export type SplitMode = "pick-parts" | "pick-missing" | "pick-total";
 
 export interface SplitPair {
@@ -111,4 +113,26 @@ export function classifySplitError(args: {
     if (playerLeft === correctRight && playerRight === correctLeft) return "reversed-pair-unclear";
   }
   return "reversed-pair-unclear";
+}
+
+export function splitRemediation(error: SplitMisconception | undefined, model: string): RemediationCopy {
+  if (error === "counts-total-as-part") {
+    return {
+      nudge: "Kijk alleen naar het lege vak.",
+      guided: "Leg de eieren in het lege vak.",
+      model
+    };
+  }
+  if (error === "off-by-one-part") {
+    return {
+      nudge: "Tel de eieren nog eens.",
+      guided: "Tel de eieren in het lege vak één voor één.",
+      model
+    };
+  }
+  return {
+    nudge: "Kijk naar de twee delen.",
+    guided: "Tel de twee delen één voor één.",
+    model
+  };
 }

@@ -3,6 +3,7 @@
 // `bridge` field carries that decomposition for the teaching scaffold. Pure data.
 
 import type { Challenge, ChallengeOption, Representation } from "../types";
+import type { RemediationCopy } from "../remediation";
 
 export type BridgeMode = "add" | "sub" | "to-ten";
 
@@ -126,6 +127,21 @@ export function classifyBridgeError(round: BridgeRound, player: number): BridgeM
   if (Math.abs(player - round.answer) === 1) return "off-by-one";
   if (round.mode === "add" && player === round.bridge.rest) return "no-bridge-counted-on";
   return "bridge-weak";
+}
+
+export function bridgeRemediation(round: BridgeRound, error: BridgeMisconception): RemediationCopy {
+  if (error === "off-by-one") {
+    return {
+      nudge: "Controleer je laatste sprong.",
+      guided: "Ga eerst naar tien en tel de rest nog eens.",
+      model: round.bridgeText
+    };
+  }
+  return {
+    nudge: "Zoek eerst de tien.",
+    guided: "Splits de sprong: eerst naar tien.",
+    model: round.bridgeText
+  };
 }
 
 let bridgeCounter = 0;

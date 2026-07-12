@@ -146,6 +146,34 @@ function buildVoiceLineCatalog(): VoiceLineCatalogEntry[] {
     "Tel de twee delen samen.",
     "Samen is het nog niet zoveel. Kijk naar het lege vak."
   ]);
+  addMany("adaptive-remediation", [
+    "Kijk alleen naar het lege vak.",
+    "Leg de eieren in het lege vak.",
+    "Tel de eieren nog eens.",
+    "Tel de eieren in het lege vak één voor één.",
+    "Kijk naar de twee delen.",
+    "Tel de twee delen één voor één.",
+    "Is het tienframe precies vol?",
+    "Tel de twee kleuren samen.",
+    "Kijk alleen naar de lege vakjes.",
+    "Tel alleen de lege vakjes.",
+    "Kijk naar de lege vakjes.",
+    "Tel de lege vakjes één voor één.",
+    "Controleer je laatste sprong.",
+    "Ga eerst naar tien en tel de rest nog eens.",
+    "Zoek eerst de tien.",
+    "Splits de sprong: eerst naar tien.",
+    "Kijk één vakje naar rechts.",
+    "Kijk één vakje naar links.",
+    "Na is naar rechts.",
+    "Voor is naar links.",
+    "Tel één stap verder.",
+    "Tel één stap terug.",
+    "Kijk naar de getallen naast het lege vak.",
+    "Vergeet het volle tiental niet.",
+    "Eerst tien, tel daarna de losse één voor één.",
+    "Tel de losse stippen nog eens."
+  ]);
 
   DUTCH_NUMBERS.forEach((word, number) => add(`number-${number}`, word, "numbers"));
   for (let quantity = 1; quantity <= 10; quantity += 1) {
