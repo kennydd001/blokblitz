@@ -2197,3 +2197,17 @@ Validation:
   attempts, and one completed journey node.
 - `npm.cmd run voice:elevenlabs-audit` passes at 1584/1584 stored Lily clips,
   1515/1515 current spoken lines, and 32/32 reading phonemes.
+
+Release:
+
+- GitHub `main` contains Claude's validated gradual number curve (`2bd86c9`) and
+  this earned-letter/adaptive-remediation milestone (`8558478`).
+- WSL Wrangler deployed Worker version
+  `28b5c13f-788a-42f2-b23d-8e9e12f47e2c`. The cache-busted canonical root serves
+  `index-DnUDxhxt.js` (400,367 bytes) and `index-DDjuguac.css` (173,835 bytes)
+  with HTTP 200. Served JavaScript contains both the letter unlock and support-
+  level paths; `sw.js` remains JavaScript with HTTP 200.
+- The live remediation clip `kijk-alleen-naar-het-lege-vak.mp3` is `audio/mpeg`
+  with exactly 28,047 bytes, and the live voice manifest reports 1,584 lines.
+  A direct in-app-browser load confirmed the same entry assets, a complete
+  returning-profile opening, and no live console warnings or errors.
