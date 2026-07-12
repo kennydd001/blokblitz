@@ -1761,7 +1761,8 @@ describe("Speeltuin hub + calm game modes", () => {
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${wb.id}"]`)!.click();
     expect(root.querySelector(".woordbouw-board")).toBeTruthy();
     expect(root.querySelector(".woordbouw-box.blank")).toBeTruthy();
-    expect(root.querySelectorAll(".woordbouw-choice")).toHaveLength(3);
+    // Choice count follows the difficulty tier at this node (2 gentle, 3 later).
+    expect(root.querySelectorAll(".woordbouw-choice").length).toBeGreaterThanOrEqual(2);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.woordbouw-choice[data-correct="true"]')?.click();
@@ -1995,7 +1996,8 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${mw.id}"]`)!.click();
     expect(root.querySelector(".meet-play")).toBeTruthy();
-    expect(root.querySelectorAll(".meet-choice")).toHaveLength(3);
+    // Choice count follows the difficulty tier at this node (2 gentle, 3 later).
+    expect(root.querySelectorAll(".meet-choice").length).toBeGreaterThanOrEqual(2);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.meet-choice[data-correct="true"]')?.click();

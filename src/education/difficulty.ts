@@ -25,9 +25,12 @@ export interface TierSignals {
 
 export function journeyTier(signals: TierSignals): DifficultyTier {
   let tier = Math.max(1, Math.round(signals.round));
-  if (signals.pathProgress >= 0.5) tier += 1;
+  if (signals.pathProgress >= 0.6) tier += 1;
   if ((signals.attemptCount ?? 0) >= 10) {
-    if ((signals.recentAccuracy ?? 0) >= 0.9) tier += 1;
+    // Acing raises the tier only once the journey is genuinely under way: a
+    // hot streak in the very first missions must not skip the gentle on-ramp
+    // (that is how five-year-olds met counting-to-40 far too early).
+    if ((signals.recentAccuracy ?? 0) >= 0.9 && signals.pathProgress >= 0.25) tier += 1;
     else if ((signals.recentAccuracy ?? 1) < 0.6) tier -= 1;
   }
   return Math.max(1, Math.min(3, tier)) as DifficultyTier;

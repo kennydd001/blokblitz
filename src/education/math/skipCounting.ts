@@ -31,9 +31,16 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function skipCountLimit(step: SkipStep): number {
-  if (step === 2) return 20;
-  if (step === 5) return 50;
+/**
+ * How far a sequence may run, per tier. Gradual by design: tier 1 stays on the
+ * first friendly hops (2, 4, 6, 8, 10), tier 2 keeps EVERY step inside the
+ * eerste-leerjaar 0-20 world (per 5 = precies de vriendjes van 10), and only
+ * tier 3 — the far end of the journey — opens counting to 50 and the tens to
+ * 100. Numbers like 30 and 40 must never appear in the early missions.
+ */
+export function skipCountLimit(step: SkipStep, tier: 1 | 2 | 3 = 3): number {
+  if (step === 2) return tier === 1 ? 10 : 20;
+  if (step === 5) return tier >= 3 ? 50 : 20;
   return 100;
 }
 
@@ -43,8 +50,8 @@ function stepsForTier(tier: 1 | 2 | 3): SkipStep[] {
   return [2, 5, 10];
 }
 
-function numberOptions(answer: number, step: SkipStep): Array<{ label: string; value: number; isCorrect: boolean }> {
-  const pool = [answer - step, answer + step, answer - 1, answer + 1, answer + step * 2].filter((value) => value >= 0 && value <= skipCountLimit(step) && value !== answer);
+function numberOptions(answer: number, step: SkipStep, limit: number): Array<{ label: string; value: number; isCorrect: boolean }> {
+  const pool = [answer - step, answer + step, answer - 1, answer + 1, answer + step * 2].filter((value) => value >= 0 && value <= limit && value !== answer);
   const distractors = shuffle([...new Set(pool)]).slice(0, 2);
   return shuffle([
     { label: String(answer), value: answer, isCorrect: true },
@@ -54,9 +61,10 @@ function numberOptions(answer: number, step: SkipStep): Array<{ label: string; v
 
 export function skipCountRound(mode?: SkipCountMode, tier: 1 | 2 | 3 = 2, forcedStep?: SkipStep): SkipCountRound {
   const step = forcedStep ?? pickOne(stepsForTier(tier));
+  const limit = skipCountLimit(step, tier);
   const pickedMode = mode ?? pickOne(tier === 1 ? (["next", "next", "missing"] as SkipCountMode[]) : (["next", "missing"] as SkipCountMode[]));
   const length = pickedMode === "next" ? 4 : 5;
-  const maxStartMultiple = Math.floor((skipCountLimit(step) - step * (length - 1)) / step);
+  const maxStartMultiple = Math.floor((limit - step * (length - 1)) / step);
   const start = pickInt(0, Math.max(0, maxStartMultiple)) * step;
   const sequence = Array.from({ length }, (_, index) => start + index * step);
   const missingIndex = pickedMode === "next" ? length - 1 : pickInt(1, length - 2);
@@ -69,7 +77,7 @@ export function skipCountRound(mode?: SkipCountMode, tier: 1 | 2 | 3 = 2, forced
     answer,
     prompt: pickedMode === "next" ? `Tel verder per ${step}. Welk getal komt daarna?` : `We tellen per ${step}. Welk getal is weg?`,
     hintText: `Spring telkens ${step} verder.`,
-    options: numberOptions(answer, step),
+    options: numberOptions(answer, step, limit),
     targetKey: `skip-${step}`,
     skill: "skipCount"
   };

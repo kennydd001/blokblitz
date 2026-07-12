@@ -36,10 +36,14 @@ describe("dynamic difficulty (tier = ronde + pad + kunnen)", () => {
   });
 
   it("listens to how the child is actually doing", () => {
-    // Acing the last stretch bumps the tier up...
-    expect(journeyTier({ round: 1, pathProgress: 0, recentAccuracy: 0.95, attemptCount: 20 })).toBe(2);
-    // ...struggling drops it back down.
+    // Acing bumps the tier up — but only once the journey is under way
+    // (path >= 0.25). The very first missions stay a gentle on-ramp even
+    // for a child who answers everything correctly.
+    expect(journeyTier({ round: 1, pathProgress: 0, recentAccuracy: 0.95, attemptCount: 20 })).toBe(1);
+    expect(journeyTier({ round: 1, pathProgress: 0.3, recentAccuracy: 0.95, attemptCount: 20 })).toBe(2);
+    // ...struggling drops it back down, anywhere on the path.
     expect(journeyTier({ round: 2, pathProgress: 0.6, recentAccuracy: 0.4, attemptCount: 20 })).toBe(2);
+    expect(journeyTier({ round: 1, pathProgress: 0.1, recentAccuracy: 0.4, attemptCount: 20 })).toBe(1);
     // Fewer than 10 attempts: the accuracy signal is ignored.
     expect(journeyTier({ round: 1, pathProgress: 0, recentAccuracy: 1, attemptCount: 4 })).toBe(1);
   });
@@ -65,9 +69,9 @@ describe("dynamic difficulty (tier = ronde + pad + kunnen)", () => {
     const lezen = recentAccuracy(attempts, 20, "literacy-reading");
     expect(lezen.count).toBe(20);
     expect(lezen.accuracy).toBeLessThan(0.6);
-    // So the same child plays rekenen a tier HIGHER than lezen.
-    const rekenTier = journeyTier({ round: 1, pathProgress: 0, ...{ recentAccuracy: 1, attemptCount: 20 } });
-    const leesTier = journeyTier({ round: 2, pathProgress: 0, recentAccuracy: lezen.accuracy, attemptCount: lezen.count });
+    // So the same child (mid-path) plays rekenen a tier HIGHER than lezen.
+    const rekenTier = journeyTier({ round: 1, pathProgress: 0.3, ...{ recentAccuracy: 1, attemptCount: 20 } });
+    const leesTier = journeyTier({ round: 2, pathProgress: 0.3, recentAccuracy: lezen.accuracy, attemptCount: lezen.count });
     expect(rekenTier).toBe(2);
     expect(leesTier).toBe(1);
   });

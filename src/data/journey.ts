@@ -117,12 +117,14 @@ interface RegionPlan {
 }
 
 const REGIONS: RegionPlan[] = [
-  { region: "grasland", stops: ["count", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
+  { region: "grasland", stops: ["count", "match", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
   { region: "muntgrot", stops: ["klankgrot", "rijmspel", "luisterbos", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
   { region: "ijsbaan", stops: ["compare", "letterkompas", "vriendjes", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
   { region: "webwoud", stops: ["splitbord", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
-  { region: "bouwdorp", stops: ["fill", "getallenlijn", "sprongpad", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
-  { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "kloktoren", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
+  { region: "bouwdorp", stops: ["fill", "getallenlijn", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
+  // Sprongpad (skip counting) lives at the very end of the journey: only there
+  // may the numbers stretch past 20 (per 5 to 50, per 10 to 100).
+  { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "sprongpad", "kloktoren", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];
 
 // Each region's climax: a colour-stealing boss that guards the trapped friend.

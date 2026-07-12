@@ -15,6 +15,23 @@ describe("skip-counting content", () => {
     expect(skipCountLimit(10)).toBe(100);
   });
 
+  it("keeps the early tiers inside the eerste-leerjaar number world", () => {
+    // Tier 1: only the first friendly hops of two.
+    expect(skipCountLimit(2, 1)).toBe(10);
+    // Tier 2 (today's normal): EVERY step stays within 0-20 — numbers like
+    // 30 and 40 must never appear before the far end of the journey.
+    expect(skipCountLimit(2, 2)).toBe(20);
+    expect(skipCountLimit(5, 2)).toBe(20);
+    for (let index = 0; index < 120; index += 1) {
+      const tier1 = skipCountRound(undefined, 1);
+      expect(tier1.sequence.at(-1)).toBeLessThanOrEqual(10);
+      expect(tier1.options.every((option) => option.value <= 10)).toBe(true);
+      const tier2 = skipCountRound(undefined, 2);
+      expect(tier2.sequence.at(-1)).toBeLessThanOrEqual(20);
+      expect(tier2.options.every((option) => option.value <= 20)).toBe(true);
+    }
+  });
+
   it("builds valid next and missing rounds for every step", () => {
     for (const step of [2, 5, 10] as SkipStep[]) {
       for (const mode of ["next", "missing"] as const) {
