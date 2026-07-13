@@ -33,6 +33,9 @@ const scenarios = [
   { name: "boot-returning-narrow-mobile", width: 332, height: 807, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
   { name: "boot-returning-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
   { name: "boot-returning-desktop", width: 1280, height: 720, mobile: false, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
+  { name: "rest-narrow-mobile", width: 332, height: 807, mobile: true, open: "rest", expectRest: true, reducedMotion: true },
+  { name: "rest-landscape-mobile", width: 844, height: 390, mobile: true, open: "rest", expectRest: true, reducedMotion: true },
+  { name: "settings-playtime-narrow-mobile", width: 332, height: 807, mobile: true, open: "settings", expectSettingsPlayTime: true },
   { name: "journey-intro-narrow-mobile", width: 332, height: 807, mobile: true, open: "journey-intro", expectJourneyIntro: true, reducedMotion: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
@@ -191,6 +194,44 @@ try {
 }
 
 async function openScenario(open) {
+  await evaluate(`
+    (() => {
+      const game = window.__blokblitzGame;
+      if (game?.save.activeProfile()) game.save.updateSettings((settings) => { settings.dailyPlayMinutes = 0; });
+    })()
+  `);
+  if (open === "rest") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        if (!game.save.activeProfile()) game.save.createProfile("Noor", "aqua");
+        game.save.updateSettings((settings) => { settings.dailyPlayMinutes = 10; });
+        game.save.addActivePlayTime(10 * 60 * 1000);
+        game.save.updateProgress((progress) => { progress.playTime.restRewardClaimed = false; });
+        game.showScene("rest");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open the warm rest scene");
+    await waitForSelector(".rest-scene .rest-buddy.mood-sleep", 5_000);
+    return;
+  }
+  if (open === "settings") {
+    const opened = await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        if (!game.save.activeProfile()) game.save.createProfile("Noor", "aqua");
+        game.save.updateSettings((settings) => { settings.dailyPlayMinutes = 20; });
+        game.showScene("settings");
+        return true;
+      })()
+    `);
+    if (!opened) throw new Error("Could not open playtime settings");
+    await waitForSelector(".setting-playtime #playtime", 5_000);
+    return;
+  }
   if (open === "skin-unlock") {
     const opened = await evaluate(`
       (() => {
@@ -663,6 +704,30 @@ async function collectMetrics(scenario = {}) {
         profileBuddyCount: document.querySelectorAll(".profile-avatar-choice .buddy, .profile-card .buddy").length,
         profileLimit: rect(".profile-limit"),
         profileAddPresent: Boolean(document.querySelector(".profile-add")),
+        restScene: rect(".scene.rest"),
+        restBuddy: rect(".rest-buddy"),
+        restBuddySleeping: Boolean(document.querySelector(".rest-buddy.mood-sleep")),
+        restContent: rect(".rest-content"),
+        restCopy: rect(".rest-copy"),
+        restTitle: document.querySelector(".rest-copy h1")?.textContent?.trim() ?? null,
+        restActiveProfileName: window.__blokblitzGame?.save.activeProfile()?.name?.trim() ?? null,
+        restStats: rect(".rest-stats"),
+        restStatItems: rects(".rest-stats > div"),
+        restReward: rect(".rest-reward"),
+        restRewardText: document.querySelector(".rest-reward")?.textContent?.trim() ?? null,
+        restActions: rect(".rest-adult-actions"),
+        restActionButtons: rects(".rest-adult-actions .btn"),
+        restMoon: rect(".rest-moon"),
+        restContentFits: (() => {
+          const scene = document.querySelector(".scene.rest");
+          return scene ? scene.scrollHeight <= scene.clientHeight + 1 && scene.scrollWidth <= scene.clientWidth + 1 : false;
+        })(),
+        settingsPanel: rect(".settings-panel"),
+        settingsPlayTime: rect(".setting-playtime"),
+        settingsPlayTimeSelect: rect(".setting-playtime #playtime"),
+        settingsPlayTimeValue: document.querySelector(".setting-playtime #playtime")?.value ?? null,
+        settingsPlayTimeOptions: document.querySelectorAll(".setting-playtime #playtime option").length,
+        settingsPlayTimeToday: document.querySelector(".setting-playtime small")?.textContent?.trim() ?? null,
         hubGrid: rect(".hub-grid"),
         hubCardCount: document.querySelectorAll(".hub-card").length,
         hubDaily: rect(".hub-daily"),
@@ -887,9 +952,34 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     if (!button.name || !button.semanticName) failures.push(`visible button has no meaningful accessible name: ${JSON.stringify(button)}`);
     if (button.width < 44 || button.height < 44) failures.push(`visible button is smaller than 44px: ${JSON.stringify(button)}`);
   }
-  if ((scenario.expectBoot || scenario.expectJourneyIntro || scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
+  if ((scenario.expectBoot || scenario.expectRest || scenario.expectSettingsPlayTime || scenario.expectJourneyIntro || scenario.expectJourneyMap || scenario.expectHub) && metrics.canvas) failures.push("3D canvas loaded before the first user interaction");
   if (scenario.expectRealRunner && (!metrics.canvas || metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("canvas does not fill viewport");
   if (!scenario.expectRealRunner && metrics.canvas && (metrics.canvas.width < viewport.width - 2 || metrics.canvas.height < viewport.height - 2)) failures.push("loaded canvas does not fill viewport");
+  if (scenario.expectRest) {
+    if (!metrics.restScene || !metrics.restContent || !metrics.restCopy) failures.push("warm rest scene is incomplete");
+    if (!metrics.restBuddy || metrics.restBuddy.width < 140 || metrics.restBuddy.height < 140 || !metrics.restBuddySleeping) failures.push(`sleeping Buddy is missing or too small: ${JSON.stringify(metrics.restBuddy)}`);
+    if (!metrics.restActiveProfileName || !metrics.restTitle?.includes(metrics.restActiveProfileName)) failures.push(`rest scene does not greet the active child: ${metrics.restTitle}/${metrics.restActiveProfileName}`);
+    if (!metrics.restStats || metrics.restStatItems.length !== 3) failures.push(`expected time, stars and rest reward, got ${metrics.restStatItems.length}`);
+    if (!metrics.restReward || !metrics.restRewardText?.includes("+3")) failures.push(`rest reward is missing: ${metrics.restRewardText}`);
+    if (!metrics.restActions || metrics.restActionButtons.length !== 3) failures.push(`expected three adult actions, got ${metrics.restActionButtons.length}`);
+    if (!metrics.restContentFits) failures.push("rest scene requires scrolling or clips content");
+    for (const item of [metrics.restScene, metrics.restBuddy, metrics.restContent, metrics.restCopy, metrics.restStats, metrics.restActions]) {
+      if (item && (item.left < -1 || item.right > viewport.width + 1 || item.top < -1 || item.bottom > viewport.height + 1)) failures.push(`rest content is clipped: ${JSON.stringify(item)}`);
+    }
+    if (rectsOverlap(metrics.restBuddy, metrics.restContent)) failures.push("sleeping Buddy overlaps the rest message");
+    if (rectsOverlap(metrics.restMoon, metrics.restContent)) failures.push("moon overlaps the rest message");
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
+  if (scenario.expectSettingsPlayTime) {
+    if (!metrics.settingsPanel || !metrics.settingsPlayTime || !metrics.settingsPlayTimeSelect) failures.push("daily playtime setting is missing");
+    if (metrics.settingsPlayTimeValue !== "20" || metrics.settingsPlayTimeOptions !== 5) failures.push(`unexpected playtime defaults: ${metrics.settingsPlayTimeValue}/${metrics.settingsPlayTimeOptions}`);
+    if (!metrics.settingsPlayTimeToday?.includes("Vandaag:")) failures.push(`today's playtime is missing: ${metrics.settingsPlayTimeToday}`);
+    if (metrics.settingsPlayTimeSelect && (metrics.settingsPlayTimeSelect.width < 100 || metrics.settingsPlayTimeSelect.height < 44)) failures.push(`playtime selector is too small: ${JSON.stringify(metrics.settingsPlayTimeSelect)}`);
+    if (metrics.settingsPlayTime && (metrics.settingsPlayTime.left < -1 || metrics.settingsPlayTime.right > viewport.width + 1 || metrics.settingsPlayTime.bottom > viewport.height + 1)) failures.push(`playtime setting is clipped: ${JSON.stringify(metrics.settingsPlayTime)}`);
+    if (failures.length > 0) throw new Error(`${scenario.name} failed:\n- ${failures.join("\n- ")}`);
+    return;
+  }
   if (scenario.expectBoot) {
     if (!metrics.bootSplash) failures.push("missing opening scene");
     if (!metrics.bootBrand) failures.push("missing BlokBlitz brand");

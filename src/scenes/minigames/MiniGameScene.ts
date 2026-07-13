@@ -125,7 +125,7 @@ export abstract class MiniGameScene extends BaseScene {
     // pick. Without an explicit focus, avoid the immediately previous target so
     // practice stays interleaved rather than becoming a same-card drill.
     const domain = SCENE_DOMAINS[this.name];
-    const focus = this.game.curriculumFocus(domain);
+    const focus = this.game.curriculumFocus(domain, this.name);
     this.roundFocusTarget = focus;
     this.warmupRound = this.game.curriculumFocusReason() === "warmup";
     const avoid = focus ? undefined : this.previousTargetKey;
@@ -494,6 +494,7 @@ export abstract class MiniGameScene extends BaseScene {
   }
 
   protected mountReplay(): void {
+    if (!this.game.allowPlayContinuation()) return;
     this.game.save.startNewSession();
     this.root.classList.remove("centered");
     this.root.classList.add("mini-scene", "centered");

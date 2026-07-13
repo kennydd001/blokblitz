@@ -47,7 +47,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -1446,6 +1447,35 @@ input {
 
 .setting-row input[type="range"] {
   width: 100%;
+}
+
+.setting-row select {
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 38px 8px 12px;
+  border: 3px solid var(--edge);
+  border-radius: 6px;
+  background: #fffdf2;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.setting-playtime {
+  grid-template-columns: 160px minmax(170px, 1fr) auto;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 3px solid #e0af38;
+}
+
+.setting-playtime select {
+  background: #fff0b8;
+  box-shadow: 0 3px 0 rgba(224, 175, 56, 0.55);
+}
+
+.setting-playtime small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .high-contrast {
@@ -5114,6 +5144,16 @@ button:focus-visible,
 .buddy.mood-oops .buddy-body { animation: buddy-wobble 0.6s ease; }
 @keyframes buddy-wobble { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
 
+.buddy-sleep-eyes,
+.buddy-sleep-z { display: none; }
+.buddy.mood-sleep .buddy-eye { display: none; }
+.buddy.mood-sleep .buddy-sleep-eyes,
+.buddy.mood-sleep .buddy-sleep-z { display: block; }
+.buddy.mood-sleep .buddy-body { animation: buddy-sleep-breathe 3.2s ease-in-out infinite; }
+.buddy.mood-sleep .buddy-sleep-z { font-size: 12px; animation: buddy-sleep-z 2.4s ease-in-out infinite; }
+@keyframes buddy-sleep-breathe { 0%, 100% { transform: translateY(1px) scaleY(0.98); } 50% { transform: translateY(-1px) scaleY(1.01); } }
+@keyframes buddy-sleep-z { 0%, 100% { opacity: 0.28; transform: translateY(3px); } 50% { opacity: 1; transform: translateY(-3px); } }
+
 @keyframes buddy-float {
   0% { opacity: 0; transform: translateY(2px); }
   30% { opacity: 1; }
@@ -6631,9 +6671,10 @@ button:focus-visible,
 .hub-profile-avatar.profile-token { width: 40px; border-width: 3px; box-shadow: inset 0 -5px 0 var(--profile-accent); }
 .hub-profile-avatar .profile-token-mark { font-size: 1.15rem; }
 .hub-profile-lock { font-size: 0.78rem; line-height: 1; margin-left: 2px; }
-.parent-gate-hold { position: relative; min-width: 190px; overflow: hidden; isolation: isolate; }
+.parent-gate-hold { position: relative; min-width: 190px; overflow: hidden; isolation: isolate; touch-action: none; user-select: none; }
 .parent-gate-hold::after { content: ""; position: absolute; z-index: -1; inset: 0 auto 0 0; width: 0; background: rgba(255, 255, 255, 0.35); }
 .parent-gate-hold.holding::after { animation: parentGateHold 1.2s linear forwards; }
+.parent-gate-hold.complete { background: #6ee7b7; }
 @keyframes parentGateHold { from { width: 0; } to { width: 100%; } }
 
 @media (max-height: 500px) and (orientation: landscape) {
@@ -7377,6 +7418,222 @@ button:focus-visible,
   .boot-spark {
     display: none;
   }
+}
+
+/* -------------------------------------------------------------------------
+   Rustmoment: a warm, conclusive stop rather than a punitive lock screen.
+   Buddy sleeps in the same world the child restored; adult-only continuation
+   stays secondary and never competes with another child-facing play command.
+   ------------------------------------------------------------------------- */
+
+.scene-layer:has(> .scene.rest) {
+  overflow: hidden;
+  padding: 0;
+  background: #6077b7;
+}
+
+.scene.rest {
+  position: absolute;
+  inset: 0;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(390px, 1.15fr);
+  align-items: center;
+  gap: clamp(24px, 6vw, 88px);
+  padding: max(28px, env(safe-area-inset-top)) clamp(32px, 9vw, 150px) max(28px, env(safe-area-inset-bottom));
+  overflow: hidden;
+  color: #fffdf2;
+  background: linear-gradient(180deg, #596bb0 0 55%, #2d8c68 55% 100%);
+}
+
+.rest-sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.rest-moon {
+  position: absolute;
+  top: 8%;
+  right: 10%;
+  color: #ffd86a;
+  font-family: Georgia, serif;
+  font-size: clamp(4.8rem, 9vw, 8rem);
+  line-height: 1;
+  filter: drop-shadow(0 0 18px rgba(255, 216, 106, 0.36));
+}
+
+.rest-sky > i {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #172033;
+  background: #fff4aa;
+  transform: rotate(45deg);
+  animation: rest-star 2.4s ease-in-out infinite alternate;
+}
+.rest-sky > i:nth-of-type(1) { top: 14%; left: 12%; }
+.rest-sky > i:nth-of-type(2) { top: 25%; left: 43%; animation-delay: 0.5s; }
+.rest-sky > i:nth-of-type(3) { top: 9%; left: 66%; animation-delay: 1s; }
+.rest-sky > i:nth-of-type(4) { top: 35%; left: 84%; animation-delay: 1.5s; }
+
+.rest-city {
+  position: absolute;
+  right: -3%;
+  bottom: 0;
+  left: 34%;
+  height: 31%;
+  opacity: 0.7;
+  background:
+    linear-gradient(90deg, transparent 0 5%, #f2c84b 5% 16%, transparent 16% 20%, #4bb6c5 20% 33%, transparent 33% 37%, #f08c6b 37% 50%, transparent 50% 54%, #76bf62 54% 69%, transparent 69% 73%, #d9bc4d 73% 86%, transparent 86%);
+  clip-path: polygon(0 100%, 0 53%, 5% 53%, 5% 18%, 16% 18%, 16% 48%, 20% 48%, 20% 0, 33% 0, 33% 39%, 37% 39%, 37% 24%, 50% 24%, 50% 58%, 54% 58%, 54% 9%, 69% 9%, 69% 44%, 73% 44%, 73% 29%, 86% 29%, 86% 61%, 100% 61%, 100% 100%);
+  border-bottom: 5px solid #172033;
+}
+
+.rest-buddy.buddy {
+  position: relative;
+  z-index: 2;
+  grid-column: 1;
+  justify-self: center;
+  align-self: center;
+  left: auto;
+  bottom: auto;
+  width: clamp(210px, 26vw, 320px);
+  filter: drop-shadow(0 12px 0 rgba(23, 32, 51, 0.18)) drop-shadow(0 22px 28px rgba(23, 32, 51, 0.22));
+}
+
+.rest-content {
+  position: relative;
+  z-index: 3;
+  grid-column: 2;
+  width: min(560px, 100%);
+  display: grid;
+  justify-items: start;
+  gap: 20px;
+  text-align: left;
+  text-shadow: 0 2px 0 rgba(23, 32, 51, 0.32);
+}
+
+.rest-copy { display: grid; gap: 8px; }
+.rest-copy .eyebrow {
+  width: fit-content;
+  margin: 0;
+  padding: 5px 10px;
+  border: 2px solid #172033;
+  border-radius: 6px;
+  background: #ffd86a;
+  color: #172033;
+  font-size: 0.8rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  text-shadow: none;
+}
+.rest-copy h1 {
+  margin: 0;
+  max-width: 14ch;
+  color: #fffdf2;
+  font-size: clamp(2.35rem, 5vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+.rest-copy > p:last-child {
+  max-width: 46ch;
+  margin: 0;
+  color: #f8f2df;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.rest-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.rest-stats > div {
+  min-width: 108px;
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 3px solid #172033;
+  border-radius: 7px;
+  background: #fffdf2;
+  color: #172033;
+  text-shadow: none;
+  box-shadow: 0 5px 0 rgba(23, 32, 51, 0.25);
+}
+.rest-stats span { font-size: 1.25rem; }
+.rest-stats strong { font-size: 1rem; }
+.rest-stats .rest-reward { background: #ffd86a; }
+
+.rest-adult-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.rest-adult-actions .btn {
+  min-height: 48px;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+}
+
+@keyframes rest-star {
+  from { opacity: 0.45; transform: rotate(45deg) scale(0.72); }
+  to { opacity: 1; transform: rotate(45deg) scale(1.08); }
+}
+
+@media (max-width: 700px) and (orientation: portrait) {
+  .scene.rest {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(210px, 0.9fr) auto;
+    gap: 4px;
+    padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, #596bb0 0 43%, #2d8c68 43% 100%);
+  }
+  .rest-buddy.buddy {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+    width: min(210px, 54vw);
+  }
+  .rest-content {
+    grid-column: 1;
+    grid-row: 2;
+    width: min(430px, 100%);
+    justify-self: center;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  .rest-copy { justify-items: center; }
+  .rest-copy h1 { max-width: 12ch; font-size: clamp(2rem, 10vw, 2.8rem); }
+  .rest-copy > p:last-child { font-size: 0.92rem; line-height: 1.32; }
+  .rest-stats,
+  .rest-adult-actions { justify-content: center; }
+  .rest-city { left: -12%; height: 42%; opacity: 0.5; }
+  .rest-moon { top: 4%; right: 7%; font-size: 4.5rem; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .scene.rest {
+    grid-template-columns: minmax(230px, 0.8fr) minmax(400px, 1.2fr);
+    gap: 22px;
+    padding: 10px 34px;
+    background: linear-gradient(180deg, #596bb0 0 60%, #2d8c68 60% 100%);
+  }
+  .rest-buddy.buddy { width: min(210px, 28vw); }
+  .rest-content { gap: 8px; }
+  .rest-copy { gap: 3px; }
+  .rest-copy h1 { font-size: 2rem; }
+  .rest-copy > p:last-child { max-width: 54ch; font-size: 0.82rem; line-height: 1.22; }
+  .rest-stats > div { min-height: 44px; padding-block: 5px; }
+  .rest-adult-actions .btn { min-height: 44px; padding-block: 5px; }
+  .rest-moon { top: 4%; right: auto; left: 4%; font-size: 3.4rem; }
+  .rest-city { height: 38%; }
 }
 
 /* Respect the device accessibility preference across decorative motion. The

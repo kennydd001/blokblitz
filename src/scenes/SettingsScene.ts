@@ -1,5 +1,6 @@
 ﻿import type { Game } from "../game/Game";
 import { BaseScene, sceneHeader } from "./SceneUtils";
+import { DAILY_PLAY_MINUTE_OPTIONS, normalizeDailyPlayMinutes, roundedPlayMinutes } from "../gameplay/session/playTime";
 
 export class SettingsScene extends BaseScene {
   constructor(game: Game) {
@@ -38,6 +39,13 @@ export class SettingsScene extends BaseScene {
         <span>Hoog contrast</span>
         <input id="contrast" type="checkbox" ${data.settings.highContrast ? "checked" : ""}>
       </label>
+      <label class="setting-row setting-playtime">
+        <span>⏱️ Daglimiet</span>
+        <select id="playtime" aria-label="Dagelijkse speeltijd per kind">
+          ${DAILY_PLAY_MINUTE_OPTIONS.map((minutes) => `<option value="${minutes}" ${normalizeDailyPlayMinutes(data.settings.dailyPlayMinutes) === minutes ? "selected" : ""}>${minutes === 0 ? "Geen limiet" : `${minutes} minuten`}</option>`).join("")}
+        </select>
+        <small>Vandaag: ${roundedPlayMinutes(this.game.playTimeStatus().usedMs)} min</small>
+      </label>
     `;
     const speed = panel.querySelector<HTMLInputElement>("#speed");
     const music = panel.querySelector<HTMLInputElement>("#music");
@@ -45,6 +53,7 @@ export class SettingsScene extends BaseScene {
     const voice = panel.querySelector<HTMLInputElement>("#voice");
     const haptics = panel.querySelector<HTMLInputElement>("#haptics");
     const contrast = panel.querySelector<HTMLInputElement>("#contrast");
+    const playtime = panel.querySelector<HTMLSelectElement>("#playtime");
     const save = (): void => {
       this.game.save.updateSettings((settings) => {
         settings.speed = Number(speed?.value ?? 1);
@@ -55,6 +64,7 @@ export class SettingsScene extends BaseScene {
         settings.voice = Boolean(voice?.checked);
         settings.haptics = Boolean(haptics?.checked);
         settings.highContrast = Boolean(contrast?.checked);
+        settings.dailyPlayMinutes = normalizeDailyPlayMinutes(Number(playtime?.value));
       });
       this.game.audio.setSettings(this.game.save.getMutableData().settings);
       this.game.haptics.setSettings(this.game.save.getMutableData().settings);
@@ -72,6 +82,7 @@ export class SettingsScene extends BaseScene {
     voice?.addEventListener("change", save);
     haptics?.addEventListener("change", save);
     contrast?.addEventListener("change", save);
+    playtime?.addEventListener("change", save);
     panel.append(this.button("Terug", () => this.game.showScene("hub")));
     this.root.append(sceneHeader("Instellingen"), panel);
   }

@@ -6,7 +6,7 @@ import { cssHex } from "../runner/worlds";
 // cheers when they're right, gently encourages when they're not, and dances at the
 // end. This is what turns "answer the questions" into "play with my dino".
 
-export type BuddyMood = "idle" | "think" | "happy" | "oops" | "wow";
+export type BuddyMood = "idle" | "think" | "happy" | "oops" | "wow" | "sleep";
 
 export interface Buddy {
   el: HTMLElement;
@@ -96,6 +96,8 @@ export function createBuddy(skin: HeroSkin, stars = 0): Buddy {
         <g class="buddy-foot"><ellipse cx="78" cy="100" rx="11" ry="7" fill="var(--ac)" stroke="#10131c" stroke-width="3"/></g>
         <g class="buddy-eye"><circle cx="52" cy="60" r="9" fill="#fff" stroke="#10131c" stroke-width="2.5"/><circle class="pupil" cx="54" cy="61" r="4.2" fill="#10131c"/></g>
         <g class="buddy-eye"><circle cx="76" cy="60" r="9" fill="#fff" stroke="#10131c" stroke-width="2.5"/><circle class="pupil" cx="78" cy="61" r="4.2" fill="#10131c"/></g>
+        <g class="buddy-sleep-eyes" fill="none" stroke="#10131c" stroke-width="3" stroke-linecap="round"><path d="M43 61 q9 7 18 0"/><path d="M67 61 q9 7 18 0"/></g>
+        <g class="buddy-sleep-z" fill="#fff7cf" stroke="#10131c" stroke-width="0.7" paint-order="stroke"><text x="91" y="42">z</text><text x="101" y="29">Z</text></g>
         <ellipse class="buddy-cheek" cx="44" cy="72" rx="5" ry="3.5" fill="#ff7eb6"/>
         <ellipse class="buddy-cheek" cx="84" cy="72" rx="5" ry="3.5" fill="#ff7eb6"/>
         <path class="buddy-mouth" d="M56 80 q8 9 16 0" fill="none" stroke="#10131c" stroke-width="3" stroke-linecap="round"/>
@@ -109,12 +111,12 @@ export function createBuddy(skin: HeroSkin, stars = 0): Buddy {
   let bubbleTimer = 0;
 
   const setMood = (mood: BuddyMood, revertMs?: number): void => {
-    wrap.classList.remove("mood-idle", "mood-think", "mood-happy", "mood-oops", "mood-wow");
+    wrap.classList.remove("mood-idle", "mood-think", "mood-happy", "mood-oops", "mood-wow", "mood-sleep");
     wrap.classList.add(`mood-${mood}`);
     if (revertTimer) window.clearTimeout(revertTimer);
     if (revertMs && mood !== "idle") {
       revertTimer = window.setTimeout(() => {
-        wrap.classList.remove("mood-happy", "mood-oops", "mood-wow", "mood-think");
+        wrap.classList.remove("mood-happy", "mood-oops", "mood-wow", "mood-think", "mood-sleep");
         wrap.classList.add("mood-idle");
       }, revertMs);
     }

@@ -84,6 +84,7 @@ export class BossRushScene extends BossScene {
   }
 
   private replayRush(): void {
+    if (!this.game.allowPlayContinuation()) return;
     this.index = 0;
     this.hitsTotal = 0;
     this.roundsTotal = 0;

@@ -45,6 +45,7 @@ export type SceneId =
   | "rijmspel"
   | "letterkompas"
   | "schrijfspoor"
+  | "rest"
   | "tientalhuis"
   | "zoemroute"
   | "getallenlijn"
@@ -164,6 +165,8 @@ export interface GameSettings {
   highContrast: boolean;
   /** Spoken Dutch voice (instructions, counting, praise). */
   voice: boolean;
+  /** Profile-local active child play per day. Zero means the parent disabled the limit. */
+  dailyPlayMinutes: number;
 }
 
 export interface DistrictProgress {
@@ -221,6 +224,13 @@ export interface DailyPlanProgress {
   rewardClaimed: boolean;
 }
 
+export interface DailyPlayTime {
+  dayKey: string;
+  usedMs: number;
+  bonusMs: number;
+  restRewardClaimed: boolean;
+}
+
 export interface GameProgress {
   sessionId: string;
   stars: number;
@@ -259,6 +269,8 @@ export interface GameProgress {
   activityBestStars: Record<string, number>;
   /** Stable, profile-local set of three recommended activities for one day. */
   dailyPlan: DailyPlanProgress;
+  /** Foreground time in child-facing scenes, reset on the profile's local day. */
+  playTime: DailyPlayTime;
 }
 
 export interface DayStreak {

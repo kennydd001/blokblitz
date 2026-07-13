@@ -98,6 +98,56 @@ async function main() {
     await waitForSelector(".reis-scene", 8_000);
     await assertNoHorizontalOverflow("journey");
 
+    // Warm stop: reaching the profile-local limit redirects the next activity,
+    // while a real adult math gate + sustained touch grants exactly ten minutes.
+    await evaluate(`
+      (() => {
+        const game = window.__blokblitzGame;
+        if (!game) return false;
+        game.lastJourneyNode = undefined;
+        game.save.updateSettings((settings) => { settings.dailyPlayMinutes = 10; });
+        game.save.addActivePlayTime(10 * 60 * 1000);
+        game.showScene("count");
+        return true;
+      })()
+    `);
+    await waitForSelector(".rest-scene .rest-buddy.mood-sleep", 5_000);
+    await assertNoHorizontalOverflow("warm rest stop");
+    await tap('[aria-label="Voor volwassenen: geef 10 minuten extra"]', "rest extra-time gate");
+    await waitForSelector(".parent-gate-option[data-correct='true']", 5_000);
+    await tap(".parent-gate-option[data-correct='true']", "rest adult sum");
+    await delay(250);
+    if (!(await exists(".parent-gate-hold"))) {
+      const gateState = await evaluate(`
+        (() => ({
+          question: document.querySelector(".parent-gate-question")?.textContent ?? null,
+          options: [...document.querySelectorAll(".parent-gate-option")].map((button) => ({
+            value: button.textContent,
+            correct: button.dataset.correct
+          })),
+          overlays: document.querySelectorAll(".parent-gate-overlay").length
+        }))()
+      `);
+      throw new Error(`Correct adult sum did not open the hold step: ${JSON.stringify(gateState)}`);
+    }
+    const holdStarted = await pressAndHold(".parent-gate-hold", 1_300, "rest adult hold");
+    await delay(250);
+    if (!(await exists(".hub-scene"))) {
+      const holdState = await evaluate(`
+        (() => ({
+          holdStarted: ${holdStarted},
+          holdPresent: Boolean(document.querySelector(".parent-gate-hold")),
+          holdClass: document.querySelector(".parent-gate-hold")?.className ?? null,
+          question: document.querySelector(".parent-gate-question")?.textContent ?? null,
+          currentScene: window.__blokblitzGame?.scenes.getCurrentName() ?? null,
+          sceneClass: document.querySelector(".scene")?.className ?? null,
+          lastJourneyNode: window.__blokblitzGame?.lastJourneyNode ?? null,
+          playTime: window.__blokblitzGame?.playTimeStatus() ?? null
+        }))()
+      `);
+      throw new Error(`Adult hold did not return to play: ${JSON.stringify({ ...holdState, browserErrors: errors })}`);
+    }
+
     await openGameScene("run");
     await waitForSelector(".run-scene", 5_000);
     await assertNoHorizontalOverflow("real runner");
@@ -151,6 +201,7 @@ async function main() {
         attempts: window.__blokblitzGame?.data().progress.attempts.length ?? -1,
         journeyDone: window.__blokblitzGame?.data().progress.journey.completed.length ?? -1,
         treasureFill: window.__blokblitzGame?.data().progress.sessionChestFill ?? -1,
+        playTime: window.__blokblitzGame?.playTimeStatus() ?? null,
         viewport: {
           width: innerWidth,
           height: innerHeight,
@@ -165,6 +216,7 @@ async function main() {
     if (metrics.attempts < 12) throw new Error(`Expected at least 12 tracked attempts after the touch playthrough, got ${metrics.attempts}`);
     if (metrics.journeyDone < 1) throw new Error("Touch playthrough did not advance De Sterrenreis");
     if (metrics.treasureFill < 2 && metrics.treasureFill !== 0) throw new Error(`Expected the treasure meter to count both finished activities, got ${metrics.treasureFill}`);
+    if (metrics.playTime?.reached || metrics.playTime?.bonusMs !== 10 * 60 * 1000) throw new Error(`Adult hold did not grant exactly ten extra minutes: ${JSON.stringify(metrics.playTime)}`);
     if (errors.length > 0) throw new Error(`Browser errors during touch QA:\n- ${errors.join("\n- ")}`);
 
     const screenshot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false });
@@ -270,6 +322,21 @@ async function swipe(selector, deltaX, label) {
   await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   steps.push({ label, selector, x: Math.round(point.x), y: Math.round(point.y), endX: Math.round(end.x), endY: Math.round(end.y) });
   await delay(140);
+}
+
+async function pressAndHold(selector, durationMs, label) {
+  await evaluate(`document.querySelector(${JSON.stringify(selector)})?.scrollIntoView({ block: "center", inline: "center" })`);
+  await delay(160);
+  const point = await centerPoint(selector);
+  const touchPoint = { ...point, id: 1, radiusX: 6, radiusY: 6, force: 1 };
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [touchPoint] });
+  await delay(120);
+  const holdingStarted = await evaluate(`document.querySelector(${JSON.stringify(selector)})?.classList.contains("holding") ?? false`);
+  await delay(Math.max(0, durationMs - 120));
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  steps.push({ label, selector, durationMs, holdingStarted, x: Math.round(point.x), y: Math.round(point.y) });
+  await delay(160);
+  return holdingStarted;
 }
 
 async function centerPoint(selector) {

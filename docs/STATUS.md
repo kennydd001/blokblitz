@@ -2,7 +2,7 @@
 
 ## Current Milestone
 
-Product Quality Hardening - mobile/adaptive UX in progress.
+Product Quality Hardening - healthy profile-local sessions and scoped adaptive review validated.
 
 ## Completed Work
 
@@ -2273,3 +2273,45 @@ Release:
 - A direct public in-app-browser load at 390x844 confirmed the same entry assets,
   the complete fresh Buddy opening, zero horizontal overflow, a 251x68 primary
   start control, and no console warnings or errors.
+
+## Healthy Play Sessions and Activity-Scoped Review - 2026-07-13
+
+Completed work:
+
+- Added profile-local foreground playtime with a conservative 20-minute default,
+  parent choices for 10/15/20/30 minutes or no limit, local-day reset, persisted
+  usage, and a parent-dashboard readout. Boot, profiles, parent screens, results,
+  and the rest screen do not count as active child play.
+- Added a warm activity-boundary stop instead of interrupting a round. A sleeping
+  Buddy thanks the active child by name, shows time and stars, awards three
+  one-time daily rest stars, and suggests movement, water, or reading together.
+  Replays and the next child activity respect the boundary, while completed
+  result/reward screens remain visible.
+- Added adult-gated ten-minute extensions and player switching. The extension
+  requires both the math gate and a sustained hold; navigation now waits for
+  pointer release so a mobile touch cannot fall through onto a game beneath the
+  modal. The gate is exposed as an accessible modal dialog.
+- Generated and committed three natural Lily `eleven_v3` rest lines. They use
+  the existing serialized local queue with no runtime API or browser voice.
+- Fixed a real adaptive-engine defect found by the expanded viewport run:
+  warm-up, shaky-target, and due-review selection are now scoped to the activity
+  that can generate the target. Letterkompas letter errors can no longer make
+  Zoemroute reroll an impossible `letter-*` target 96 times; word and letter
+  review remain independently useful inside their shared reading domain.
+
+Validation:
+
+- `npm.cmd run verify` passes typecheck, lint, 39 test files / 331 tests, and a
+  production build. New pure and DOM coverage proves migration, local-day reset,
+  profile isolation, foreground accounting, unlimited mode, one-time reward,
+  adult extension, result-boundary behavior, settings persistence, activity-
+  scoped review, and release-on-pointer-up gating.
+- `npm.cmd run qa:viewport` passes all 67 desktop/mobile scenarios. New 332x807
+  portrait and 844x390 landscape rest screens, plus the narrow settings screen,
+  are checked for clipping, overlap, content fit, 44px controls, accessible names,
+  sleeping Buddy, active-child greeting, reward, and the five parent limit choices.
+- `npm.cmd run qa:mobile-touch` passes 45 real touch steps, 12 tracked attempts,
+  one completed journey node, and the complete limit -> adult sum -> 1.3-second
+  hold -> ten-minute extension path without a ghost tap.
+- `npm.cmd run voice:elevenlabs-audit` passes at 1589/1589 stored Lily clips,
+  1520/1520 current spoken lines, and 32/32 reading phonemes.

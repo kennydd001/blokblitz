@@ -64,7 +64,7 @@ function scoreMode(mode: PlayMode, input: DailyPlanInput): number {
   return weakness + dueBoost + novelty + rotation - repeatPenalty - completions.length * 0.8;
 }
 
-function attemptMatchesMode(attempt: AttemptLog, mode: PlayMode): boolean {
+export function attemptMatchesMode(attempt: AttemptLog, mode: PlayMode): boolean {
   if (mode.levelIds?.includes(attempt.levelId)) return true;
   if (mode.challengeTypes?.includes(attempt.challengeType)) return true;
   if (mode.targetPrefixes?.length && attempt.targetKey) {

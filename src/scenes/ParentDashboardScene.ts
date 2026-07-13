@@ -3,6 +3,7 @@ import { childFocusAction, childFocusTitle, childRepresentationName } from "../e
 import { availableRemediations } from "../education/literacy/minimalPairs";
 import { weeklyDigest } from "../education/parentInsights";
 import type { CurriculumCell } from "../education/types";
+import { normalizeDailyPlayMinutes, roundedPlayMinutes } from "../gameplay/session/playTime";
 import { BaseScene, sceneHeader } from "./SceneUtils";
 
 const DOMAIN_LABELS: Record<string, string> = {
@@ -33,6 +34,8 @@ export class ParentDashboardScene extends BaseScene {
     this.root.replaceChildren();
     const tracker = this.game.mastery;
     const data = this.game.data();
+    const playTime = this.game.playTimeStatus();
+    const dailyMinutes = normalizeDailyPlayMinutes(data.settings.dailyPlayMinutes);
     const dashboard = document.createElement("div");
     dashboard.className = "dashboard-grid";
     const focus = this.game.adaptive.recommendFocus();
@@ -47,6 +50,11 @@ export class ParentDashboardScene extends BaseScene {
 
     dashboard.append(
       this.panel("Deze week", this.weekRows()),
+      this.panel("Speeltijd vandaag", [
+        this.line("Actief", `${roundedPlayMinutes(playTime.usedMs)} min`),
+        this.line("Daglimiet", dailyMinutes === 0 ? "Geen limiet" : `${dailyMinutes} min`),
+        this.line("Extra gegeven", `${roundedPlayMinutes(playTime.bonusMs)} min`)
+      ]),
       this.panel("Mastery per skill", tracker.masteryBySkill().map((item) => this.bar(childFocusTitle(item.skill), item.accuracy, `${item.exposures}x ${item.mastery}`))),
       this.panel("Per doel: wat kan je kind al?", this.curriculumMasteryRows()),
       this.panel("Splits (rekenbordje)", this.splitRows()),

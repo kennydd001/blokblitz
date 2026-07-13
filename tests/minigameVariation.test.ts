@@ -128,6 +128,57 @@ describe("within-session variation", () => {
     expect(game.curriculumFocusReason()).toBe("review");
   });
 
+  it("keeps warm-up targets inside the activity that can actually generate them", () => {
+    const game = new Game(document.querySelector<HTMLElement>("#app")!);
+    const old = Date.now() - 12 * 86_400_000;
+    const attempts: AttemptLog[] = [
+      {
+        timestamp: old,
+        sessionId: "last-week",
+        levelId: "literacy-reading",
+        scene: "minigame",
+        challengeType: "literacy-reading:letterSound",
+        skill: "letterSound",
+        representation: "numeral",
+        quantity: 0,
+        quantityRange: "1-3",
+        promptRepresentation: "numeral",
+        correctAnswer: "letter-i",
+        playerAnswer: "letter-i",
+        wasCorrect: true,
+        reactionTimeMs: 500,
+        hintUsed: false,
+        domain: "literacy-reading",
+        targetKey: "letter-i"
+      },
+      {
+        timestamp: old + 1,
+        sessionId: "last-week",
+        levelId: "zoemroute",
+        scene: "minigame",
+        challengeType: "word-blend",
+        skill: "wordRead",
+        representation: "numeral",
+        quantity: 0,
+        quantityRange: "1-3",
+        promptRepresentation: "numeral",
+        correctAnswer: "maan",
+        playerAnswer: "maan",
+        wasCorrect: true,
+        reactionTimeMs: 500,
+        hintUsed: false,
+        domain: "literacy-reading",
+        targetKey: "word-maan"
+      }
+    ];
+    game.save.updateProgress((progress) => { progress.attempts = attempts; });
+    game.mastery.setAttempts(attempts);
+    game.save.startNewSession();
+
+    expect(game.curriculumFocus("literacy-reading", "zoemroute")).toBe("word-maan");
+    expect(game.curriculumFocus("literacy-reading", "letterkompas")).toBe("letter-i");
+  });
+
   it("rerolls an accidental immediate target repeat", () => {
     const game = new Game(document.querySelector<HTMLElement>("#app")!);
     const scene = new VariationScene(game, ["a", "a", "b"]);

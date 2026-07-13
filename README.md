@@ -18,7 +18,7 @@ Representative modes include:
 - **🦘 Sprongpad** — cross a number path in jumps of 2, 5, or 10 (skip-counting).
 - **🗺️ Avontuur** — a 3D voxel runner across six themed worlds, steering through **number gates** whose quantities appear as canonical cube/dice/bead/… patterns.
 
-The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. One shared queue prevents instructions, answer labels, counting and praise from cutting across one another; voice-first choices resolve only after their label ends. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. Collect **stars** to unlock new voxel heroes, improve the persistent 0-78 calm-mode star collection, and earn **stickers** such as Sterrenmeester for completing long-term goals.
+The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. One shared queue prevents instructions, answer labels, counting and praise from cutting across one another; voice-first choices resolve only after their label ends. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. A profile-local 20-minute default play budget ends only at a safe activity boundary with sleeping Buddy; parents can choose 10/15/20/30 minutes or no limit and can grant ten extra minutes through the adult gate. Collect **stars** to unlock new voxel heroes, improve the persistent 0-78 calm-mode star collection, and earn **stickers** such as Sterrenmeester for completing long-term goals.
 
 ## Run Locally
 
@@ -61,9 +61,9 @@ npm.cmd run qa:viewport
 npm.cmd run qa:mobile-touch
 ```
 
-`qa:mobile-touch` uses Chrome DevTools touch events, not DOM `.click()`, to play the child route from Start -> Number Portal -> Sprint -> WebWoud -> Sterrenstad build -> Summary.
+`qa:mobile-touch` uses Chrome DevTools touch events, not DOM `.click()`, to verify the returning-child sign, the warm playtime stop plus adult long-press, runner controls, a complete Sterrenreis stop, and a complete reading activity.
 
-`qa:viewport` captures the core desktop/mobile scenes, including 360px narrow-phone checks for menu, live Runner, Sterrenstad build, and Summary.
+`qa:viewport` captures 67 core desktop/mobile scenarios, including 332px narrow-phone and short-landscape checks for the opening, rest screen, settings, journey, calm modes, live Runner, rewards, and profile flow.
 
 The child start and replay buttons also make a best-effort fullscreen request from the user gesture. Browsers may deny it, but the game treats that as optional and continues normally.
 
@@ -92,6 +92,8 @@ Settings (behind the parent gate, from the menu):
 - Spoken voice, reading phoneme audio, counting, and praise can be turned on or off.
 - Phone vibration feedback can be turned on or off.
 - High contrast can be toggled.
+- Daily child play can be set to 10, 15, 20, or 30 minutes, or unlimited; today’s
+  active minutes remain visible in Settings and the parent dashboard.
 
 ## Game Flow
 
@@ -116,7 +118,8 @@ The full representation/mastery/adaptive education engine drives every gate unde
 - `src/education`: educational types, canonical layouts, mastery tracker, adaptive engine, spaced repetition, the daily recommendation engine, challenge factory, and misconception detection
 - `src/data/playModes.ts`: the single catalog for free-play labels, curriculum category, recommendation stage, learning track, and attempt mapping
 - `src/education/representations`: reusable SVG renderers for all 12 quantity representations
-- `src/gameplay`: layer-specific mechanic labels and templates
+- `src/gameplay`: layer-specific mechanic labels/templates and the pure daily
+  playtime budget model
 - `assets/ASSET_MANIFEST.json`: local asset and license record
 - `docs`: spec, plan, implementation runbook, and live status
 

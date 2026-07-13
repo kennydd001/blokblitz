@@ -16,6 +16,16 @@ import { JOURNEY, backfillCompleted, frontierIndex } from "../data/journey";
 import { PROFILE_AVATAR_IDS } from "../data/profileAvatars";
 import { earnedStickerIds } from "../data/stickers";
 import { WORLDS, nextWorldId } from "../runner/worlds";
+import {
+  DEFAULT_DAILY_PLAY_MINUTES,
+  EXTRA_PLAY_MINUTES,
+  REST_REWARD_STARS,
+  dailyPlayTimeStatus,
+  defaultDailyPlayTime,
+  normalizeDailyPlayMinutes,
+  normalizeDailyPlayTime,
+  type PlayTimeStatus
+} from "../gameplay/session/playTime";
 
 const STORAGE_KEY = "blokblitz-save-v1";
 const ROSTER_STORAGE_KEY = "blokblitz-profiles-v1";
@@ -138,7 +148,8 @@ export function defaultSettings(): GameSettings {
     sound: true,
     haptics: true,
     highContrast: false,
-    voice: true
+    voice: true,
+    dailyPlayMinutes: DEFAULT_DAILY_PLAY_MINUTES
   };
 }
 
@@ -177,7 +188,8 @@ export function defaultProgress(): GameProgress {
     buddyLevelSeen: 1,
     activityHistory: [],
     activityBestStars: {},
-    dailyPlan: { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
+    dailyPlan: { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false },
+    playTime: defaultDailyPlayTime()
   };
 }
 
@@ -462,6 +474,40 @@ export class SaveManager {
     return this.getData();
   }
 
+  playTimeStatus(now = Date.now(), pendingMs = 0): PlayTimeStatus {
+    return dailyPlayTimeStatus(this.data.settings, this.data.progress.playTime, now, pendingMs);
+  }
+
+  addActivePlayTime(milliseconds: number, now = Date.now()): PlayTimeStatus {
+    if (!Number.isFinite(milliseconds) || milliseconds <= 0) return this.playTimeStatus(now);
+    const playTime = normalizeDailyPlayTime(this.data.progress.playTime, now);
+    playTime.usedMs += milliseconds;
+    this.data.progress.playTime = playTime;
+    this.save();
+    return this.playTimeStatus(now);
+  }
+
+  grantExtraPlayTime(minutes = EXTRA_PLAY_MINUTES, now = Date.now()): PlayTimeStatus {
+    const playTime = normalizeDailyPlayTime(this.data.progress.playTime, now);
+    playTime.bonusMs += Math.max(1, Math.round(minutes)) * 60_000;
+    this.data.progress.playTime = playTime;
+    this.save();
+    return this.playTimeStatus(now);
+  }
+
+  claimRestReward(now = Date.now()): boolean {
+    const playTime = normalizeDailyPlayTime(this.data.progress.playTime, now);
+    const status = dailyPlayTimeStatus(this.data.settings, playTime, now);
+    if (!status.reached || playTime.restRewardClaimed) return false;
+    playTime.restRewardClaimed = true;
+    this.data.progress.playTime = playTime;
+    this.data.progress.stars += REST_REWARD_STARS;
+    const session = this.data.progress.sessions.find((item) => item.id === this.data.progress.sessionId);
+    if (session) session.starsEarned += REST_REWARD_STARS;
+    this.save();
+    return true;
+  }
+
   /** Keep one stable set of recommendations for this child for the whole day. */
   ensureDailyPlan(dayKey: string, modeIds: string[]): DailyPlanProgress {
     const uniqueModeIds = [...new Set(modeIds.filter(Boolean))].slice(0, 3);
@@ -558,7 +604,8 @@ export class SaveManager {
         ...fallback.settings,
         ...savedSettings,
         music: savedSettings.music ?? !legacyMuted,
-        sound: savedSettings.sound ?? !legacyMuted
+        sound: savedSettings.sound ?? !legacyMuted,
+        dailyPlayMinutes: normalizeDailyPlayMinutes(savedSettings.dailyPlayMinutes)
       },
       progress: {
         ...fallback.progress,
@@ -584,7 +631,8 @@ export class SaveManager {
         buddyLevelSeen: data.progress?.buddyLevelSeen ?? 1,
         activityHistory: data.progress?.activityHistory ?? [],
         activityBestStars: normalizeActivityBestStars(data.progress?.activityBestStars),
-        dailyPlan: data.progress?.dailyPlan ?? { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false }
+        dailyPlan: data.progress?.dailyPlan ?? { dayKey: "", modeIds: [], completedModeIds: [], rewardClaimed: false },
+        playTime: normalizeDailyPlayTime(data.progress?.playTime)
       }
     };
     compactProgressForStorage(migrated.progress);

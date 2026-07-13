@@ -205,6 +205,7 @@ export class MemoryScene extends BaseScene {
         nextMission: nextDailyMission(this.game, this.name),
         sessionTreasure: { fill: treasureFill, total: 3 },
         onReplay: () => {
+          if (!this.game.allowPlayContinuation()) return;
           this.game.save.startNewSession();
           this.startBoard();
         },

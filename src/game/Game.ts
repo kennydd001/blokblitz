@@ -1,7 +1,8 @@
 import { AdaptiveEngine } from "../education/adaptiveEngine";
 import { journeyTier, recentAccuracy, type DifficultyTier } from "../education/difficulty";
 import { dueForReview, nextInterleavedTarget, sessionWarmup } from "../education/review";
-import { buildDailyPlayPlan, localDayKey } from "../education/dailyPlan";
+import { attemptMatchesMode, buildDailyPlayPlan, localDayKey } from "../education/dailyPlan";
+import { playModeByScene } from "../data/playModes";
 import { JOURNEY, nodeIndexById } from "../data/journey";
 import { buildAttemptLog } from "../education/challengeLogger";
 import { ChallengeFactory } from "../education/challengeFactory";
@@ -55,7 +56,11 @@ import { WoordbouwplaatsScene } from "../scenes/minigames/WoordbouwplaatsScene";
 import { ZoemrouteScene } from "../scenes/minigames/ZoemrouteScene";
 import { SettingsScene } from "../scenes/SettingsScene";
 import { ProfilePickerScene } from "../scenes/ProfilePickerScene";
+import { RestScene } from "../scenes/RestScene";
 import type { Stage3D } from "./Stage3D";
+
+const NON_PLAY_SCENES = new Set(["boot", "profiles", "parentDashboard", "parent-dashboard", "settings", "results", "rest"]);
+const PLAY_TIME_PERSIST_MS = 15_000;
 
 export class Game {
   readonly root: HTMLElement;
@@ -89,6 +94,7 @@ export class Game {
   private focusSessionId = "";
   private readonly warmupTargets = new Map<string, string[]>();
   private lastFocusReason: "warmup" | "adaptive" | "review" | "discovery" = "discovery";
+  private pendingPlayTimeMs = 0;
 
   private readonly onResize = (): void => this.resize();
 
@@ -101,6 +107,7 @@ export class Game {
   private readonly onVisibilityChange = (): void => {
     if (!this.active) return;
     if (document.hidden) {
+      this.flushPlayTime();
       this.loop.stop();
       this.voice.pause();
       this.audio.pauseForBackground();
@@ -174,6 +181,7 @@ export class Game {
   stop(): void {
     if (!this.active) return;
     this.active = false;
+    this.flushPlayTime();
     this.input.detach();
     this.loop.stop();
     this.audio.stopMusic();
@@ -187,7 +195,28 @@ export class Game {
   }
 
   showScene(name: string, params?: unknown): void {
+    this.flushPlayTime();
+    if (name !== "rest" && this.isChildPlayScene(name) && this.save.playTimeStatus().reached) {
+      this.scenes.goTo("rest");
+      return;
+    }
     this.scenes.goTo(name, params);
+  }
+
+  playTimeStatus(now = Date.now()) {
+    return this.save.playTimeStatus(now, this.pendingPlayTimeMs);
+  }
+
+  allowPlayContinuation(): boolean {
+    this.flushPlayTime();
+    if (!this.save.playTimeStatus().reached) return true;
+    this.scenes.goTo("rest");
+    return false;
+  }
+
+  grantExtraPlayTime(minutes?: number): void {
+    this.flushPlayTime();
+    this.save.grantExtraPlayTime(minutes);
   }
 
   /**
@@ -197,7 +226,9 @@ export class Game {
    * The caller navigates (usually to "reis").
    */
   useProfile(id: string): void {
+    this.flushPlayTime();
     if (id) this.save.switchProfile(id);
+    this.pendingPlayTimeMs = 0;
     this.mastery.setAttempts(this.save.getMutableData().progress.attempts);
     this.focusSessionId = "";
     this.warmupTargets.clear();
@@ -310,30 +341,36 @@ export class Game {
    * last practised — spaced repetition, so a skill learned last week comes back
    * before it fades. Undefined lets the generator roll a fresh target freely.
    */
-  curriculumFocus(domain?: string): string | undefined {
+  curriculumFocus(domain?: string, scene?: string): string | undefined {
     this.lastFocusReason = "discovery";
     if (!domain) return undefined;
     const attempts = this.mastery.getAttempts();
+    const mode = scene ? playModeByScene(scene) : undefined;
+    const relevantAttempts = mode
+      ? attempts.filter((attempt) => attemptMatchesMode(attempt, mode))
+      : attempts.filter((attempt) => attempt.domain === domain);
+    const focusScope = mode ? `${domain}:${mode.scene}` : domain;
     const sessionId = this.save.getMutableData().progress.sessionId;
     if (sessionId !== this.focusSessionId) {
       this.focusSessionId = sessionId;
       this.warmupTargets.clear();
     }
-    if (!this.warmupTargets.has(domain)) {
-      const historical = attempts.filter((attempt) => attempt.sessionId !== sessionId && attempt.domain === domain);
+    if (!this.warmupTargets.has(focusScope)) {
+      const historical = relevantAttempts.filter((attempt) => attempt.sessionId !== sessionId);
       this.warmupTargets.set(
-        domain,
+        focusScope,
         sessionWarmup(historical, Date.now(), 3).map((item) => item.targetKey)
       );
     }
-    const warmup = this.warmupTargets.get(domain)?.shift();
-    const shaky = this.adaptive.recommendCurriculumFocus(domain);
-    const due = dueForReview(attempts, Date.now())
+    const warmup = this.warmupTargets.get(focusScope)?.shift();
+    const recommendedShaky = this.adaptive.recommendCurriculumFocus(domain);
+    const shaky = relevantAttempts.some((attempt) => attempt.targetKey === recommendedShaky) ? recommendedShaky : undefined;
+    const due = dueForReview(relevantAttempts, Date.now())
       .filter((item) => item.domain === domain)
       .map((item) => item.targetKey);
     const target = nextInterleavedTarget(
       [warmup, shaky, ...due],
-      attempts,
+      relevantAttempts,
       sessionId,
       domain
     );
@@ -428,6 +465,7 @@ export class Game {
     this.scenes.register("parentDashboard", (game) => new ParentDashboardScene(game));
     this.scenes.register("settings", (game) => new SettingsScene(game));
     this.scenes.register("profiles", (game) => new ProfilePickerScene(game));
+    this.scenes.register("rest", (game) => new RestScene(game));
   }
 
   private resize(): void {
@@ -437,11 +475,26 @@ export class Game {
   }
 
   private update(dt: number, elapsed: number): void {
+    if (this.isChildPlayScene(this.scenes.getCurrentName()) && !this.playTimeStatus().reached) {
+      this.pendingPlayTimeMs += dt * 1000;
+      if (this.pendingPlayTimeMs >= PLAY_TIME_PERSIST_MS) this.flushPlayTime();
+    }
     this.scenes.update(dt);
     // Only the runner shows the 3D world. Every other scene is pure DOM over an
     // opaque sky, so rendering the WebGL scene there just burned battery/heat/GPU
     // on a tablet for pixels the child never saw (~90% of playtime). Gate it.
     if (this.scenes.getCurrentName() === "run") this.stage3d?.update(dt, elapsed);
+  }
+
+  private isChildPlayScene(name: string | undefined): boolean {
+    return Boolean(name && !NON_PLAY_SCENES.has(name));
+  }
+
+  private flushPlayTime(): void {
+    if (this.pendingPlayTimeMs <= 0) return;
+    const elapsed = this.pendingPlayTimeMs;
+    this.pendingPlayTimeMs = 0;
+    this.save.addActivePlayTime(elapsed);
   }
 
   private soundCueForCorrectAttempt(challenge: Challenge, isSnap: boolean): SoundCue {

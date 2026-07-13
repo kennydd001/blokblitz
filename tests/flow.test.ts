@@ -2898,6 +2898,9 @@ describe("per-child profiles", () => {
     const hold = document.querySelector<HTMLButtonElement>(".parent-gate-hold")!;
     hold.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
     vi.advanceTimersByTime(1250);
+    expect(document.querySelector(".parent-gate-overlay")).toBeTruthy();
+    hold.dispatchEvent(new MouseEvent("pointerup", { bubbles: true, cancelable: true }));
+    vi.advanceTimersByTime(1);
     expect(document.querySelector(".parent-gate-overlay")).toBeFalsy();
     expect(root.querySelector(".profiles-scene")).toBeTruthy();
   });
@@ -2917,6 +2920,9 @@ describe("per-child profiles", () => {
     const hold = document.querySelector<HTMLButtonElement>(".parent-gate-hold")!;
     hold.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
     vi.advanceTimersByTime(1250);
+    expect(document.querySelector(".parent-gate-overlay")).toBeTruthy();
+    hold.dispatchEvent(new MouseEvent("pointerup", { bubbles: true, cancelable: true }));
+    vi.advanceTimersByTime(1);
 
     expect(document.querySelector(".parent-gate-overlay")).toBeNull();
     expect(root.querySelector(".profiles-scene")).toBeTruthy();

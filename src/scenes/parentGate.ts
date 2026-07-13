@@ -5,6 +5,7 @@
 export interface ParentGateOptions {
   holdToConfirm?: boolean;
   holdMs?: number;
+  holdPrompt?: string;
 }
 
 export function openParentGate(onPass: () => void, options: ParentGateOptions = {}): void {
@@ -19,6 +20,9 @@ export function openParentGate(onPass: () => void, options: ParentGateOptions = 
 
   const card = document.createElement("div");
   card.className = "parent-gate-card";
+  card.setAttribute("role", "dialog");
+  card.setAttribute("aria-modal", "true");
+  card.setAttribute("aria-label", "Controle voor volwassenen");
   const title = document.createElement("p");
   title.className = "parent-gate-title";
   title.textContent = "Voor volwassenen";
@@ -62,40 +66,66 @@ export function openParentGate(onPass: () => void, options: ParentGateOptions = 
   document.body.appendChild(overlay);
 
   function showHoldStep(): void {
-    question.textContent = "Houd vast om te wisselen";
+    question.textContent = options.holdPrompt ?? "Houd vast om te wisselen";
     const hold = document.createElement("button");
     hold.type = "button";
     hold.className = "btn primary parent-gate-hold";
     hold.textContent = "Ingedrukt houden";
     const holdMs = Math.max(700, options.holdMs ?? 1200);
     let timer: number | undefined;
+    let ready = false;
+    let finishing = false;
 
     const cancelHold = (): void => {
       if (timer !== undefined) window.clearTimeout(timer);
       timer = undefined;
-      hold.classList.remove("holding");
+      ready = false;
+      hold.classList.remove("holding", "complete");
+      hold.textContent = "Ingedrukt houden";
     };
     const beginHold = (): void => {
-      if (timer !== undefined) return;
+      if (timer !== undefined || finishing) return;
+      ready = false;
       hold.classList.add("holding");
       timer = window.setTimeout(() => {
         timer = undefined;
+        ready = true;
+        hold.classList.add("complete");
+        hold.textContent = "Loslaten om te bevestigen";
+      }, holdMs);
+    };
+    const finishHold = (event: Event): void => {
+      event.preventDefault();
+      if (!ready || finishing) {
+        cancelHold();
+        return;
+      }
+      finishing = true;
+      hold.classList.remove("holding");
+      // Keep the modal above the destination until this pointer event is fully
+      // finished. Otherwise touchend can become a ghost click on the new scene.
+      window.setTimeout(() => {
         overlay.remove();
         onPass();
-      }, holdMs);
+      }, 0);
     };
 
     hold.addEventListener("pointerdown", (event) => {
       event.preventDefault();
+      try {
+        hold.setPointerCapture?.(event.pointerId);
+      } catch {
+        // Pointer capture is optional in older WebViews.
+      }
       beginHold();
     });
-    hold.addEventListener("pointerup", cancelHold);
+    hold.addEventListener("pointerup", finishHold);
     hold.addEventListener("pointercancel", cancelHold);
     hold.addEventListener("pointerleave", cancelHold);
     hold.addEventListener("keydown", (event) => {
       if ((event.key === "Enter" || event.key === " ") && !event.repeat) beginHold();
     });
-    hold.addEventListener("keyup", cancelHold);
+    hold.addEventListener("keyup", finishHold);
     row.replaceChildren(hold);
   }
 }

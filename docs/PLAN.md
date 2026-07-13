@@ -140,3 +140,26 @@ Manual smoke:
 - Inspect desktop and mobile viewport.
 - Confirm app is nonblank, readable, interactive, and no core UI overlaps.
 
+## Milestone 8 - Healthy Session Boundary and Scoped Review
+
+Acceptance criteria:
+
+- Foreground child play is tracked per profile and local day; parent and reward
+  screens do not consume the budget.
+- The default limit is parent-adjustable and never interrupts an active round.
+- The warm rest screen is child-specific, readable in phone portrait/landscape,
+  and gives adults gated access to extra time, settings, or another profile.
+- A completed adult hold cannot fall through onto the newly mounted game screen.
+- Adaptive warm-up and review targets stay inside the activity that can generate
+  them, even when multiple modes share one learning domain.
+- Every new spoken line is a committed local Lily clip and the voice audit remains
+  complete.
+
+Validation:
+
+```powershell
+npm.cmd run verify
+npm.cmd run qa:viewport
+npm.cmd run qa:mobile-touch
+npm.cmd run voice:elevenlabs-audit
+```

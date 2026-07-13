@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T13:05:52.966Z",
+  "generatedAt": "2026-07-13T17:27:11.181Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1586,
+  "lineCount": 1589,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -3449,6 +3449,14 @@
       "file": "buddy-groeit-uitroep-superdino-uitroep.mp3"
     },
     {
+      "id": "common-32",
+      "slug": "buddy-is-moe-tijd-voor-een-fijne-pauze",
+      "text": "Buddy is moe. Tijd voor een fijne pauze.",
+      "spokenText": "Buddy is moe. Tijd voor een fijne pauze.",
+      "category": "common",
+      "file": "buddy-is-moe-tijd-voor-een-fijne-pauze.mp3"
+    },
+    {
       "id": "adaptive-remediation-13",
       "slug": "controleer-je-laatste-sprong",
       "text": "Controleer je laatste sprong.",
@@ -4161,6 +4169,14 @@
       "file": "een-vogeltje.mp3"
     },
     {
+      "id": "source-scenes/RestScene.ts-3922-0",
+      "slug": "een-volwassene-gaf-je-tien-minuten-extra",
+      "text": "Een volwassene gaf je tien minuten extra.",
+      "spokenText": "Een volwassene gaf je tien minuten extra.",
+      "category": "source-static",
+      "file": "een-volwassene-gaf-je-tien-minuten-extra.mp3"
+    },
+    {
       "id": "listen-option-beer-honing-0-1",
       "slug": "een-wortel",
       "text": "een wortel",
@@ -4431,6 +4447,14 @@
       "spokenText": "Goed gedaan!",
       "category": "common",
       "file": "goed-gedaan-uitroep.mp3"
+    },
+    {
+      "id": "source-scenes/RestScene.ts-3239-0",
+      "slug": "goed-gespeeld-uitroep-morgen-wacht-er-weer-een-avontuur",
+      "text": "Goed gespeeld! Morgen wacht er weer een avontuur.",
+      "spokenText": "Goed gespeeld! Morgen wacht er weer een avontuur.",
+      "category": "source-static",
+      "file": "goed-gespeeld-uitroep-morgen-wacht-er-weer-een-avontuur.mp3"
     },
     {
       "id": "praise-1",
