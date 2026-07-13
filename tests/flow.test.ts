@@ -4,6 +4,7 @@ import { AdaptiveEngine } from "../src/education/adaptiveEngine";
 import { ChallengeFactory } from "../src/education/challengeFactory";
 import { MasteryTracker } from "../src/education/masteryTracker";
 import { buildCurriculumAttempt } from "../src/education/challengeLogger";
+import { STARTER_LETTERS } from "../src/education/literacy/letters";
 import { AdaptiveGateProvider } from "../src/runner/gateProvider";
 import { RunnerCore, type GateProvider, type GateSpec, type RunnerSnapshot } from "../src/runner/RunnerCore";
 import { STICKERS } from "../src/data/stickers";
@@ -1127,6 +1128,26 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(indexOf("kloktoren")).toBeGreaterThan(indexOf("zoemroute"));
   });
 
+  it("orders initial reading from sound and letters through blending to word building", () => {
+    const stops = JOURNEY.filter((node) => node.kind === "stop");
+    const indexOf = (scene: string) => stops.findIndex((node) => node.scene === scene);
+    expect(indexOf("klankgrot")).toBeLessThan(indexOf("letterkompas"));
+    expect(indexOf("letterkompas")).toBeLessThan(indexOf("schrijfspoor"));
+    expect(indexOf("schrijfspoor")).toBeLessThan(indexOf("zoemroute"));
+    expect(indexOf("zoemroute")).toBeLessThan(indexOf("woordbouwplaats"));
+  });
+
+  it("orders number bonds before the transition to 20 and keeps the road at 50 nodes", () => {
+    const stops = JOURNEY.filter((node) => node.kind === "stop");
+    const indexOf = (scene: string) => stops.findIndex((node) => node.scene === scene);
+    expect(indexOf("splitbord")).toBeLessThan(indexOf("fill"));
+    expect(indexOf("fill")).toBeLessThan(indexOf("vriendjes"));
+    expect(indexOf("vriendjes")).toBeLessThan(indexOf("tientalhuis"));
+    expect(indexOf("tientalhuis")).toBeLessThan(indexOf("getallenlijn"));
+    expect(indexOf("getallenlijn")).toBeLessThan(indexOf("tienbrug"));
+    expect(JOURNEY).toHaveLength(50);
+  });
+
   it("guards every region's friend with a boss that has a name and a defeat line", () => {
     const bossNodes = JOURNEY.filter((node) => node.kind === "boss");
     const regions = [...new Set(JOURNEY.map((node) => node.regionId))];
@@ -1166,6 +1187,27 @@ describe("Speeltuin hub + calm game modes", () => {
     // the boss that was inserted earlier — so the frontier moves forward, not back.
     expect(repaired).toEqual(JOURNEY.slice(0, friendIndex + 1).map((node) => node.id));
     expect(frontierIndex(repaired)).toBe(friendIndex + 1);
+  });
+
+  it("migrates children at every changed legacy stop without moving their frontier backwards", () => {
+    const cases = [
+      ["muntgrot-match-3", "muntgrot-memory-3"],
+      ["muntgrot-memory-4", "muntgrot-memory-3"],
+      ["ijsbaan-vriendjes-3", "ijsbaan-zoemroute-3"],
+      ["webwoud-tientalhuis-1", "webwoud-fill-1"],
+      ["webwoud-woordbouwplaats-2", "webwoud-woordbouwplaats-3"],
+      ["webwoud-meetwerf-3", "webwoud-meetwerf-4"],
+      ["bouwdorp-fill-0", "bouwdorp-tientalhuis-0"],
+      ["sterrenrace-zoemroute-1", "sterrenrace-woordbouwplaats-1"]
+    ] as const;
+
+    for (const [legacyId, currentId] of cases) {
+      const currentIndex = JOURNEY.findIndex((node) => node.id === currentId);
+      const repaired = backfillCompleted([legacyId]);
+      expect(currentIndex, currentId).toBeGreaterThanOrEqual(0);
+      expect(repaired, legacyId).toEqual(JOURNEY.slice(0, currentIndex + 1).map((node) => node.id));
+      expect(frontierIndex(repaired), legacyId).toBe(currentIndex + 1);
+    }
   });
 
   it("opens a brand-new journey with a playable micro-cinematic", async () => {
@@ -1731,7 +1773,7 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${th.id}"]`)!.click();
     expect(root.querySelector(".tientalhuis-board")).toBeTruthy();
-    expect(root.querySelectorAll(".tientalhuis-choice")).toHaveLength(2);
+    expect(root.querySelectorAll(".tientalhuis-choice")).toHaveLength(3);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.tientalhuis-choice[data-correct="true"]')?.click();
@@ -1759,8 +1801,10 @@ describe("Speeltuin hub + calm game modes", () => {
     game.showScene("reis");
     root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${zr.id}"]`)!.click();
     expect(root.querySelector(".zoemroute-stones")).toBeTruthy();
+    expect(root.querySelector(".zoemroute-chain")).toBeTruthy();
     expect(root.querySelectorAll(".zoemroute-stone").length).toBeGreaterThanOrEqual(1);
-    expect(root.querySelectorAll(".zoemroute-choice")).toHaveLength(3);
+    expect(root.querySelectorAll(".zoemroute-choice")).toHaveLength(2);
+    expect([...root.querySelectorAll<HTMLElement>(".zoemroute-stone")].every((stone) => STARTER_LETTERS.includes(stone.textContent ?? ""))).toBe(true);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.zoemroute-choice[data-correct="true"]')?.click();
@@ -1821,6 +1865,7 @@ describe("Speeltuin hub + calm game modes", () => {
     expect(root.querySelector(".woordbouw-box.blank")).toBeTruthy();
     // Choice count follows the difficulty tier at this node (2 gentle, 3 later).
     expect(root.querySelectorAll(".woordbouw-choice").length).toBeGreaterThanOrEqual(2);
+    expect([...root.querySelectorAll<HTMLElement>(".woordbouw-choice")].every((choice) => STARTER_LETTERS.includes(choice.textContent?.trim() ?? ""))).toBe(true);
 
     for (let i = 0; i < 24 && !root.querySelector(".mini-done"); i += 1) {
       root.querySelector<HTMLButtonElement>('.woordbouw-choice[data-correct="true"]')?.click();

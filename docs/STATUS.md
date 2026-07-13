@@ -2330,3 +2330,52 @@ Release:
 - A direct public in-app-browser smoke at 390x844 confirmed the new entry hashes,
   the complete returning-child profile opening, zero horizontal overflow, and
   no browser warnings or errors.
+
+## Curriculum-Ordered Journey and Decodable Words - 2026-07-13
+
+Completed work:
+
+- Rechecked the 2026-2027 Flemish rollout against current official sources.
+  Nederlands and wiskunde are mandatory implementation priorities for years
+  1-3, while the exact first-grade sequence remains a leerplan/method decision.
+- Reordered the 50-node Sterrenreis into a defensible spiral. Klank and letter
+  work now lead into Schrijfspoor and Zoemroute before Woordbouw; Splitbord,
+  filling and friends of ten now precede teen numbers, the line to 20 and
+  Tienbrug. Clock reading remains in the final region.
+- Added legacy journey-id aliases for every changed stop. A returning child is
+  backfilled to a clean current prefix and never moved backwards by the release.
+- Replaced daily-plan magic indexes with the actual Zoemroute and Tienbrug
+  milestones. Clock reading can no longer be recommended from the middle of the
+  journey; sustained practice evidence can still accelerate a strong child.
+- Connected Zoemroute and Woordbouwplaats to the profile-local earned letter
+  book. Added the fully starter-decodable word `mis`; old word experience keeps
+  its graphemes open. Weak/due words and exact missing boxes are now selected
+  directly instead of relying on up to 96 random rolls.
+- Added the clear `mis/mes` i/e minimal-pair remediation automatically exposed
+  by the expanded picture-word inventory.
+- Rebuilt the Zoemroute sound chain as one stable visual group. Five sound
+  stones stay on one row at 332 px, while the replay button gets a clean second
+  row. The success bee follows the chain itself.
+- Replaced the stale Muntgrot counting line with a sound-listening story and
+  generated six new local Lily `eleven_v3` clips for the changed story, `mis`,
+  its rhyme prompts, and blend prompt.
+
+Validation:
+
+- `npm.cmd run verify` passes typecheck, lint, 39 test files / 340 tests, and a
+  production build. New regressions cover route order, all legacy stop aliases,
+  decodable target/tile pools, old-word letter migration, direct adaptive words,
+  exact word boxes, i/e minimal pairs, and journey-linked recommendation stages.
+- `npm.cmd run qa:viewport` passes all 67 scenarios. The advanced reading
+  fixtures are history-isolated, force the five-sound word `banaan`, and reject
+  a sound chain that wraps across rows. Narrow portrait and landscape images
+  were inspected directly after the layout repair.
+- `npm.cmd run qa:mobile-touch` passes 45 real touch steps with 12 attempts and
+  one completed journey node. `npm.cmd run voice:elevenlabs-audit` passes at
+  1595/1595 local Lily clips, 1524/1524 current spoken lines, and 32/32 reading
+  phonemes.
+
+Release:
+
+- Pending commit, GitHub push, Sprintsite deployment, and live smoke for this
+  milestone.

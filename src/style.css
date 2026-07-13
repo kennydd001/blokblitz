@@ -3926,7 +3926,8 @@ select {
 
 /* ===== Zoemroute — connected blending (sound stones) ===== */
 .zoemroute-play { gap: 18px; }
-.zoemroute-stones { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
+.zoemroute-stones { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
+.zoemroute-chain { display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; position: relative; }
 .zoemroute-stone {
   min-width: 52px; min-height: 52px; padding: 6px 12px; border-radius: 16px;
   border: 4px solid var(--edge); background: linear-gradient(160deg, #bdf0ff, #5ec0ff);
@@ -3945,6 +3946,13 @@ select {
 .zoemroute-zoem:active { transform: scale(0.95); }
 .zoemroute-choices { gap: 16px; }
 .zoemroute-choice { min-width: 96px; }
+@media (max-width: 380px) {
+  .zoemroute-stones { flex-direction: column; flex-wrap: nowrap; gap: 10px; }
+  .zoemroute-chain { width: 100%; gap: 4px; }
+  .zoemroute-stone { min-width: 44px; padding-inline: 8px; font-size: 1.5rem; }
+  .zoemroute-link { width: 8px; flex: 0 0 8px; }
+  .zoemroute-zoem { margin-left: 0; }
+}
 
 /* ===== Meetwerf — length compare + measuring with unit blocks ===== */
 .meet-play { gap: 16px; }

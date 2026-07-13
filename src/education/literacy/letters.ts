@@ -35,6 +35,14 @@ function attemptedLetter(attempt: AttemptLog): string | undefined {
   return LETTERS.includes(letter) ? letter : undefined;
 }
 
+function attemptedWord(attempt: AttemptLog) {
+  if (attempt.domain !== "literacy-reading" || !attempt.targetKey) return undefined;
+  const wordKey = attempt.targetKey.startsWith("word-")
+    ? attempt.targetKey.slice("word-".length)
+    : attempt.targetKey.match(/^build-(.+)-\d+$/)?.[1];
+  return wordKey ? PHONICS_WORDS.find((word) => word.word === wordKey) : undefined;
+}
+
 /** Profile-local letter book: never relock legacy-seen letters; otherwise each
  * grapheme with two independent, unhinted successes earns one new grapheme. */
 export function letterProgress(attempts: AttemptLog[]): LetterProgress {
@@ -43,6 +51,12 @@ export function letterProgress(attempts: AttemptLog[]): LetterProgress {
     .filter((item): item is { attempt: AttemptLog; letter: string } => Boolean(item.letter));
   const cleanByLetter = new Map<string, number>();
   let seenFrontier = STARTER_LETTERS.length;
+  for (const attempt of attempts) {
+    for (const unit of attemptedWord(attempt)?.units ?? []) {
+      const unitIndex = LETTERS.indexOf(unit);
+      seenFrontier = unitIndex < 0 ? LETTERS.length : Math.max(seenFrontier, unitIndex + 1);
+    }
+  }
   for (const { attempt, letter } of letterAttempts) {
     seenFrontier = Math.max(seenFrontier, LETTERS.indexOf(letter) + 1);
     if (attempt.wasCorrect && !attempt.hintUsed) cleanByLetter.set(letter, (cleanByLetter.get(letter) ?? 0) + 1);

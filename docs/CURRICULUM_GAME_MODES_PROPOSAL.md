@@ -1,11 +1,11 @@
 # Curriculum and Game Mode Expansion Proposal
 
-Date: 2026-06-27
+Date: 2026-06-27. Implementation status updated 2026-07-13.
 
-Scope: proposal only. This document is a hand-off for the next builder. It does
-not implement code, but it gives the curriculum map, game modes, data model, and
-acceptance checks needed to expand BlokBlitz beyond the current 1-10 number
-structure core.
+Scope: originally a hand-off proposal; now the living curriculum rationale for
+the implemented expansion. It records the curriculum map, game modes, data
+model, current journey order, and acceptance checks beyond the original 1-10
+number-structure core.
 
 ## Sources Checked
 
@@ -13,6 +13,10 @@ structure core.
   https://www.vlaanderen.be/onderwijsprofessionals/lesgeven-en-begeleiden/opleidingsinhouden/opleidingsinhouden-basisonderwijs/nieuwe-minimumdoelen-basisonderwijs
 - Onderwijsdoelen search entry point:
   https://onderwijsdoelen.be
+- Katholiek Onderwijs Vlaanderen, "Vlot lezen: tienpuntenplan voor de aanpak":
+  https://pro.katholiekonderwijs.vlaanderen/download/content/ac976e7e-a5b7-408f-8148-4d8cde32bb0f/attachments/Tienpuntenplan_voor_leesvertraging.pdf
+- GO!, "Wiskunde basisonderwijs":
+  https://pro.g-o.be/themas/leerplannen/basisonderwijs/wiskunde/
 - Vosbergschool, "Infoboekje L1 2025-2026":
   https://2023.vosbergschool.be/wp-content/uploads/2025/09/Infoboekje-L1-2025-2026.pdf
 - Uitgeverij Zwijsen, "Veilig leren lezen Zoem-versie - Didactiek":
@@ -25,6 +29,31 @@ mandatory for years 1-3. First-grade detail therefore has to be inferred from
 approved school methods, local leerplannen, and the bridge from end
 kleuteronderwijs to later primary goals. The game should stay configurable so a
 school or parent can adapt letter order and word sets.
+
+As rechecked on 2026-07-13, the official implementation table requires schools
+to implement the new Nederlands, wiskunde, and wetenschap en techniek goals in
+years 1-3 during school year 2026-2027. It still does not prescribe one national
+week-by-week first-grade order. The implemented order below is therefore a
+defensible learning progression, not a claim that every Flemish reading method
+uses identical letter timing.
+
+## Current Implementation
+
+This proposal is no longer only a hand-off. The game now implements all core
+reading, splitting, to-20, geometry, measurement, money, time, listening, and
+traffic modes described below. The 50-node Sterrenreis uses this spiral:
+
+1. Quantity sense, matching, one-more/less, and safe traffic.
+2. Auditory sound discrimination, rhyme, listening, and memory.
+3. Comparing, earned letter-sound mapping, handwriting, then connected blending.
+4. Split boards, filling to ten, friends of ten, word building, and measuring.
+5. Teen numbers, number line to 20, doubles/even-odd, money, ordering, and counting.
+6. Spaced revisits, bridge-through-ten, skip counting, and finally clock reading.
+
+Zoemroute and Woordbouwplaats now receive their target words only from the
+profile's earned letter book. The starter word `mis` is fully decodable with
+`i-k-m-s`; advanced or legacy words keep their already-seen graphemes available.
+Weak and due words are selected directly instead of relying on random rerolls.
 
 ## High-Level Finding
 

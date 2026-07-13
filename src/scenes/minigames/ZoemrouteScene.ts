@@ -1,4 +1,5 @@
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
+import { LETTERS, letterProgress } from "../../education/literacy/letters";
 import { zoemChallenge, zoemRound, type ZoemRound } from "../../education/literacy/words";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -18,7 +19,12 @@ export class ZoemrouteScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = zoemRound(this.tier());
+    const unlocked = letterProgress(this.game.mastery.getAttempts()).unlockedLetters;
+    this.currentRound = zoemRound(
+      this.tier(),
+      unlocked.length < LETTERS.length ? unlocked : undefined,
+      this.adaptiveTargetKey()
+    );
     this.instruction = this.currentRound.prompt;
     return zoemChallenge(this.currentRound);
   }
@@ -30,12 +36,14 @@ export class ZoemrouteScene extends MiniGameScene {
     // The sound-stone route: tap a stone to hear that sound.
     const route = document.createElement("div");
     route.className = "zoemroute-stones";
+    const chain = document.createElement("div");
+    chain.className = "zoemroute-chain";
     this.currentRound.units.forEach((unit, i) => {
       if (i > 0) {
         const link = document.createElement("span");
         link.className = "zoemroute-link";
         link.setAttribute("aria-hidden", "true");
-        route.appendChild(link);
+        chain.appendChild(link);
       }
       const stone = document.createElement("button");
       stone.type = "button";
@@ -43,8 +51,9 @@ export class ZoemrouteScene extends MiniGameScene {
       stone.textContent = unit;
       stone.setAttribute("aria-label", `klank ${unit}`);
       stone.addEventListener("click", () => this.game.readingAudio.playPhoneme(unit, { interrupt: true, rate: 0.7 }));
-      route.appendChild(stone);
+      chain.appendChild(stone);
     });
+    route.appendChild(chain);
 
     const zoem = document.createElement("button");
     zoem.type = "button";
@@ -120,6 +129,6 @@ export class ZoemrouteScene extends MiniGameScene {
     bee.className = "zoemroute-bee";
     bee.setAttribute("aria-hidden", "true");
     bee.textContent = "🐝";
-    stones.appendChild(bee);
+    stones.querySelector(".zoemroute-chain")?.appendChild(bee);
   }
 }

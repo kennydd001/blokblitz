@@ -29,8 +29,12 @@ function shuffle<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-function wordPoolForTier(tier: DifficultyTier): PhonicsWord[] {
-  return tier === 1 ? STARTER_WORDS : tier === 2 ? SIMPLE_WORDS : PHONICS_WORDS;
+function wordPoolForTier(tier: DifficultyTier, knownUnits?: readonly string[]): PhonicsWord[] {
+  const pool = tier === 1 ? STARTER_WORDS : tier === 2 ? SIMPLE_WORDS : PHONICS_WORDS;
+  if (!knownUnits?.length) return pool;
+  const known = new Set(knownUnits);
+  const decodable = pool.filter((word) => word.units.every((unit) => known.has(unit)));
+  return decodable.length > 0 ? decodable : pool;
 }
 
 function wordSimilarity(first: PhonicsWord, second: PhonicsWord): number {
@@ -39,10 +43,14 @@ function wordSimilarity(first: PhonicsWord, second: PhonicsWord): number {
     + Number(first.units.length === second.units.length) * 2;
 }
 
-export function zoemRound(tier: DifficultyTier = 2): ZoemRound {
-  const wordPool = wordPoolForTier(tier);
-  const word = pickOne(wordPool);
-  const candidates = shuffle(wordPool.filter((candidate) => candidate.word !== word.word));
+export function zoemRound(tier: DifficultyTier = 2, knownUnits?: readonly string[], targetKey?: string): ZoemRound {
+  const wordPool = wordPoolForTier(tier, knownUnits);
+  const focusedWord = targetKey?.startsWith("word-") ? targetKey.slice("word-".length) : undefined;
+  const word = wordPool.find((candidate) => candidate.word === focusedWord) ?? pickOne(wordPool);
+  const distractorPool = wordPool.length >= (tier === 1 ? 2 : tier === 2 ? 3 : 4)
+    ? wordPool
+    : wordPoolForTier(tier);
+  const candidates = shuffle(distractorPool.filter((candidate) => candidate.word !== word.word));
   if (tier === 3) candidates.sort((first, second) => wordSimilarity(second, word) - wordSimilarity(first, word));
   const others = candidates.slice(0, tier === 1 ? 1 : tier === 2 ? 2 : 3);
   return {
@@ -71,14 +79,21 @@ export interface BouwRound {
   skill: "wordBuild";
 }
 
-export function bouwRound(tier: DifficultyTier = 2): BouwRound {
-  const word = pickOne(wordPoolForTier(tier));
+export function bouwRound(tier: DifficultyTier = 2, knownUnits?: readonly string[], targetKey?: string): BouwRound {
+  const wordPool = wordPoolForTier(tier, knownUnits);
+  const focused = targetKey?.match(/^build-(.+)-(\d+)$/);
+  const focusedWord = focused?.[1];
+  const word = wordPool.find((candidate) => candidate.word === focusedWord) ?? pickOne(wordPool);
   const units = word.units;
   const blankChoices = tier === 1 ? [...new Set([0, units.length - 1])] : units.map((_, index) => index);
-  const blankIndex = pickOne(blankChoices);
+  const focusedBlank = Number(focused?.[2]);
+  const blankIndex = focusedWord === word.word && Number.isInteger(focusedBlank) && focusedBlank >= 0 && focusedBlank < units.length
+    ? focusedBlank
+    : pickOne(blankChoices);
   const correct = units[blankIndex];
-  const sameSoundClass = ALL_UNITS.filter((unit) => unit !== correct && VOWEL_UNITS.has(unit) === VOWEL_UNITS.has(correct));
-  const otherSoundClass = ALL_UNITS.filter((unit) => unit !== correct && !sameSoundClass.includes(unit));
+  const allowedUnits = knownUnits?.length ? ALL_UNITS.filter((unit) => knownUnits.includes(unit)) : ALL_UNITS;
+  const sameSoundClass = allowedUnits.filter((unit) => unit !== correct && VOWEL_UNITS.has(unit) === VOWEL_UNITS.has(correct));
+  const otherSoundClass = allowedUnits.filter((unit) => unit !== correct && !sameSoundClass.includes(unit));
   const candidates = [...shuffle(sameSoundClass), ...shuffle(otherSoundClass)];
   if (tier === 3) candidates.sort((first, second) => Number(second.length === correct.length) - Number(first.length === correct.length));
   const distractors = candidates.slice(0, tier === 1 ? 1 : tier === 2 ? 2 : 3);

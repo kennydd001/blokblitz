@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T17:27:11.181Z",
+  "generatedAt": "2026-07-13T18:09:18.718Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1589,
+  "lineCount": 1595,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -6041,6 +6041,14 @@
       "file": "leg-ze-naast-elkaar-en-vergelijk.mp3"
     },
     {
+      "id": "region-story-muntgrot",
+      "slug": "luister-goed-naar-de-klanken-dan-glinstert-de-muntgrot-weer-uitroep",
+      "text": "Luister goed naar de klanken. Dan glinstert de Muntgrot weer!",
+      "spokenText": "Luister goed naar de klanken. Dan glinstert de Muntgrot weer!",
+      "category": "story",
+      "file": "luister-goed-naar-de-klanken-dan-glinstert-de-muntgrot-weer-uitroep.mp3"
+    },
+    {
       "id": "rhyme-hint",
       "slug": "luister-goed-naar-het-einde-van-de-woorden",
       "text": "Luister goed naar het einde van de woorden.",
@@ -7375,6 +7383,14 @@
       "spokenText": "midden op de weg",
       "category": "verkeer",
       "file": "midden-op-de-weg.mp3"
+    },
+    {
+      "id": "word-mis",
+      "slug": "mis",
+      "text": "mis",
+      "spokenText": "mis",
+      "category": "reading-word",
+      "file": "mis.mp3"
     },
     {
       "id": "word-muis",
@@ -10233,6 +10249,14 @@
       "file": "wat-rijmt-op-maan-vraag.mp3"
     },
     {
+      "id": "rhyme-i-s-mis",
+      "slug": "wat-rijmt-op-mis-vraag",
+      "text": "Wat rijmt op mis?",
+      "spokenText": "Wat rijmt op mis?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-mis-vraag.mp3"
+    },
+    {
       "id": "rhyme-ui-s-muis",
       "slug": "wat-rijmt-op-muis-vraag",
       "text": "Wat rijmt op muis?",
@@ -10271,6 +10295,14 @@
       "spokenText": "Wat rijmt op tand?",
       "category": "rhyme",
       "file": "wat-rijmt-op-tand-vraag.mp3"
+    },
+    {
+      "id": "rhyme-i-s-vis",
+      "slug": "wat-rijmt-op-vis-vraag",
+      "text": "Wat rijmt op vis?",
+      "spokenText": "Wat rijmt op vis?",
+      "category": "rhyme",
+      "file": "wat-rijmt-op-vis-vraag.mp3"
     },
     {
       "id": "rhyme-uu-r-vuur",
@@ -10911,6 +10943,14 @@
       "spokenText": "Welk plaatje is mmm eh sss?",
       "category": "phonics",
       "file": "welk-plaatje-is-m-min-e-min-s-vraag.mp3"
+    },
+    {
+      "id": "blend-picture-mis",
+      "slug": "welk-plaatje-is-m-min-i-min-s-vraag",
+      "text": "Welk plaatje is m-i-s?",
+      "spokenText": "Welk plaatje is mmm ih sss?",
+      "category": "phonics",
+      "file": "welk-plaatje-is-m-min-i-min-s-vraag.mp3"
     },
     {
       "id": "blend-picture-muis",
@@ -12311,6 +12351,14 @@
       "spokenText": "Welkom in Muntgrot! In de Muntgrot is het donker. Tel goed, dan glinstert het weer!",
       "category": "runtime-dynamic",
       "file": "welkom-in-muntgrot-uitroep-in-de-muntgrot-is-het-donker-tel-goed-dan-glinstert-het-weer-uitroep.mp3"
+    },
+    {
+      "id": "region-welcome-muntgrot",
+      "slug": "welkom-in-muntgrot-uitroep-luister-goed-naar-de-klanken-dan-glinstert-de-muntgrot-weer-uitroep",
+      "text": "Welkom in Muntgrot! Luister goed naar de klanken. Dan glinstert de Muntgrot weer!",
+      "spokenText": "Welkom in Muntgrot! Luister goed naar de klanken. Dan glinstert de Muntgrot weer!",
+      "category": "story",
+      "file": "welkom-in-muntgrot-uitroep-luister-goed-naar-de-klanken-dan-glinstert-de-muntgrot-weer-uitroep.mp3"
     },
     {
       "id": "runtime-region-welcome-sterrenrace",

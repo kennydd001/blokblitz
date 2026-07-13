@@ -64,10 +64,10 @@ const scenarios = [
   { name: "tientalhuis-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:tientalhuis", expectMiniMode: ".tientalhuis-play", expectChoiceCount: 4 },
   { name: "letterkompas-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:letterkompas", expectMiniMode: ".letterkompas-play", expectChoiceCount: 4, expectAdvancedLetter: "IJ" },
   { name: "rijmrivier-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:rijmspel", expectMiniMode: ".rhyme-river", expectChoiceCount: 4 },
-  { name: "zoemroute-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:zoemroute", expectMiniMode: ".zoemroute-play", expectChoiceCount: 4, expectSoundStones: 4 },
+  { name: "zoemroute-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:zoemroute", expectMiniMode: ".zoemroute-play", expectChoiceCount: 4, expectSoundStones: 5 },
   { name: "woordbouw-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:woordbouwplaats", expectMiniMode: ".woordbouw-play", expectChoiceCount: 4, expectWordBoxes: 5 },
   { name: "luisterbos-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:luisterbos", expectMiniMode: ".luister-play", expectChoiceCount: 3, expectRoundDots: 8 },
-  { name: "zoemroute-advanced-landscape", width: 844, height: 390, mobile: true, open: "tier-3:zoemroute", expectMiniMode: ".zoemroute-play", expectChoiceCount: 4, expectSoundStones: 4 },
+  { name: "zoemroute-advanced-landscape", width: 844, height: 390, mobile: true, open: "tier-3:zoemroute", expectMiniMode: ".zoemroute-play", expectChoiceCount: 4, expectSoundStones: 5 },
   { name: "woordbouw-advanced-landscape", width: 844, height: 390, mobile: true, open: "tier-3:woordbouwplaats", expectMiniMode: ".woordbouw-play", expectChoiceCount: 4, expectWordBoxes: 5 },
   { name: "compare-mobile", width: 390, height: 844, mobile: true, open: "compare", expectMiniMode: ".compare-play", expectCompareFeeding: true },
   { name: "onemoreless-narrow-mobile", width: 332, height: 807, mobile: true, open: "onemoreless", expectMiniMode: ".onemore-play", expectBeforeAfter: true },
@@ -405,7 +405,10 @@ async function openScenario(open) {
       (() => {
         const game = window.__blokblitzGame;
         if (!game) return false;
-        const journey = game.save.getMutableData().progress.journey;
+        const progress = game.save.getMutableData().progress;
+        progress.attempts.length = 0;
+        game.mastery.setAttempts(progress.attempts);
+        const journey = progress.journey;
         journey.round = ${tier};
         journey.nodeIndex = 0;
         game.lastJourneyNode = undefined;
@@ -449,12 +452,45 @@ async function openScenario(open) {
           game.save.getMutableData().progress.attempts.push(...attempts);
           game.mastery.setAttempts(game.save.getMutableData().progress.attempts);
         `
-        : "";
+        : scene === "zoemroute" || scene === "woordbouwplaats"
+          ? `
+            const targetKey = ${JSON.stringify(scene === "zoemroute" ? "word-banaan" : "build-banaan-2")};
+            const skill = ${JSON.stringify(scene === "zoemroute" ? "wordRead" : "wordBuild")};
+            const attempts = Array.from({ length: 3 }, (_, index) => ({
+              timestamp: Date.now() - 1000 + index,
+              sessionId: "qa-advanced-word",
+              levelId: "literacy-reading",
+              scene: "minigame",
+              challengeType: "literacy-reading:" + skill,
+              skill,
+              representation: "numeral",
+              quantity: 0,
+              quantityRange: "1-3",
+              promptRepresentation: "numeral",
+              correctAnswer: targetKey,
+              playerAnswer: "fout",
+              wasCorrect: false,
+              reactionTimeMs: 500,
+              hintUsed: false,
+              errorType: skill === "wordRead" ? "word-read-weak" : "build-weak",
+              domain: "literacy-reading",
+              targetKey,
+              rangeKey: "words",
+              stimulusKey: "banaan",
+              responseKey: "fout"
+            }));
+            game.save.getMutableData().progress.attempts.push(...attempts);
+            game.mastery.setAttempts(game.save.getMutableData().progress.attempts);
+          `
+          : "";
     const opened = await evaluate(`
       (() => {
         const game = window.__blokblitzGame;
         if (!game) return false;
-        const journey = game.save.getMutableData().progress.journey;
+        const progress = game.save.getMutableData().progress;
+        progress.attempts.length = 0;
+        game.mastery.setAttempts(progress.attempts);
+        const journey = progress.journey;
         journey.round = 3;
         journey.nodeIndex = 0;
         game.lastJourneyNode = undefined;
@@ -812,6 +848,7 @@ async function collectMetrics(scenario = {}) {
         traceTools: rect(".schrijfspoor-tools"),
         traceFeedback: rect(".schrijfspoor-feedback"),
         soundStones: rects(".zoemroute-stone"),
+        soundStoneRows: [...document.querySelectorAll(".zoemroute-stone")].map((stone) => stone.offsetTop),
         wordBoxes: rects(".woordbouw-box"),
         roundDotCount: document.querySelectorAll(".mini-dot").length,
         countItems: rects(".count-item"),
@@ -1249,6 +1286,7 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     }
     if (scenario.expectRemediation && (metrics.supportLevel !== scenario.expectRemediation || !metrics.miniScaffold)) failures.push(`remediation mismatch: level=${metrics.supportLevel}, scaffold=${JSON.stringify(metrics.miniScaffold)}`);
     if (scenario.expectSoundStones !== undefined && metrics.soundStones.length !== scenario.expectSoundStones) failures.push(`expected ${scenario.expectSoundStones} sound stones, got ${metrics.soundStones.length}`);
+    if (scenario.expectSoundStones !== undefined && new Set(metrics.soundStoneRows).size !== 1) failures.push(`sound chain wrapped across rows: ${metrics.soundStoneRows.join(", ")}`);
     if (scenario.expectWordBoxes !== undefined && metrics.wordBoxes.length !== scenario.expectWordBoxes) failures.push(`expected ${scenario.expectWordBoxes} word boxes, got ${metrics.wordBoxes.length}`);
     if (scenario.expectRoundDots !== undefined && metrics.roundDotCount !== scenario.expectRoundDots) failures.push(`expected ${scenario.expectRoundDots} round dots, got ${metrics.roundDotCount}`);
     for (const item of [...metrics.soundStones, ...metrics.wordBoxes]) {

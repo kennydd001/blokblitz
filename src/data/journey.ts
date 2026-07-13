@@ -110,8 +110,9 @@ const MODE_ACTION: Record<string, string> = {
   luisterbos: "Luister naar het verhaaltje en kies het plaatje."
 };
 
-// Ordered as a first-grade learning spiral: early counting, then letters and
-// splits, then structures to 20. Clock reading stays late because it combines
+// Ordered as a first-grade learning spiral: early quantity sense and phonemic
+// awareness, letter-sound coupling before blending/word building, and number
+// bonds before structures to 20. Clock reading stays late because it combines
 // number sense, position, language, and half-hour notation.
 interface RegionPlan {
   region: string;
@@ -121,13 +122,13 @@ interface RegionPlan {
 
 const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "match", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
-  { region: "muntgrot", stops: ["klankgrot", "rijmspel", "luisterbos", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
-  { region: "ijsbaan", stops: ["compare", "letterkompas", "schrijfspoor", "vriendjes", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
-  { region: "webwoud", stops: ["splitbord", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
-  { region: "bouwdorp", stops: ["fill", "getallenlijn", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
+  { region: "muntgrot", stops: ["klankgrot", "rijmspel", "luisterbos", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
+  { region: "ijsbaan", stops: ["compare", "letterkompas", "schrijfspoor", "zoemroute", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
+  { region: "webwoud", stops: ["splitbord", "fill", "vriendjes", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
+  { region: "bouwdorp", stops: ["tientalhuis", "getallenlijn", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
   // Sprongpad (skip counting) lives at the very end of the journey: only there
   // may the numbers stretch past 20 (per 5 to 50, per 10 to 100).
-  { region: "sterrenrace", stops: ["match", "zoemroute", "tienbrug", "sprongpad", "kloktoren", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
+  { region: "sterrenrace", stops: ["match", "woordbouwplaats", "tienbrug", "sprongpad", "kloktoren", "fill"], friend: { id: "f-dragon", name: "Sterre de draak", emoji: "🐲" } }
 ];
 
 // Each region's climax: a colour-stealing boss that guards the trapped friend.
@@ -185,6 +186,19 @@ function buildNodes(): JourneyNode[] {
 
 export const JOURNEY: JourneyNode[] = buildNodes();
 
+// Journey ids include their old position. Keep a returning child at least as
+// far along as before when the learning spiral changes between releases.
+const LEGACY_JOURNEY_ID_ALIASES: Record<string, string> = {
+  "muntgrot-match-3": "muntgrot-memory-3",
+  "muntgrot-memory-4": "muntgrot-memory-3",
+  "ijsbaan-vriendjes-3": "ijsbaan-zoemroute-3",
+  "webwoud-tientalhuis-1": "webwoud-fill-1",
+  "webwoud-woordbouwplaats-2": "webwoud-woordbouwplaats-3",
+  "webwoud-meetwerf-3": "webwoud-meetwerf-4",
+  "bouwdorp-fill-0": "bouwdorp-tientalhuis-0",
+  "sterrenrace-zoemroute-1": "sterrenrace-woordbouwplaats-1"
+};
+
 export const JOURNEY_WIDTH = VIEW_W;
 export const JOURNEY_HEIGHT = TOP_MARGIN * 2 + (JOURNEY.length - 1) * SPACING;
 
@@ -228,7 +242,7 @@ export function nodeIndexById(id: string): number {
  * earlier nodes as already done instead of sending the child backwards.
  */
 export function backfillCompleted(completed: string[]): string[] {
-  const done = new Set(completed);
+  const done = new Set(completed.flatMap((id) => [id, LEGACY_JOURNEY_ID_ALIASES[id]].filter((value): value is string => Boolean(value))));
   let maxIdx = -1;
   JOURNEY.forEach((node, i) => {
     if (done.has(node.id)) maxIdx = i;
@@ -258,7 +272,7 @@ export const REGION_IDS = REGIONS.map((plan) => plan.region);
 /** One-line story hook shown + spoken the first time Buddy enters each region. */
 export const REGION_STORY: Record<string, string> = {
   grasland: "Het grasland werd grijs toen de ster viel. Breng de kleuren terug!",
-  muntgrot: "In de Muntgrot is het donker. Tel goed, dan glinstert het weer!",
+  muntgrot: "Luister goed naar de klanken. Dan glinstert de Muntgrot weer!",
   ijsbaan: "Op de ijsbaan is alles bevroren. Warme antwoorden laten het smelten!",
   webwoud: "In het Webwoud raakte een vriendje verstrikt. Help het los!",
   bouwdorp: "Het Bouwdorp viel om. Samen bouwen we het stukje voor stukje weer op!",

@@ -1,4 +1,5 @@
 import { buildCurriculumAttempt } from "../../education/challengeLogger";
+import { LETTERS, letterProgress } from "../../education/literacy/letters";
 import { bouwChallenge, bouwRound, classifyBouwError, type BouwRound } from "../../education/literacy/words";
 import type { Challenge, ChallengeOption } from "../../education/types";
 import type { Game } from "../../game/Game";
@@ -18,7 +19,12 @@ export class WoordbouwplaatsScene extends MiniGameScene {
   }
 
   protected makeChallenge(): Challenge {
-    this.currentRound = bouwRound(this.tier());
+    const unlocked = letterProgress(this.game.mastery.getAttempts()).unlockedLetters;
+    this.currentRound = bouwRound(
+      this.tier(),
+      unlocked.length < LETTERS.length ? unlocked : undefined,
+      this.adaptiveTargetKey()
+    );
     this.instruction = this.currentRound.prompt;
     return bouwChallenge(this.currentRound);
   }

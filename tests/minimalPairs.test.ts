@@ -56,11 +56,12 @@ describe("minimal-pair derivation", () => {
       CONFUSABLE_SOUNDS.filter(([x, y]) => minimalPairsForContrast(x, y).length > 0)
     );
     expect(available.map(({ contrast }) => contrast)).toEqual([
-     ["b", "p"],
-     ["a", "e"],
-     ["i", "o"],
+      ["b", "p"],
+      ["a", "e"],
+      ["i", "e"],
+      ["i", "o"],
       ["v", "m"]
-   ]);
+    ]);
   });
 
   it("derivation is deterministic", () => {

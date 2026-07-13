@@ -38,7 +38,7 @@ function correctPairAttempt(targetKey: string, timestamp: number): AttemptLog {
 
 describe("in-game minimal-pair remediation", () => {
   it("only exposes contrasts backed by real picture-word pairs", () => {
-    expect(availableSoundContrasts().map((contrast) => contrast.key)).toEqual(["b-p", "a-e", "i-o", "m-v"]);
+    expect(availableSoundContrasts().map((contrast) => contrast.key)).toEqual(["b-p", "a-e", "e-i", "i-o", "m-v"]);
   });
 
   it("builds a balanced two-picture round for every available contrast", () => {

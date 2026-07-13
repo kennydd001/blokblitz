@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { STARTER_LETTERS } from "../src/education/literacy/letters";
 import { bouwRound, classifyBouwError } from "../src/education/literacy/words";
 
 describe("woordbouwplaats rounds", () => {
@@ -34,5 +35,22 @@ describe("woordbouwplaats rounds", () => {
     expect(advanced.units.length).toBeGreaterThan(3);
     expect(advanced.options).toHaveLength(4);
     random.mockRestore();
+  });
+
+  it("uses only unlocked graphemes for a starter word and its sound tiles", () => {
+    for (let i = 0; i < 20; i += 1) {
+      const round = bouwRound(1, STARTER_LETTERS);
+      expect(round.word.word).toBe("mis");
+      expect(round.units.every((unit) => STARTER_LETTERS.includes(unit))).toBe(true);
+      expect(round.options.every((option) => STARTER_LETTERS.includes(option.value))).toBe(true);
+    }
+  });
+
+  it("serves the exact eligible adaptive word box directly", () => {
+    const round = bouwRound(3, undefined, "build-banaan-2");
+    expect(round.word.word).toBe("banaan");
+    expect(round.units).toHaveLength(5);
+    expect(round.blankIndex).toBe(2);
+    expect(round.targetKey).toBe("build-banaan-2");
   });
 });

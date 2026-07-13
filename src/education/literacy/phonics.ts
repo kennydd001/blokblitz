@@ -32,6 +32,7 @@ export const PHONICS_WORDS: PhonicsWord[] = [
   { word: "boot", emoji: "⛵", begin: "b", end: "t", units: ["b", "oo", "t"] },
   // Expanded decodable pool — every unit is in the reading phoneme inventory so
   // readingInventoryIssues() stays empty. Keeps all four reading modes fresh.
+  { word: "mis", emoji: "❌", begin: "m", end: "s", units: ["m", "i", "s"] },
   { word: "pen", emoji: "🖊️", begin: "p", end: "n", units: ["p", "e", "n"] },
   { word: "bel", emoji: "🔔", begin: "b", end: "l", units: ["b", "e", "l"] },
   { word: "mes", emoji: "🔪", begin: "m", end: "s", units: ["m", "e", "s"] },

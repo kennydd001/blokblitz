@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { JOURNEY } from "../src/data/journey";
 import { PLAY_MODES } from "../src/data/playModes";
 import { buildDailyPlayPlan, localDayKey, recommendationStage } from "../src/education/dailyPlan";
 import type { AttemptLog } from "../src/education/types";
@@ -81,15 +82,26 @@ describe("daily play plan", () => {
         targetKey: "word-vis"
       })
     );
-    const plan = buildDailyPlayPlan(input({ attempts, journeyIndex: 10 }));
+    const zoemIndex = JOURNEY.findIndex((node) => node.scene === "zoemroute");
+    const plan = buildDailyPlayPlan(input({ attempts, journeyIndex: zoemIndex }));
     expect(plan.find((item) => item.track === "literacy")?.scene).toBe("zoemroute");
   });
 
   it("only unlocks later recommendations after enough trajectory evidence", () => {
+    const zoemIndex = JOURNEY.findIndex((node) => node.scene === "zoemroute");
+    const tienbrugIndex = JOURNEY.findIndex((node) => node.scene === "tienbrug");
     expect(recommendationStage(input())).toBe(1);
-    expect(recommendationStage(input({ journeyIndex: 10 }))).toBe(2);
-    expect(recommendationStage(input({ journeyIndex: 30 }))).toBe(3);
+    expect(recommendationStage(input({ journeyIndex: zoemIndex - 1 }))).toBe(1);
+    expect(recommendationStage(input({ journeyIndex: zoemIndex }))).toBe(2);
+    expect(recommendationStage(input({ journeyIndex: tienbrugIndex - 1 }))).toBe(2);
+    expect(recommendationStage(input({ journeyIndex: tienbrugIndex }))).toBe(3);
     expect(recommendationStage(input({ journeyRound: 2 }))).toBe(3);
+  });
+
+  it("cannot recommend clock reading before the late-route milestone", () => {
+    const tienbrugIndex = JOURNEY.findIndex((node) => node.scene === "tienbrug");
+    const plan = buildDailyPlayPlan(input({ journeyIndex: tienbrugIndex - 1 }));
+    expect(plan.find((item) => item.track === "discovery")?.scene).not.toBe("kloktoren");
   });
 
   it("uses the child's local calendar day instead of UTC midnight", () => {

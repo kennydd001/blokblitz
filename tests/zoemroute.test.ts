@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { STARTER_LETTERS } from "../src/education/literacy/letters";
 import { zoemRound } from "../src/education/literacy/words";
 
 describe("zoemroute rounds", () => {
@@ -27,5 +28,21 @@ describe("zoemroute rounds", () => {
     expect(advanced.units.length).toBeGreaterThan(3);
     expect(advanced.options).toHaveLength(4);
     random.mockRestore();
+  });
+
+  it("only asks a new reader to blend graphemes from the unlocked letter book", () => {
+    for (let i = 0; i < 20; i += 1) {
+      const round = zoemRound(1, STARTER_LETTERS);
+      expect(round.word.word).toBe("mis");
+      expect(round.units.every((unit) => STARTER_LETTERS.includes(unit))).toBe(true);
+      expect(round.options).toHaveLength(2);
+    }
+  });
+
+  it("serves an eligible adaptive word directly instead of hoping to reroll it", () => {
+    const round = zoemRound(3, undefined, "word-banaan");
+    expect(round.word.word).toBe("banaan");
+    expect(round.units).toHaveLength(5);
+    expect(round.targetKey).toBe("word-banaan");
   });
 });

@@ -32,6 +32,17 @@ function letterAttempt(letter: string, wasCorrect = true, hintUsed = false, time
   };
 }
 
+function legacyWordAttempt(word: string): AttemptLog {
+  return {
+    ...letterAttempt("i"),
+    challengeType: "literacy-reading:wordRead",
+    skill: "wordRead",
+    correctAnswer: word,
+    playerAnswer: word,
+    targetKey: `word-${word}`
+  };
+}
+
 describe("letterkompas rounds", () => {
   it("builds sound-to-letter and letter-to-word rounds with exactly one correct option", () => {
     for (const mode of ["sound-to-letter", "letter-to-word"] as const) {
@@ -102,5 +113,11 @@ describe("letterkompas rounds", () => {
     const history = [letterAttempt("i", true, false, 4), letterAttempt("i", false, false, 5)];
     expect(letterPracticeTarget(history, STARTER_LETTERS)).toBe("k");
     expect(letterPracticeTarget(history, STARTER_LETTERS, "letter-s")).toBe("s");
+  });
+
+  it("does not relock graphemes a returning child already met inside a word", () => {
+    const legacy = letterProgress([legacyWordAttempt("druif")]);
+    expect(legacy.unlockedLetters).toEqual(LETTERS);
+    expect(letterProgress([legacyWordAttempt("vuur")]).unlockedLetters).toEqual(LETTERS);
   });
 });

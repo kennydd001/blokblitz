@@ -1,4 +1,5 @@
 import { PLAY_MODES, type PlayMode, type PlayTrack } from "../data/playModes";
+import { JOURNEY } from "../data/journey";
 import type { ActivityHistoryEntry, AttemptLog } from "./types";
 
 export interface DailyPlanInput {
@@ -22,6 +23,9 @@ const TRACKS: Array<{ track: PlayTrack; reason: DailyRecommendation["reason"] }>
   { track: "discovery", reason: "ontdekken" }
 ];
 
+const STAGE_TWO_JOURNEY_INDEX = JOURNEY.findIndex((node) => node.scene === "zoemroute");
+const STAGE_THREE_JOURNEY_INDEX = JOURNEY.findIndex((node) => node.scene === "tienbrug");
+
 export function localDayKey(date = new Date()): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -30,8 +34,8 @@ export function localDayKey(date = new Date()): string {
 }
 
 export function recommendationStage(input: Pick<DailyPlanInput, "attempts" | "journeyIndex" | "journeyRound">): 1 | 2 | 3 {
-  if (input.journeyRound > 1 || input.journeyIndex >= 28 || input.attempts.length >= 150) return 3;
-  if (input.journeyIndex >= 9 || input.attempts.length >= 45) return 2;
+  if (input.journeyRound > 1 || input.journeyIndex >= STAGE_THREE_JOURNEY_INDEX || input.attempts.length >= 150) return 3;
+  if (input.journeyIndex >= STAGE_TWO_JOURNEY_INDEX || input.attempts.length >= 45) return 2;
   return 1;
 }
 
