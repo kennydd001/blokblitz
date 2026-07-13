@@ -8,6 +8,7 @@ import { BaseScene, sceneHeader } from "./SceneUtils";
 const DOMAIN_LABELS: Record<string, string> = {
   "literacy-phonemic": "Klanken horen",
   "literacy-reading": "Letters & woorden",
+  "literacy-writing": "Letters schrijven",
   "listening-comprehension": "Luisteren",
   "math-number": "Getallen tot 20",
   "math-operations": "Plus & min tot 20",
@@ -50,6 +51,7 @@ export class ParentDashboardScene extends BaseScene {
       this.panel("Per doel: wat kan je kind al?", this.curriculumMasteryRows()),
       this.panel("Splits (rekenbordje)", this.splitRows()),
       this.panel("Lezen (klanken)", this.readingRows()),
+      this.panel("Schrijven", this.writingRows()),
       this.panel("Klankparen om te oefenen", this.klankparenRows()),
       this.panel("Rekenen tot 20", this.math20Rows()),
       this.panel("Vormen & meten", this.geomRows()),
@@ -141,7 +143,7 @@ export class ParentDashboardScene extends BaseScene {
 
   // Reading progress: phonemic-awareness (Klankgrot) attempts, by domain.
   private readingRows(): HTMLElement[] {
-    const reading = this.game.mastery.getAttempts().filter((a) => a.domain?.startsWith("literacy"));
+    const reading = this.game.mastery.getAttempts().filter((a) => a.domain === "literacy-phonemic" || a.domain === "literacy-reading");
     if (reading.length === 0) return [];
     const pct = (xs: typeof reading): number => (xs.length ? Math.round((xs.filter((a) => a.wasCorrect).length / xs.length) * 100) : 0);
     const discriminate = reading.filter((a) => a.skill === "soundDiscriminate");
@@ -155,6 +157,20 @@ export class ParentDashboardScene extends BaseScene {
     ];
     if (letters.length) rows.push(this.line("Letter & klank", `${pct(letters)}% uit ${letters.length}`));
     return rows;
+  }
+
+  private writingRows(): HTMLElement[] {
+    const writing = this.game.mastery.getAttempts().filter((attempt) => attempt.domain === "literacy-writing");
+    if (writing.length === 0) return [];
+    const correct = writing.filter((attempt) => attempt.wasCorrect).length;
+    const clean = writing.filter((attempt) => attempt.wasCorrect && !attempt.hintUsed).length;
+    const formed = new Set(writing.filter((attempt) => attempt.wasCorrect).map((attempt) => attempt.targetKey)).size;
+    return [
+      this.line("Pogingen", String(writing.length)),
+      this.line("Spoor gevolgd", `${Math.round((correct / writing.length) * 100)}%`),
+      this.line("Zonder hulp", `${Math.round((clean / writing.length) * 100)}%`),
+      this.line("Lettertekens gelukt", String(formed))
+    ];
   }
 
   // Math-to-20 progress (Tientalhuis teen structure, later bridge/number-line).
@@ -216,6 +232,7 @@ export class ParentDashboardScene extends BaseScene {
     const [head, ...rest] = key.split("-");
     const tail = rest.join("-");
     if (head === "letter") return `letter ${tail}`;
+    if (head === "write") return `schrijf ${tail}`;
     if (head === "line") return `getal ${tail}`;
     if (head === "begin" || head === "end" || head === "blend") return tail;
     return tail || key;

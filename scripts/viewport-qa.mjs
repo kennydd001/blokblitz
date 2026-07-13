@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import net from "node:net";
@@ -9,6 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 const root = process.cwd();
 const artifactDir = path.join(root, ".qa-artifacts", "viewport-qa");
 mkdirSync(artifactDir, { recursive: true });
+const playModeCount = (readFileSync(path.join(root, "src", "data", "playModes.ts"), "utf8").match(/\{\s*scene:\s*"/g) ?? []).length;
 
 const advancedModeSeeds = {
   geldmarkt: [0.999, 0.999],
@@ -31,6 +32,7 @@ const scenarios = [
   { name: "profiles-full-narrow-mobile", width: 332, height: 807, mobile: true, open: "profiles-full", expectProfiles: true },
   { name: "boot-returning-narrow-mobile", width: 332, height: 807, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
   { name: "boot-returning-landscape-mobile", width: 844, height: 390, mobile: true, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
+  { name: "boot-returning-desktop", width: 1280, height: 720, mobile: false, open: "boot-returning", expectBoot: true, expectReturningBoot: true, reducedMotion: true },
   { name: "journey-intro-narrow-mobile", width: 332, height: 807, mobile: true, open: "journey-intro", expectJourneyIntro: true, reducedMotion: true },
   { name: "menu-mobile", width: 390, height: 844, mobile: true, open: "menu", expectJourneyMap: true },
   { name: "menu-narrow-mobile", width: 360, height: 740, mobile: true, open: "menu", expectJourneyMap: true },
@@ -50,6 +52,8 @@ const scenarios = [
   { name: "calm-done-treasure-landscape", width: 844, height: 390, mobile: true, open: "calm-done-treasure", expectCalmDone: { fill: 3, next: null, treasureReady: true } },
   { name: "memory-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "memory-tier-1", expectMemory: { tier: 1, cards: 6 } },
   { name: "letterkompas-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "letterkompas", expectMiniMode: ".letterkompas-play", expectChoiceCount: 2, expectLetterBook: "4 van 28" },
+  { name: "schrijfspoor-starter-narrow-mobile", width: 332, height: 807, mobile: true, open: "schrijfspoor", expectMiniMode: ".schrijfspoor-board", expectTrace: true },
+  { name: "schrijfspoor-drawn-landscape", width: 844, height: 390, mobile: true, open: "schrijfspoor-drawn", expectMiniMode: ".schrijfspoor-board", expectTrace: true, expectTraceInk: true },
   { name: "memory-advanced-narrow-mobile", width: 390, height: 844, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "memory-advanced-landscape", width: 844, height: 390, mobile: true, open: "memory-tier-3", expectMemory: { tier: 3, cards: 10 } },
   { name: "geldmarkt-advanced-narrow-mobile", width: 332, height: 807, mobile: true, open: "tier-3:geldmarkt", expectMiniMode: ".geld-play", expectChoiceCount: 3 },
@@ -450,6 +454,39 @@ async function openScenario(open) {
     await waitForSelector(".mini-scaffold", 5_000);
     return;
   }
+  if (open === "schrijfspoor-drawn") {
+    await openGameScene("schrijfspoor");
+    await waitForSelector(".schrijfspoor-surface", 5_000);
+    const strokes = await evaluate(`
+      (() => {
+        const svg = document.querySelector(".schrijfspoor-surface");
+        if (!svg) return [];
+        const rect = svg.getBoundingClientRect();
+        const box = svg.viewBox.baseVal;
+        return [...svg.querySelectorAll(".schrijfspoor-guide-stroke")].map((path) => {
+          const length = path.getTotalLength();
+          return Array.from({ length: 18 }, (_, index) => {
+            const point = path.getPointAtLength((length * index) / 17);
+            return {
+              x: rect.left + ((point.x - box.x) / box.width) * rect.width,
+              y: rect.top + ((point.y - box.y) / box.height) * rect.height
+            };
+          });
+        });
+      })()
+    `);
+    for (let strokeIndex = 0; strokeIndex < strokes.length; strokeIndex += 1) {
+      const stroke = strokes[strokeIndex];
+      const id = strokeIndex + 1;
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ ...stroke[0], id, radiusX: 6, radiusY: 6, force: 1 }] });
+      for (const point of stroke.slice(1)) {
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ ...point, id, radiusX: 6, radiusY: 6, force: 1 }] });
+      }
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    }
+    await delay(120);
+    return;
+  }
   if (open !== "real-runner") {
     await openGameScene(open);
     await waitForSelector(".mini-scene", 5_000);
@@ -704,6 +741,11 @@ async function collectMetrics(scenario = {}) {
         memoryCards: rects(".memory-card"),
         advancedLetterChoices: [...document.querySelectorAll(".letterkompas-choice")].map((choice) => choice.textContent?.trim() ?? ""),
         letterBook: document.querySelector(".letterkompas-book")?.getAttribute("aria-label") ?? null,
+        traceSurface: rect(".schrijfspoor-surface"),
+        traceGuideStrokes: document.querySelectorAll(".schrijfspoor-guide-stroke").length,
+        traceInkStrokes: document.querySelectorAll(".schrijfspoor-ink-stroke").length,
+        traceTools: rect(".schrijfspoor-tools"),
+        traceFeedback: rect(".schrijfspoor-feedback"),
         soundStones: rects(".zoemroute-stone"),
         wordBoxes: rects(".woordbouw-box"),
         roundDotCount: document.querySelectorAll(".mini-dot").length,
@@ -1079,7 +1121,8 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     }
     if (scenario.expectModeStars) {
       const expectedTotal = Object.values(scenario.expectModeStars).reduce((total, stars) => total + stars, 0);
-      if (metrics.hubModeTotal !== `${expectedTotal}/${25 * 3} ★`) failures.push(`expected ${expectedTotal}/75 Hub collection, got ${metrics.hubModeTotal}`);
+      const available = playModeCount * 3;
+      if (metrics.hubModeTotal !== `${expectedTotal}/${available} ★`) failures.push(`expected ${expectedTotal}/${available} Hub collection, got ${metrics.hubModeTotal}`);
       for (const [mode, expected] of Object.entries(scenario.expectModeStars)) {
         const actual = metrics.hubModeRatings.find((rating) => rating.mode === mode)?.earned;
         if (actual !== expected) failures.push(`expected ${mode} to show ${expected} stars, got ${actual}`);
@@ -1098,7 +1141,7 @@ function validateScenario(scenario, metrics, scenarioErrors) {
   }
   if (scenario.expectMiniMode) {
     if (!metrics.miniBoardPresent) failures.push(`missing mini board ${scenario.expectMiniMode}`);
-    if (metrics.miniChoiceCount < 1) failures.push("mini mode has no tappable choices");
+    if (metrics.miniChoiceCount < 1 && !scenario.expectTrace) failures.push("mini mode has no tappable choices");
     if (scenario.expectChoiceCount !== undefined && metrics.miniChoiceCount !== scenario.expectChoiceCount) failures.push(`expected ${scenario.expectChoiceCount} choices, got ${metrics.miniChoiceCount}`);
     if (metrics.miniBoard && (metrics.miniBoard.left < -1 || metrics.miniBoard.right > viewport.width + 1 || metrics.miniBoard.top < -1 || metrics.miniBoard.bottom > viewport.height + 1)) failures.push(`mini board is clipped: ${JSON.stringify(metrics.miniBoard)}`);
     if (metrics.miniTitleClipped) failures.push("mini mode title is clipped");
@@ -1108,6 +1151,12 @@ function validateScenario(scenario, metrics, scenarioErrors) {
     }
     if (scenario.expectAdvancedLetter && !metrics.advancedLetterChoices.includes(scenario.expectAdvancedLetter)) failures.push(`missing advanced letter ${scenario.expectAdvancedLetter}: ${metrics.advancedLetterChoices.join(", ")}`);
     if (scenario.expectLetterBook && !metrics.letterBook?.includes(scenario.expectLetterBook)) failures.push(`letter book mismatch: ${metrics.letterBook}`);
+    if (scenario.expectTrace) {
+      if (!metrics.traceSurface || metrics.traceGuideStrokes < 2) failures.push(`trace board is incomplete: ${JSON.stringify({ surface: metrics.traceSurface, guide: metrics.traceGuideStrokes })}`);
+      if (!metrics.traceTools || !metrics.traceFeedback) failures.push("trace controls or live feedback are missing");
+      if (metrics.traceSurface && (metrics.traceSurface.width < 220 || metrics.traceSurface.height < 170)) failures.push(`trace surface is too small: ${JSON.stringify(metrics.traceSurface)}`);
+      if (scenario.expectTraceInk && metrics.traceInkStrokes < 1) failures.push("real touch drawing did not create an ink stroke");
+    }
     if (scenario.expectRemediation && (metrics.supportLevel !== scenario.expectRemediation || !metrics.miniScaffold)) failures.push(`remediation mismatch: level=${metrics.supportLevel}, scaffold=${JSON.stringify(metrics.miniScaffold)}`);
     if (scenario.expectSoundStones !== undefined && metrics.soundStones.length !== scenario.expectSoundStones) failures.push(`expected ${scenario.expectSoundStones} sound stones, got ${metrics.soundStones.length}`);
     if (scenario.expectWordBoxes !== undefined && metrics.wordBoxes.length !== scenario.expectWordBoxes) failures.push(`expected ${scenario.expectWordBoxes} word boxes, got ${metrics.wordBoxes.length}`);

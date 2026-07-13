@@ -6649,6 +6649,191 @@ button:focus-visible,
 }
 
 /* -------------------------------------------------------------------------
+   Schrijfspoor: an actual finger/pencil surface, with the visible guide and
+   scored ink sharing the same SVG geometry. The board is deliberately stable
+   in size so a new stroke, help marker or status cannot shift the controls.
+   ------------------------------------------------------------------------- */
+
+.hub-card.schrijfspoor { background: linear-gradient(160deg, #fff2a8, #55c8b0); }
+
+.schrijfspoor-play {
+  width: min(560px, 96%);
+  gap: 8px;
+}
+
+.schrijfspoor-target {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+}
+
+.schrijfspoor-target > span { font-size: 1.35rem; }
+.schrijfspoor-target strong {
+  min-width: 54px;
+  font-size: 2.3rem;
+  line-height: 1;
+  font-weight: 950;
+  text-transform: lowercase;
+}
+.schrijfspoor-target small { color: #41536a; font-size: 0.78rem; font-weight: 900; }
+
+.schrijfspoor-board {
+  width: min(500px, 92vw);
+  aspect-ratio: 11 / 9;
+  min-height: 220px;
+  max-height: min(48dvh, 410px);
+  display: grid;
+  place-items: center;
+  border: 4px solid var(--edge);
+  border-radius: 8px;
+  background: #eef8ff;
+  box-shadow: 0 7px 0 rgba(23, 32, 51, 0.24), 0 18px 32px rgba(34, 74, 110, 0.17);
+  overflow: hidden;
+}
+
+.schrijfspoor-surface {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  touch-action: none;
+  cursor: crosshair;
+  outline: none;
+}
+
+.schrijfspoor-paper {
+  fill: #fffdf2;
+  stroke: #6d8197;
+  stroke-width: 3;
+}
+
+.schrijfspoor-guide-shadow,
+.schrijfspoor-guide-stroke,
+.schrijfspoor-ink-stroke {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.schrijfspoor-guide-shadow { stroke: #ffffff; stroke-width: 22; opacity: 0.9; }
+.schrijfspoor-guide-stroke { stroke: #6c82a8; stroke-width: 13; opacity: 0.76; }
+.schrijfspoor-play[data-guide-level="dotted"] .schrijfspoor-guide-stroke { stroke-dasharray: 2 8; opacity: 0.68; }
+.schrijfspoor-play[data-guide-level="faint"] .schrijfspoor-guide-stroke { stroke-dasharray: 2 9; opacity: 0.42; }
+.schrijfspoor-surface.needs-help .schrijfspoor-guide-stroke { stroke: #e8a91d; stroke-dasharray: none; opacity: 0.92; }
+.schrijfspoor-surface.complete .schrijfspoor-guide-stroke { stroke: #28a86b; stroke-dasharray: none; opacity: 0.52; }
+
+.schrijfspoor-ink-stroke {
+  stroke: #246bce;
+  stroke-width: 11;
+  filter: drop-shadow(0 2px 0 rgba(23, 32, 51, 0.18));
+}
+.schrijfspoor-surface.drawing .schrijfspoor-ink-stroke { stroke: #1859b5; }
+.schrijfspoor-surface.complete .schrijfspoor-ink-stroke { stroke: #159a67; animation: trace-success 700ms var(--spring); }
+
+.schrijfspoor-start circle { fill: #168a55; stroke: #ffffff; stroke-width: 2.5; }
+.schrijfspoor-start text { fill: #ffffff; font-size: 10px; font-weight: 950; text-anchor: middle; pointer-events: none; }
+.schrijfspoor-end {
+  fill: #f4b942;
+  stroke: #7d5710;
+  stroke-width: 0.7;
+  paint-order: stroke;
+  font-size: 17px;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.schrijfspoor-missed {
+  fill: rgba(255, 214, 74, 0.24);
+  stroke: #c88412;
+  stroke-width: 4;
+  stroke-dasharray: 4 4;
+  pointer-events: none;
+  animation: trace-missed 850ms ease-in-out infinite;
+}
+
+.schrijfspoor-feedback {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #264464;
+  font-size: 0.9rem;
+}
+.schrijfspoor-feedback > span { color: #168a55; font-size: 1.1rem; }
+.schrijfspoor-feedback.help > span { color: #c88412; }
+.schrijfspoor-feedback.good > span { color: #168a55; }
+
+.schrijfspoor-tools {
+  width: min(500px, 92vw);
+  display: grid;
+  grid-template-columns: 58px minmax(160px, 1fr);
+  justify-content: center;
+  gap: 10px;
+}
+.schrijfspoor-clear.btn {
+  width: 58px;
+  min-width: 58px;
+  min-height: 54px;
+  padding: 0;
+  font-size: 1.8rem;
+}
+.schrijfspoor-check.btn {
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f4b942;
+  border-width: 4px;
+  font-size: 1.1rem;
+}
+
+@keyframes trace-missed {
+  0%, 100% { transform: scale(0.88); opacity: 0.58; }
+  50% { transform: scale(1.18); opacity: 1; }
+}
+@keyframes trace-success {
+  0% { stroke-width: 11; }
+  45% { stroke-width: 17; }
+  100% { stroke-width: 11; }
+}
+
+@media (max-width: 400px) {
+  .schrijfspoor-play { gap: 5px; }
+  .schrijfspoor-target { min-height: 34px; }
+  .schrijfspoor-target strong { font-size: 1.9rem; }
+  .schrijfspoor-board { width: min(306px, 92vw); min-height: 210px; max-height: 38dvh; }
+  .schrijfspoor-tools { width: min(306px, 92vw); }
+  .schrijfspoor-feedback { min-height: 30px; font-size: 0.82rem; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .scene.schrijfspoor { gap: 5px; padding-block: 4px; }
+  .scene.schrijfspoor .mini-instruction { min-height: 44px; padding: 5px 10px; font-size: 1rem; }
+  .schrijfspoor-play {
+    width: min(720px, 94vw);
+    display: grid;
+    grid-template-columns: minmax(300px, 430px) minmax(160px, 220px);
+    grid-template-areas: "board target" "board feedback" "board tools";
+    justify-content: center;
+    align-items: center;
+    gap: 5px 14px;
+  }
+  .schrijfspoor-board { grid-area: board; width: min(286px, 38vw); min-height: 0; max-height: none; }
+  .schrijfspoor-target { grid-area: target; grid-template-columns: auto auto; justify-content: center; }
+  .schrijfspoor-target small { grid-column: 1 / 3; }
+  .schrijfspoor-feedback { grid-area: feedback; }
+  .schrijfspoor-tools { grid-area: tools; width: 100%; grid-template-columns: 54px minmax(110px, 1fr); }
+  .schrijfspoor-clear.btn,
+  .schrijfspoor-check.btn { min-height: 48px; }
+  .scene.schrijfspoor .buddy { width: 64px; }
+}
+
+/* -------------------------------------------------------------------------
    Opening frame: the first user gesture unlocks audio, so make that tap part
    of the adventure. Buddy, the fallen star and the block city replace the old
    generic number card while keeping first paint entirely local and DOM-based.
@@ -6898,6 +7083,15 @@ button:focus-visible,
   text-align: center;
 }
 
+.boot-splash[data-returning="true"] .boot-action {
+  width: min(420px, 100%);
+  padding: 14px 18px 16px;
+  border: 4px solid #172033;
+  border-radius: 8px;
+  background: rgba(255, 253, 242, 0.96);
+  box-shadow: 0 7px 0 rgba(23, 32, 51, 0.24), 0 18px 34px rgba(23, 32, 51, 0.16);
+}
+
 .boot-prompt {
   color: #172033;
   font-size: 1.12rem;
@@ -6912,8 +7106,8 @@ button:focus-visible,
 }
 
 .boot-progress > span {
-  min-width: 82px;
-  min-height: 44px;
+  min-width: 94px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -6937,12 +7131,15 @@ button:focus-visible,
 }
 
 .boot-sign-prompt {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
   color: #172033;
-  font-size: 0.86rem;
-  font-weight: 900;
-  text-transform: uppercase;
   text-shadow: 0 2px 0 rgba(255, 255, 255, 0.62);
 }
+
+.boot-sign-prompt strong { font-size: 1.28rem; line-height: 1; font-weight: 950; }
+.boot-sign-prompt small { color: #4b5c70; font-size: 0.78rem; font-weight: 900; text-transform: uppercase; }
 
 .boot-signs {
   display: flex;
@@ -6952,8 +7149,8 @@ button:focus-visible,
 }
 
 .boot-sign {
-  width: 72px;
-  height: 66px;
+  width: 78px;
+  height: 72px;
   display: grid;
   place-items: center;
   padding: 5px;
@@ -7078,18 +7275,64 @@ button:focus-visible,
   }
 
   .boot-splash[data-returning="true"] .boot-city {
-    bottom: 30%;
+    bottom: 39%;
     transform: scale(0.9);
     transform-origin: 50% 100%;
   }
 
+  .boot-splash[data-returning="true"] .boot-action {
+    padding: 10px 12px 12px;
+  }
+
+  .boot-progress > span { min-width: 82px; min-height: 44px; }
+  .boot-sign { width: 72px; height: 66px; }
+
   .boot-splash[data-returning="true"] .boot-scenery::after {
-    bottom: 29%;
+    bottom: 38%;
   }
 
   .boot-prompt {
     font-size: 1rem;
   }
+}
+
+@media (min-width: 760px) and (min-height: 620px) {
+  .boot-splash[data-returning="true"] {
+    grid-template-columns: minmax(330px, 0.92fr) minmax(400px, 1.08fr);
+    grid-template-rows: auto minmax(420px, 1fr);
+    column-gap: clamp(24px, 6vw, 92px);
+    padding-inline: clamp(42px, 9vw, 150px);
+  }
+
+  .boot-splash[data-returning="true"] .boot-brand {
+    grid-column: 1 / 3;
+    grid-row: 1;
+  }
+
+  .boot-splash[data-returning="true"] .boot-hero {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 410px;
+  }
+
+  .boot-splash[data-returning="true"] .boot-buddy.buddy {
+    width: 260px;
+    height: 260px;
+  }
+
+  .boot-splash[data-returning="true"] .boot-action {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    justify-self: center;
+    gap: 13px;
+  }
+
+  .boot-splash[data-returning="true"] .boot-signs { gap: 14px; }
+  .boot-splash[data-returning="true"] .boot-sign { width: 88px; height: 80px; }
+  .boot-splash[data-returning="true"] .boot-sign-token.profile-token { width: 58px; }
+  .boot-splash[data-returning="true"] .boot-sign-token .profile-token-mark { font-size: 1.55rem; }
+  .boot-splash[data-returning="true"] .boot-city { opacity: 0.72; }
 }
 
 @media (max-height: 620px) and (orientation: landscape) {

@@ -14,10 +14,11 @@ Representative modes include:
 - **🔢 Op volgorde** — tap numbers from small to big (ordering).
 - **🧠 Memory** — flip cards to match each number to a group with the same amount (cross-representation + memory).
 - **🌊 Rijmrivier** — hear which picture-word has the same ending (rhyme awareness).
+- **✏️ Schrijfspoor** — trace earned letters from start dot to star with fading visual support (letter formation).
 - **🦘 Sprongpad** — cross a number path in jumps of 2, 5, or 10 (skip-counting).
 - **🗺️ Avontuur** — a 3D voxel runner across six themed worlds, steering through **number gates** whose quantities appear as canonical cube/dice/bead/… patterns.
 
-The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. One shared queue prevents instructions, answer labels, counting and praise from cutting across one another; voice-first choices resolve only after their label ends. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. Collect **stars** to unlock new voxel heroes, improve the persistent 0-75 calm-mode star collection, and earn **stickers** such as Sterrenmeester for completing long-term goals.
+The calm tap modes have no timer and no game-over: a wrong tap gives a gentle nudge and a retry. A **spoken Dutch voice** reads each task aloud, counts along ("één… twee… drie…") and praises the child — the biggest help for a 4-7 year old who can't read yet. All runtime speech is local ElevenLabs `eleven_v3` audio generated build-time with Lily - Velvety Actress. One shared queue prevents instructions, answer labels, counting and praise from cutting across one another; voice-first choices resolve only after their label ends. Isolated reading phoneme taps use a separate local pack; whole-word and "zoemend lezen" actions use slowed local Lily word clips. There is no browser speech fallback. Every answer in every mode is logged by the shared adaptive education engine, so number sense *is* the gameplay and the parent dashboard stays accurate. Each child has an isolated local profile; the last selected child stays active and switching profiles is behind the parent gate. Collect **stars** to unlock new voxel heroes, improve the persistent 0-78 calm-mode star collection, and earn **stickers** such as Sterrenmeester for completing long-term goals.
 
 ## Run Locally
 
@@ -94,8 +95,8 @@ Settings (behind the parent gate, from the menu):
 
 ## Game Flow
 
-0. **De Sterrenreis** (the story mode, the front door — `ReisScene`/`src/data/journey.ts`): the app boots onto one winding road that ties the full curriculum into a single adventure — *help Buddy carry the lost star home*. The current road has 48 stops, gates, bosses, rescued friends, and the final star across six world colour bands. Exactly one node glows; finishing it blooms the node into colour, moves the star, and opens the next step. No reading is required because Buddy and the spoken voice carry the story. A `🎒 Vrij spelen` button opens the Speeltuin.
-1. **Speeltuin hub** (free-play): three personal daily missions appear first, followed by one clear Sterrenreis action and five compact category tabs (`Getallen`, `Splitsen`, `Lezen`, `Tot 20`, `Ontdekken`). Only one child-sized category is shown at a time; all 25 calm modes remain reachable. Completing the three recommendations pays one profile-local 10-star bonus, exactly once. The garage, sticker book, `Ouders`, and `Instellingen` remain below.
+0. **De Sterrenreis** (the story mode, the front door — `ReisScene`/`src/data/journey.ts`): the app boots onto one winding road that ties the full curriculum into a single adventure — *help Buddy carry the lost star home*. The current road has 50 stops, gates, bosses, rescued friends, and the final star across six world colour bands. Exactly one node glows; finishing it blooms the node into colour, moves the star, and opens the next step. No reading is required because Buddy and the spoken voice carry the story. A `🎒 Vrij spelen` button opens the Speeltuin.
+1. **Speeltuin hub** (free-play): three personal daily missions appear first, followed by one clear Sterrenreis action and five compact category tabs (`Getallen`, `Splitsen`, `Lezen`, `Tot 20`, `Ontdekken`). Only one child-sized category is shown at a time; all 26 calm modes remain reachable. Completing the three recommendations pays one profile-local 10-star bonus, exactly once. The garage, sticker book, `Ouders`, and `Instellingen` remain below.
 2. **Avontuur → world map**: six themed worlds shown as tappable cards, unlocked one by one (🌳 Grasland → 🪙 Muntgrot → ❄️ IJsbaan → 🕸️ Webwoud → 🧱 Bouwdorp → 🚀 Sterrenrace). Each world has its own look, number cap (5 → 10), gate types (subitise → count → compare) and mechanic mix (coins, web-swings, build moments).
 3. **A run**: a 3-2-1 countdown, then number gates with coin trails, jumpable barriers, web-swing zips and a Minecraft build moment in between. The gate getalbeeld rotates through every pattern (dice, dots, ten-frames, fingers, beads, dominoes, eggs, numerals, paws…). A wrong gate or a bump is safe — it only slows you briefly and shows the correct quantity.
 4. **Results**: a 1–3 star rating, stars/blocks earned, distance and best record, and any newly unlocked world or hero — then `Volgende!`, `Nog eens!` or back to the map. Finishing a world unlocks the next.
@@ -111,7 +112,7 @@ The full representation/mastery/adaptive education engine drives every gate unde
 - `src/game`: app shell, Three.js world, input, queued local ElevenLabs playback, dedicated reading phoneme clips, haptics, persistence, scene manager
 - `src/runner`: the revamped real-time runner — pure `RunnerCore` simulation, `RunnerView` voxel rendering, the adaptive gate provider, and unlockable hero skins
 - `src/scenes`: Boot, `HubScene` (Speeltuin), `MainMenuScene` (world map), `RunScene`, `ResultsScene`, plus the retained guided scenes (number of day, legacy runner, WebWoud, city, minigames, summary, dashboard, settings)
-- `src/scenes/minigames`: the calm tap modes — `MiniGameScene` base + `miniUi` (shared done screen) + `CountScene`, `MatchScene`, `CompareScene`, `FillScene`, `OneMoreLessScene`, `OrderScene`, `MemoryScene`, and `miniChallenges` (their Challenge builders)
+- `src/scenes/minigames`: the calm modes — `MiniGameScene` base + `miniUi` (shared done screen), the number/reading/discovery scenes, and `SchrijfspoorScene` with real pointer tracing
 - `src/education`: educational types, canonical layouts, mastery tracker, adaptive engine, spaced repetition, the daily recommendation engine, challenge factory, and misconception detection
 - `src/data/playModes.ts`: the single catalog for free-play labels, curriculum category, recommendation stage, learning track, and attempt mapping
 - `src/education/representations`: reusable SVG renderers for all 12 quantity representations
@@ -133,6 +134,7 @@ Tracked skills:
 - Quantity to numeral
 - Numeral to quantity
 - Build quantity
+- Letter formation
 
 Mastery levels:
 

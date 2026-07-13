@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T14:52:53.996Z",
+  "generatedAt": "2026-07-13T13:05:52.966Z",
   "provider": "ElevenLabs",
   "model": "eleven_v3",
   "voice": "Lily - Velvety Actress",
@@ -14,7 +14,7 @@
     "speed": 0.9
   },
   "seed": 11611,
-  "lineCount": 1584,
+  "lineCount": 1586,
   "lines": [
     {
       "id": "split-parts-0-1",
@@ -3207,6 +3207,14 @@
       "spokenText": "beer",
       "category": "reading-word",
       "file": "beer.mp3"
+    },
+    {
+      "id": "source-scenes/minigames/SchrijfspoorScene.ts-12673-0",
+      "slug": "begin-bij-de-groene-stip-en-volg-het-spoor-naar-de-ster",
+      "text": "Begin bij de groene stip en volg het spoor naar de ster.",
+      "spokenText": "Begin bij de groene stip en volg het spoor naar de ster.",
+      "category": "source-static",
+      "file": "begin-bij-de-groene-stip-en-volg-het-spoor-naar-de-ster.mp3"
     },
     {
       "id": "minigame-reteach-6",
@@ -9711,6 +9719,14 @@
       "spokenText": "Vlak naast of achter een vrachtwagen kan de chauffeur je niet zien: de dode hoek.",
       "category": "verkeer",
       "file": "vlak-naast-of-achter-een-vrachtwagen-kan-de-chauffeur-je-niet-zien-de-dode-hoek.mp3"
+    },
+    {
+      "id": "common-30",
+      "slug": "volg-het-lichtspoor-met-je-vinger",
+      "text": "Volg het lichtspoor met je vinger.",
+      "spokenText": "Volg het lichtspoor met je vinger.",
+      "category": "common",
+      "file": "volg-het-lichtspoor-met-je-vinger.mp3"
     },
     {
       "id": "story-2",

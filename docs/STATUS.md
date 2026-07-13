@@ -2211,3 +2211,53 @@ Release:
   with exactly 28,047 bytes, and the live voice manifest reports 1,584 lines.
   A direct in-app-browser load confirmed the same entry assets, a complete
   returning-profile opening, and no live console warnings or errors.
+
+## Adaptive Schrijfspoor and Returning-Child Polish - 2026-07-13
+
+Completed work:
+
+- Added the complete `Schrijfspoor` calm mode instead of leaving handwriting as
+  an unused scorer foundation. All 28 earned reading graphemes have bounded
+  lowercase school-print paths; single letters and digraphs use the same stable
+  ruled SVG board and real pointer/touch ink.
+- Added little-finger scoring that weights complete letter coverage above
+  neatness, rejects short or unrelated scribbles, keeps mistakes safe, and
+  pulses the exact missed area before retry. Guide support fades from full to
+  dotted to faint with the child's profile-specific difficulty tier.
+- Connected writing to the earned Letterkompas book and adaptive engine. The
+  least-evidenced unlocked grapheme rotates first, `write-*` remediation can
+  override it, and every submission logs the `literacy-writing` domain,
+  `letterForm` skill, trace score, help use, and exact misconception.
+- Integrated Schrijfspoor into the IJsbaan Sterrenreis route, free-play catalog,
+  78-star collection, shared five-round rewards, daily recommendations, parent
+  dashboard, scene registry, and journey-save backfill. The journey now has 50
+  nodes and the Speeltuin exposes 26 calm curriculum modes.
+- Strengthened the returning-child opening on phone, landscape, and desktop.
+  Buddy and the child's identity now have separate visual zones; the child's
+  name, progress, three profile signs, and adult-gated player switch remain
+  visible without letting siblings enter one another's progress accidentally.
+- Added two approved Lily `eleven_v3` instructions for the trace flow. Both are
+  generated at build time, stored as local MP3s, and share the serialized voice
+  queue with the existing reading phoneme clip; no runtime API or browser voice
+  fallback was introduced.
+
+Validation:
+
+- `npm.cmd run verify` passes typecheck, lint, 37 test files / 320 tests, and a
+  production build. Pure tests cover all 28 paths, complete/wobbly/partial/
+  scribbled traces, adaptive target rotation, and fading support; the full DOM
+  flow draws five rounds with pointer events, logs writing attempts, and advances
+  the story node.
+- `npm.cmd run qa:viewport` passes all 64 scenarios. New checks render a 332x807
+  starter board, draw real Chrome touch ink at 844x390, require a usable trace
+  surface and controls, and verify the returning opening at 332x807, 844x390,
+  and 1280x720. The new screenshots were inspected directly with no clipping,
+  overlap, or illegible controls.
+- `npm.cmd run qa:mobile-touch` passes 41 real touch steps, 12 tracked attempts,
+  and one completed journey node. `npm.cmd run voice:elevenlabs-audit` passes at
+  1586/1586 stored Lily clips, 1517/1517 current spoken lines, and 32/32 reading
+  phonemes.
+
+Release:
+
+- GitHub and Sprintsite publication are pending the final repository audit.

@@ -35,6 +35,7 @@ const MODE_EMOJI: Record<string, string> = {
   klankgrot: "🔊",
   rijmspel: "🌊",
   letterkompas: "🧭",
+  schrijfspoor: "✏️",
   tientalhuis: "🏠",
   zoemroute: "🐝",
   getallenlijn: "📏",
@@ -63,6 +64,7 @@ const MODE_TITLE: Record<string, string> = {
   klankgrot: "Klankgrot",
   rijmspel: "Rijmrivier",
   letterkompas: "Letterkompas",
+  schrijfspoor: "Schrijfspoor",
   tientalhuis: "Tientalhuis",
   zoemroute: "Zoemroute",
   getallenlijn: "Getallenlijn",
@@ -91,6 +93,7 @@ const MODE_ACTION: Record<string, string> = {
   klankgrot: "Luister en kies het juiste plaatje.",
   rijmspel: "Luister naar het einde en vind wat rijmt.",
   letterkompas: "Hoor de klank en kies de letter.",
+  schrijfspoor: "Volg het lichtspoor en schrijf de letter.",
   tientalhuis: "Maak een tiener: tien en nog wat.",
   zoemroute: "Zoem de klanken samen tot een woord.",
   getallenlijn: "Vind het getal op de lijn tot 20.",
@@ -119,7 +122,7 @@ interface RegionPlan {
 const REGIONS: RegionPlan[] = [
   { region: "grasland", stops: ["count", "match", "onemoreless", "verkeerspad"], friend: { id: "f-bun", name: "Hippie het konijn", emoji: "🐰" } },
   { region: "muntgrot", stops: ["klankgrot", "rijmspel", "luisterbos", "match", "memory"], friend: { id: "f-fox", name: "Vonk de vos", emoji: "🦊" } },
-  { region: "ijsbaan", stops: ["compare", "letterkompas", "vriendjes", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
+  { region: "ijsbaan", stops: ["compare", "letterkompas", "schrijfspoor", "vriendjes", "vormenburcht", "order"], friend: { id: "f-peng", name: "Pim de pinguïn", emoji: "🐧" } },
   { region: "webwoud", stops: ["splitbord", "tientalhuis", "woordbouwplaats", "meetwerf"], friend: { id: "f-owl", name: "Oeki de uil", emoji: "🦉" } },
   { region: "bouwdorp", stops: ["fill", "getallenlijn", "dubbelspel", "geldmarkt", "order", "count"], friend: { id: "f-frog", name: "Bram de kikker", emoji: "🐸" } },
   // Sprongpad (skip counting) lives at the very end of the journey: only there

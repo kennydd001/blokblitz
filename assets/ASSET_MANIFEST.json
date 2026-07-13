@@ -5,13 +5,13 @@
       "source": "ElevenLabs text-to-speech, model eleven_v3, voice Lily - Velvety Actress, generated build-time through /v1/text-to-speech",
       "license": "Generated via ElevenLabs API; usage governed by ElevenLabs terms for this project",
       "author": "ElevenLabs Lily - Velvety Actress",
-      "downloadedAt": "2026-07-11",
+      "downloadedAt": "2026-07-13",
       "usedFiles": [
         "public/audio/voice/nl/elevenlabs-lily-v3/",
         "public/audio/voice/nl/elevenlabs-lily-v3/voice-lines.json",
         "src/game/voiceLineManifest.ts"
       ],
-      "notes": "1558 MP3 clips are stored locally and loaded from same-origin runtime paths. The current game catalog requires 1489 unique lines and is checked by the audio audit. The game does not call ElevenLabs, Web Speech, or any external TTS API during play."
+      "notes": "1586 MP3 clips are stored locally and loaded from same-origin runtime paths. The current game catalog requires 1517 unique lines and is checked by the audio audit. The game does not call ElevenLabs, Web Speech, or any external TTS API during play."
     },
     {
       "name": "ElevenLabs Dutch reading phoneme pack",
@@ -37,6 +37,15 @@
       "downloadedAt": null,
       "usedFiles": [],
       "notes": "Dot cards, dice, dominoes, fingers, frames, beads, blocks, eggs, paw prints, numerals, and mixed cards are generated locally at runtime."
+    },
+    {
+      "name": "Procedural handwriting guides",
+      "source": "src/education/literacy/tracing.ts and src/scenes/minigames/SchrijfspoorScene.ts",
+      "license": "Project-generated",
+      "author": "Codex for this local project",
+      "downloadedAt": null,
+      "usedFiles": [],
+      "notes": "All 28 lowercase letter and grapheme guides, ruled-paper paths, trace ink, start markers, and adaptive help markers are generated locally as SVG at runtime."
     },
     {
       "name": "Procedural Three.js scenes",

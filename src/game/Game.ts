@@ -34,6 +34,7 @@ import { KlankgrotScene } from "../scenes/minigames/KlankgrotScene";
 import { RhymeScene } from "../scenes/minigames/RhymeScene";
 import { KloktorenScene } from "../scenes/minigames/KloktorenScene";
 import { LetterkompasScene } from "../scenes/minigames/LetterkompasScene";
+import { SchrijfspoorScene } from "../scenes/minigames/SchrijfspoorScene";
 import { LuisterbosScene } from "../scenes/minigames/LuisterbosScene";
 import { CountScene } from "../scenes/minigames/CountScene";
 import { FillScene } from "../scenes/minigames/FillScene";
@@ -407,6 +408,7 @@ export class Game {
     this.scenes.register("klankgrot", (game) => new KlankgrotScene(game));
     this.scenes.register("rijmspel", (game) => new RhymeScene(game));
     this.scenes.register("letterkompas", (game) => new LetterkompasScene(game));
+    this.scenes.register("schrijfspoor", (game) => new SchrijfspoorScene(game));
     this.scenes.register("tientalhuis", (game) => new TientalhuisScene(game));
     this.scenes.register("zoemroute", (game) => new ZoemrouteScene(game));
     this.scenes.register("getallenlijn", (game) => new GetallenlijnScene(game));

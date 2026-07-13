@@ -1657,6 +1657,64 @@ describe("Speeltuin hub + calm game modes", () => {
     vi.useRealTimers();
   });
 
+  it("plays Schrijfspoor from the journey with real pointer strokes and logs letter formation", async () => {
+    vi.useFakeTimers();
+    const [{ Game }, { traceGuide }] = await Promise.all([
+      import("../src/game/Game"),
+      import("../src/education/literacy/tracing")
+    ]);
+    const root = document.querySelector<HTMLElement>("#app")!;
+    const game = new Game(root);
+    const traceIndex = JOURNEY.findIndex((node) => node.scene === "schrijfspoor");
+    const traceNode = JOURNEY[traceIndex];
+    game.save.updateProgress((progress) => {
+      progress.journey.completed = JOURNEY.slice(0, traceIndex).map((node) => node.id);
+      progress.journey.nodeIndex = frontierIndex(progress.journey.completed);
+    });
+
+    game.showScene("reis");
+    root.querySelector<HTMLButtonElement>(`.reis-node[data-node="${traceNode.id}"]`)!.click();
+    expect(root.querySelector(".schrijfspoor-board")).toBeTruthy();
+
+    const pointer = (type: string, x: number, y: number, pointerId: number): MouseEvent => {
+      const event = new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y });
+      Object.defineProperty(event, "pointerId", { value: pointerId });
+      return event;
+    };
+
+    for (let round = 0; round < 8 && !root.querySelector(".mini-done"); round += 1) {
+      const board = root.querySelector<HTMLElement>(".schrijfspoor-board")!;
+      const grapheme = board.dataset.grapheme!;
+      const svg = board.querySelector<SVGSVGElement>(".schrijfspoor-surface")!;
+      vi.spyOn(svg, "getBoundingClientRect").mockReturnValue({
+        x: 0,
+        y: 0,
+        top: 0,
+        left: 0,
+        right: 220,
+        bottom: 180,
+        width: 220,
+        height: 180,
+        toJSON: () => ({})
+      });
+      traceGuide(grapheme).strokes.forEach((stroke, strokeIndex) => {
+        const pointerId = strokeIndex + 1;
+        svg.dispatchEvent(pointer("pointerdown", stroke[0].x, stroke[0].y, pointerId));
+        stroke.slice(1).forEach((point) => svg.dispatchEvent(pointer("pointermove", point.x, point.y, pointerId)));
+        const end = stroke[stroke.length - 1];
+        svg.dispatchEvent(pointer("pointerup", end.x, end.y, pointerId));
+      });
+      root.querySelector<HTMLButtonElement>(".schrijfspoor-check")!.click();
+      vi.advanceTimersByTime(1100);
+    }
+
+    expect(root.querySelector(".mini-done")).toBeTruthy();
+    expect(game.data().progress.journey.completed).toContain(traceNode.id);
+    expect(game.mastery.getAttempts().filter((attempt) => attempt.skill === "letterForm")).toHaveLength(5);
+    expect(game.mastery.getAttempts().every((attempt) => attempt.wasCorrect)).toBe(true);
+    vi.useRealTimers();
+  });
+
   it("plays Tientalhuis from the journey: finishing advances + logs math-to-20", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
@@ -2422,7 +2480,7 @@ describe("rewards, voice and parent gate", () => {
     expect(root.querySelector(".results-unlock.sticker")).toBeTruthy();
   });
 
-  it("persists a better calm-mode rating as a visible 75-star collection goal", async () => {
+  it("persists a better calm-mode rating in the complete dynamic star collection", async () => {
     vi.useFakeTimers();
     const { Game } = await import("../src/game/Game");
     const root = document.querySelector<HTMLElement>("#app")!;
@@ -2439,7 +2497,7 @@ describe("rewards, voice and parent gate", () => {
     expect(game.data().progress.activityBestStars.count).toBe(3);
     expect(root.querySelector(".results-unlock.personal-best")?.textContent).toContain("3/3 sterren");
     game.showScene("hub");
-    expect(root.querySelector(".hub-mode-total")?.textContent).toContain("3/75");
+    expect(root.querySelector(".hub-mode-total")?.textContent).toContain(`3/${PLAY_MODES.length * 3}`);
     expect(root.querySelectorAll('.hub-card[data-mode="count"] .hub-mode-stars .earned')).toHaveLength(3);
     expect(root.querySelector('.hub-card[data-mode="count"]')?.getAttribute("aria-label")).toContain("3 van 3 sterren");
   });

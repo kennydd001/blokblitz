@@ -109,7 +109,9 @@ function buildVoiceLineCatalog(): VoiceLineCatalogEntry[] {
     "Hoera! Drie sterren erbij!",
     "Laatste klap!",
     "De Sterrenrover wordt boos!",
-    "Alle bazen verslagen! Jij bent de kampioen van de Sterrenarena!"
+    "Alle bazen verslagen! Jij bent de kampioen van de Sterrenarena!",
+    "Volg het lichtspoor met je vinger.",
+    "Begin bij de groene stip en volg het spoor naar de ster."
   ]);
   addMany("profiles", ["Hoi! Kies jouw teken.", "Kies wie er nu speelt.", "Hoi! Daar gaan we!"]);
   HERO_SKINS.forEach((skin) => add(`profile-skin-${skin.id}`, skin.name, "profiles"));

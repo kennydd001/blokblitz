@@ -1,6 +1,6 @@
 # Acceptance Audit
 
-Last updated: 2026-07-11.
+Last updated: 2026-07-13.
 
 This audit maps the Codex goal completion criteria to concrete project evidence. It is intentionally stricter than the automated test suite and includes browser UI/gameplay verification.
 
@@ -8,16 +8,16 @@ This audit maps the Codex goal completion criteria to concrete project evidence.
 
 - Install: `npm.cmd install` has passed for this project and dependencies are locked.
 - Static checks: `npm.cmd run typecheck` and `npm.cmd run lint` pass.
-- Tests: `npm.cmd run test` passes with 35 test files / 304 tests.
+- Tests: `npm.cmd run test` passes with 37 test files / 320 tests.
 - Production build: `npm.cmd run build` passes without warnings.
 - Full verification: `npm.cmd run verify` passes with typecheck, lint, tests, and production build.
 - Local server smoke: `http://127.0.0.1:5287/?qa=final-audit` returned HTTP 200.
 - Sprintsite smoke: `https://blokblitz.sprintsite.be/?audit=final` returned HTTP 200 with the current production JS/CSS hashes.
-- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 59 Chrome scenarios covering the fresh and returning profile-sign opening, a single-message first-journey cinematic, reduced-motion emulation, first-profile creation, the four-child profile cap, the 75-star calm-mode collection, serialized Buddy/hero rewards, personal next-mission and full-treasure endings, Sterrenreis, the personal-mission Speeltuin, the real runner, core reading/math/discovery modes, forced tier-3 curriculum content, bosses, 332px phones, desktop fullscreen, and mobile landscape.
+- Browser UI/gameplay QA: `npm.cmd run qa:viewport` passes 64 Chrome scenarios covering the fresh and returning profile-sign opening on phone, landscape, and desktop; a single-message first-journey cinematic; reduced-motion emulation; first-profile creation; the four-child profile cap; the 78-star calm-mode collection; serialized Buddy/hero rewards; personal next-mission and full-treasure endings; Sterrenreis; the personal-mission Speeltuin; real traced handwriting input; the real runner; core reading/math/discovery modes; forced tier-3 curriculum content; bosses; 332px phones; desktop fullscreen; and mobile landscape.
 - Mobile touch QA: `npm.cmd run qa:mobile-touch` passes a fixed-seed phone-like Chrome route using real `Input.dispatchTouchEvent` touches. The 41-step route taps a wrong returning profile sign and remains safely on boot, taps the correct sign, exercises runner controls and swipes, completes audio-gated Count, selects reading, finishes Klankgrot, earns and equips Aqua through the reward modal, logs 12 attempts, advances one node, and returns to the Hub.
 - Browser layout checks: no console errors or horizontal overflow; every visible button has a meaningful accessible name and is at least 44x44px; screenshots are non-flat; pure DOM first paint has no eager canvas; runner canvases fill the viewport.
-- Story-mode browser QA: in-app browser at `390x844` opened the 48-node Sterrenreis with one active frontier, Buddy, the friend meadow, a child-facing quest card, and progress pill; completing a story activity moves the frontier without page-level map overflow.
-- Personal trajectory QA: pure tests verify balanced math/reading/discovery recommendations, curriculum-stage gating, weak-domain prioritization, repeat avoidance, local-day stability, profile-local persistence, correctly closed practice sessions, idempotent rewards, isolated hero unlocks and best ratings, and migration of impossible legacy state. Browser and viewport checks verify six profile signs distinct from playable heroes, deterministic repair of duplicate or invalid legacy signs, unique signs for every supported sibling profile, returning sign confirmation before progress can be changed, adult-gated switching, the 0-75 calm-mode collection, three mission cards, one-tap continuation to the next unfinished mission, full-chest priority, five complete categories, no gift/progress overlap, immediate hero choice, and usable 332 px/fullscreen layouts.
+- Story-mode browser QA: in-app browser at `390x844` opened the 50-node Sterrenreis with one active frontier, Buddy, the friend meadow, a child-facing quest card, and progress pill; completing a story activity moves the frontier without page-level map overflow.
+- Personal trajectory QA: pure tests verify balanced math/reading/discovery recommendations, curriculum-stage gating, weak-domain prioritization, repeat avoidance, local-day stability, profile-local persistence, correctly closed practice sessions, idempotent rewards, isolated hero unlocks and best ratings, and migration of impossible legacy state. Browser and viewport checks verify six profile signs distinct from playable heroes, deterministic repair of duplicate or invalid legacy signs, unique signs for every supported sibling profile, returning sign confirmation before progress can be changed, adult-gated switching, the 0-78 calm-mode collection, three mission cards, one-tap continuation to the next unfinished mission, full-chest priority, five complete categories, no gift/progress overlap, immediate hero choice, and usable 332 px/fullscreen layouts.
 - Visual inspection: current screenshots for the Buddy/Sterrenstad opening in narrow portrait, desktop, and mobile landscape plus the journey, personal-mission Hub, Count, Compare, OneMoreLess, Vormenburcht, Verkeerspad, core reading/splitting modes, bosses, and real runner were inspected during product-readiness passes.
 - Procedural device-feedback checks: tests verify distinct local Web Audio cue patterns, short optional vibration patterns, persisted haptic settings, and shared attempt-pipeline routing for Snap, rescue, city-building, herd rescue, and gentle retry feedback.
 - Asset policy: `assets/ASSET_MANIFEST.json` documents both generated ElevenLabs source packs and all project-generated local assets; runtime source tests reject external requests and browser speech.
@@ -74,17 +74,18 @@ No required proof remains open for the original completion checklist as of the l
   touch input. Sterrenreis is now the child-facing orchestration layer around
   those required systems rather than a replacement for their logic.
 - Milestone 6 is exceeded: the original 12 templates still share the attempt
-  pipeline, while 25 calm curriculum modes cover number sense, splitting,
-  reading/phonemic awareness, operations to 20, geometry, measurement, money,
-  time, listening, and traffic. Mistakes remain retryable and scaffolded.
-- Milestone 7 is current, not inherited: 35 files / 304 tests, typecheck, lint,
-  production build, 59 viewport scenarios, deterministic 41-step touch journey, 1489/1489
+  pipeline, while 26 calm curriculum modes cover number sense, splitting,
+  reading/phonemic awareness, handwriting, operations to 20, geometry,
+  measurement, money, time, listening, and traffic. Mistakes remain retryable
+  and scaffolded.
+- Milestone 7 is current, not inherited: 37 files / 320 tests, typecheck, lint,
+  production build, 64 viewport scenarios, deterministic 41-step touch journey, 1517/1517
   reachable sentence clips, 32/32 reading phonemes, live Sprintsite shell/code/
-  audio/service-worker smokes, and a clean Git worktree all pass on 2026-07-12.
+  audio/service-worker smokes, and a clean Git worktree all pass on 2026-07-13.
 - Product-readiness dimensions were re-audited directly: first impression is
   now a Buddy/Sterrenstad story frame with one large action and return-aware
   child progress, followed by one Sterrenreis/frontier; each profile gets three balanced daily missions;
-  weak/due targets and tier gates shape practice; all 25 calm modes now change
+  weak/due targets and tier gates shape practice; all 26 calm modes now change
   real content range, operation type, sound complexity, question load, choice
   count, or board size across the same three child-specific tiers; curriculum
   targets use a within-session interleaving cooldown unless the adaptive engine
@@ -141,7 +142,7 @@ Current follow-up evidence:
 - The child-facing Summary now keeps detailed attempt/streak stats inside a closed `Voor ouders` details panel by default, reducing dashboard-like noise while keeping parent evidence accessible.
 - `npm.cmd run qa:viewport` covers menu, 360px narrow menu, number portal, real mobile runner, legacy mobile runner, 360px narrow runner, mobile wrong-choice scaffold, short desktop runner, mobile WebWoud, live WebWoud reward feedback, mobile Oefenwereld, mobile Sterrenstad overview, mobile Sterrenstad build, 360px narrow Sterrenstad build, mobile summary, and 360px narrow summary.
 - `npm.cmd run qa:mobile-touch` touches the real `run` controls, covers the longer child route with real touch events, and produces `.qa-artifacts/mobile-touch-qa/report.json` plus `summary-touch-mobile.png`.
-- Latest validation: `npm.cmd run verify` passes with 36 files / 312 tests and production build, `npm.cmd run qa:viewport` passes 61 scenarios with explicit fresh/returning opening checks, a 332x807 beat-3 journey cinematic with no competing region banner, reduced-motion, first/capped-profile, unique returning sign confirmation, 75-star collection, serialized portrait/landscape reward dialogs, 332px next-mission ending, 844x390 full-treasure ending, tiered Memory, profile-earned 4/28 starter versus advanced `IJ` letters, a rendered Splitbord remediation model, and deterministic advanced-content checks plus all visible buttons named and at least 44x44px, `npm.cmd run qa:mobile-touch` passes a fixed-seed 41-step journey that verifies wrong/correct profile signs and equips Aqua with 12 tracked attempts, the first-install offline cache test covers entry plus lazy chunks, and the local ElevenLabs audit passes at 1584/1584 stored clips, 1515/1515 current lines, and 32/32 reading phonemes.
+- Latest validation: `npm.cmd run verify` passes with 37 files / 320 tests and production build; `npm.cmd run qa:viewport` passes 64 scenarios with explicit fresh/returning opening checks on phone, landscape, and desktop, real pointer-drawn Schrijfspoor ink, a 332x807 starter writing board, a 78-star collection, tiered Memory, profile-earned 4/28 starter versus advanced `IJ` letters, a rendered Splitbord remediation model, and deterministic advanced-content checks plus all visible buttons named and at least 44x44px; `npm.cmd run qa:mobile-touch` passes a fixed-seed 41-step journey that verifies wrong/correct profile signs and equips Aqua with 12 tracked attempts; the first-install offline cache test covers entry plus lazy chunks; and the local ElevenLabs audit passes at 1586/1586 stored clips, 1517/1517 current lines, and 32/32 reading phonemes.
 
 Remaining for the active product-readiness goal:
 

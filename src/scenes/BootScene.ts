@@ -106,7 +106,11 @@ export class BootScene extends BaseScene {
 
     const prompt = document.createElement("span");
     prompt.className = "boot-sign-prompt";
-    prompt.textContent = `${active.name || "Speler"}: tik jouw teken`;
+    const playerName = document.createElement("strong");
+    playerName.textContent = active.name || "Speler";
+    const promptAction = document.createElement("small");
+    promptAction.textContent = "Tik jouw teken";
+    prompt.append(playerName, promptAction);
 
     const signs = document.createElement("div");
     signs.className = "boot-signs";

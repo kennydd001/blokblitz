@@ -59,6 +59,7 @@ export const SCENE_DOMAINS: Record<string, string> = {
   klankgrot: "literacy-phonemic",
   rijmspel: "literacy-phonemic",
   letterkompas: "literacy-reading",
+  schrijfspoor: "literacy-writing",
   zoemroute: "literacy-reading",
   woordbouwplaats: "literacy-reading",
   luisterbos: "listening-comprehension",
