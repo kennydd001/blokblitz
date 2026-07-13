@@ -2260,4 +2260,16 @@ Validation:
 
 Release:
 
-- GitHub and Sprintsite publication are pending the final repository audit.
+- GitHub `main` contains the validated handwriting and returning-child milestone
+  as commit `2ebb29f`.
+- WSL Wrangler deployed Worker version
+  `c16462b0-d9d2-4c35-80da-16fe44de1014`. After edge propagation, the
+  cache-busted canonical root and the plain root both serve
+  `index-BQ3xKeYm.js` (414,849 bytes) and `index-CNli3EW3.css` (179,743 bytes)
+  with HTTP 200; both contain the current Schrijfspoor implementation.
+- The two live trace instructions are `audio/mpeg` with exact local/live sizes
+  of 66,499 and 33,062 bytes. The live voice manifest reports 1,586 lines and
+  `sw.js` remains JavaScript with HTTP 200.
+- A direct public in-app-browser load at 390x844 confirmed the same entry assets,
+  the complete fresh Buddy opening, zero horizontal overflow, a 251x68 primary
+  start control, and no console warnings or errors.
