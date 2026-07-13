@@ -2377,5 +2377,12 @@ Validation:
 
 Release:
 
-- Pending commit, GitHub push, Sprintsite deployment, and live smoke for this
-  milestone.
+- GitHub `main` contains the curriculum-order and decodable-reading milestone
+  as commit `9d19ba7`.
+- WSL Wrangler deployed Worker version
+  `c4a2e311-7a85-4bd6-a25c-67b651489acf`. The cache-busted public root serves
+  `index-BtFu0hNh.js` (424,538 bytes) and `index-Cr7ucN2L.css` (185,880 bytes)
+  with HTTP 200 and the correct JavaScript/CSS content types.
+- All six new clips are live as `audio/mpeg` with exact local/live sizes of
+  17,598, 58,558, 76,530, 109,967, 23,031, and 24,285 bytes. The live voice
+  manifest reports 1,595 lines and `sw.js` remains JavaScript with HTTP 200.
