@@ -2315,3 +2315,18 @@ Validation:
   hold -> ten-minute extension path without a ghost tap.
 - `npm.cmd run voice:elevenlabs-audit` passes at 1589/1589 stored Lily clips,
   1520/1520 current spoken lines, and 32/32 reading phonemes.
+
+Release:
+
+- GitHub `main` contains the validated healthy-session and scoped-review
+  milestone as commit `93f150b`.
+- WSL Wrangler deployed Worker version
+  `943ea0bf-52a5-4edf-8116-8c710f0b7e8e`. The cache-busted public root serves
+  `index-CNBhrUwc.js` (422,656 bytes) and `index-Ctq6fANL.css` (185,506 bytes)
+  with HTTP 200 and the correct JavaScript/CSS content types.
+- All three new rest clips are live as `audio/mpeg` with exact local/live sizes
+  of 56,050, 44,765, and 56,050 bytes. The live voice manifest reports 1,589
+  lines and `sw.js` remains JavaScript with HTTP 200.
+- A direct public in-app-browser smoke at 390x844 confirmed the new entry hashes,
+  the complete returning-child profile opening, zero horizontal overflow, and
+  no browser warnings or errors.
